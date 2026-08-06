@@ -1,3 +1,4 @@
+@import "./styles/indagis-tokens.css";
 @import 'tailwindcss';
 /* `fonts.css` must come BEFORE `globals.css`: as of @nous-research/ui 0.14.x,
    `globals.css` only declares the `--font-*` CSS variables (Collapse, Rules
