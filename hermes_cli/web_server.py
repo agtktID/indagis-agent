@@ -1,5 +1,5 @@
 """
-Hermes Agent — Web UI server.
+Indagis Agent — Web UI server.
 
 Provides a FastAPI backend serving the Vite/React frontend and REST API
 endpoints for managing configuration, environment variables, and sessions.
