@@ -176,6 +176,27 @@ export function AboutSettings() {
           title={a.automaticUpdates}
         />
 
+        {/* Indagis → Hermes attribution. Mandated by the upstream MIT
+            license: a single, always-visible "Built on" line in About.
+            Links to the original NousResearch repository so the credit
+            is verifiable. */}
+        <div className="mt-2 flex flex-col gap-0.5 px-1 text-xs text-muted-foreground">
+          <a
+            className="font-mono text-[11px] tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+            href="https://github.com/NousResearch/hermes-agent"
+            onClick={event => {
+              event.preventDefault()
+              void window.hermesDesktop?.openExternal?.(
+                'https://github.com/NousResearch/hermes-agent'
+              )
+            }}
+            rel="noreferrer"
+            target="_blank"
+          >
+            Built on Hermes Agent · NousResearch · MIT License
+          </a>
+        </div>
+
         <UninstallSection />
       </div>
     </SettingsContent>

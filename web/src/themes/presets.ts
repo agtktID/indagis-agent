@@ -40,18 +40,32 @@ const DEFAULT_LAYOUT: ThemeLayout = {
 
 export const defaultTheme: DashboardTheme = {
   name: "default",
-  label: "Hermes Teal",
-  description: "Classic dark teal — the canonical Hermes look",
+  label: "Indagis",
+  description: "Premium investigation / SOC centre — Obsidian Black canvas with Cyber Cyan accent",
   palette: {
-    background: { hex: "#041c1c", alpha: 1 },
-    midground: { hex: "#ffe6cb", alpha: 1 },
-    foreground: { hex: "#ffffff", alpha: 0 },
-    warmGlow: "rgba(255, 189, 56, 0.35)",
-    noiseOpacity: 1,
+    background: { hex: "#0B0F14", alpha: 1 },
+    midground: { hex: "#37D5D6", alpha: 1 },
+    foreground: { hex: "#E2E8F0", alpha: 1 },
+    warmGlow: "rgba(55, 213, 214, 0.18)",
+    noiseOpacity: 0.6,
   },
-  typography: DEFAULT_TYPOGRAPHY,
+  typography: {
+    ...DEFAULT_TYPOGRAPHY,
+    fontSans: `"Inter", ${SYSTEM_SANS}`,
+    fontMono: `"JetBrains Mono", ${SYSTEM_MONO}`,
+    fontDisplay: `"Space Grotesk", ${SYSTEM_SANS}`,
+    fontUrl:
+      "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap",
+    lineHeight: "1.75",
+  },
   layout: DEFAULT_LAYOUT,
-  terminalBackground: "#000000",
+  terminalBackground: "#0B0F14",
+  terminalForeground: "#E2E8F0",
+  seriesColors: {
+    inputTokenAccent: "#37D5D6",
+    outputTokenAccent: "#2CB67D",
+  },
+  swatchColors: ["#0B0F14", "#37D5D6", "#E2E8F0"],
 };
 
 export const midnightTheme: DashboardTheme = {
@@ -134,13 +148,13 @@ export const monoTheme: DashboardTheme = {
 export const cyberpunkTheme: DashboardTheme = {
   name: "cyberpunk",
   label: "Cyberpunk",
-  description: "Neon green on black — matrix terminal",
+  description: "Amber-on-black monospace terminal — 80s CRT vibe (no Matrix green)",
   palette: {
-    background: { hex: "#040608", alpha: 1 },
-    midground: { hex: "#9bffcf", alpha: 1 },
-    foreground: { hex: "#ffffff", alpha: 0 },
-    warmGlow: "rgba(0, 255, 136, 0.22)",
-    noiseOpacity: 1.2,
+    background: { hex: "#08080A", alpha: 1 },
+    midground: { hex: "#FFB000", alpha: 1 },
+    foreground: { hex: "#FFE6B0", alpha: 1 },
+    warmGlow: "rgba(255, 176, 0, 0.22)",
+    noiseOpacity: 1.0,
   },
   typography: {
     ...DEFAULT_TYPOGRAPHY,
@@ -154,9 +168,9 @@ export const cyberpunkTheme: DashboardTheme = {
     radius: "0",
   },
   colorOverrides: {
-    success: "#00ff88",
-    warning: "#ffd700",
-    destructive: "#ff0055",
+    success: "#FFB000",
+    warning: "#FF8800",
+    destructive: "#FF3355",
   },
 };
 
@@ -214,13 +228,13 @@ export const nousBlueTheme: DashboardTheme = {
  */
 export const defaultLargeTheme: DashboardTheme = {
   name: "default-large",
-  label: "Hermes Teal (Large)",
-  description: "Hermes Teal with bigger fonts and roomier spacing",
+  label: "Indagis (Large)",
+  description: "Indagis with bigger fonts and roomier spacing",
   palette: defaultTheme.palette,
   typography: {
     ...DEFAULT_TYPOGRAPHY,
     baseSize: "18px",
-    lineHeight: "1.65",
+    lineHeight: "1.75",
   },
   layout: {
     ...DEFAULT_LAYOUT,

@@ -54,9 +54,12 @@ export function ArtLines({ lines }: { lines: [string, string][] }) {
 // Terminals can't scale glyphs, so "responsive" means picking a layout that
 // fits the available columns. Thresholds are picked so each tier reads
 // comfortably without forcing wrap or truncation drift on box-drawing edges.
-const TAG_FULL = 'Nous Research · Messenger of the Digital Gods'
-const TAG_MID = 'Messenger of the Digital Gods'
-const TAG_TINY = 'Nous Research'
+// Indagis tagline — the "built on" credit line is part of the brand voice.
+// Three tiers mirror the responsive banner; the full form carries the
+// NousResearch/MIT attribution mandated by the upstream license.
+const TAG_FULL = 'Indagis Agent · Built on Hermes Agent (NousResearch, MIT)'
+const TAG_MID = 'Indagis Agent · Built on Hermes Agent'
+const TAG_TINY = 'Indagis Agent'
 const HIDE_BELOW = 34
 const COMPACT_FROM = 58
 
