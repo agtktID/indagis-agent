@@ -4,7 +4,7 @@ import pytest
 
 class TestServedProfilesStatus:
     def test_write_and_read_served_profiles(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         import importlib
         import gateway.status as status
         importlib.reload(status)
@@ -32,7 +32,7 @@ class TestNamedProfileMultiplexerGuard:
         from hermes_cli import gateway as gw
         monkeypatch.setattr(gw, "_profile_suffix", lambda: "coder")
         monkeypatch.setattr(
-            "hermes_constants.get_default_hermes_root", lambda: tmp_path
+            "hermes_constants.get_default_indagis_root", lambda: tmp_path
         )
         # No gateway.pid in tmp_path => no running default gateway => no raise.
         gw._guard_named_profile_under_multiplexer(force=False)
@@ -44,7 +44,7 @@ class TestNamedProfileMultiplexerGuard:
 
         monkeypatch.setattr(gw, "_profile_suffix", lambda: "coder")
         monkeypatch.setattr(
-            "hermes_constants.get_default_hermes_root", lambda: tmp_path
+            "hermes_constants.get_default_indagis_root", lambda: tmp_path
         )
         (tmp_path / "gateway.pid").write_text("12345", encoding="utf-8")
         monkeypatch.setattr(status, "_read_pid_record", lambda p: {"pid": 12345})

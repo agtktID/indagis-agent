@@ -1,7 +1,7 @@
 """
 Profile management for multiple isolated Hermes instances.
 
-Each profile is a fully independent HERMES_HOME directory with its own
+Each profile is a fully independent INDAGIS_HOME directory with its own
 config.yaml, .env, memory, sessions, skills, gateway, cron, and logs.
 Profiles live under ``~/.hermes/profiles/<name>/`` by default.
 
@@ -224,11 +224,11 @@ _DEFAULT_EXPORT_EXCLUDE_ROOT = frozenset({
     "logs",                 # gateway logs
 })
 
-# Allow-list for ``export_profile("default")``: when HERMES_HOME equals the
+# Allow-list for ``export_profile("default")``: when INDAGIS_HOME equals the
 # cwd (Docker/custom deployments), the default profile home is the working
 # directory and contains arbitrary user files that should NOT be bundled
 # into the export. The set below identifies the *known Hermes profile
-# artifacts* at the root of HERMES_HOME; everything else is excluded.
+# artifacts* at the root of INDAGIS_HOME; everything else is excluded.
 # Sensitive runtime infrastructure (``state.db``, ``logs/``, ``auth.*``,
 # other profiles) is intentionally *not* in this list so the export stays
 # a portable, credential-free snapshot of the user-facing surface
@@ -267,26 +267,26 @@ _HERMES_SUBCOMMANDS = frozenset({
 def _get_profiles_root() -> Path:
     """Return the directory where named profiles are stored.
 
-    Anchored to the hermes root, NOT to the current HERMES_HOME
+    Anchored to the hermes root, NOT to the current INDAGIS_HOME
     (which may itself be a profile).  This ensures ``coder profile list``
     can see all profiles.
 
-    In Docker/custom deployments where HERMES_HOME points outside
-    ``~/.hermes``, profiles live under ``HERMES_HOME/profiles/`` so
+    In Docker/custom deployments where INDAGIS_HOME points outside
+    ``~/.hermes``, profiles live under ``INDAGIS_HOME/profiles/`` so
     they persist on the mounted volume.
     """
     return _get_default_hermes_home() / "profiles"
 
 
 def _get_default_hermes_home() -> Path:
-    """Return the default (pre-profile) HERMES_HOME path.
+    """Return the default (pre-profile) INDAGIS_HOME path.
 
     In standard deployments this is ``~/.hermes``.
-    In Docker/custom deployments where HERMES_HOME is outside ``~/.hermes``
-    (e.g. ``/opt/data``), returns HERMES_HOME directly.
+    In Docker/custom deployments where INDAGIS_HOME is outside ``~/.hermes``
+    (e.g. ``/opt/data``), returns INDAGIS_HOME directly.
     """
-    from hermes_constants import get_default_hermes_root
-    return get_default_hermes_root()
+    from hermes_constants import get_default_indagis_root
+    return get_default_indagis_root()
 
 
 def _get_active_profile_path() -> Path:
@@ -368,7 +368,7 @@ def validate_alias_name(name: str) -> None:
 
 
 def get_profile_dir(name: str) -> Path:
-    """Resolve a profile name to its HERMES_HOME directory."""
+    """Resolve a profile name to its INDAGIS_HOME directory."""
     canon = normalize_profile_name(name)
     if canon == "default":
         return _get_default_hermes_home()
@@ -522,16 +522,16 @@ def _migrate_profile_config_if_outdated(profile_dir: Path) -> None:
         return
 
     try:
-        from hermes_constants import reset_hermes_home_override, set_hermes_home_override
+        from hermes_constants import reset_indagis_home_override, set_indagis_home_override
         from hermes_cli.config import check_config_version, migrate_config
 
-        token = set_hermes_home_override(str(profile_dir))
+        token = set_indagis_home_override(str(profile_dir))
         try:
             current_ver, latest_ver = check_config_version()
             if current_ver < latest_ver:
                 migrate_config(interactive=False, quiet=True)
         finally:
-            reset_hermes_home_override(token)
+            reset_indagis_home_override(token)
     except Exception:
         # Profile creation should not fail because an old copied config could
         # not be migrated. The next `hermes doctor --fix` can still surface the
@@ -711,7 +711,7 @@ def _check_gateway_running(profile_dir: Path) -> bool:
     no live PID file.  In those cases fall back to validating the PID recorded
     in the profile's own ``gateway_state.json`` against the live process table,
     mirroring the ``/api/status`` sidebar's liveness logic so the two surfaces
-    agree.  Parameterized by ``profile_dir`` so it never mutates ``HERMES_HOME``.
+    agree.  Parameterized by ``profile_dir`` so it never mutates ``INDAGIS_HOME``.
     """
     try:
         from gateway.status import get_running_pid
@@ -965,14 +965,14 @@ def profiles_to_serve(multiplex: bool) -> List[Tuple[str, Path]]:
       always had. The name is ``"default"`` for the default profile or the
       active named profile's id.
     - ``multiplex=True``: returns the default profile plus every valid named
-      profile under ``profiles/``, each paired with its own HERMES_HOME.
+      profile under ``profiles/``, each paired with its own INDAGIS_HOME.
 
     Intentionally lightweight (a directory scan + name validation only): no
     per-profile config reads, gateway-running probes, or skill counts like
     :func:`list_profiles`. It runs on gateway startup and must stay cheap.
 
     The returned ``hermes_home`` is the path to pass to
-    ``set_hermes_home_override`` when scoping a turn to that profile.
+    ``set_indagis_home_override`` when scoping a turn to that profile.
     """
     active = get_active_profile_name() or "default"
     if not multiplex:
@@ -1053,8 +1053,8 @@ def create_profile(
     if clone_from is not None or clone_all or clone_config:
         if clone_from is None:
             # Default: clone from active profile
-            from hermes_constants import get_hermes_home
-            source_dir = get_hermes_home()
+            from hermes_constants import get_indagis_home
+            source_dir = get_indagis_home()
         else:
             clone_from = normalize_profile_name(clone_from)
             validate_profile_name(clone_from)
@@ -1191,7 +1191,7 @@ def create_profile(
 def seed_profile_skills(profile_dir: Path, quiet: bool = False) -> Optional[dict]:
     """Seed bundled skills into a profile via subprocess.
 
-    Uses subprocess because sync_skills() caches HERMES_HOME at module level.
+    Uses subprocess because sync_skills() caches INDAGIS_HOME at module level.
     Returns the sync result dict, or None on failure.
 
     Profiles that opted out of bundled skills (via ``hermes profile create
@@ -1212,7 +1212,7 @@ def seed_profile_skills(profile_dir: Path, quiet: bool = False) -> Optional[dict
             [sys.executable, "-c",
              "import json; from tools.skills_sync import sync_skills; "
              "r = sync_skills(quiet=True); print(json.dumps(r))"],
-            env={**os.environ, "HERMES_HOME": str(profile_dir)},
+            env={**os.environ, "INDAGIS_HOME": str(profile_dir)},
             cwd=str(project_root),
             capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=60,
         )
@@ -1295,7 +1295,7 @@ def _profile_bound_backend_pids(canon: str, profile_dir: Path) -> list[int]:
     ``ENOTEMPTY`` (and, pre-fix, resurrected the tree).  ``gateway.pid`` never
     names it, so find it by inspection: a Hermes backend subcommand
     (``serve``/``dashboard``/``gateway``) that is bound to *this* profile either
-    by a ``--profile <canon>`` / ``-p <canon>`` selector or by a ``HERMES_HOME``
+    by a ``--profile <canon>`` / ``-p <canon>`` selector or by a ``INDAGIS_HOME``
     that resolves to ``profile_dir``.
 
     Best-effort and tightly scoped: current-user processes only, backend
@@ -1376,10 +1376,10 @@ def _profile_bound_backend_pids(canon: str, profile_dir: Path) -> list[int]:
                         bound = True
                         break
 
-            # ...or by HERMES_HOME env pointing at this profile dir.
+            # ...or by INDAGIS_HOME env pointing at this profile dir.
             if not bound:
                 try:
-                    env_home = (proc.environ() or {}).get("HERMES_HOME", "")
+                    env_home = (proc.environ() or {}).get("INDAGIS_HOME", "")
                     if env_home and Path(env_home).resolve() == resolved_dir:
                         bound = True
                 except Exception:
@@ -1548,7 +1548,7 @@ def delete_profile(name: str, yes: bool = False) -> Path:
     # 2b. Stop any other backends bound to this profile (Desktop-spawned
     # serve/dashboard processes the gateway.pid file never names). They hold
     # the profile's SQLite connection open and keep writing files, which makes
-    # the rmtree below fail with ENOTEMPTY and — before the ensure_hermes_home
+    # the rmtree below fail with ENOTEMPTY and — before the ensure_indagis_home
     # guard — resurrected the deleted tree.
     _stop_profile_backends(canon, profile_dir)
 
@@ -1633,7 +1633,7 @@ def _maybe_register_gateway_service(profile_name: str) -> None:
     which goes through the same dispatch path.
 
     Port selection: each supervised profile gateway loads its own
-    ``HERMES_HOME`` and binds the port resolved by ``gateway/config.py``
+    ``INDAGIS_HOME`` and binds the port resolved by ``gateway/config.py``
     from that profile's environment — ``API_SERVER_PORT`` (or
     ``platforms.api_server.extra.port`` in the profile's
     ``config.yaml``), defaulting to 8642. There is no ``[gateway] port``
@@ -1711,10 +1711,10 @@ def _cleanup_gateway_service(name: str, profile_dir: Path) -> None:
     import platform as _platform
 
     # Derive service name for this profile
-    # Temporarily set HERMES_HOME so _profile_suffix resolves correctly
-    old_home = os.environ.get("HERMES_HOME")
+    # Temporarily set INDAGIS_HOME so _profile_suffix resolves correctly
+    old_home = os.environ.get("INDAGIS_HOME")
     try:
-        os.environ["HERMES_HOME"] = str(profile_dir)
+        os.environ["INDAGIS_HOME"] = str(profile_dir)
         from hermes_cli.gateway import get_service_name, get_launchd_plist_path
 
         if _platform.system() == "Linux":
@@ -1749,9 +1749,9 @@ def _cleanup_gateway_service(name: str, profile_dir: Path) -> None:
         print(f"⚠ Service cleanup: {e}")
     finally:
         if old_home is not None:
-            os.environ["HERMES_HOME"] = old_home
-        elif "HERMES_HOME" in os.environ:
-            del os.environ["HERMES_HOME"]
+            os.environ["INDAGIS_HOME"] = old_home
+        elif "INDAGIS_HOME" in os.environ:
+            del os.environ["INDAGIS_HOME"]
 
 
 def _stop_gateway_process(profile_dir: Path) -> None:
@@ -1838,14 +1838,14 @@ def set_active_profile(name: str) -> None:
 
 
 def get_active_profile_name() -> str:
-    """Infer the current profile name from HERMES_HOME.
+    """Infer the current profile name from INDAGIS_HOME.
 
-    Returns ``"default"`` if HERMES_HOME is not set or points to ``~/.hermes``.
-    Returns the profile name if HERMES_HOME points into ``~/.hermes/profiles/<name>``.
-    Returns ``"custom"`` if HERMES_HOME is set to an unrecognized path.
+    Returns ``"default"`` if INDAGIS_HOME is not set or points to ``~/.hermes``.
+    Returns the profile name if INDAGIS_HOME points into ``~/.hermes/profiles/<name>``.
+    Returns ``"custom"`` if INDAGIS_HOME is set to an unrecognized path.
     """
-    from hermes_constants import get_hermes_home
-    hermes_home = get_hermes_home()
+    from hermes_constants import get_indagis_home
+    hermes_home = get_indagis_home()
     resolved = hermes_home.resolve()
 
     default_resolved = _get_default_hermes_home().resolve()
@@ -1876,9 +1876,9 @@ def _default_export_ignore(root_dir: Path):
     * **Root-level allow-list** — only entries whose name appears in
       ``_DEFAULT_EXPORT_INCLUDE_ROOT`` survive. Everything else (such as
       an unrelated ``x11-dev/`` directory in a Docker deployment where
-      HERMES_HOME equals the cwd) is excluded. Blacklisting was tried
+      INDAGIS_HOME equals the cwd) is excluded. Blacklisting was tried
       first and proved unable to anticipate every non-Hermes file the
-      user may have lying alongside HERMES_HOME (#58394).
+      user may have lying alongside INDAGIS_HOME (#58394).
     * **Universal exclusions at any depth** — ``__pycache__``, sockets,
       temp files; plus npm lockfiles, which may appear at the root.
 
@@ -2244,10 +2244,10 @@ def rename_profile(old_name: str, new_name: str) -> Path:
 # ---------------------------------------------------------------------------
 
 def resolve_profile_env(profile_name: str) -> str:
-    """Resolve a profile name to a HERMES_HOME path string.
+    """Resolve a profile name to a INDAGIS_HOME path string.
 
     Called early in the CLI entry point, before any hermes modules
-    are imported, to set the HERMES_HOME environment variable.
+    are imported, to set the INDAGIS_HOME environment variable.
     """
     canon = normalize_profile_name(profile_name)
     validate_profile_name(canon)

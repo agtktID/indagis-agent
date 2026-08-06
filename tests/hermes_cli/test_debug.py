@@ -12,10 +12,10 @@ import pytest
 
 @pytest.fixture
 def hermes_home(tmp_path, monkeypatch):
-    """Set up an isolated HERMES_HOME with minimal logs."""
+    """Set up an isolated INDAGIS_HOME with minimal logs."""
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
 
     # Create log files
     logs_dir = home / "logs"
@@ -219,10 +219,10 @@ class TestCaptureLogSnapshotRedaction:
 
     @pytest.fixture
     def hermes_home_with_secret(self, tmp_path, monkeypatch):
-        """Isolated HERMES_HOME whose agent.log contains a vendor-prefixed token."""
+        """Isolated INDAGIS_HOME whose agent.log contains a vendor-prefixed token."""
         home = tmp_path / ".hermes"
         home.mkdir()
-        monkeypatch.setenv("HERMES_HOME", str(home))
+        monkeypatch.setenv("INDAGIS_HOME", str(home))
         # Baseline fixture: no explicit env-var opinion. With the post-#17691
         # default of ON, the default-path tests below exercise the
         # secure-default behaviour. The `force=True` regression test
@@ -451,10 +451,10 @@ class TestRunDebugShareRedaction:
 
     @pytest.fixture
     def hermes_home_with_secret(self, tmp_path, monkeypatch):
-        """Isolated HERMES_HOME whose agent.log contains a vendor-prefixed token."""
+        """Isolated INDAGIS_HOME whose agent.log contains a vendor-prefixed token."""
         home = tmp_path / ".hermes"
         home.mkdir()
-        monkeypatch.setenv("HERMES_HOME", str(home))
+        monkeypatch.setenv("INDAGIS_HOME", str(home))
         monkeypatch.delenv("HERMES_REDACT_SECRETS", raising=False)
 
         logs_dir = home / "logs"

@@ -93,7 +93,7 @@ def is_container_startup_environment() -> bool:
 
 
 def active_profile_may_override_home(hermes_root: str) -> bool:
-    """Cheap probe: does an active non-default profile redirect HERMES_HOME?"""
+    """Cheap probe: does an active non-default profile redirect INDAGIS_HOME?"""
     active_profile = os.path.join(hermes_root, "active_profile")
     try:
         if os.path.exists(active_profile):
@@ -106,7 +106,7 @@ def active_profile_may_override_home(hermes_root: str) -> bool:
 
 
 def _resolved_home() -> str:
-    hermes_home = os.environ.get("HERMES_HOME", "").strip()
+    hermes_home = os.environ.get("INDAGIS_HOME", "").strip()
     if hermes_home:
         return hermes_home
     return os.path.join(os.path.expanduser("~"), ".hermes")
@@ -126,7 +126,7 @@ def container_mode_may_be_active() -> bool:
     if is_container_startup_environment():
         return False
 
-    hermes_home = os.environ.get("HERMES_HOME", "").strip()
+    hermes_home = os.environ.get("INDAGIS_HOME", "").strip()
     if hermes_home:
         if os.path.exists(os.path.join(hermes_home, ".container-mode")):
             return True
@@ -169,7 +169,7 @@ def read_install_method() -> str | None:
     order) — the managed/git/pip fallbacks need heavier imports and stay on
     the slow path. On the fast path home ambiguity is already excluded:
     ``container_mode_may_be_active()`` bails to the slow path whenever a
-    non-default profile might redirect HERMES_HOME.
+    non-default profile might redirect INDAGIS_HOME.
     """
     stamp = os.path.join(_resolved_home(), ".install_method")
     try:

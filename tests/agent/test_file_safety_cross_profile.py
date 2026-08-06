@@ -58,7 +58,7 @@ def fake_hermes(tmp_path, monkeypatch):
     # Monkeypatch the resolver functions used by file_safety so each test
     # can choose which profile is "active".
     import hermes_constants
-    monkeypatch.setattr(hermes_constants, "get_default_hermes_root", lambda: root)
+    monkeypatch.setattr(hermes_constants, "get_default_indagis_root", lambda: root)
 
     # The reloads below ensure get_cross_profile_warning/classify see the patched root.
     import agent.file_safety as fs
@@ -91,7 +91,7 @@ class TestResolveActiveProfileName:
 
 
     def test_falls_back_to_default_on_resolution_failure(self, fake_hermes, monkeypatch):
-        """If HERMES_HOME resolution raises, return 'default' rather than crashing the tool."""
+        """If INDAGIS_HOME resolution raises, return 'default' rather than crashing the tool."""
         import agent.file_safety as fs
 
         def _boom():

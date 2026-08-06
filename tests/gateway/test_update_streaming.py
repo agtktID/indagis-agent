@@ -77,7 +77,7 @@ class TestGatewayPrompt:
         thread = threading.Thread(target=write_response)
         thread.start()
 
-        with patch.dict(os.environ, {"HERMES_HOME": str(hermes_home)}):
+        with patch.dict(os.environ, {"INDAGIS_HOME": str(hermes_home)}):
             from hermes_cli.main import _gateway_prompt
             result = _gateway_prompt("Restore? [Y/n]", "y", timeout=5.0)
 

@@ -30,7 +30,7 @@ class TestUnifiedDashboardRouting:
 
 
     def test_profile_launch_reexecs_machine_dashboard(self, main_mod, monkeypatch):
-        monkeypatch.delenv("HERMES_HOME", raising=False)
+        monkeypatch.delenv("INDAGIS_HOME", raising=False)
         monkeypatch.setattr(
             "hermes_cli.profiles.get_active_profile_name", lambda: "worker_x"
         )
@@ -54,11 +54,11 @@ class TestUnifiedDashboardRouting:
         assert "--open-profile" in argv
         assert argv[argv.index("--open-profile") + 1] == "worker_x"
         # The child is pinned to the machine ROOT, not the launching profile's
-        # HERMES_HOME.  For a standard install (HERMES_HOME unset) that root is
+        # INDAGIS_HOME.  For a standard install (INDAGIS_HOME unset) that root is
         # the platform-native default (~/.hermes), NOT dropped — see the Docker
         # test below for why we resolve explicitly instead of popping.
-        from hermes_constants import get_default_hermes_root
-        assert env.get("HERMES_HOME") == str(get_default_hermes_root())
+        from hermes_constants import get_default_indagis_root
+        assert env.get("INDAGIS_HOME") == str(get_default_indagis_root())
 
 
     def test_desktop_profile_backend_skips_machine_dashboard_reroute(self, main_mod, monkeypatch):

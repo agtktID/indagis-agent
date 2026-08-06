@@ -26,10 +26,10 @@ from agent.secret_scope import (
 from hermes_constants import (
     DEFAULT_INDICATOR_STYLE,
     INDICATOR_STYLES,
-    get_hermes_home,
-    get_hermes_home_override,
-    reset_hermes_home_override,
-    set_hermes_home_override,
+    get_indagis_home,
+    get_indagis_home_override,
+    reset_indagis_home_override,
+    set_indagis_home_override,
 )
 from hermes_cli.env_loader import load_hermes_dotenv
 from utils import is_truthy_value
@@ -53,7 +53,7 @@ from tui_gateway.transport import (
 
 logger = logging.getLogger(__name__)
 
-_hermes_home = get_hermes_home()
+_hermes_home = get_indagis_home()
 load_hermes_dotenv(
     hermes_home=_hermes_home, project_env=Path(__file__).parent.parent / ".env"
 )
@@ -349,15 +349,15 @@ class _SlashWorker:
         # Tier-1 secrets (gateway/GitHub/infra) are still stripped (#29157).
         # Global-remote / multi-profile sessions: the worker must resolve
         # config/skills/state against the session's profile home, not the
-        # gateway's launch HERMES_HOME (#40677). The override goes through the
+        # gateway's launch INDAGIS_HOME (#40677). The override goes through the
         # build_subprocess_env factory's `extra` (applied last, always wins)
-        # instead of a hand-rolled env["HERMES_HOME"] assignment.
+        # instead of a hand-rolled env["INDAGIS_HOME"] assignment.
         from tools.environments.local import build_subprocess_env
         env = build_subprocess_env(
             hermes_subprocess_env(inherit_credentials=True),
             scrub_secrets=False,
             inherit_profile_home=False,  # base already carries the HOME contract
-            extra={"HERMES_HOME": str(profile_home)} if profile_home else None,
+            extra={"INDAGIS_HOME": str(profile_home)} if profile_home else None,
         )
 
         # start_new_session=True detaches the slash worker into its own
@@ -1382,7 +1382,7 @@ def _db_unavailable_error(rid, *, code: int):
 # One dashboard normally serves its launch profile. But the desktop's app-global
 # remote mode points every profile at this single backend, so resume/prompt must
 # be able to act on ANOTHER local profile's state.db + home. The desktop passes
-# ``profile`` on those calls; we open that profile's db and bind its HERMES_HOME
+# ``profile`` on those calls; we open that profile's db and bind its INDAGIS_HOME
 # (a ContextVar override) for the duration of the call so config/skills/model and
 # message persistence all resolve to the right profile. Omitted/own profile → the
 # launch profile (unchanged for single-profile and per-profile-remote setups).
@@ -1404,10 +1404,10 @@ def _profile_home(profile: str | None) -> Path | None:
 
 
 def _profile_scoped(handler):
-    """Bind ``params['profile']``'s HERMES_HOME around a pet RPC handler.
+    """Bind ``params['profile']``'s INDAGIS_HOME around a pet RPC handler.
 
     Pets are per-profile: ``display.pet.*`` lives in the profile's config.yaml and
-    sprites install under its ``pets/`` dir (both resolve via ``get_hermes_home``).
+    sprites install under its ``pets/`` dir (both resolve via ``get_indagis_home``).
     The desktop sends ``profile`` on pet calls so config + pets dir resolve to the
     focused profile even in app-global remote mode, where one backend serves every
     profile. No-op for the launch profile (own-profile backends already resolve it).
@@ -1417,11 +1417,11 @@ def _profile_scoped(handler):
         home = _profile_home(params.get("profile") if isinstance(params, dict) else None)
         if home is None:
             return handler(rid, params)
-        token = set_hermes_home_override(home)
+        token = set_indagis_home_override(home)
         try:
             return handler(rid, params)
         finally:
-            reset_hermes_home_override(token)
+            reset_indagis_home_override(token)
 
     return wrapper
 
@@ -2112,11 +2112,11 @@ def _start_agent_build(sid: str, session: dict) -> None:
         try:
             tokens = _set_session_context(key)
             # Build against the session's profile (global-remote): bind its
-            # HERMES_HOME so config/skills/model resolve to it, and hand the
+            # INDAGIS_HOME so config/skills/model resolve to it, and hand the
             # agent that profile's db so turns persist to the right state.db.
             session_db = None
             if profile_home:
-                home_token = set_hermes_home_override(profile_home)
+                home_token = set_indagis_home_override(profile_home)
                 try:
                     from agent.secret_scope import build_profile_secret_scope, set_secret_scope
 
@@ -2242,7 +2242,7 @@ def _start_agent_build(sid: str, session: dict) -> None:
             _emit("error", sid, {"message": f"agent init failed: {e}"})
         finally:
             if home_token is not None:
-                reset_hermes_home_override(home_token)
+                reset_indagis_home_override(home_token)
             if secret_token is not None:
                 try:
                     from agent.secret_scope import reset_secret_scope
@@ -2938,7 +2938,7 @@ def _load_cfg_raw() -> dict:
         # remote profile loads ITS config (model, skills, prompt); otherwise the
         # launch profile's _hermes_home. Cache is keyed on the resolved path, so
         # profiles don't clobber each other.
-        override = get_hermes_home_override()
+        override = get_indagis_home_override()
         home = override if isinstance(override, str) and override else _hermes_home
         p = Path(home) / "config.yaml"
         mtime = p.stat().st_mtime if p.exists() else None
@@ -3213,7 +3213,7 @@ def _skin_sig() -> tuple[str, float | None]:
     """(active skin name, its user-file mtime). Built-ins have no file, so only
     their name moves; a user skin's mtime lets an in-place color edit repaint too."""
     name = str((_load_cfg().get("display") or {}).get("skin") or "default")
-    override = get_hermes_home_override()
+    override = get_indagis_home_override()
     home = override if isinstance(override, str) and override else _hermes_home
     try:
         mtime: float | None = (Path(home) / "skins" / f"{name}.yaml").stat().st_mtime
@@ -3257,7 +3257,7 @@ def _broadcast_skin_if_changed() -> None:
 
 def _watcher_home() -> Path:
     """Active profile home for the change watcher's signature probes."""
-    override = get_hermes_home_override()
+    override = get_indagis_home_override()
     return Path(override if isinstance(override, str) and override else _hermes_home)
 
 
@@ -6510,7 +6510,7 @@ def _init_session(
             "tool_progress_mode": _load_tool_progress_mode(),
             "edit_snapshots": {},
             "tool_started_at": {},
-            # Profile-scoped HERMES_HOME for app-global remote mode; None =
+            # Profile-scoped INDAGIS_HOME for app-global remote mode; None =
             # launch profile. SessionBranch copies the parent's value so the
             # child stays on the same state.db.
             "profile_home": profile_home,
@@ -7203,7 +7203,7 @@ def _auto_continue_config() -> tuple[bool, float, int]:
 
 
 def _session_home(session: dict) -> Path:
-    """The HERMES_HOME the session's durable state lives in (profile-aware)."""
+    """The INDAGIS_HOME the session's durable state lives in (profile-aware)."""
     profile_home = session.get("profile_home")
     return Path(profile_home) if profile_home else Path(_hermes_home)
 
@@ -8181,9 +8181,9 @@ def _pet_state_rows(spritesheet) -> list[str]:
 
 def _pet_gen_root():
     """Profile-scoped staging dir for in-progress generation drafts."""
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    root = get_hermes_home() / "cache" / "pet-gen"
+    root = get_indagis_home() / "cache" / "pet-gen"
     root.mkdir(parents=True, exist_ok=True)
     return root
 
@@ -8603,14 +8603,14 @@ def _serialize_subscription_preview(p) -> dict:
 # from the event stream).  On turn-complete it posts the final tree here;
 # /replay and /replay-diff fetch past snapshots by session_id + filename.
 #
-# Layout:  $HERMES_HOME/spawn-trees/<session_id>/<timestamp>.json
+# Layout:  $INDAGIS_HOME/spawn-trees/<session_id>/<timestamp>.json
 # Each file contains { session_id, started_at, finished_at, subagents: [...] }.
 
 
 def _spawn_trees_root():
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    root = get_hermes_home() / "spawn-trees"
+    root = get_indagis_home() / "spawn-trees"
     root.mkdir(parents=True, exist_ok=True)
     return root
 
@@ -9388,7 +9388,7 @@ def _run_prompt_submit(
     def run():
         approval_token = None
         session_tokens = []
-        home_token = None  # per-turn HERMES_HOME override for a resumed remote profile
+        home_token = None  # per-turn INDAGIS_HOME override for a resumed remote profile
         secret_token = None
         goal_followup = None  # set by the post-turn goal hook below
         result = None  # turn outcome; read after the finally for leftover /steer
@@ -9423,7 +9423,7 @@ def _run_prompt_submit(
             )
             _profile_home_str = session.get("profile_home")
             if _profile_home_str:
-                home_token = set_hermes_home_override(_profile_home_str)
+                home_token = set_indagis_home_override(_profile_home_str)
                 secret_token = set_secret_scope(build_profile_secret_scope(Path(_profile_home_str)))
             # The sudo password callback is thread-local (tools.terminal_tool
             # _callback_tls), so wiring it on the build thread doesn't reach this
@@ -10051,7 +10051,7 @@ def _run_prompt_submit(
             if isinstance(local_run_kwargs, dict):
                 local_run_kwargs.clear()
 
-            # Run while any profile-specific HERMES_HOME override is still active
+            # Run while any profile-specific INDAGIS_HOME override is still active
             # so context.memory_trim is resolved from the session's own config.
             try:
                 from hermes_cli.mem_trim import trim_memory
@@ -10085,7 +10085,7 @@ def _run_prompt_submit(
             except Exception:
                 pass
             if home_token is not None:
-                reset_hermes_home_override(home_token)
+                reset_indagis_home_override(home_token)
             if secret_token is not None:
                 reset_secret_scope(secret_token)
             _clear_session_context(session_tokens)
@@ -10275,8 +10275,8 @@ def _session_images_dir(session: dict) -> Path:
     """Resolve the uploads ``images/`` dir against the session's effective home.
 
     Attach RPCs (``image.attach_bytes``, ``clipboard.paste``, ``pdf.attach``)
-    run BEFORE ``prompt.submit`` installs the session's profile HERMES_HOME
-    override, so ``get_hermes_home()`` here would return the gateway's launch
+    run BEFORE ``prompt.submit`` installs the session's profile INDAGIS_HOME
+    override, so ``get_indagis_home()`` here would return the gateway's launch
     home. In a multi-profile / root-gateway deployment that writes the upload to
     the launch home's ``images/`` while the sandbox mount and the vision host-
     read allowlist both resolve the *session profile's* ``images/`` at run time
@@ -11333,16 +11333,16 @@ def _(rid, params, pdb, conn) -> dict:
 
 def _is_repo_junk(root: str) -> bool:
     """A git root we never auto-surface as a project: the bare home dir or
-    anything under HERMES_HOME (~/.hermes by default) — config/sessions/skills,
+    anything under INDAGIS_HOME (~/.hermes by default) — config/sessions/skills,
     not a workspace. User-created projects pointing there are still honored."""
     if not root:
         return True
 
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
     real = os.path.realpath(root)
     home = os.path.realpath(os.path.expanduser("~"))
-    hermes_home = os.path.realpath(str(get_hermes_home()))
+    hermes_home = os.path.realpath(str(get_indagis_home()))
 
     return real == home or real == hermes_home or real.startswith(hermes_home + os.sep)
 
@@ -11351,18 +11351,18 @@ def _is_session_cwd_junk(cwd: str) -> bool:
     """A non-git cwd that should stay in flat Recents rather than auto-group.
 
     Unlike discovered git roots, an explicitly selected descendant of
-    HERMES_HOME may be an intentional prose/data workspace. The pre-Projects
+    INDAGIS_HOME may be an intentional prose/data workspace. The pre-Projects
     desktop surfaced every such cwd, so exclude only the two broad defaults
     that would create catch-all projects.
     """
     if not cwd:
         return True
 
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
     real = os.path.normcase(os.path.realpath(cwd))
     home = os.path.normcase(os.path.realpath(os.path.expanduser("~")))
-    hermes_home = os.path.normcase(os.path.realpath(str(get_hermes_home())))
+    hermes_home = os.path.normcase(os.path.realpath(str(get_indagis_home())))
     return real == home or real == hermes_home
 
 

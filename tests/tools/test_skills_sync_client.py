@@ -454,12 +454,12 @@ class TestMergeDecision:
 
 @pytest.fixture
 def synced_env(tmp_path, monkeypatch):
-    """A HERMES_HOME with two opted-in skills + a token-carrying identity."""
+    """A INDAGIS_HOME with two opted-in skills + a token-carrying identity."""
     import hermes_constants
     home = tmp_path / "hermes"
     skills = home / "skills"
     skills.mkdir(parents=True)
-    monkeypatch.setattr(hermes_constants, "get_hermes_home", lambda: home)
+    monkeypatch.setattr(hermes_constants, "get_indagis_home", lambda: home)
     monkeypatch.setattr(ssc, "_skills_dir", lambda: skills)
 
     _write_skill(skills, "alpha", body="alpha v1\n")

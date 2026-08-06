@@ -285,7 +285,7 @@ def _config_default_interface_early() -> str:
         return _EARLY_INTERFACE_CACHE[0]
     value = "cli"
     try:
-        home = os.environ.get("HERMES_HOME")
+        home = os.environ.get("INDAGIS_HOME")
         if home:
             cfg_path = os.path.join(home, "config.yaml")
         else:
@@ -508,14 +508,14 @@ _ensure_project_root_on_path_fast()
 # ---------------------------------------------------------------------------
 # Profile override — MUST happen before any hermes module import.
 #
-# Many modules cache HERMES_HOME at import time (module-level constants).
+# Many modules cache INDAGIS_HOME at import time (module-level constants).
 # We intercept --profile/-p from sys.argv here and set the env var so that
-# every subsequent ``os.getenv("HERMES_HOME", ...)`` resolves correctly.
+# every subsequent ``os.getenv("INDAGIS_HOME", ...)`` resolves correctly.
 # The flag is stripped from sys.argv so argparse never sees it.
 # Falls back to ~/.hermes/active_profile for sticky default.
 # ---------------------------------------------------------------------------
 def _apply_profile_override() -> None:
-    """Pre-parse --profile/-p and set HERMES_HOME before imports."""
+    """Pre-parse --profile/-p and set INDAGIS_HOME before imports."""
     argv = sys.argv[1:]
     profile_name = None
     consume = 0
@@ -620,16 +620,16 @@ def _apply_profile_override() -> None:
             consume = 0
             profile_index = None
 
-    # 1.5 If HERMES_HOME is already set and no explicit flag was given, trust it
+    # 1.5 If INDAGIS_HOME is already set and no explicit flag was given, trust it
     # only when it already points to a specific profile directory.  The
     # distinguishing heuristic: a profile path has "profiles" as its immediate
     # parent directory name (e.g. ~/.hermes/profiles/coder or
-    # /opt/data/profiles/coder).  If HERMES_HOME points to the hermes root
-    # instead (e.g. systemd hardcodes HERMES_HOME=/root/.hermes), we must
+    # /opt/data/profiles/coder).  If INDAGIS_HOME points to the hermes root
+    # instead (e.g. systemd hardcodes INDAGIS_HOME=/root/.hermes), we must
     # still read active_profile — the user may have switched profiles via
     # `hermes profile use` and the gateway should honour that choice.
     # See issue #22502.
-    hermes_home_env = os.environ.get("HERMES_HOME", "")
+    hermes_home_env = os.environ.get("INDAGIS_HOME", "")
     if profile_name is None and hermes_home_env:
         if Path(hermes_home_env).parent.name == "profiles":
             return
@@ -641,16 +641,16 @@ def _apply_profile_override() -> None:
     # active_profile. Each supervised slot has a fixed profile identity: named
     # slots pass ``-p <name>`` explicitly (handled in step 1 above), and the
     # reserved ``gateway-default`` slot runs bare ``hermes gateway run`` to mean
-    # "the root HERMES_HOME profile". If the reserved default child read
+    # "the root INDAGIS_HOME profile". If the reserved default child read
     # active_profile here, switching the active profile (e.g. via the dashboard)
     # would silently redirect the default gateway into that profile — yielding a
     # duplicate gateway for the active profile and no real default gateway. See
     # the "Docker & Profiles & Dashboard" report.
     if profile_name is None and not os.environ.get("HERMES_S6_SUPERVISED_CHILD"):
         try:
-            from hermes_constants import get_default_hermes_root
+            from hermes_constants import get_default_indagis_root
 
-            active_path = get_default_hermes_root() / "active_profile"
+            active_path = get_default_indagis_root() / "active_profile"
             if active_path.exists():
                 name = active_path.read_text(encoding="utf-8").strip()
                 if name and name != "default":
@@ -659,7 +659,7 @@ def _apply_profile_override() -> None:
         except (UnicodeDecodeError, OSError):
             pass  # corrupted file, skip
 
-    # 3. If we found a profile, resolve and set HERMES_HOME
+    # 3. If we found a profile, resolve and set INDAGIS_HOME
     if profile_name is not None:
         try:
             from hermes_cli.profiles import resolve_profile_env
@@ -680,7 +680,7 @@ def _apply_profile_override() -> None:
                 file=sys.stderr,
             )
             return
-        os.environ["HERMES_HOME"] = hermes_home
+        os.environ["INDAGIS_HOME"] = hermes_home
         # Strip the flag from argv so argparse doesn't choke
         if consume > 0 and profile_index is not None:
             start = profile_index + 1  # +1 because argv is sys.argv[1:]
@@ -691,7 +691,7 @@ _apply_profile_override()
 
 # Load .env from ~/.hermes/.env first, then project root as dev fallback.
 # User-managed env files should override stale shell exports on restart.
-from hermes_cli.config import get_hermes_home
+from hermes_cli.config import get_indagis_home
 from hermes_cli.env_loader import load_hermes_dotenv
 
 load_hermes_dotenv(project_env=PROJECT_ROOT / ".env")
@@ -713,7 +713,7 @@ try:
     # 3-4 config.yaml parses per invocation into one.
     from hermes_cli.config import read_raw_config as _read_raw_early
 
-    _cfg_path = get_hermes_home() / "config.yaml"
+    _cfg_path = get_indagis_home() / "config.yaml"
     if _cfg_path.exists():
         _early_cfg_raw = _read_raw_early() or {}
         # Managed scope: overlay administrator-pinned values so a managed
@@ -894,7 +894,7 @@ def _termux_bundled_skills_fingerprint() -> str:
 
 
 def _termux_bundled_skills_stamp_path() -> Path:
-    return get_hermes_home() / "skills" / ".termux_bundled_sync_stamp"
+    return get_indagis_home() / "skills" / ".termux_bundled_sync_stamp"
 
 
 def _termux_bundled_skills_sync_needed() -> bool:
@@ -957,7 +957,7 @@ def _relative_time(ts) -> str:
 
 def _has_any_provider_configured() -> bool:
     """Check if at least one inference provider is usable."""
-    from hermes_cli.config import get_env_path, get_hermes_home, load_config
+    from hermes_cli.config import get_env_path, get_indagis_home, load_config
     from hermes_cli.auth import get_auth_status
 
     # Determine whether Hermes itself has been explicitly configured (model
@@ -1018,7 +1018,7 @@ def _has_any_provider_configured() -> bool:
     # take 15-20s — long enough that desktop setup.status calls time out.
 
     # Check for Nous Portal OAuth credentials
-    auth_file = get_hermes_home() / "auth.json"
+    auth_file = get_indagis_home() / "auth.json"
     if auth_file.exists():
         try:
             import json
@@ -1828,9 +1828,9 @@ def _ensure_tui_node() -> None:
     if not helper.is_file():
         return
 
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    hermes_home = str(get_hermes_home())
+    hermes_home = str(get_indagis_home())
     try:
         # Helper writes logs to stderr; we ask bash to print `command -v node`
         # on stdout once ensure_node succeeds. Subshell PATH edits don't leak
@@ -1841,7 +1841,7 @@ def _ensure_tui_node() -> None:
                 "-c",
                 f'source "{helper}" >&2 && ensure_node >&2 && command -v node',
             ],
-            env={**os.environ, "HERMES_HOME": hermes_home},
+            env={**os.environ, "INDAGIS_HOME": hermes_home},
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -1942,7 +1942,7 @@ def _make_tui_argv(tui_dir: Path, tui_dev: bool) -> tuple[list[str], Path]:
             env_node = os.environ.get("HERMES_NODE")
             if env_node and os.path.isfile(env_node) and os.access(env_node, os.X_OK):
                 return env_node
-        # find_node_executable() prefers the managed $HERMES_HOME/node tree,
+        # find_node_executable() prefers the managed $INDAGIS_HOME/node tree,
         # which is not on PATH — a bare which() would declare "node not found"
         # and exit on an install whose only Node is the one Hermes installed,
         # and would pick a system Node over the managed one when both exist.
@@ -2906,7 +2906,7 @@ def cmd_whatsapp(args):
         print("✓ Bridge dependencies already installed")
 
     # ── Step 5: Check for existing session ───────────────────────────────
-    session_dir = get_hermes_home() / "whatsapp" / "session"
+    session_dir = get_indagis_home() / "whatsapp" / "session"
     session_dir.mkdir(parents=True, exist_ok=True)
 
     if (session_dir / "creds.json").exists():
@@ -4477,7 +4477,7 @@ def _run_anthropic_oauth_flow(save_env_value):
         ):
             use_anthropic_claude_code_credentials(save_fn=save_env_value)
             print("  ✓ Claude Code credentials linked.")
-            from hermes_constants import display_hermes_home as _dhh_fn
+            from hermes_constants import display_indagis_home as _dhh_fn
 
             print(
                 f"    Hermes will use Claude's credential store directly instead of copying a setup-token into {_dhh_fn()}/.env."
@@ -5114,7 +5114,7 @@ from hermes_cli.update_cmd import (  # noqa: F401
 )
 
 # Stamp file recording the checkout fingerprint the bytecode cache was last
-# validated against. Lives next to the checkout (NOT in HERMES_HOME) because
+# validated against. Lives next to the checkout (NOT in INDAGIS_HOME) because
 # __pycache__ is per-checkout state shared by every profile.
 _BYTECODE_FINGERPRINT_FILE = ".bytecode-fingerprint"
 
@@ -5278,9 +5278,9 @@ def _compute_web_ui_content_hash(project_root: Path, web_dir: Path) -> str:
 
 
 def _web_ui_stamp_path() -> Path:
-    """Return the path to the web UI build stamp file under $HERMES_HOME."""
-    from hermes_constants import get_hermes_home
-    return get_hermes_home() / "web-ui-build-stamp.json"
+    """Return the path to the web UI build stamp file under $INDAGIS_HOME."""
+    from hermes_constants import get_indagis_home
+    return get_indagis_home() / "web-ui-build-stamp.json"
 
 
 def _write_web_ui_build_stamp(project_root: Path, web_dir: Path) -> None:
@@ -5806,7 +5806,7 @@ def _desktop_dist_exists(desktop_dir: Path) -> bool:
 #   - ``hermes desktop`` (interactive launch) skips the build when the
 #     stamp matches, making repeated launches fast
 #
-# Stamp file: $HERMES_HOME/desktop-build-stamp.json
+# Stamp file: $INDAGIS_HOME/desktop-build-stamp.json
 # Schema:
 #   {
 #     "contentHash": "<sha256 hex of source files>",
@@ -5875,9 +5875,9 @@ def _compute_desktop_content_hash(project_root: Path) -> str:
 
 
 def _desktop_stamp_path() -> Path:
-    """Return the path to the desktop build stamp file under $HERMES_HOME."""
-    from hermes_constants import get_hermes_home
-    return get_hermes_home() / "desktop-build-stamp.json"
+    """Return the path to the desktop build stamp file under $INDAGIS_HOME."""
+    from hermes_constants import get_indagis_home
+    return get_indagis_home() / "desktop-build-stamp.json"
 
 
 def _desktop_build_needed(desktop_dir: Path, project_root: Path, *, source_mode: bool) -> bool:
@@ -7583,11 +7583,11 @@ def _respawn_dashboard_processes(commands: list[list[str]]) -> list[list[str]]:
     ``logs/dashboard-restart.log``).  Returns the commands that failed to
     spawn; the caller prints the manual hint for those.
     """
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
     respawned: list[list[str]] = []
     failed: list[tuple[list[str], str]] = []
-    log_path = get_hermes_home() / "logs" / "dashboard-restart.log"
+    log_path = get_indagis_home() / "logs" / "dashboard-restart.log"
     try:
         log_path.parent.mkdir(parents=True, exist_ok=True)
     except OSError:
@@ -7658,7 +7658,7 @@ def _load_installable_optional_extras(group: str = "all") -> list[str]:
     return referenced
 
 
-# Install-scoped breadcrumbs live next to the venv (not under $HERMES_HOME)
+# Install-scoped breadcrumbs live next to the venv (not under $INDAGIS_HOME)
 # because the venv is shared across profiles.
 #
 # ``.update-incomplete`` — generic core ``.[all]`` install was interrupted.
@@ -9020,8 +9020,8 @@ def _install_hangup_protection(gateway_mode: bool = False):
     # tolerance.  Any failure here is non-fatal; we just skip the wrap.
     try:
         # Late-bound import so tests can monkeypatch
-        # hermes_cli.config.get_hermes_home to simulate setup failure.
-        from hermes_cli.config import get_hermes_home as _get_hermes_home
+        # hermes_cli.config.get_indagis_home to simulate setup failure.
+        from hermes_cli.config import get_indagis_home as _get_hermes_home
 
         logs_dir = _get_hermes_home() / "logs"
         logs_dir.mkdir(parents=True, exist_ok=True)
@@ -9262,14 +9262,14 @@ def cmd_profile(args):
         _is_wrapper_dir_in_path,
         _get_wrapper_dir,
     )
-    from hermes_constants import display_hermes_home
+    from hermes_constants import display_indagis_home
 
     action = getattr(args, "profile_action", None)
 
     if action is None:
         # Bare `hermes profile` — show current profile status
         profile_name = get_active_profile_name()
-        dhh = display_hermes_home()
+        dhh = display_indagis_home()
         print(f"\nActive profile: {profile_name}")
         print(f"Path:           {dhh}")
 
@@ -9498,7 +9498,7 @@ def cmd_profile(args):
         if name and not text_value and not auto_flag:
             try:
                 if _profiles_mod.normalize_profile_name(name) == "default":
-                    from hermes_constants import get_hermes_home as _hh
+                    from hermes_constants import get_indagis_home as _hh
                     profile_dir = Path(_hh())
                 else:
                     profile_dir = _profiles_mod.get_profile_dir(name)
@@ -9521,7 +9521,7 @@ def cmd_profile(args):
         if text_value:
             try:
                 if _profiles_mod.normalize_profile_name(name) == "default":
-                    from hermes_constants import get_hermes_home as _hh
+                    from hermes_constants import get_indagis_home as _hh
                     profile_dir = Path(_hh())
                 else:
                     profile_dir = _profiles_mod.get_profile_dir(name)
@@ -10111,10 +10111,10 @@ def _read_ssh_session_token_file(path: str) -> str:
     token_path = _Path(path)
     # The Desktop client writes the token under $HOME/.hermes/desktop-ssh: a
     # literal "~/.hermes/desktop-ssh" in apps/desktop/electron/remote-lifecycle.ts
-    # expanded against the account's $HOME, independent of HERMES_HOME and the
+    # expanded against the account's $HOME, independent of INDAGIS_HOME and the
     # active profile. Anchor validation to that same OS-home path, NOT to
-    # get_hermes_home(): a non-default sticky profile (or any HERMES_HOME pointing
-    # elsewhere, e.g. a Docker /opt/data root) re-homes get_hermes_home() and
+    # get_indagis_home(): a non-default sticky profile (or any INDAGIS_HOME pointing
+    # elsewhere, e.g. a Docker /opt/data root) re-homes get_indagis_home() and
     # would otherwise reject every token the client legitimately wrote (#69551).
     token_root = _Path.home() / ".hermes" / "desktop-ssh"
     try:
@@ -10261,7 +10261,7 @@ def cmd_dashboard(args):
     # profile via the per-request ?profile= scoping. Running one dashboard
     # per profile just fragments that (port collisions, N processes, and a
     # "which dashboard am I on?" guessing game). So when a NAMED profile
-    # launches the dashboard (`worker dashboard` → HERMES_HOME points into
+    # launches the dashboard (`worker dashboard` → INDAGIS_HOME points into
     # profiles/), default to the machine dashboard:
     #   - already running → open the browser at ?profile=<name> and exit
     #   - not running     → re-exec as the machine dashboard (pinned to the
@@ -10319,27 +10319,27 @@ def cmd_dashboard(args):
         if getattr(args, "skip_build", False):
             reexec_argv.append("--skip-build")
         from tools.environments.local import build_subprocess_env
-        # Exact env preservation: HERMES_HOME is explicitly pinned to the
+        # Exact env preservation: INDAGIS_HOME is explicitly pinned to the
         # machine root below — the factory must not re-inject a profile home.
         env = build_subprocess_env(scrub_secrets=False, inherit_profile_home=False)
         # Pin the child to the machine ROOT, not the launching profile's
-        # HERMES_HOME.  We must resolve the root explicitly instead of just
-        # dropping HERMES_HOME: in the Docker layout the machine root is
-        # /opt/data (set via `ENV HERMES_HOME=/opt/data`), so an unset
-        # HERMES_HOME falls back to $HOME/.hermes = /opt/data/.hermes — an
+        # INDAGIS_HOME.  We must resolve the root explicitly instead of just
+        # dropping INDAGIS_HOME: in the Docker layout the machine root is
+        # /opt/data (set via `ENV INDAGIS_HOME=/opt/data`), so an unset
+        # INDAGIS_HOME falls back to $HOME/.hermes = /opt/data/.hermes — an
         # empty, auto-seeded home where the dashboard sees only the default
         # profile and the install-method stamp is missing (so the Docker
-        # update-button guard also misfires).  get_default_hermes_root()
+        # update-button guard also misfires).  get_default_indagis_root()
         # returns the root for both layouts: ~/.hermes for a standard install
         # and /opt/data for Docker (it strips a trailing profiles/<name>).
         # See the support report for the double-mount workaround this avoids.
         try:
-            from hermes_constants import get_default_hermes_root
-            env["HERMES_HOME"] = str(get_default_hermes_root())
+            from hermes_constants import get_default_indagis_root
+            env["INDAGIS_HOME"] = str(get_default_indagis_root())
         except Exception:
             # Best-effort: if root resolution fails, fall back to the prior
-            # behaviour (drop HERMES_HOME) rather than block the reroute.
-            env.pop("HERMES_HOME", None)
+            # behaviour (drop INDAGIS_HOME) rather than block the reroute.
+            env.pop("INDAGIS_HOME", None)
         # On Windows, os.execvpe() does not truly replace the process — it
         # spawns via CreateProcess then the parent exits.  Under Python 3.14+
         # this can crash with STATUS_ACCESS_VIOLATION (0xC0000005) when
@@ -10994,9 +10994,9 @@ def cmd_memory(args):
         print("\n  ✓ Memory provider: built-in only")
         print("  Saved to config.yaml\n")
     elif sub == "reset":
-        from hermes_constants import get_hermes_home, display_hermes_home
+        from hermes_constants import get_indagis_home, display_indagis_home
 
-        mem_dir = get_hermes_home() / "memories"
+        mem_dir = get_indagis_home() / "memories"
         target = getattr(args, "target", "all")
         files_to_reset = []
         if target in {"all", "memory"}:
@@ -11010,7 +11010,7 @@ def cmd_memory(args):
         ]
         if not existing:
             print(
-                f"\n  Nothing to reset — no memory files found in {display_hermes_home()}/memories/\n"
+                f"\n  Nothing to reset — no memory files found in {display_indagis_home()}/memories/\n"
             )
             return
 
@@ -11037,7 +11037,7 @@ def cmd_memory(args):
         print(
             "\n  Memory reset complete. New sessions will start with a blank slate."
         )
-        print(f"  Files were in: {display_hermes_home()}/memories/\n")
+        print(f"  Files were in: {display_indagis_home()}/memories/\n")
     else:
         from hermes_cli.memory_setup import memory_command
 

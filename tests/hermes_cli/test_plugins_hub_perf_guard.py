@@ -15,7 +15,7 @@ _PLUGIN_ROW = [("demo", "1.0.0", "demo plugin", "user", "/tmp/demo-plugin", "dem
 def _patch_minimal_hub_dependencies(monkeypatch, *, check_fn, discover_all_plugins=None):
     monkeypatch.setattr(web_server, "_get_dashboard_plugins", lambda force_rescan=False: [])
     monkeypatch.setattr(web_server, "_discover_memory_provider_statuses", lambda: [])
-    monkeypatch.setattr(web_server, "get_hermes_home", lambda: Path("/tmp/hermes-home"))
+    monkeypatch.setattr(web_server, "get_indagis_home", lambda: Path("/tmp/hermes-home"))
     monkeypatch.setattr(web_server, "load_config", lambda: {"dashboard": {"hidden_plugins": []}})
 
     monkeypatch.setattr(

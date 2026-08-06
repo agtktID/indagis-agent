@@ -11,8 +11,8 @@ persisted entity the user creates and names. It anchors:
   under the project's primary repo with a deterministic branch name, instead
   of the random ``wt/<task-id>`` fallback.
 
-Scope: **per-profile**, stored at ``$HERMES_HOME/projects.db`` (resolved via
-``get_hermes_home()``), mirroring sessions / config / cron. This deliberately
+Scope: **per-profile**, stored at ``$INDAGIS_HOME/projects.db`` (resolved via
+``get_indagis_home()``), mirroring sessions / config / cron. This deliberately
 differs from kanban, whose board DB is root-anchored and shared across
 profiles. A Project may *bind* a kanban board (``board_slug``) so the two
 systems agree on the repo + branch convention without merging their stores.
@@ -34,7 +34,7 @@ from pathlib import Path
 from typing import Iterable, List, Optional
 
 from hermes_cli.sqlite_util import add_column_if_missing as _add_column_if_missing, write_txn
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -42,12 +42,12 @@ from hermes_constants import get_hermes_home
 
 
 def projects_db_path() -> Path:
-    """The per-profile projects DB path (``$HERMES_HOME/projects.db``).
+    """The per-profile projects DB path (``$INDAGIS_HOME/projects.db``).
 
-    Profile-aware: ``get_hermes_home()`` already points at the active profile's
+    Profile-aware: ``get_indagis_home()`` already points at the active profile's
     home. Tests pass an explicit ``db_path`` to :func:`connect`.
     """
-    return get_hermes_home() / "projects.db"
+    return get_indagis_home() / "projects.db"
 
 
 # ---------------------------------------------------------------------------

@@ -14,7 +14,7 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from hermes_constants import display_hermes_home
+from hermes_constants import display_indagis_home
 
 logger = logging.getLogger(__name__)
 
@@ -516,7 +516,7 @@ def _validate_cron_base_url(
 def _validate_cron_script_path(script: Optional[str]) -> Optional[str]:
     """Validate a cron job script path at the API boundary.
 
-    Scripts must be relative paths that resolve within HERMES_HOME/scripts/.
+    Scripts must be relative paths that resolve within INDAGIS_HOME/scripts/.
     Absolute paths and ~ expansion are rejected to prevent arbitrary script
     execution via prompt injection.
 
@@ -525,7 +525,7 @@ def _validate_cron_script_path(script: Optional[str]) -> Optional[str]:
     if not script or not script.strip():
         return None  # empty/None = clearing the field, always OK
 
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
     raw = script.strip()
 
@@ -541,7 +541,7 @@ def _validate_cron_script_path(script: Optional[str]) -> Optional[str]:
     # Validate containment after resolution
     from tools.path_security import validate_within_dir
 
-    scripts_dir = get_hermes_home() / "scripts"
+    scripts_dir = get_indagis_home() / "scripts"
     scripts_dir.mkdir(parents=True, exist_ok=True)
     containment_error = validate_within_dir(scripts_dir / raw, scripts_dir)
     if containment_error:
@@ -1081,7 +1081,7 @@ Important safety rule: cron-run sessions should not recursively schedule more cr
             },
             "script": {
                 "type": "string",
-                "description": f"Optional path to a script that runs each tick. In the default mode its stdout is injected into the agent's prompt as context (data-collection / change-detection pattern). With no_agent=True, the script IS the job and its stdout is delivered verbatim (classic watchdog pattern). Relative paths resolve under {display_hermes_home()}/scripts/. ``.sh``/``.bash`` extensions run via bash, everything else via Python. On update, pass empty string to clear."
+                "description": f"Optional path to a script that runs each tick. In the default mode its stdout is injected into the agent's prompt as context (data-collection / change-detection pattern). With no_agent=True, the script IS the job and its stdout is delivered verbatim (classic watchdog pattern). Relative paths resolve under {display_indagis_home()}/scripts/. ``.sh``/``.bash`` extensions run via bash, everything else via Python. On update, pass empty string to clear."
             },
             "no_agent": {
                 "type": "boolean",

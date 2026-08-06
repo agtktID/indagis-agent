@@ -24,7 +24,7 @@ def test_unsupported_allocator_is_noop_without_gc(monkeypatch):
 
 
 def test_config_kill_switch_overrides_force_from_config_file(monkeypatch, tmp_path):
-    from hermes_constants import reset_hermes_home_override, set_hermes_home_override
+    from hermes_constants import reset_indagis_home_override, set_indagis_home_override
 
     hermes_home = tmp_path / "hermes"
     hermes_home.mkdir()
@@ -34,13 +34,13 @@ def test_config_kill_switch_overrides_force_from_config_file(monkeypatch, tmp_pa
     )
     trim = Mock(return_value=1)
     monkeypatch.setattr(mem_trim, "_malloc_trim", trim)
-    token = set_hermes_home_override(hermes_home)
+    token = set_indagis_home_override(hermes_home)
 
     try:
         assert mem_trim.trim_memory(force=True) is False
         trim.assert_not_called()
     finally:
-        reset_hermes_home_override(token)
+        reset_indagis_home_override(token)
 
 
 def test_default_config_declares_memory_trim_controls():

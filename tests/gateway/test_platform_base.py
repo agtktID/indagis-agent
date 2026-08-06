@@ -636,7 +636,7 @@ class TestMediaDeliveryDefaultMode:
 
 
     def test_denylist_blocks_google_token_default_mode(self, tmp_path, monkeypatch):
-        """Integration credentials at the HERMES_HOME root (google_token.json)
+        """Integration credentials at the INDAGIS_HOME root (google_token.json)
         must never be deliverable, even though they aren't the historically
         enumerated .env/auth.json/config.yaml files. Regression for a
         refreshed google_token.json being auto-attached to a Slack reply
@@ -721,7 +721,7 @@ class TestMediaDeliveryDefaultMode:
 
 
     def test_profile_scoped_cache_delivers_under_symlinked_root(self, tmp_path, monkeypatch):
-        """Reopened #31733: a profile gateway whose HERMES_HOME is symlinked
+        """Reopened #31733: a profile gateway whose INDAGIS_HOME is symlinked
         under a denied prefix (e.g. /opt/data -> /root/.hermes) emits
         profile-scoped paths (``<root>/profiles/<name>/cache/images/x.png``)
         that resolve under ``/root``. ``$HOME`` is NOT that prefix, so the

@@ -142,7 +142,7 @@ def _codex_curated_models() -> list[str]:
 
 # Static fallback for xAI when the models.dev disk cache is empty (fresh
 # install, offline first run, etc.). Mirrors the xAI-direct model IDs from
-# $HERMES_HOME/models_dev_cache.json as of 2026-04-28. Whenever xAI renames
+# $INDAGIS_HOME/models_dev_cache.json as of 2026-04-28. Whenever xAI renames
 # or retires a model, the disk cache picks it up on the next refresh and the
 # fallback here only matters until that refresh lands.
 #
@@ -191,7 +191,7 @@ def _xai_merge_curated_extras(ids: list[str]) -> list[str]:
 def _xai_curated_models() -> list[str]:
     """Derive the xAI-direct curated list from models.dev disk cache.
 
-    Reads $HERMES_HOME/models_dev_cache.json directly (no network) so this
+    Reads $INDAGIS_HOME/models_dev_cache.json directly (no network) so this
     runs at import time without blocking. Falls back to ``_XAI_STATIC_FALLBACK``
     when the cache is empty or unreadable. Hermes refreshes the cache from
     https://models.dev/api.json on normal use, so this list self-heals as
@@ -893,8 +893,8 @@ _nous_recommended_cache: dict[str, tuple[dict[str, Any], float]] = {}
 
 def _nous_recommended_disk_path() -> "Path":
     """Disk path for the persisted recommended-models cache."""
-    from hermes_constants import get_hermes_home
-    return get_hermes_home() / "cache" / "nous_recommended_cache.json"
+    from hermes_constants import get_indagis_home
+    return get_indagis_home() / "cache" / "nous_recommended_cache.json"
 
 
 def _read_nous_recommended_disk(base: str) -> dict[str, Any] | None:
@@ -963,7 +963,7 @@ def fetch_nous_recommended_models(
     ``force_refresh=True`` to bypass the in-process cache.
 
     A successful live fetch is also persisted to a per-base disk cache
-    (``$HERMES_HOME/cache/nous_recommended_cache.json``) as last-known-good.
+    (``$INDAGIS_HOME/cache/nous_recommended_cache.json``) as last-known-good.
     When the live fetch fails (network, parse, non-2xx) and the in-process
     cache is empty, the disk copy is returned instead of ``{}`` — so a
     transient Portal hiccup no longer silently drops the free/paid model
@@ -3076,7 +3076,7 @@ def provider_model_ids(provider: Optional[str], *, force_refresh: bool = False) 
 # HTTP roundtrips just to render the provider list.
 #
 # Cache strategy:
-#   - One JSON file at $HERMES_HOME/provider_models_cache.json
+#   - One JSON file at $INDAGIS_HOME/provider_models_cache.json
 #   - Per-provider entries keyed by (provider, credential fingerprint)
 #   - Credential fingerprint = sha256 of env-var values that the provider
 #     normally reads. Swap your OPENAI_API_KEY and the entry invalidates.
@@ -3141,8 +3141,8 @@ def _spawn_swr_refresh(provider: str) -> None:
 
 
 def _provider_models_cache_path() -> Path:
-    from hermes_constants import get_hermes_home
-    return get_hermes_home() / "provider_models_cache.json"
+    from hermes_constants import get_indagis_home
+    return get_indagis_home() / "provider_models_cache.json"
 
 
 def _credential_fingerprint(provider: str) -> str:
@@ -3153,7 +3153,7 @@ def _credential_fingerprint(provider: str) -> str:
     for that provider. We hash AT LEAST the api-key + base-url env vars
     declared in ``PROVIDER_REGISTRY``. For OAuth-backed providers
     (codex, copilot, anthropic-via-claude-code, nous portal), the
-    relevant tokens live in ``$HERMES_HOME/auth.json`` and external
+    relevant tokens live in ``$INDAGIS_HOME/auth.json`` and external
     credential files. Rather than parse every shape, we additionally
     fold the mtime of those files into the fingerprint so refreshes
     after re-auth bust the cache.
@@ -3189,9 +3189,9 @@ def _credential_fingerprint(provider: str) -> str:
 
     # OAuth / external-file mtimes that change on re-auth
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         for rel in ("auth.json", "credentials.json"):
-            p = get_hermes_home() / rel
+            p = get_indagis_home() / rel
             try:
                 parts.append(f"{rel}@{p.stat().st_mtime_ns}")
             except FileNotFoundError:
@@ -4667,8 +4667,8 @@ def _strip_ollama_cloud_suffix(model_id: str) -> str:
 
 def _ollama_cloud_cache_path() -> Path:
     """Return the path for the Ollama Cloud model cache."""
-    from hermes_constants import get_hermes_home
-    return get_hermes_home() / "ollama_cloud_models_cache.json"
+    from hermes_constants import get_indagis_home
+    return get_indagis_home() / "ollama_cloud_models_cache.json"
 
 
 def _load_ollama_cloud_cache(*, ignore_ttl: bool = False) -> Optional[dict]:

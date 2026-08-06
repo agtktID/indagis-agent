@@ -83,7 +83,7 @@ class TestGetDisabledSkillNames:
             "    telegram:\n"
             "      - tg-only-skill\n"
         )
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.delenv("HERMES_PLATFORM", raising=False)
         monkeypatch.delenv("HERMES_SESSION_PLATFORM", raising=False)
 
@@ -102,7 +102,7 @@ class TestGetDisabledSkillNames:
             "    discord:\n"
             "      - discord-skill\n"
         )
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.delenv("HERMES_PLATFORM", raising=False)
         monkeypatch.setenv("HERMES_SESSION_PLATFORM", "discord")
 
@@ -121,7 +121,7 @@ class TestGetDisabledSkillNames:
             "    discord:\n"
             "      - discord-skill\n"
         )
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.setenv("HERMES_PLATFORM", "telegram")
         monkeypatch.setenv("HERMES_SESSION_PLATFORM", "discord")
 

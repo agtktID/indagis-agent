@@ -22,13 +22,13 @@ from hermes_cli import proxy_cli
 
 @pytest.fixture
 def hermes_home(tmp_path, monkeypatch):
-    """Point HERMES_HOME at a temp dir so the wizard doesn't touch the
+    """Point INDAGIS_HOME at a temp dir so the wizard doesn't touch the
     operator's real config.  Also blanks any provider env vars so we
     don't accidentally read a real key."""
 
     home = tmp_path / "hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     for key in list(os.environ):
         if key.endswith("_API_KEY") or key in (
             "BWS_ACCESS_TOKEN", "ANTHROPIC_API_KEY",

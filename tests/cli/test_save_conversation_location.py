@@ -24,7 +24,7 @@ def hermes_home(tmp_path, monkeypatch):
     home = tmp_path / ".hermes"
     home.mkdir()
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     # Clear any cached hermes_home computation
     import hermes_constants
     if hasattr(hermes_constants, "_hermes_home_cache"):
@@ -49,7 +49,7 @@ def test_save_conversation_writes_under_hermes_home(hermes_home, tmp_path, monke
     work.mkdir()
     monkeypatch.chdir(work)
 
-    # Import fresh to pick up the HERMES_HOME fixture
+    # Import fresh to pick up the INDAGIS_HOME fixture
     for mod in [m for m in sys.modules if m.startswith("cli") or m == "hermes_constants"]:
         sys.modules.pop(mod, None)
 

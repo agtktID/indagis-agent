@@ -6,7 +6,7 @@ approvals.deny / mcp_servers, skills/), dry-run write-nothing guarantees,
 malformed-input skip reports, and the never-import-secrets rule.
 
 Uses the profile_env fixture pattern from tests/hermes_cli/test_profiles.py:
-Path.home() and HERMES_HOME are redirected to tmp_path so nothing touches
+Path.home() and INDAGIS_HOME are redirected to tmp_path so nothing touches
 the real ~/.hermes.
 """
 
@@ -29,16 +29,16 @@ from hermes_cli.agent_import import (
 
 
 # ---------------------------------------------------------------------------
-# Shared fixture: redirect Path.home() and HERMES_HOME (profile_env pattern)
+# Shared fixture: redirect Path.home() and INDAGIS_HOME (profile_env pattern)
 # ---------------------------------------------------------------------------
 
 @pytest.fixture()
 def profile_env(tmp_path, monkeypatch):
-    """Isolated environment: Path.home() -> tmp_path, HERMES_HOME -> tmp/.hermes."""
+    """Isolated environment: Path.home() -> tmp_path, INDAGIS_HOME -> tmp/.hermes."""
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     default_home = tmp_path / ".hermes"
     default_home.mkdir(exist_ok=True)
-    monkeypatch.setenv("HERMES_HOME", str(default_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(default_home))
     return tmp_path
 
 

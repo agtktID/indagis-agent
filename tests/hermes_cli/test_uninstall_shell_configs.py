@@ -31,11 +31,11 @@ ZSHRC = (
 
 @pytest.fixture
 def fake_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """Point both ``Path.home()`` and ``HERMES_HOME`` at a throwaway dir."""
+    """Point both ``Path.home()`` and ``INDAGIS_HOME`` at a throwaway dir."""
     home = tmp_path / "home"
     home.mkdir()
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: home))
-    monkeypatch.setenv("HERMES_HOME", str(home / ".hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(home / ".hermes"))
     return home
 
 
@@ -76,7 +76,7 @@ class TestCrashDurability:
             raise OSError("simulated crash mid-write")
 
         # Scoped context so restoring os.fsync doesn't also undo the
-        # Path.home()/HERMES_HOME patches the fake_home fixture installed.
+        # Path.home()/INDAGIS_HOME patches the fake_home fixture installed.
         with pytest.MonkeyPatch.context() as mp:
             mp.setattr(os, "fsync", boom)
             removed = uninstall.remove_path_from_shell_configs()

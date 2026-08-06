@@ -5,7 +5,7 @@ read/wrote the dashboard process's own (root) ``.env`` via ``load_env()`` /
 ``save_env_value()`` — so a dashboard switched to a freshly created profile
 still displayed and persisted the ROOT install's messaging credentials.
 These tests pin the new behavior: reads and writes land in the REQUESTED
-profile's HERMES_HOME, and the dashboard's own profile stays untouched.
+profile's INDAGIS_HOME, and the dashboard's own profile stays untouched.
 """
 import pytest
 import yaml
@@ -18,10 +18,10 @@ _VALID_BODY_BOT_TOKEN = "987654321:ZYXWVUTSRQPONMLKJIHGFEDCBA_4321"
 @pytest.fixture
 def isolated_profiles(tmp_path, monkeypatch, _isolate_hermes_home):
     """Isolated default home + one named profile, each with its own .env."""
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
     from hermes_cli import profiles
 
-    default_home = get_hermes_home()
+    default_home = get_indagis_home()
     profiles_root = default_home / "profiles"
     worker_home = profiles_root / "worker_alpha"
     for home in (default_home, worker_home):
@@ -46,10 +46,10 @@ def client(monkeypatch, isolated_profiles):
         pytest.skip("fastapi/starlette not installed")
 
     import hermes_state
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
     from hermes_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-    monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_hermes_home() / "state.db")
+    monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_indagis_home() / "state.db")
     # The dashboard process's os.environ may carry root-install credentials;
     # make sure the scoped path never falls back to them.
     monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
@@ -109,7 +109,7 @@ class TestProfileScopedMessagingReads:
             "read_runtime_status",
             # Accepts path= : the profile-scoped read now passes the
             # profile's own gateway_state.json explicitly rather than
-            # relying on process-level HERMES_HOME resolution (#71211).
+            # relying on process-level INDAGIS_HOME resolution (#71211).
             lambda *a, **k: {
                 "gateway_state": "startup_failed",
                 "exit_reason": "all configured messaging platforms failed to connect",

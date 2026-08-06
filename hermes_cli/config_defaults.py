@@ -273,9 +273,9 @@ DEFAULT_CONFIG = {
         "env_passthrough": [],
         # HOME handling for host tool subprocesses:
         #   auto    — host keeps the real OS-user HOME; containers use
-        #             HERMES_HOME/home for persistent state (default)
+        #             INDAGIS_HOME/home for persistent state (default)
         #   real    — force the real OS-user HOME
-        #   profile — force HERMES_HOME/home when it exists (old strict
+        #   profile — force INDAGIS_HOME/home when it exists (old strict
         #             per-profile CLI config isolation)
         "home_mode": "auto",
         # Extra files to source in the login shell when building the
@@ -1226,7 +1226,7 @@ DEFAULT_CONFIG = {
         "tool_progress_grouping": "accumulate",
         # Optional custom phrases for generic long-running status messages.
         # Built-in defaults live in gateway/assets/status_phrases.yaml. Users
-        # can set `path`/`paths` to HERMES_HOME-relative YAML files/directories
+        # can set `path`/`paths` to INDAGIS_HOME-relative YAML files/directories
         # (or rely on conventional status_phrases.yaml / status_phrases/*.yaml).
         # Keys: status, generic. Use
         # mode: "append" (default) to add phrases, or "replace" to fully
@@ -1286,7 +1286,7 @@ DEFAULT_CONFIG = {
         "pet": {
             "enabled": False,
             # Active pet slug; resolved against installed pets in
-            # get_hermes_home()/pets/. Empty → first installed pet.
+            # get_indagis_home()/pets/. Empty → first installed pet.
             "slug": "",
             # Terminal render protocol for CLI/TUI:
             #   auto  — detect kitty/iTerm2/sixel, else unicode half-blocks
@@ -2177,7 +2177,7 @@ DEFAULT_CONFIG = {
         # Active cron SCHEDULER provider (Axis B — the trigger that decides
         # WHEN a due job fires). Empty string = the built-in in-process 60s
         # ticker (default). Name an installed provider (plugins/cron_providers/<name>/ or
-        # $HERMES_HOME/plugins/<name>/) to relocate the trigger — e.g. "chronos",
+        # $INDAGIS_HOME/plugins/<name>/) to relocate the trigger — e.g. "chronos",
         # the NAS-mediated managed-cron provider for scale-to-zero deployments.
         # An unknown or unavailable provider falls back to the built-in, so cron
         # never loses its trigger.
@@ -2748,13 +2748,13 @@ DEFAULT_CONFIG = {
         #
         #   quick (default) — snapshot critical small state files (pairing
         #     JSONs, cron jobs, config.yaml, .env, auth.json, per-profile
-        #     DBs) into <HERMES_HOME>/state-snapshots/ before the update.
+        #     DBs) into <INDAGIS_HOME>/state-snapshots/ before the update.
         #     Files over 1 GiB (e.g. a bloated state.db) are skipped with a
         #     warning so the snapshot stays fast. Restore via ``/snapshot``.
         #     This is the #15733 (lost pairing data) / #34600 (emptied cron
         #     jobs) safety net.
         #   full — the quick snapshot PLUS a full ``hermes backup``-style zip
-        #     of HERMES_HOME into <HERMES_HOME>/backups/, restorable with
+        #     of INDAGIS_HOME into <INDAGIS_HOME>/backups/, restorable with
         #     ``hermes import``. Can add minutes on large homes. This is the
         #     #48200 (wrong-path wipe) safety net. ``--backup`` forces this
         #     for a single run.
@@ -2817,7 +2817,7 @@ DEFAULT_CONFIG = {
 
         # How to handle missing server binaries.
         # ``"auto"`` — try to install via npm/go/pip into
-        #              ``<HERMES_HOME>/lsp/bin/`` on first use.
+        #              ``<INDAGIS_HOME>/lsp/bin/`` on first use.
         # ``"manual"`` — only use binaries already on PATH.
         # ``"off"`` — alias for ``manual``.
         "install_strategy": "auto",

@@ -34,7 +34,7 @@ import re
 from typing import Any, Optional
 from urllib.parse import parse_qsl, quote, unquote, urljoin, urlparse, urlsplit, urlunsplit
 
-from hermes_constants import get_hermes_home_override
+from hermes_constants import get_indagis_home_override
 from utils import is_truthy_value
 
 logger = logging.getLogger(__name__)
@@ -234,7 +234,7 @@ def _global_allow_private_urls() -> bool:
     # A multiplex gateway serves several independently configured profiles in
     # one process. Reusing the first profile's opt-out here would let it disable
     # private-network blocking for every later profile in that process.
-    if get_hermes_home_override() is not None:
+    if get_indagis_home_override() is not None:
         return _resolve_allow_private_urls()
 
     if _allow_private_resolved:

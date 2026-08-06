@@ -14,7 +14,7 @@ from hermes_state import SessionDB
 
 @pytest.fixture()
 def db(tmp_path, monkeypatch):
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     database = SessionDB(db_path=tmp_path / "state.db")
     yield database
     database.close()

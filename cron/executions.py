@@ -14,10 +14,10 @@ import uuid
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from hermes_time import now as _hermes_now
 
-EXECUTIONS_FILE = get_hermes_home().resolve() / "cron" / "executions.db"
+EXECUTIONS_FILE = get_indagis_home().resolve() / "cron" / "executions.db"
 MAX_TERMINAL_EXECUTIONS = 1000
 _TERMINAL_STATES = ("completed", "failed", "unknown")
 _lock = threading.RLock()

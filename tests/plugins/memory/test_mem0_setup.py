@@ -188,7 +188,7 @@ class TestPostSetup:
 
     def test_platform_flag_mode(self, tmp_path, monkeypatch):
         monkeypatch.setattr("sys.argv", ["hermes", "--mode", "platform", "--api-key", "sk-test"])
-        monkeypatch.setattr("plugins.memory.mem0._setup.get_hermes_home", lambda: tmp_path)
+        monkeypatch.setattr("plugins.memory.mem0._setup.get_indagis_home", lambda: tmp_path)
         _inject_fake_hermes_cli(monkeypatch)
         config = {"memory": {}}
         post_setup(str(tmp_path), config)
@@ -204,7 +204,7 @@ class TestPostSetup:
             "hermes", "--mode", "selfhosted",
             "--host", "http://localhost:8888/", "--api-key", "admin-key",
         ])
-        monkeypatch.setattr("plugins.memory.mem0._setup.get_hermes_home", lambda: tmp_path)
+        monkeypatch.setattr("plugins.memory.mem0._setup.get_indagis_home", lambda: tmp_path)
         _inject_fake_hermes_cli(monkeypatch)
         monkeypatch.setattr("plugins.memory.mem0._setup._check_selfhosted_server", lambda h: None)
         config = {"memory": {}}

@@ -44,7 +44,7 @@ from urllib.parse import parse_qs, urlencode, urlparse
 import httpx
 
 from hermes_cli.config import (
-    get_hermes_home,
+    get_indagis_home,
     get_config_path,
     read_raw_config,
     require_readable_config_before_write,
@@ -998,10 +998,10 @@ def _oauth_trace(event: str, *, sequence_id: Optional[str] = None, **fields: Any
 # =============================================================================
 
 def _auth_file_path() -> Path:
-    path = get_hermes_home() / "auth.json"
-    # Seat belt: if pytest is running and HERMES_HOME resolves to the real
+    path = get_indagis_home() / "auth.json"
+    # Seat belt: if pytest is running and INDAGIS_HOME resolves to the real
     # user's auth store, refuse rather than silently corrupt it. This catches
-    # tests that forgot to monkeypatch HERMES_HOME, tests invoked without the
+    # tests that forgot to monkeypatch INDAGIS_HOME, tests invoked without the
     # hermetic conftest, or sandbox escapes via threads/subprocesses. In
     # production (no PYTEST_CURRENT_TEST) this is a single dict lookup.
     if os.environ.get("PYTEST_CURRENT_TEST"):
@@ -1013,7 +1013,7 @@ def _auth_file_path() -> Path:
         if resolved == real_home_auth:
             raise RuntimeError(
                 f"Refusing to touch real user auth store during test run: {path}. "
-                "Set HERMES_HOME to a tmp_path in your test fixture, or run "
+                "Set INDAGIS_HOME to a tmp_path in your test fixture, or run "
                 "via scripts/run_tests.sh for hermetic CI-parity env."
             )
     return path
@@ -1023,18 +1023,18 @@ def _global_auth_file_path() -> Optional[Path]:
     """Return the global-root auth.json when the process is in profile mode.
 
     Returns ``None`` when the profile and global root resolve to the same
-    directory (classic mode, or custom HERMES_HOME that is not a profile).
+    directory (classic mode, or custom INDAGIS_HOME that is not a profile).
     Used by read-only fallback paths so providers authed at the root are
     visible to profile processes that haven't configured them locally.
 
     See issue #18594 follow-up (credential_pool shadowing).
     """
     try:
-        from hermes_constants import get_default_hermes_root
-        global_root = get_default_hermes_root()
+        from hermes_constants import get_default_indagis_root
+        global_root = get_default_indagis_root()
     except Exception:
         return None
-    profile_home = get_hermes_home()
+    profile_home = get_indagis_home()
     try:
         if profile_home.resolve(strict=False) == global_root.resolve(strict=False):
             return None
@@ -1057,9 +1057,9 @@ def _load_global_auth_store() -> Dict[str, Any]:
     or the global auth.json is absent). Never raises on missing file.
 
     Seat belt: under pytest, refuses to read the real user's
-    ``~/.hermes/auth.json`` even when HERMES_HOME is set to a profile
+    ``~/.hermes/auth.json`` even when INDAGIS_HOME is set to a profile
     path. The hermetic conftest does not redirect ``HOME``, so
-    ``get_default_hermes_root()`` for a profile-shaped HERMES_HOME can
+    ``get_default_indagis_root()`` for a profile-shaped INDAGIS_HOME can
     still resolve to the real user's home on a dev machine. That would
     leak real credentials into tests. This guard uses the unmodified
     ``HOME`` env var (what ``os.path.expanduser('~')`` would resolve to),
@@ -4546,7 +4546,7 @@ def _write_through_xai_oauth_to_global_root(state: Dict[str, Any]) -> None:
         # Classic mode (profile == root); the profile save already hit root.
         return
     # Seat belt: under pytest, refuse to write the real user's
-    # ~/.hermes/auth.json even when HERMES_HOME points at a profile path
+    # ~/.hermes/auth.json even when INDAGIS_HOME points at a profile path
     # (mirrors the read-side guard in _load_global_auth_store). Uses the
     # unmodified HOME env, not Path.home() which fixtures may monkeypatch.
     if os.environ.get("PYTEST_CURRENT_TEST"):
@@ -5236,9 +5236,9 @@ def _poll_for_token(
 #
 # File lives at ${HERMES_SHARED_AUTH_DIR}/nous_auth.json, defaulting to
 # ``<hermes-root>/shared/nous_auth.json`` where ``<hermes-root>`` is what
-# ``get_default_hermes_root()`` returns — ``~/.hermes`` on Linux/macOS,
+# ``get_default_indagis_root()`` returns — ``~/.hermes`` on Linux/macOS,
 # ``%LOCALAPPDATA%\hermes`` on native Windows, or the Docker/custom root.
-# It is OUTSIDE any named profile's HERMES_HOME so named profiles (which
+# It is OUTSIDE any named profile's INDAGIS_HOME so named profiles (which
 # typically live under ``<hermes-root>/profiles/<name>/``) all see the
 # same file.
 #
@@ -5258,18 +5258,18 @@ def _nous_shared_auth_dir() -> Path:
     Honors ``HERMES_SHARED_AUTH_DIR`` so tests can redirect it to a tmp
     path without touching the real user's home. Defaults to
     ``<hermes-root>/shared/``, where ``<hermes-root>`` is what
-    :func:`hermes_constants.get_default_hermes_root` returns — so
+    :func:`hermes_constants.get_default_indagis_root` returns — so
     Linux/macOS classic installs land at ``~/.hermes/shared/``, native
     Windows installs at ``%LOCALAPPDATA%\\hermes\\shared\\``, and
-    Docker / custom ``HERMES_HOME`` deployments at
-    ``<HERMES_HOME>/shared/``. Sits outside any named profile so all
+    Docker / custom ``INDAGIS_HOME`` deployments at
+    ``<INDAGIS_HOME>/shared/``. Sits outside any named profile so all
     profiles under the same root share the store.
     """
     override = os.getenv("HERMES_SHARED_AUTH_DIR", "").strip()
     if override:
         return Path(override).expanduser()
-    from hermes_constants import get_default_hermes_root
-    return get_default_hermes_root() / "shared"
+    from hermes_constants import get_default_indagis_root
+    return get_default_indagis_root() / "shared"
 
 
 def _nous_shared_store_path() -> Path:
@@ -5281,9 +5281,9 @@ def _nous_shared_store_path() -> Path:
     # so forgetting to set it fails loudly instead of writing to the real
     # shared store).
     if os.environ.get("PYTEST_CURRENT_TEST"):
-        from hermes_constants import get_default_hermes_root
+        from hermes_constants import get_default_indagis_root
         real_home_shared = (
-            get_default_hermes_root() / "shared" / NOUS_SHARED_STORE_FILENAME
+            get_default_indagis_root() / "shared" / NOUS_SHARED_STORE_FILENAME
         ).resolve(strict=False)
         try:
             resolved = path.resolve(strict=False)
@@ -5312,7 +5312,7 @@ def _nous_shared_store_lock(timeout_seconds: float = AUTH_LOCK_TIMEOUT_SECONDS):
     try:
         lock_path = _nous_shared_store_path().with_suffix(".lock")
     except RuntimeError:
-        # No HERMES_HOME yet (pre-setup): fall through without locking.
+        # No INDAGIS_HOME yet (pre-setup): fall through without locking.
         yield
         return
 
@@ -7814,7 +7814,7 @@ def _login_openai_codex(
     config_path = _update_config_for_provider("openai-codex", creds.get("base_url", DEFAULT_CODEX_BASE_URL))
     print()
     print("Login successful!")
-    from hermes_constants import display_hermes_home as _dhh
+    from hermes_constants import display_indagis_home as _dhh
     print(f"  Auth state: {_dhh()}/auth.json")
     print(f"  Config updated: {config_path} (model.provider=openai-codex)")
 
@@ -7882,7 +7882,7 @@ def _login_xai_oauth(
     config_path = _update_config_for_provider("xai-oauth", creds.get("base_url", DEFAULT_XAI_OAUTH_BASE_URL))
     print()
     print("Login successful!")
-    from hermes_constants import display_hermes_home as _dhh
+    from hermes_constants import display_indagis_home as _dhh
     print(f"  Auth state: {_dhh()}/auth.json")
     print(f"  Config updated: {config_path} (model.provider=xai-oauth)")
 

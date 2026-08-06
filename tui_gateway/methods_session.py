@@ -38,7 +38,7 @@ def _(rid, params: dict) -> dict:
     # ``profile`` (app-global remote mode): a new chat started under a non-launch
     # profile must build its agent + persist against THAT profile's home/state.db,
     # not the dashboard's launch profile. Stored on the session so _start_agent_build
-    # and each turn re-bind HERMES_HOME. None/own profile → launch (unchanged).
+    # and each turn re-bind INDAGIS_HOME. None/own profile → launch (unchanged).
     profile = (params.get("profile") or "").strip() or None
     profile_home = _profile_home(profile)
 
@@ -574,7 +574,7 @@ def _(rid, params: dict) -> dict:
     lease = None  # claimed lazily on the first turn (_ensure_active_session_slot)
     _enable_gateway_prompts()
     home_token = (
-        set_hermes_home_override(str(profile_home)) if profile_home is not None else None
+        set_indagis_home_override(str(profile_home)) if profile_home is not None else None
     )
     secret_token = (
         set_secret_scope(build_profile_secret_scope(Path(str(profile_home))))
@@ -629,7 +629,7 @@ def _(rid, params: dict) -> dict:
         return _err(rid, 5000, f"resume failed: {e}")
     finally:
         if home_token is not None:
-            reset_hermes_home_override(home_token)
+            reset_indagis_home_override(home_token)
         if secret_token is not None:
             reset_secret_scope(secret_token)
 
@@ -659,7 +659,7 @@ def _(rid, params: dict) -> dict:
             return _ok(rid, payload)
         try:
             init_home_token = (
-                set_hermes_home_override(str(profile_home))
+                set_indagis_home_override(str(profile_home))
                 if profile_home is not None
                 else None
             )
@@ -681,7 +681,7 @@ def _(rid, params: dict) -> dict:
                 )
             finally:
                 if init_home_token is not None:
-                    reset_hermes_home_override(init_home_token)
+                    reset_indagis_home_override(init_home_token)
                 if init_secret_token is not None:
                     reset_secret_scope(init_secret_token)
             if sid in _sessions:
@@ -690,7 +690,7 @@ def _(rid, params: dict) -> dict:
                         "model_override"
                     ]
                 _sessions[sid]["display_history_prefix"] = display_history_prefix
-                # Remember the profile home so each turn re-binds HERMES_HOME (the
+                # Remember the profile home so each turn re-binds INDAGIS_HOME (the
                 # agent persists to its own db, but mid-turn home reads — memory,
                 # skills — must resolve to the resumed profile too).
                 if profile_home is not None:
@@ -924,7 +924,7 @@ def _(rid, params: dict) -> dict:
         if profile_home is not None:
             sessions_dir = Path(profile_home) / "sessions"
         else:
-            sessions_dir = get_hermes_home() / "sessions"
+            sessions_dir = get_indagis_home() / "sessions"
         try:
             deleted = db.delete_session(target, sessions_dir=sessions_dir)
         except Exception as e:
@@ -2284,7 +2284,7 @@ def _(rid, params: dict) -> dict:
     if err:
         return err
 
-    from hermes_constants import display_hermes_home
+    from hermes_constants import display_indagis_home
 
     key = session.get("session_key") or params.get("session_id") or ""
     agent = session.get("agent")
@@ -2335,7 +2335,7 @@ def _(rid, params: dict) -> dict:
         "Hermes TUI Status",
         "",
         f"Session ID: {key}",
-        f"Path: {display_hermes_home()}",
+        f"Path: {display_indagis_home()}",
     ]
     if project:
         lines.append(f"Project: {project['name']}")
@@ -2612,7 +2612,7 @@ def _(rid, params: dict) -> dict:
     # Mirror the classic CLI /save: snapshot under the Hermes profile home
     # (~/.hermes/sessions/saved/) rather than the project/workspace CWD, and
     # include the system prompt so the export matches the dashboard save.
-    saved_dir = get_hermes_home() / "sessions" / "saved"
+    saved_dir = get_indagis_home() / "sessions" / "saved"
     try:
         saved_dir.mkdir(parents=True, exist_ok=True)
     except Exception as e:
@@ -2760,7 +2760,7 @@ def _(rid, params: dict) -> dict:
 
             branch_db = SessionDB(db_path=Path(parent_home) / "state.db")
         home_token = (
-            set_hermes_home_override(parent_home) if parent_home else None
+            set_indagis_home_override(parent_home) if parent_home else None
         )
         # The home override alone only moves config/skills/memory; credentials
         # resolve through get_secret(), which without a scope falls through to
@@ -2799,7 +2799,7 @@ def _(rid, params: dict) -> dict:
             if secret_token is not None:
                 reset_secret_scope(secret_token)
             if home_token is not None:
-                reset_hermes_home_override(home_token)
+                reset_indagis_home_override(home_token)
         if new_sid in _sessions:
             _sessions[new_sid]["active_session_lease"] = lease
     except Exception as e:

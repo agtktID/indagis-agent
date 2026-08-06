@@ -60,9 +60,9 @@ agent:
 
 def _resolve_cli_route():
     from hermes_cli._parser import build_top_level_parser
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    _write_profile_config(get_hermes_home())
+    _write_profile_config(get_indagis_home())
     parser, _subparsers, _chat = build_top_level_parser()
     args, _unknown = parser.parse_known_args(
         ["-m", MODEL, "--provider", REQUESTED_PROVIDER, "chat"]

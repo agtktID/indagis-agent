@@ -376,7 +376,7 @@ def test_nested_project_folders_pick_the_deepest_match():
 
 
 def test_junk_root_never_becomes_an_auto_project():
-    # A session whose git root is HERMES_HOME (config/state) must not spawn a
+    # A session whose git root is INDAGIS_HOME (config/state) must not spawn a
     # phantom project; it lands in the Home bucket. A real repo alongside it
     # still groups normally.
     resolve = _resolver(

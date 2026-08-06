@@ -46,7 +46,7 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from typing import Any, Callable, Dict, Iterator, List, Optional
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from tools.daemon_pool import DaemonThreadPoolExecutor
 from tools.thread_context import propagate_context_to_thread
 
@@ -117,7 +117,7 @@ _monitor_stop = threading.Event()
 
 
 def _db_path():
-    return get_hermes_home() / "state.db"
+    return get_indagis_home() / "state.db"
 
 
 def _connect() -> sqlite3.Connection:
@@ -800,7 +800,7 @@ def dispatch_async_delegation(
 
     try:
         # Propagate the dispatching profile so the detached child resolves
-        # get_hermes_home() under the right profile.
+        # get_indagis_home() under the right profile.
         executor.submit(propagate_context_to_thread(_worker))
     except Exception as exc:  # pragma: no cover — pool submit failure is rare
         with _records_lock:

@@ -544,11 +544,11 @@ class ComputeHost:
         secret_token = None
         try:
             if profile_home:
-                from hermes_constants import set_hermes_home_override
+                from hermes_constants import set_indagis_home_override
                 from agent.secret_scope import build_profile_secret_scope, set_secret_scope
                 from hermes_state import SessionDB
 
-                home_token = set_hermes_home_override(profile_home)
+                home_token = set_indagis_home_override(profile_home)
                 secret_token = set_secret_scope(build_profile_secret_scope(Path(profile_home)))
                 session_db = SessionDB(db_path=Path(profile_home) / "state.db")
             agent = server._make_agent(
@@ -564,10 +564,10 @@ class ComputeHost:
         finally:
             if home_token is not None:
                 try:
-                    from hermes_constants import reset_hermes_home_override
+                    from hermes_constants import reset_indagis_home_override
                     from agent.secret_scope import reset_secret_scope
 
-                    reset_hermes_home_override(home_token)
+                    reset_indagis_home_override(home_token)
                     reset_secret_scope(secret_token)
                 except Exception:
                     pass
@@ -837,7 +837,7 @@ def run_host(stdin: Any = None, stdout: Any = None) -> None:
             "boot_id": host._boot_id,
             "build_sha": _build_sha(),
             "cwd": os.getcwd(),
-            "hermes_home": os.environ.get("HERMES_HOME", ""),
+            "hermes_home": os.environ.get("INDAGIS_HOME", ""),
         }
     )
 

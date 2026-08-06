@@ -153,12 +153,12 @@ class TestResolveConfigPath:
         local_cfg = hermes_home / "honcho.json"
         local_cfg.write_text('{"apiKey": "local"}')
 
-        with patch.dict(os.environ, {"HERMES_HOME": str(hermes_home)}):
+        with patch.dict(os.environ, {"INDAGIS_HOME": str(hermes_home)}):
             result = resolve_config_path()
         assert result == local_cfg
 
     def test_falls_back_to_default_profile_when_no_local(self, tmp_path, monkeypatch):
-        # Profile mode: HERMES_HOME points at ~/.hermes/profiles/<name>, so
+        # Profile mode: INDAGIS_HOME points at ~/.hermes/profiles/<name>, so
         # _get_default_hermes_home() must resolve back to ~/.hermes — that's
         # the bug the HOME-anchored helper fixes (vs. blindly using Path.home()).
         fake_home = tmp_path / "fakehome"
@@ -170,7 +170,7 @@ class TestResolveConfigPath:
         default_cfg.write_text('{"apiKey": "default-key"}')
 
         monkeypatch.setattr(Path, "home", lambda: fake_home)
-        monkeypatch.setenv("HERMES_HOME", str(profile_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(profile_home))
 
         result = resolve_config_path()
 
@@ -291,9 +291,9 @@ class TestGetHonchoClient:
     )
     def test_timeout_change_triggers_client_rebuild(self):
         """Changing timeout config must rebuild the cached client."""
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        cfg_yaml = get_hermes_home() / "config.yaml"
+        cfg_yaml = get_indagis_home() / "config.yaml"
         cfg_yaml.write_text("honcho:\n  timeout: 30\n")
 
         fake_honcho_1 = MagicMock(name="Honcho_v1")

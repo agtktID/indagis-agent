@@ -63,7 +63,7 @@ from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 
 
 def _launch_cwd_for_session(source: str) -> Optional[str]:
@@ -124,7 +124,7 @@ from hermes_cli.timeouts import (
     get_provider_stale_timeout,
 )
 
-_hermes_home = get_hermes_home()
+_hermes_home = get_indagis_home()
 _project_env = Path(__file__).parent / '.env'
 _loaded_env_paths = load_hermes_dotenv(hermes_home=_hermes_home, project_env=_project_env)
 if _loaded_env_paths:

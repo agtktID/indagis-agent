@@ -58,7 +58,7 @@ def test_reload_runtime_env_preserves_config_terminal_backend(
     (hermes_home / ".env").write_text("TERMINAL_ENV=docker\n", encoding="utf-8")
 
     monkeypatch.setattr(gateway_run, "_hermes_home", hermes_home)
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     # Startup bridge already ran: the effective backend is local.
     monkeypatch.setenv("TERMINAL_ENV", "local")
 

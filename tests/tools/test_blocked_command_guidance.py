@@ -8,7 +8,7 @@ from tools.terminal_tool import _foreground_background_guidance
 
 class TestParserLimitRecovery:
     def test_parser_limit_block_saves_payload_and_names_it(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
         cmd = "python3 -c '" + "x = 1; " * 900 + "'"
         r = _hardline_block_result(_PARSER_LIMIT_DESCRIPTION, cmd)
         assert r["approved"] is False
@@ -42,7 +42,7 @@ class TestParserLimitRecovery:
         assert "RECOVERY" in r["message"]
 
     def test_real_hardline_blocks_unchanged(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
         r = _hardline_block_result("recursive delete of root filesystem", "rm -rf --no-preserve-root /")
         assert "RECOVERY" not in r["message"]
         assert "unconditional blocklist" in r["message"]
@@ -50,7 +50,7 @@ class TestParserLimitRecovery:
         assert not (tmp_path / ".hermes" / "cache" / "blocked-scripts").exists()
 
     def test_old_saved_payloads_cleaned(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
         import os
         d = tmp_path / ".hermes" / "cache" / "blocked-scripts"
         d.mkdir(parents=True)

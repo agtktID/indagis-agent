@@ -48,8 +48,8 @@ def test_fire_cron_job_scopes_store_and_runtime_home_together(
     from hermes_cli import web_server
 
     from hermes_constants import (
-        reset_hermes_home_override,
-        set_hermes_home_override,
+        reset_indagis_home_override,
+        set_indagis_home_override,
     )
 
     default_home = isolated_profiles["default"]
@@ -69,7 +69,7 @@ def test_fire_cron_job_scopes_store_and_runtime_home_together(
         lambda: RecordingProvider(),
     )
 
-    outer_token = set_hermes_home_override(default_home)
+    outer_token = set_indagis_home_override(default_home)
     try:
         assert web_server._fire_cron_job_for_profile("worker_alpha", "worker-job") is True
         assert captured == {
@@ -79,7 +79,7 @@ def test_fire_cron_job_scopes_store_and_runtime_home_together(
         }
         assert scheduler._get_hermes_home() == default_home
     finally:
-        reset_hermes_home_override(outer_token)
+        reset_indagis_home_override(outer_token)
 
 
 def test_profile_call_cannot_retarget_ticker_store_mid_write(

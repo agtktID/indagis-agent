@@ -8,7 +8,7 @@ history.
 """
 from __future__ import annotations
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 
 import copy
 import json
@@ -393,7 +393,7 @@ class SessionManager:
         Returns ``None`` if the DB is unavailable (e.g. import error in a
         minimal test environment).
 
-        Note: we resolve ``HERMES_HOME`` dynamically rather than relying on
+        Note: we resolve ``INDAGIS_HOME`` dynamically rather than relying on
         the module-level ``DEFAULT_DB_PATH`` constant, because that constant
         is evaluated at import time and won't reflect env-var changes made
         later (e.g. by the test fixture ``_isolate_hermes_home``).
@@ -402,7 +402,7 @@ class SessionManager:
             return self._db_instance
         try:
             from hermes_state import SessionDB
-            hermes_home = get_hermes_home()
+            hermes_home = get_indagis_home()
             self._db_instance = SessionDB(db_path=hermes_home / "state.db")
             return self._db_instance
         except Exception:

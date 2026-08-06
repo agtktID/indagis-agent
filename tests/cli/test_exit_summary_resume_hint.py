@@ -40,7 +40,7 @@ class TestExitSummaryResumeHint:
         with patch("hermes_cli.profiles.get_active_profile_name", return_value="custom"):
             cli_obj._print_exit_summary()
         out = capsys.readouterr().out
-        # "custom" is the standard HERMES_HOME indicator — no -p needed.
+        # "custom" is the standard INDAGIS_HOME indicator — no -p needed.
         assert "hermes --resume 20260524_000001_abc123" in out
         assert " -p " not in out
 

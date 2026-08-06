@@ -2,7 +2,7 @@ import argparse
 import os
 
 import pytest
-from hermes_constants import set_hermes_home_override, reset_hermes_home_override
+from hermes_constants import set_indagis_home_override, reset_indagis_home_override
 
 from hermes_cli.main import _read_ssh_session_token_file, cmd_dashboard
 from hermes_cli.subcommands.dashboard import build_dashboard_parser
@@ -45,12 +45,12 @@ def test_token_file_is_read_and_unlinked_through_private_directory(tmp_path, mon
     token_path = token_dir / "0123456789abcdef.token"
     token_path.write_text("b" * 64)
     token_path.chmod(0o600)
-    override = set_hermes_home_override(hermes_home)
+    override = set_indagis_home_override(hermes_home)
     try:
         assert _read_ssh_session_token_file(str(token_path)) == "b" * 64
         assert not token_path.exists()
     finally:
-        reset_hermes_home_override(override)
+        reset_indagis_home_override(override)
 
 
 @pytest.mark.skipif(os.name == "nt", reason="POSIX desktop-ssh token path")
@@ -58,8 +58,8 @@ def test_token_anchor_is_os_home_not_active_profile(tmp_path, monkeypatch):
     """Regression for #69551: the Desktop client always writes the token under
     ``$HOME/.hermes/desktop-ssh`` (a literal ``~/.hermes/desktop-ssh`` in
     apps/desktop/electron/remote-lifecycle.ts, expanded against the account's
-    $HOME). A non-default sticky profile re-homes ``get_hermes_home()`` to
-    ``<root>/profiles/<name>``, and a Docker-style ``HERMES_HOME`` can point
+    $HOME). A non-default sticky profile re-homes ``get_indagis_home()`` to
+    ``<root>/profiles/<name>``, and a Docker-style ``INDAGIS_HOME`` can point
     elsewhere entirely — neither must move the validator off
     ``$HOME/.hermes/desktop-ssh``, or the token is wrongly rejected."""
     home = tmp_path / "home"
@@ -68,17 +68,17 @@ def test_token_anchor_is_os_home_not_active_profile(tmp_path, monkeypatch):
     token_dir.mkdir(parents=True, mode=0o700)
     token_path = token_dir / "0123456789abcdef.token"
 
-    # A sticky profile and a custom (Docker) root both point get_hermes_home()
+    # A sticky profile and a custom (Docker) root both point get_indagis_home()
     # away from $HOME/.hermes; the anchor must ignore both.
     for elsewhere in (home / ".hermes" / "profiles" / "coder", tmp_path / "opt" / "data"):
         token_path.write_text("b" * 64)
         token_path.chmod(0o600)
-        override = set_hermes_home_override(elsewhere)
+        override = set_indagis_home_override(elsewhere)
         try:
             assert _read_ssh_session_token_file(str(token_path)) == "b" * 64
             assert not token_path.exists()
         finally:
-            reset_hermes_home_override(override)
+            reset_indagis_home_override(override)
 
 
 @pytest.mark.skipif(os.name == "nt", reason="POSIX desktop-ssh token path")
@@ -94,12 +94,12 @@ def test_token_under_profile_desktop_ssh_is_rejected(tmp_path, monkeypatch):
     token_path = token_dir / "0123456789abcdef.token"
     token_path.write_text("b" * 64)
     token_path.chmod(0o600)
-    override = set_hermes_home_override(profile_home)
+    override = set_indagis_home_override(profile_home)
     try:
         with pytest.raises(SystemExit, match="desktop-ssh directory"):
             _read_ssh_session_token_file(str(token_path))
     finally:
-        reset_hermes_home_override(override)
+        reset_indagis_home_override(override)
 
 
 @pytest.mark.skipif(os.name == "nt", reason="POSIX symlink contract")
@@ -113,14 +113,14 @@ def test_token_file_rejects_symlink(tmp_path, monkeypatch):
     target.chmod(0o600)
     token_path = token_dir / "0123456789abcdef.token"
     token_path.symlink_to(target)
-    override = set_hermes_home_override(home / ".hermes")
+    override = set_indagis_home_override(home / ".hermes")
     try:
         with pytest.raises(SystemExit, match="symlink|not accessible"):
             _read_ssh_session_token_file(str(token_path))
         assert not token_path.exists()
         assert target.read_text() == "b" * 64
     finally:
-        reset_hermes_home_override(override)
+        reset_indagis_home_override(override)
 
 
 def test_token_file_rejects_parent_escape(tmp_path, monkeypatch):
@@ -131,19 +131,19 @@ def test_token_file_rejects_parent_escape(tmp_path, monkeypatch):
     escaped = token_root.parent / "0123456789abcdef.token"
     escaped.write_text("b" * 64)
     escaped.chmod(0o600)
-    override = set_hermes_home_override(home / ".hermes")
+    override = set_indagis_home_override(home / ".hermes")
     try:
         with pytest.raises(SystemExit, match="invalid runtime path"):
             _read_ssh_session_token_file(str(token_root / ".." / escaped.name))
         assert escaped.exists()
     finally:
-        reset_hermes_home_override(override)
+        reset_indagis_home_override(override)
 
 
 def test_windows_runtime_root_stays_at_machine_root_for_named_profile(tmp_path, monkeypatch):
     from hermes_cli import windows_ssh_runtime
 
     machine_root = tmp_path / "custom-hermes-root"
-    monkeypatch.setenv("HERMES_HOME", str(machine_root / "profiles" / "writer_2"))
+    monkeypatch.setenv("INDAGIS_HOME", str(machine_root / "profiles" / "writer_2"))
 
     assert windows_ssh_runtime._root() == machine_root / "desktop-ssh"

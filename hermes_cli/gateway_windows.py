@@ -86,18 +86,18 @@ def _assert_windows() -> None:
 
 
 def _preserve_hermes_home_path(path: str | Path) -> str:
-    """Render Hermes-owned paths under the configured HERMES_HOME spelling.
+    """Render Hermes-owned paths under the configured INDAGIS_HOME spelling.
 
     Windows installs may keep ``%LOCALAPPDATA%\\hermes`` as a symlink/junction to
     another drive. Runtime state should still identify itself by the configured
     AppData path, so launcher files must not bake in the resolved target when a
-    path lives under HERMES_HOME.
+    path lives under INDAGIS_HOME.
     """
     candidate = Path(path)
     try:
-        from hermes_cli.config import get_hermes_home
+        from hermes_cli.config import get_indagis_home
 
-        home = Path(get_hermes_home())
+        home = Path(get_indagis_home())
         resolved_home = home.resolve()
         resolved_candidate = candidate.resolve()
         home_key = os.path.normcase(str(resolved_home))
@@ -312,13 +312,13 @@ def get_task_script_path() -> Path:
     """The generated ``gateway.cmd`` wrapper kept beside the VBS launcher.
 
     Lives under ``%LOCALAPPDATA%\\hermes\\gateway-service\\<task_name>.cmd``
-    (or ``<HERMES_HOME>/gateway-service/<task_name>.cmd`` so per-profile
+    (or ``<INDAGIS_HOME>/gateway-service/<task_name>.cmd`` so per-profile
     Hermes installs stay self-contained).
     """
     _assert_windows()
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
 
-    script_dir = Path(get_hermes_home()) / "gateway-service"
+    script_dir = Path(get_indagis_home()) / "gateway-service"
     script_dir.mkdir(parents=True, exist_ok=True)
     return script_dir / f"{_sanitize_filename(get_task_name())}.cmd"
 
@@ -359,17 +359,17 @@ def _legacy_startup_entry_path() -> Path:
 def _stable_gateway_working_dir(project_root: Path) -> str:
     """Return a stable cwd for detached/startup gateway runs.
 
-    Mirror the POSIX service invariant: anchor at ``HERMES_HOME`` whenever it
+    Mirror the POSIX service invariant: anchor at ``INDAGIS_HOME`` whenever it
     exists so Scheduled Task / Startup launches do not fail at the ``cd`` step
     after a transient checkout or worktree is moved away. Fall back to the
-    source checkout only if ``HERMES_HOME`` cannot be used yet. Preserve the
+    source checkout only if ``INDAGIS_HOME`` cannot be used yet. Preserve the
     configured spelling instead of resolving symlinks so AppData installs backed
     by a junction/symlink still identify themselves as AppData.
     """
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
 
     try:
-        home = get_hermes_home()
+        home = get_indagis_home()
         if home:
             home_path = Path(home)
             if home_path.is_dir():
@@ -393,7 +393,7 @@ def _build_gateway_cmd_script(
 
     The script:
       - cd's into a stable working directory
-      - exports HERMES_HOME, PYTHONIOENCODING, VIRTUAL_ENV
+      - exports INDAGIS_HOME, PYTHONIOENCODING, VIRTUAL_ENV
       - invokes ``python -m hermes_cli.main [--profile X] gateway run``
 
     The .cmd is a compatibility/manual-run artifact: service persistence
@@ -408,7 +408,7 @@ def _build_gateway_cmd_script(
     """
     lines = ["@echo off", f"rem {_TASK_DESCRIPTION}"]
     lines.append(f"cd /d {_quote_cmd_script_arg(working_dir)}")
-    lines.append(f'set "HERMES_HOME={hermes_home}"')
+    lines.append(f'set "INDAGIS_HOME={hermes_home}"')
     lines.append('set "PYTHONIOENCODING=utf-8"')
     lines.append('set "HERMES_GATEWAY_DETACHED=1"')
     python_exe_path, venv_dir, extra_pythonpath = _resolve_detached_python(python_path)
@@ -493,7 +493,7 @@ def _build_gateway_vbs_script(
         "Dim sh, env, existing_pp",
         'Set sh = CreateObject("WScript.Shell")',
         'Set env = sh.Environment("PROCESS")',
-        f"env.Item({_quote_vbs_string('HERMES_HOME')}) = {_quote_vbs_string(hermes_home)}",
+        f"env.Item({_quote_vbs_string('INDAGIS_HOME')}) = {_quote_vbs_string(hermes_home)}",
         f"env.Item({_quote_vbs_string('PYTHONIOENCODING')}) = {_quote_vbs_string('utf-8')}",
         f"env.Item({_quote_vbs_string('HERMES_GATEWAY_DETACHED')}) = {_quote_vbs_string('1')}",
         f"env.Item({_quote_vbs_string('VIRTUAL_ENV')}) = {_quote_vbs_string(_preserve_hermes_home_path(venv_dir))}",
@@ -542,7 +542,7 @@ def _write_task_script() -> Path:
     """Generate and write the gateway.cmd wrapper. Return its absolute path."""
     _assert_windows()
     # Local imports to avoid circular-init at module load time.
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
     from hermes_cli.gateway import (
         PROJECT_ROOT,
         _profile_arg,
@@ -551,7 +551,7 @@ def _write_task_script() -> Path:
 
     python_path = _preserve_hermes_home_path(get_python_path())
     working_dir = _stable_gateway_working_dir(PROJECT_ROOT)
-    hermes_home = str(Path(get_hermes_home()))
+    hermes_home = str(Path(get_indagis_home()))
     profile_arg = _profile_arg(hermes_home)
 
     content = _build_gateway_cmd_script(python_path, working_dir, hermes_home, profile_arg)
@@ -786,7 +786,7 @@ def _build_gateway_argv() -> tuple[list[str], str, dict[str, str]]:
     layer in between.
     """
     _assert_windows()
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
     from hermes_cli.gateway import (
         PROJECT_ROOT,
         _profile_arg,
@@ -798,7 +798,7 @@ def _build_gateway_argv() -> tuple[list[str], str, dict[str, str]]:
     )
     project_root = _preserve_hermes_home_path(PROJECT_ROOT)
     working_dir = _stable_gateway_working_dir(PROJECT_ROOT)
-    hermes_home = str(Path(get_hermes_home()))
+    hermes_home = str(Path(get_indagis_home()))
     profile_arg = _profile_arg(hermes_home)
 
     argv = [python_exe, "-m", "hermes_cli.main"]
@@ -807,7 +807,7 @@ def _build_gateway_argv() -> tuple[list[str], str, dict[str, str]]:
     argv.extend(["gateway", "run"])
 
     env_overlay = {
-        "HERMES_HOME": hermes_home,
+        "INDAGIS_HOME": hermes_home,
         "PYTHONIOENCODING": "utf-8",
         "HERMES_GATEWAY_DETACHED": "1",
         "VIRTUAL_ENV": _preserve_hermes_home_path(venv_dir),
@@ -834,7 +834,7 @@ def windowless_gateway_restart_spec(
     pythonw.exe rewrite here produced a console-less gateway whose every
     console-subsystem child allocated a visible conhost).  This helper now
     only normalizes the interpreter via ``_resolve_detached_python`` and
-    supplies the stable cwd + env overlay (HERMES_HOME, VIRTUAL_ENV,
+    supplies the stable cwd + env overlay (INDAGIS_HOME, VIRTUAL_ENV,
     PYTHONPATH) so the respawn doesn't depend on the watcher's transient
     working directory.
 
@@ -849,7 +849,7 @@ def windowless_gateway_restart_spec(
     if sys.platform != "win32":
         return run_argv, "", {}
 
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
     from hermes_cli.gateway import PROJECT_ROOT
 
     python_exe = run_argv[0]
@@ -870,7 +870,7 @@ def windowless_gateway_restart_spec(
     working_dir = _stable_gateway_working_dir(PROJECT_ROOT)
     project_root = str(PROJECT_ROOT)
     try:
-        hermes_home = str(Path(get_hermes_home()).resolve())
+        hermes_home = str(Path(get_indagis_home()).resolve())
     except Exception:
         hermes_home = ""
 
@@ -880,7 +880,7 @@ def windowless_gateway_restart_spec(
         "VIRTUAL_ENV": str(venv_dir),
     }
     if hermes_home:
-        env_overlay["HERMES_HOME"] = hermes_home
+        env_overlay["INDAGIS_HOME"] = hermes_home
     _prepend_pythonpath(
         env_overlay,
         [project_root, *extra_pythonpath] if extra_pythonpath else [project_root],
@@ -931,9 +931,9 @@ def _spawn_detached(script_path: Path | None = None) -> int:
     # logging module writes to gateway.log through a FileHandler, so the
     # real gateway logs still land there — this just captures anything
     # that goes to print() or native stderr.
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
 
-    log_dir = Path(get_hermes_home()) / "logs"
+    log_dir = Path(get_indagis_home()) / "logs"
     log_dir.mkdir(parents=True, exist_ok=True)
     stray_log = log_dir / "gateway-stdio.log"
 
@@ -1185,15 +1185,15 @@ def _report_gateway_start(via: str) -> None:
     else:
         print(f"⚠ Launched gateway via {via}, but no process detected after 6s.")
         print("  Check the log for startup errors:")
-        from hermes_cli.config import get_hermes_home
-        print(f"    type {Path(get_hermes_home())}\\logs\\gateway.log")
-        print(f"    type {Path(get_hermes_home())}\\logs\\gateway-stdio.log")
+        from hermes_cli.config import get_indagis_home
+        print(f"    type {Path(get_indagis_home())}\\logs\\gateway.log")
+        print(f"    type {Path(get_indagis_home())}\\logs\\gateway-stdio.log")
 
 
 def _print_next_steps() -> None:
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
 
-    hermes_home = Path(get_hermes_home())
+    hermes_home = Path(get_indagis_home())
     print()
     print("Next steps:")
     print("  hermes gateway status                      # Check status")
@@ -1314,9 +1314,9 @@ def _print_deep_probes() -> None:
     import json
     from datetime import datetime, timezone
 
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
 
-    home = Path(get_hermes_home())
+    home = Path(get_indagis_home())
     pid_path = home / "gateway.pid"
     lock_path = home / "gateway.lock"
     state_path = home / "gateway_state.json"

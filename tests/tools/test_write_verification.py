@@ -10,7 +10,7 @@ from tools.file_tools import write_file_tool
 
 @pytest.fixture
 def workdir(tmp_path, monkeypatch):
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
     return tmp_path
 
 

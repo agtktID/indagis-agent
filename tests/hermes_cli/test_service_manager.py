@@ -242,13 +242,13 @@ def test_render_run_script_uses_replace_to_take_over_stale_holder() -> None:
 
     Without ``--replace`` a gateway started OUTSIDE s6 (a stray shell
     ``hermes gateway run``, an agent action, the Open WebUI helper) holds
-    the per-HERMES_HOME PID lock; the supervised slot then execs a bare
+    the per-INDAGIS_HOME PID lock; the supervised slot then execs a bare
     ``gateway run``, hits the "Another gateway instance is already
     running" guard, exits non-zero, and s6 restarts it — a restart loop
     that never binds. ``--replace`` makes the supervised gateway reap the
     stale holder and win, so s6 is authoritative for the slot.
 
-    Covers both the default (root HERMES_HOME, no ``-p``) and named-profile
+    Covers both the default (root INDAGIS_HOME, no ``-p``) and named-profile
     render paths.
     """
     default_text = S6ServiceManager._render_run_script("default", {})
@@ -397,7 +397,7 @@ def test_s6_log_run_never_invokes_chown_with_symlinked_log_dir(tmp_path) -> None
         encoding="utf-8",
     )
     # Pretend we are root so the script takes the s6-setuidgid setup path.
-    # Mark the drop so fake rm can refuse unlink outside HERMES_HOME the way
+    # Mark the drop so fake rm can refuse unlink outside INDAGIS_HOME the way
     # a real hermes uid cannot delete a foreign root-owned lock.
     (bin_dir / "id").write_text(
         "#!/bin/sh\n"
@@ -461,7 +461,7 @@ def test_s6_log_run_never_invokes_chown_with_symlinked_log_dir(tmp_path) -> None
             time.sleep(0.001)
 
     env = os.environ.copy()
-    env["HERMES_HOME"] = str(hermes_home)
+    env["INDAGIS_HOME"] = str(hermes_home)
     env["PATH"] = f"{bin_dir.as_posix()}{os.pathsep}{env.get('PATH', '')}"
 
     racer = threading.Thread(target=_swap_race, daemon=True)

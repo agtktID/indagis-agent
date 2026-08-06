@@ -23,9 +23,9 @@ def hermes_home(tmp_path, monkeypatch):
     home = tmp_path / ".hermes"
     home.mkdir()
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
 
-    # Bust the goal-module DB cache so it re-resolves HERMES_HOME.
+    # Bust the goal-module DB cache so it re-resolves INDAGIS_HOME.
     from hermes_cli import goals
 
     goals._DB_CACHE.clear()
@@ -46,11 +46,11 @@ def server(hermes_home, monkeypatch):
     ):
         mod = importlib.import_module("tui_gateway.server")
 
-    # Pin config resolution to the isolated HERMES_HOME. Sibling test
+    # Pin config resolution to the isolated INDAGIS_HOME. Sibling test
     # files (test_billing_rpc, test_delegation_session_lifecycle,
     # test_gateway_owned_session_reap, ...) import tui_gateway.server at
     # collection time — BEFORE the conftest env isolation runs — so the
-    # module-level ``_hermes_home = get_hermes_home()`` snapshot freezes
+    # module-level ``_hermes_home = get_indagis_home()`` snapshot freezes
     # the developer's real home. When any of them precede this file in
     # the same process, ``importlib.import_module`` returns that cached
     # module and ``_load_cfg()`` would read the REAL config.yaml (e.g. a

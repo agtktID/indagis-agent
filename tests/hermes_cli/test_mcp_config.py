@@ -27,9 +27,9 @@ def _set_interactive_stdin(monkeypatch, *, is_tty: bool = True) -> None:
 @pytest.fixture(autouse=True)
 def _isolate_config(tmp_path, monkeypatch):
     """Redirect all config I/O to a temp directory."""
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     monkeypatch.setattr(
-        "hermes_cli.config.get_hermes_home", lambda: tmp_path
+        "hermes_cli.config.get_indagis_home", lambda: tmp_path
     )
     config_path = tmp_path / "config.yaml"
     env_path = tmp_path / ".env"
@@ -152,9 +152,9 @@ class TestMcpRemove:
             "oauth-srv": {"url": "https://example.com/mcp", "auth": "oauth"},
         })
         monkeypatch.setattr("builtins.input", lambda _: "y")
-        # Also patch get_hermes_home in the mcp_config module namespace
+        # Also patch get_indagis_home in the mcp_config module namespace
         monkeypatch.setattr(
-            "hermes_cli.mcp_config.get_hermes_home", lambda: tmp_path
+            "hermes_cli.mcp_config.get_indagis_home", lambda: tmp_path
         )
 
         # Create a fake token file
@@ -599,9 +599,9 @@ class TestMcpRemoveEvictsManager:
         })
         monkeypatch.setattr("builtins.input", lambda _: "y")
         monkeypatch.setattr(
-            "hermes_cli.mcp_config.get_hermes_home", lambda: tmp_path
+            "hermes_cli.mcp_config.get_indagis_home", lambda: tmp_path
         )
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         _set_interactive_stdin(monkeypatch)
 
         from tools.mcp_oauth_manager import get_manager, reset_manager_for_tests

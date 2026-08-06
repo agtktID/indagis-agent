@@ -268,7 +268,7 @@ class TestResolveTaskProviderModel:
 class TestMoaAggregatorSharedResolution:
     """The shared MoA→aggregator helper and the layers that consume it.
 
-    Real-config tests: write an actual config.yaml under a temp HERMES_HOME
+    Real-config tests: write an actual config.yaml under a temp INDAGIS_HOME
     and exercise the genuine load_config() → resolve_moa_preset() boundary —
     no mocking of the configuration-resolution chain.
     """
@@ -310,7 +310,7 @@ class TestMoaAggregatorSharedResolution:
                 }
             )
         )
-        monkeypatch.setenv("HERMES_HOME", str(home))
+        monkeypatch.setenv("INDAGIS_HOME", str(home))
         return home
 
     def test_real_config_explicit_task_provider_moa(self, tmp_path, monkeypatch):
@@ -519,7 +519,7 @@ class TestReadCodexAccessToken:
                 },
             },
         }))
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         result = _read_codex_access_token()
         assert result == "tok-123"
 
@@ -550,7 +550,7 @@ class TestReadCodexAccessToken:
                 },
             },
         }))
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         with patch("agent.auxiliary_client._select_pool_entry", return_value=(False, None)):
             result = _read_codex_access_token()
         assert result is None, "Expired JWT should return None"
@@ -575,7 +575,7 @@ class TestReadCodexAccessToken:
                 },
             },
         }))
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         result = _read_codex_access_token()
         assert result == valid_jwt
 
@@ -598,7 +598,7 @@ class TestResolveXaiOAuthForAux:
             "version": 1,
             "providers": {},
         }))
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.delenv("HERMES_XAI_BASE_URL", raising=False)
         monkeypatch.delenv("XAI_BASE_URL", raising=False)
 
@@ -630,7 +630,7 @@ class TestResolveXaiOAuthForAux:
             "version": 1,
             "providers": {},
         }))
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.setenv("HERMES_XAI_BASE_URL", "https://example.x.ai/v1/")
 
         pool = load_pool("xai-oauth")
@@ -884,7 +884,7 @@ class TestExpiredCodexFallback:
                 },
             },
         }))
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         # Set up Anthropic as fallback
         monkeypatch.setenv("ANTHROPIC_TOKEN", "sk-ant-oat01-test-fallback")
@@ -927,7 +927,7 @@ class TestExpiredCodexFallback:
                 },
             },
         }))
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.setenv("OPENROUTER_API_KEY", "or-test-key")
 
         with patch("agent.auxiliary_client.OpenAI") as mock_openai:

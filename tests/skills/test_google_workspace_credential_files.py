@@ -60,7 +60,7 @@ class TestGoogleWorkspaceCredentialFiles:
             fm = _parse_frontmatter(content)
             entries = fm.get("required_credential_files", [])
 
-            with patch.dict(os.environ, {"HERMES_HOME": str(hermes_home)}):
+            with patch.dict(os.environ, {"INDAGIS_HOME": str(hermes_home)}):
                 missing = register_credential_files(entries)
 
             assert missing == [], f"Unexpected missing files: {missing}"

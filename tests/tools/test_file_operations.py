@@ -54,8 +54,8 @@ class TestIsWriteDenied:
     )
     def test_oauth_traversal_denied(self, path):
         """Path traversal attempts to protected OAuth files must be blocked."""
-        from hermes_constants import get_hermes_home
-        hermes_home = get_hermes_home()
+        from hermes_constants import get_indagis_home
+        hermes_home = get_indagis_home()
         full_path = str(hermes_home / path)
         assert _is_write_denied(full_path) is True
 
@@ -65,7 +65,7 @@ class TestIsWriteDenied:
         root = tmp_path / "hermes"
         profile = root / "profiles" / "coder"
         profile.mkdir(parents=True)
-        monkeypatch.setenv("HERMES_HOME", str(profile))
+        monkeypatch.setenv("INDAGIS_HOME", str(profile))
 
         assert _is_write_denied(str(profile / "mcp-tokens" / "tok.json")) is True
         assert _is_write_denied(str(root / "mcp-tokens" / "tok.json")) is True
@@ -84,7 +84,7 @@ class TestIsWriteDenied:
         root = tmp_path / "hermes"
         profile = root / "profiles" / "coder"
         profile.mkdir(parents=True)
-        monkeypatch.setenv("HERMES_HOME", str(profile))
+        monkeypatch.setenv("INDAGIS_HOME", str(profile))
 
         # Active profile pairing entries
         assert _is_write_denied(str(profile / "pairing" / "telegram-approved.json")) is True

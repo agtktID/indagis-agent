@@ -21,10 +21,10 @@ class TestSaveConfigValueAtomic:
             "model": {"default": "test-model", "provider": "openrouter"},
             "display": {"skin": "default"},
         }))
-        # save_config_value resolves the target live via get_hermes_home(), so
-        # point HERMES_HOME at the temp dir (the _hermes_home import-time
+        # save_config_value resolves the target live via get_indagis_home(), so
+        # point INDAGIS_HOME at the temp dir (the _hermes_home import-time
         # constant is no longer consulted).
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.setattr("cli._hermes_home", hermes_home)
         return config_path
 
@@ -80,19 +80,19 @@ class TestSaveConfigValueAtomic:
 
 
 class TestSaveConfigValueTargetsUserConfig:
-    """Regression: persisted runtime settings must land in HERMES_HOME/config.yaml
+    """Regression: persisted runtime settings must land in INDAGIS_HOME/config.yaml
     (which config readers actually read), never the repo's cli-config.yaml.
 
     This was the "wake-word ear reverts to disabled after restart" bug: on an
-    install whose HERMES_HOME/config.yaml did not exist yet, save_config_value
+    install whose INDAGIS_HOME/config.yaml did not exist yet, save_config_value
     fell back to the checked-in cli-config.yaml. The toggle reported success, but
-    startup read HERMES_HOME/config.yaml and never saw the setting."""
+    startup read INDAGIS_HOME/config.yaml and never saw the setting."""
 
     def test_creates_user_config_when_absent(self, tmp_path, monkeypatch):
-        # Fresh HERMES_HOME with NO config.yaml (managed/desktop first launch).
+        # Fresh INDAGIS_HOME with NO config.yaml (managed/desktop first launch).
         hermes_home = tmp_path / ".hermes"
         hermes_home.mkdir()
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         from cli import save_config_value
 
@@ -113,7 +113,7 @@ class TestSaveConfigValueTargetsUserConfig:
 
         hermes_home = tmp_path / ".hermes"
         hermes_home.mkdir()
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         from cli import save_config_value
 

@@ -39,7 +39,7 @@ from typing import Any, List, Optional
 # the module) fail with ModuleNotFoundError for hermes_time et al.
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from hermes_cli._subprocess_compat import windows_hide_flags
 from hermes_cli.config import (
     _expand_env_vars,
@@ -577,12 +577,12 @@ def _get_hermes_home() -> Path:
     """Resolve Hermes home dynamically while preserving test monkeypatch hooks.
 
     Cron is per-profile by design (#4707): the in-process ticker runs inside a
-    profile-scoped gateway, so resolving the active HERMES_HOME at call time
+    profile-scoped gateway, so resolving the active INDAGIS_HOME at call time
     means a profile's jobs are stored AND executed under that profile's home
     (its .env, config.yaml, scripts, skills). Do not freeze this at import or
     anchor it at the shared default root — either re-breaks profile isolation.
     """
-    return _hermes_home or get_hermes_home()
+    return _hermes_home or get_indagis_home()
 
 
 def _get_lock_paths() -> tuple[Path, Path]:
@@ -2211,7 +2211,7 @@ def _run_job_script(
 ) -> tuple[bool, str]:
     """Execute a cron job's data-collection script and capture its output.
 
-    Scripts must reside within HERMES_HOME/scripts/.  Both relative and
+    Scripts must reside within INDAGIS_HOME/scripts/.  Both relative and
     absolute paths are resolved and validated against this directory to
     prevent arbitrary script execution via path traversal or absolute
     path injection.
@@ -2232,7 +2232,7 @@ def _run_job_script(
 
     Args:
         script_path: Path to the script.  Relative paths are resolved
-            against HERMES_HOME/scripts/.  Absolute and ~-prefixed paths
+            against INDAGIS_HOME/scripts/.  Absolute and ~-prefixed paths
             are also validated to ensure they stay within the scripts dir.
         workdir: Optional absolute path to use as the script's cwd.
             When set, the subprocess runs in this directory instead of
@@ -2256,7 +2256,7 @@ def _run_job_script(
         path = (scripts_dir / raw).resolve()
 
     # Guard against path traversal, absolute path injection, and symlink
-    # escape — scripts MUST reside within HERMES_HOME/scripts/.
+    # escape — scripts MUST reside within INDAGIS_HOME/scripts/.
     try:
         path.relative_to(scripts_dir_resolved)
     except ValueError:
@@ -3162,7 +3162,7 @@ def run_job(
         # changes take effect without a gateway restart. Route through
         # load_hermes_dotenv (not a bare load_dotenv) and reset the secret-
         # source cache first: startup already applied external secrets and
-        # recorded this HERMES_HOME in _APPLIED_HOMES, so a naive reload would
+        # recorded this INDAGIS_HOME in _APPLIED_HOMES, so a naive reload would
         # re-apply only the .env placeholder and never re-resolve a Bitwarden/
         # BSM-backed secret — leaving cron jobs 401'ing on the placeholder
         # (#33465). Clearing the cache forces the re-pull; the resolved secret
@@ -3534,7 +3534,7 @@ def run_job(
             disabled_toolsets=_resolve_cron_disabled_toolsets(_cfg),
             quiet_mode=True,
             # Cron jobs should always inherit the user's SOUL.md identity from
-            # HERMES_HOME. When a workdir is configured, also inject project
+            # INDAGIS_HOME. When a workdir is configured, also inject project
             # context files (AGENTS.md / CLAUDE.md / .cursorrules) from there.
             # Without a workdir, keep cwd context discovery disabled.
             skip_context_files=not bool(_job_workdir),

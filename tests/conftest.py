@@ -5,11 +5,11 @@ Hermetic-test invariants enforced here (see AGENTS.md for rationale):
 1. **No credential env vars.** All provider/credential-shaped env vars
    (ending in _API_KEY, _TOKEN, _SECRET, _PASSWORD, _CREDENTIALS, etc.)
    are unset before every test. Local developer keys cannot leak in.
-2. **Isolated HERMES_HOME.** HERMES_HOME points to a per-test tempdir so
-   code reading ``~/.hermes/*`` via ``get_hermes_home()`` can't see the
+2. **Isolated INDAGIS_HOME.** INDAGIS_HOME points to a per-test tempdir so
+   code reading ``~/.hermes/*`` via ``get_indagis_home()`` can't see the
    real one. (We do NOT also redirect HOME — that broke subprocesses in
    CI. Code using ``Path.home() / ".hermes"`` instead of the canonical
-   ``get_hermes_home()`` is a bug to fix at the callsite.)
+   ``get_indagis_home()`` is a bug to fix at the callsite.)
 3. **Deterministic runtime.** TZ=UTC, LANG=C.UTF-8, PYTHONHASHSEED=0.
 4. **No HERMES_SESSION_* inheritance** — the agent's current gateway
    session must not leak into tests.
@@ -36,14 +36,14 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 
-# ── Sandbox HERMES_HOME before ANY test module is imported ──────────────────
+# ── Sandbox INDAGIS_HOME before ANY test module is imported ──────────────────
 # `hermes_cli/main.py` calls `setup_logging()` at MODULE level, which resolves
-# `get_hermes_home()` and attaches rotating file handlers to the ROOT logger.
+# `get_indagis_home()` and attaches rotating file handlers to the ROOT logger.
 # So merely importing it - which many test modules do, directly or
 # transitively - points the whole pytest session's logging at the operator's
 # real `~/.hermes/logs/agent.log` and `errors.log`.
 #
-# The `_isolate_env` fixture below also sandboxes HERMES_HOME, but fixtures run
+# The `_isolate_env` fixture below also sandboxes INDAGIS_HOME, but fixtures run
 # AFTER collection imports test modules, by which point the handler already
 # holds an absolute path to the real log. Measured on a live install: 126
 # warnings in the operator's agent.log came from test runs, not the gateway -
@@ -53,23 +53,23 @@ if str(PROJECT_ROOT) not in sys.path:
 # window. The per-test fixture still applies for everything after import.
 #
 # ORDER MATTERS: the kanban write guard's deny-list (further down) must know
-# the REAL Hermes root — capture it BEFORE the sandbox rewires HERMES_HOME,
+# the REAL Hermes root — capture it BEFORE the sandbox rewires INDAGIS_HOME,
 # otherwise the deny-list would point at the throwaway tempdir and the guard
 # would silently stop protecting the operator's actual ~/.hermes (#69385).
 _PRE_SANDBOX_KANBAN_OVERRIDE = os.environ.get("HERMES_KANBAN_HOME", "").strip()
-_PRE_SANDBOX_HERMES_HOME = os.environ.get("HERMES_HOME", "")
-if not os.environ.get("HERMES_HOME"):
+_PRE_SANDBOX_HERMES_HOME = os.environ.get("INDAGIS_HOME", "")
+if not os.environ.get("INDAGIS_HOME"):
     _SESSION_HERMES_HOME = tempfile.mkdtemp(prefix="hermes-test-home-")
-    os.environ["HERMES_HOME"] = _SESSION_HERMES_HOME
+    os.environ["INDAGIS_HOME"] = _SESSION_HERMES_HOME
     atexit.register(shutil.rmtree, _SESSION_HERMES_HOME, True)
 
-#: HERMES_HOME as it stood when conftest was imported - i.e. before any test
+#: INDAGIS_HOME as it stood when conftest was imported - i.e. before any test
 #: module could import code that configures logging. Recorded so the guard in
 #: tests/test_log_isolation.py can assert the sandbox existed AT THAT MOMENT.
 #: Reading os.environ from inside a test is useless here: the per-test
 #: `_isolate_env` fixture has sandboxed it by then, so the check would pass
 #: even with this block removed.
-HERMES_HOME_AT_CONFTEST_IMPORT = os.environ.get("HERMES_HOME", "")
+HERMES_HOME_AT_CONFTEST_IMPORT = os.environ.get("INDAGIS_HOME", "")
 
 
 # ── Per-file process isolation ──────────────────────────────────────────────
@@ -255,7 +255,7 @@ _HERMES_BEHAVIORAL_VARS = frozenset({
     "HERMES_AGENT_USE_LEGACY_SESSION_KEYS",
     # Kanban path/board pins must never leak from a developer shell or
     # dispatched worker into tests; otherwise tests can write fake tasks to
-    # the real ~/.hermes/kanban.db instead of the per-test HERMES_HOME.
+    # the real ~/.hermes/kanban.db instead of the per-test INDAGIS_HOME.
     "HERMES_KANBAN_DB",
     "HERMES_KANBAN_BOARD",
     "HERMES_KANBAN_HOME",
@@ -402,7 +402,7 @@ _HERMES_BEHAVIORAL_VARS = frozenset({
 def _hermetic_environment(tmp_path, monkeypatch):
     """Blank out all credential/behavioral env vars so local and CI match.
 
-    Also redirects HOME and HERMES_HOME to per-test tempdirs so code that
+    Also redirects HOME and INDAGIS_HOME to per-test tempdirs so code that
     reads ``~/.hermes/*`` can't touch the real one, and pins TZ/LANG so
     datetime/locale-sensitive tests are deterministic.
     """
@@ -422,15 +422,15 @@ def _hermetic_environment(tmp_path, monkeypatch):
     # custom host resolution override/delete this explicitly.
     monkeypatch.setenv("HERMES_HONCHO_HOST", "hermes")
 
-    # 3. Redirect HERMES_HOME to a per-test tempdir. Code that reads
-    #    ``~/.hermes/*`` via ``get_hermes_home()`` now gets the tempdir.
+    # 3. Redirect INDAGIS_HOME to a per-test tempdir. Code that reads
+    #    ``~/.hermes/*`` via ``get_indagis_home()`` now gets the tempdir.
     #
     #    NOTE: We do NOT also redirect HOME. Doing so broke CI because
     #    some tests (and their transitive deps) spawn subprocesses that
     #    inherit HOME and expect it to be stable. If a test genuinely
     #    needs HOME isolated, it should set it explicitly in its own
     #    fixture. Any code in the codebase reading ``~/.hermes/*`` via
-    #    ``Path.home() / ".hermes"`` instead of ``get_hermes_home()``
+    #    ``Path.home() / ".hermes"`` instead of ``get_indagis_home()``
     #    is a bug to fix at the callsite.
     fake_hermes_home = tmp_path / "hermes_test"
     fake_hermes_home.mkdir()
@@ -438,9 +438,9 @@ def _hermetic_environment(tmp_path, monkeypatch):
     (fake_hermes_home / "cron").mkdir()
     (fake_hermes_home / "memories").mkdir()
     (fake_hermes_home / "skills").mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(fake_hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(fake_hermes_home))
 
-    # 3b. hermes_state computes ``DEFAULT_DB_PATH = get_hermes_home() / "state.db"``
+    # 3b. hermes_state computes ``DEFAULT_DB_PATH = get_indagis_home() / "state.db"``
     #     at import time. When the module is first imported at collection (any
     #     test file with a top-level ``from hermes_state import ...``) that
     #     happens BEFORE this fixture ever runs, so every argless
@@ -561,7 +561,7 @@ def _neutralize_macos_keychain_creds(request, monkeypatch):
 # fixture patches ``kanban_db.connect`` to refuse writes whose resolved DB
 # path lands under the REAL kanban root (captured at import time, before any
 # fixture rewires the environment). A deny-list is used instead of an
-# allow-list because test-level fixtures legitimately move HERMES_HOME to
+# allow-list because test-level fixtures legitimately move INDAGIS_HOME to
 # sibling directories — an allow-list captured at setup time would see the
 # stale autouse-set value and falsely reject hermetic tests (#69385 review).
 
@@ -570,7 +570,7 @@ def _capture_real_kanban_root() -> Path:
     """Resolve the REAL kanban root from the pre-test environment.
 
     Uses the pre-sandbox environment snapshot taken at the very top of this
-    file (before the session HERMES_HOME sandbox rewired the env), so the
+    file (before the session INDAGIS_HOME sandbox rewired the env), so the
     deny-list keeps pointing at the operator's actual root. Mirrors
     ``kanban_db.kanban_home()`` resolution order:
     1. ``HERMES_KANBAN_HOME`` env var when set and non-empty
@@ -579,11 +579,11 @@ def _capture_real_kanban_root() -> Path:
     if _PRE_SANDBOX_KANBAN_OVERRIDE:
         return Path(_PRE_SANDBOX_KANBAN_OVERRIDE).expanduser().resolve()
     if _PRE_SANDBOX_HERMES_HOME:
-        # HERMES_HOME was genuinely set before the sandbox — honor it via the
+        # INDAGIS_HOME was genuinely set before the sandbox — honor it via the
         # normal resolver (it may be a profile dir whose root matters).
-        from hermes_constants import get_default_hermes_root
-        return get_default_hermes_root().resolve()
-    # No pre-existing HERMES_HOME: the real root is the platform default,
+        from hermes_constants import get_default_indagis_root
+        return get_default_indagis_root().resolve()
+    # No pre-existing INDAGIS_HOME: the real root is the platform default,
     # NOT the sandbox tempdir now sitting in the env.
     return (Path.home() / ".hermes").resolve()
 
@@ -598,7 +598,7 @@ def _kanban_write_guard(_hermetic_environment, monkeypatch):
     Uses a **deny-list**: only blocks writes where the resolved DB path
     (explicit ``db_path`` or ``kanban_db_path()``) lands under the real
     ``~/.hermes`` captured at import time. Hermetic tests that legitimately
-    move HERMES_HOME to sibling tempdirs are unaffected.
+    move INDAGIS_HOME to sibling tempdirs are unaffected.
 
     Only patches when ``hermes_cli.kanban_db`` is *already imported* — a
     ``sys.modules`` probe, not an import — so the guard never drags the
@@ -749,14 +749,14 @@ def _reset_tui_gateway_server_state():
         mod._db_error = None
 
     # A leaked context-local Hermes home override redirects every later
-    # ``get_hermes_home()`` call (active-session registry, config paths)
+    # ``get_indagis_home()`` call (active-session registry, config paths)
     # to a stale per-test tmpdir. Force the main-thread ContextVar back
     # to its default.
     try:
-        from hermes_constants import get_hermes_home_override, set_hermes_home_override
+        from hermes_constants import get_indagis_home_override, set_indagis_home_override
 
-        if get_hermes_home_override() is not None:
-            set_hermes_home_override(None)
+        if get_indagis_home_override() is not None:
+            set_indagis_home_override(None)
     except Exception:
         pass
 
@@ -885,9 +885,9 @@ def _wal_is_usable() -> bool:
     (fixed → WAL). The same test then passes in one and fails in the other.
 
     IMPORTANT: this must NOT import ``hermes_state``. That module computes
-    ``DEFAULT_DB_PATH`` from ``get_hermes_home()`` at import time, so importing
+    ``DEFAULT_DB_PATH`` from ``get_indagis_home()`` at import time, so importing
     it during collection — before the per-test ``_isolate_hermes_home`` fixture
-    redirects ``HERMES_HOME`` — permanently caches the DEVELOPER'S REAL
+    redirects ``INDAGIS_HOME`` — permanently caches the DEVELOPER'S REAL
     ``~/.hermes/state.db`` for the whole session. Tests then read live
     production sessions instead of a tempdir. The version predicate is
     duplicated from ``hermes_state._is_sqlite_wal_reset_vulnerable`` (upstream

@@ -32,7 +32,7 @@ def test_cmd_setup_generic_choice_cancel_writes_nothing(tmp_path, monkeypatch):
     monkeypatch.setattr(memory_setup, "_get_available_providers", lambda: [("fake", "local", provider)])
     monkeypatch.setattr(memory_setup, "_curses_select", lambda *args, **kwargs: next(selections))
     monkeypatch.setattr(memory_setup, "_install_dependencies", install_dependencies)
-    monkeypatch.setattr(memory_setup, "get_hermes_home", lambda: tmp_path)
+    monkeypatch.setattr(memory_setup, "get_indagis_home", lambda: tmp_path)
     monkeypatch.setattr("hermes_cli.config.load_config", lambda: {"memory": {}})
     monkeypatch.setattr("hermes_cli.config.save_config", save_config)
 

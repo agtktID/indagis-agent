@@ -12,7 +12,7 @@ from gateway import status
 
 class TestGatewayPidState:
     def test_write_pid_file_records_gateway_metadata(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
 
         status.write_pid_file()
 
@@ -31,7 +31,7 @@ class TestGatewayPidState:
         """
         import pytest
 
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
 
         # First write wins.
         status.write_pid_file()
@@ -48,7 +48,7 @@ class TestGatewayPidState:
 
 
     def test_runtime_lock_claims_and_releases_liveness(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
 
         assert status.is_gateway_runtime_lock_active() is False
         assert status.acquire_gateway_runtime_lock() is True
@@ -60,7 +60,7 @@ class TestGatewayPidState:
 
 
     def test_get_running_pid_cached_invalidates_when_pid_file_changes(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         status._clear_running_pid_cache()
 
         pid_path = tmp_path / "gateway.pid"
@@ -97,7 +97,7 @@ class TestGatewayPidState:
 
 
     def test_get_running_pid_falls_back_to_live_lock_record(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         pid_path = tmp_path / "gateway.pid"
         pid_path.write_text(json.dumps({
             "pid": 99999,
@@ -135,26 +135,26 @@ class TestGatewayPidState:
     def test_gateway_identity_files_use_process_home_not_context_override(
         self, tmp_path, monkeypatch
     ):
-        """Regression: pid/lock/state files must use process-level HERMES_HOME.
+        """Regression: pid/lock/state files must use process-level INDAGIS_HOME.
 
         When a profile context override is active (e.g., during session dispatch
         for a named profile), gateway identity files should still be written to
-        the process-level HERMES_HOME, not the profile's directory.  See #56986.
+        the process-level INDAGIS_HOME, not the profile's directory.  See #56986.
         """
-        from hermes_constants import set_hermes_home_override, reset_hermes_home_override
+        from hermes_constants import set_indagis_home_override, reset_indagis_home_override
 
         process_home = tmp_path / "default"
         process_home.mkdir()
         profile_home = tmp_path / "profiles" / "cfo"
         profile_home.mkdir(parents=True)
-        monkeypatch.setenv("HERMES_HOME", str(process_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(process_home))
 
         # Simulate a profile context override being active during write.
-        token = set_hermes_home_override(str(profile_home))
+        token = set_indagis_home_override(str(profile_home))
         try:
             status.write_pid_file()
         finally:
-            reset_hermes_home_override(token)
+            reset_indagis_home_override(token)
 
         # PID file must land in the process-level home, not the profile home.
         assert (process_home / "gateway.pid").exists()
@@ -164,7 +164,7 @@ class TestGatewayPidState:
         assert payload["pid"] == os.getpid()
 
         # Cleanup for atexit hooks.
-        monkeypatch.setenv("HERMES_HOME", str(process_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(process_home))
         (process_home / "gateway.pid").unlink(missing_ok=True)
 
 
@@ -172,7 +172,7 @@ class TestGatewayRuntimeStatus:
 
     def test_write_runtime_status_overwrites_stale_pid_on_restart(self, tmp_path, monkeypatch):
         """Regression: setdefault() preserved stale PID from previous process (#1631)."""
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
 
         # Simulate a previous gateway run that left a state file with a stale PID
         state_path = tmp_path / "gateway_state.json"
@@ -249,7 +249,7 @@ class TestGatewayRuntimeStatus:
 
 
     def test_command_line_belongs_to_profile_normalizes_separators(self):
-        """A Windows argv renders HERMES_HOME with backslashes while the
+        """A Windows argv renders INDAGIS_HOME with backslashes while the
         profile's Path may carry forward slashes (and, on Windows, vice
         versa).  The separator difference must not defeat the match."""
         home = Path("c:/opt/data/profiles/coder")
@@ -258,7 +258,7 @@ class TestGatewayRuntimeStatus:
 
 
     def test_write_runtime_status_explicit_none_clears_stale_fields(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
 
         status.write_runtime_status(
             gateway_state="startup_failed",
@@ -521,7 +521,7 @@ class TestTakeoverMarker:
     """
 
     def test_write_marker_records_target_identity(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.setattr(status, "_get_process_start_time", lambda pid: 42)
 
         ok = status.write_takeover_marker(target_pid=12345)
@@ -549,7 +549,7 @@ class TestTakeoverMarker:
         misclassified as an unexpected UNKNOWN exit. With start_time
         unavailable we fall back to PID equality alone, bounded by the TTL.
         """
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         # Simulate Windows: no start_time available for any PID.
         monkeypatch.setattr(status, "_get_process_start_time", lambda pid: None)
 
@@ -565,8 +565,8 @@ class TestTakeoverMarker:
 
 
     def test_write_marker_records_replacer_hermes_home(self, tmp_path, monkeypatch):
-        """The marker stamps the replacer's HERMES_HOME for cross-profile guard (#29092)."""
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        """The marker stamps the replacer's INDAGIS_HOME for cross-profile guard (#29092)."""
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.setattr(status, "_get_process_start_time", lambda pid: 42)
 
         status.write_takeover_marker(target_pid=12345)
@@ -576,12 +576,12 @@ class TestTakeoverMarker:
 
     def test_consume_rejects_marker_from_different_profile(self, tmp_path, monkeypatch):
         """Regression (#29092): a marker written by a gateway under a DIFFERENT
-        HERMES_HOME must be rejected even when PID + start_time coincidentally
+        INDAGIS_HOME must be rejected even when PID + start_time coincidentally
         match — otherwise two profile services sharing a default ~/.hermes flap
         each other in an infinite SIGTERM/Restart loop. The mismatched marker is
         left in place so the profile it was actually meant for can consume it.
         """
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.setattr(status, "_get_process_start_time", lambda pid: 100)
         marker_path = tmp_path / ".gateway-takeover.json"
         from datetime import datetime, timezone
@@ -606,7 +606,7 @@ class TestTakeoverMarker:
         ``replacer_hermes_home`` field; an absent field is treated as same-home so
         single-profile setups and mixed old/new deployments keep working.
         """
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.setattr(status, "_get_process_start_time", lambda pid: 100)
         marker_path = tmp_path / ".gateway-takeover.json"
         from datetime import datetime, timezone
@@ -645,7 +645,7 @@ class TestScopedLockTakeover:
         replacer_home = tmp_path / "replacer"
         target_home = tmp_path / "target"
         replacer_home.mkdir()
-        monkeypatch.setenv("HERMES_HOME", str(replacer_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(replacer_home))
         record = self._owner_record(target_home)
 
         alive = iter([True, True, False])
@@ -706,7 +706,7 @@ class TestPlannedStopMarker:
     """Tests for intentional service/manual gateway stop markers."""
 
     def test_write_marker_records_target_identity(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.setattr(status, "_get_process_start_time", lambda pid: 42)
 
         ok = status.write_planned_stop_marker(target_pid=12345)
@@ -736,7 +736,7 @@ class TestPlannedStopMarker:
         With start_time unavailable on BOTH sides we fall back to PID
         equality alone, bounded by the marker TTL.
         """
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         # Simulate Windows: no start_time available for any PID.
         monkeypatch.setattr(status, "_get_process_start_time", lambda pid: None)
 
@@ -761,7 +761,7 @@ class TestPlannedStopMarker:
         unavailable. When both sides report one (Linux), a mismatch must
         still reject — otherwise PID reuse could resurrect a stale marker.
         """
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.setattr(status, "_get_process_start_time", lambda pid: 100)
         status.write_planned_stop_marker(target_pid=os.getpid())
 
@@ -830,7 +830,7 @@ class TestActiveAgentsTurnBoundaryWrite:
     not clobber it."""
 
     def test_active_agents_only_write_preserves_gateway_state(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
 
         # Lifecycle transition sets running.
         status.write_runtime_status(gateway_state="running", active_agents=0)
@@ -871,7 +871,7 @@ class TestGatewayBusyDerivation:
 
 class TestRespawnStormBreaker:
     def test_no_storm_under_threshold(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         for _ in range(5):
             result = status.record_start_and_check_storm(
                 max_starts=5, window_s=120.0
@@ -881,7 +881,7 @@ class TestRespawnStormBreaker:
 
 class TestLaunchdPlistRespawnGovernance:
     def test_plist_has_throttle_interval(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         from hermes_cli.gateway import generate_launchd_plist
 
         plist = generate_launchd_plist()
@@ -897,7 +897,7 @@ class TestPermissionErrorOnLockFile:
     def test_permission_error_on_lock_file_returns_false_and_removes(self, tmp_path, monkeypatch):
         """When the lock file is not writable (root-owned), the function should
         remove the stale file and report the lock as inactive."""
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         lock_path = tmp_path / "gateway.lock"
         lock_path.write_text("stale", encoding="utf-8")
 
@@ -917,7 +917,7 @@ class TestPermissionErrorOnLockFile:
     def test_permission_error_unlink_failure_still_returns_false(self, tmp_path, monkeypatch):
         """Even if unlinking the stale lock file fails (e.g. directory not writable),
         the function should still return False to allow startup."""
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         lock_path = tmp_path / "gateway.lock"
         lock_path.write_text("stale", encoding="utf-8")
 
@@ -944,7 +944,7 @@ class TestPermissionErrorOnLockFile:
     def test_acquire_gateway_runtime_lock_recovers_from_permission_error(self, tmp_path, monkeypatch):
         """acquire_gateway_runtime_lock must survive a stale root-owned lock
         file: unlink it and retry with a fresh file instead of crashing."""
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         lock_path = status._get_gateway_lock_path()
         lock_path.parent.mkdir(parents=True, exist_ok=True)
         lock_path.write_text("stale", encoding="utf-8")
@@ -1021,7 +1021,7 @@ class TestRuntimeStatusUpdatedAtContract:
         string|null contract every emit surface relies on."""
         from datetime import datetime
 
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
 
         status.write_runtime_status(gateway_state="running")
 
@@ -1094,7 +1094,7 @@ class TestResolveGatewayLiveness:
         """Gateway identity files live in the per-profile home.
 
         The status readers resolve process-level paths and deliberately
-        ignore the HERMES_HOME contextvar override (#56986), so the profile
+        ignore the INDAGIS_HOME contextvar override (#56986), so the profile
         directory must be threaded through explicitly or a scoped request
         silently reports a DIFFERENT profile's gateway (#71211).
         """

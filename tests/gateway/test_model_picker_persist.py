@@ -16,7 +16,7 @@ only with ``--global`` (or ``model.persist_switch_by_default: true``).
 These tests drive the real ``_handle_model_command`` with a fake picker-capable
 adapter that captures the ``on_model_selected`` callback, then invoke that
 callback and assert ``config.yaml`` is (or isn't) updated — exercising the exact
-closure the PR changed, against a real temp ``HERMES_HOME``.
+closure the PR changed, against a real temp ``INDAGIS_HOME``.
 """
 
 import types
@@ -111,9 +111,9 @@ def _setup_isolated_home(tmp_path, monkeypatch, model_yaml_value):
 
     monkeypatch.setattr(gateway_run, "_hermes_home", hermes_home)
     _stub_picker_dependencies(monkeypatch)
-    # save_config writes to ``get_hermes_home() / config.yaml`` — point it here.
-    monkeypatch.setattr("hermes_constants.get_hermes_home", lambda: hermes_home)
-    monkeypatch.setattr("hermes_cli.config.get_hermes_home", lambda: hermes_home)
+    # save_config writes to ``get_indagis_home() / config.yaml`` — point it here.
+    monkeypatch.setattr("hermes_constants.get_indagis_home", lambda: hermes_home)
+    monkeypatch.setattr("hermes_cli.config.get_indagis_home", lambda: hermes_home)
     return cfg_path
 
 

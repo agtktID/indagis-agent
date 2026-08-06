@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +115,7 @@ def active_session_limit_message(
 
 
 def _state_dir() -> Path:
-    return Path(get_hermes_home()) / "runtime"
+    return Path(get_indagis_home()) / "runtime"
 
 
 def _state_path() -> Path:

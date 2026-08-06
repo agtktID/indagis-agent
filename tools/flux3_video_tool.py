@@ -587,9 +587,9 @@ def _default_directory():
 
     if _delivers_as_an_attachment():
         try:
-            from hermes_constants import get_hermes_dir
+            from hermes_constants import get_indagis_dir
 
-            return get_hermes_dir("cache/videos", "video_cache")
+            return get_indagis_dir("cache/videos", "video_cache")
         except Exception:
             logger.debug("Could not resolve the video cache dir; using Downloads", exc_info=True)
     downloads = Path.home() / "Downloads"

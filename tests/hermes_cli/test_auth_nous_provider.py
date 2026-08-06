@@ -156,7 +156,7 @@ def test_resolve_nous_runtime_credentials_prefers_invoke_jwt_and_mirrors(
         expires_at=_future_iso(3600),
         expires_in=3600,
     )
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     creds = auth_mod.resolve_nous_runtime_credentials()
 
@@ -220,7 +220,7 @@ def test_resolve_nous_runtime_credentials_invoke_jwt_is_idempotent(
     auth_path.write_text(json.dumps(auth_store, indent=2))
     before_content = auth_path.read_text()
     before_mtime = auth_path.stat().st_mtime_ns
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     def _unexpected_shared_write(*args, **kwargs):
         raise AssertionError("unchanged invoke JWT resolution should not sync shared store")
@@ -268,7 +268,7 @@ def test_resolve_nous_runtime_credentials_reauths_when_invoke_scope_missing(
         expires_at=_future_iso(3600),
         expires_in=3600,
     )
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     with pytest.raises(AuthError) as exc:
         auth_mod.resolve_nous_runtime_credentials()
@@ -294,7 +294,7 @@ def test_removed_legacy_session_env_var_does_not_change_jwt_auth(tmp_path, monke
         expires_at=_future_iso(3600),
         expires_in=3600,
     )
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     monkeypatch.setenv("HERMES_AGENT_USE_LEGACY_SESSION_KEYS", "true")
 
     creds = auth_mod.resolve_nous_runtime_credentials()
@@ -360,7 +360,7 @@ def test_nous_inference_auth_logs_do_not_include_secret_values(
         expires_at=_future_iso(3600),
         expires_in=3600,
     )
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     def _fake_refresh_access_token(*, client, portal_base_url, client_id, refresh_token):
         del client, portal_base_url, client_id, refresh_token
@@ -405,7 +405,7 @@ def test_get_nous_auth_status_checks_credential_pool(tmp_path, monkeypatch):
     (hermes_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
     }))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     # Seed the credential pool with a Nous entry
     from agent.credential_pool import PooledCredential, load_pool
@@ -443,7 +443,7 @@ def test_get_nous_auth_status_empty_returns_not_logged_in(tmp_path, monkeypatch)
     (hermes_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
     }))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     status = get_nous_auth_status()
     assert status["logged_in"] is False
@@ -474,7 +474,7 @@ class TestLoginNousSkipKeepsCurrent:
         import yaml
         hermes_home = tmp_path / "hermes"
         hermes_home.mkdir(parents=True, exist_ok=True)
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config_path = hermes_home / "config.yaml"
         config_path.write_text(yaml.safe_dump({
@@ -596,7 +596,7 @@ class TestLoginNousSkipKeepsCurrent:
 
         hermes_home = tmp_path / "hermes"
         hermes_home.mkdir(parents=True, exist_ok=True)
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config_path = hermes_home / "config.yaml"
         config_path.write_text(yaml.safe_dump({"model": {}}, sort_keys=False))
@@ -666,7 +666,7 @@ def test_persist_nous_credentials_writes_both_pool_and_providers(tmp_path, monke
     (hermes_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
     }))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     state = _full_state_fixture()
     entry = persist_nous_credentials(state)
@@ -710,7 +710,7 @@ def test_persist_nous_credentials_idempotent_no_duplicate_pool_entries(tmp_path,
     (hermes_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
     }))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     first = _full_state_fixture()
     persist_nous_credentials(first)
@@ -750,7 +750,7 @@ def test_persist_nous_credentials_no_label_uses_auto_derived(tmp_path, monkeypat
     (hermes_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
     }))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     entry = persist_nous_credentials(_full_state_fixture())
     assert entry is not None
@@ -933,7 +933,7 @@ def test_persist_nous_credentials_mirrors_to_shared_store(
     (hermes_home / "auth.json").write_text(
         json.dumps({"version": 1, "providers": {}})
     )
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     persist_nous_credentials(_full_state_fixture())
 
@@ -1000,7 +1000,7 @@ class TestStalePortalBaseUrlMigration:
     def test_migrates_stale_portal_url_on_load(self, tmp_path, monkeypatch):
         from hermes_cli.auth import _load_auth_store, DEFAULT_NOUS_PORTAL_URL
 
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         auth_file = tmp_path / "auth.json"
         auth_file.write_text(json.dumps({
             "version": 1,
@@ -1029,7 +1029,7 @@ class TestStalePortalBaseUrlMigration:
         from hermes_cli import auth as auth_mod
 
         hermes_home = tmp_path / "hermes"
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         _setup_nous_auth(
             hermes_home,
             access_token=_invoke_jwt(seconds=-60),

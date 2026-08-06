@@ -829,8 +829,8 @@ class ResponseStore:
         self._max_size = max_size
         if db_path is None:
             try:
-                from hermes_cli.config import get_hermes_home
-                db_path = str(get_hermes_home() / "response_store.db")
+                from hermes_cli.config import get_indagis_home
+                db_path = str(get_indagis_home() / "response_store.db")
             except Exception:
                 db_path = ":memory:"
         self._db_path: Optional[str] = db_path if db_path != ":memory:" else None
@@ -840,7 +840,7 @@ class ResponseStore:
             self._conn = sqlite3.connect(":memory:", check_same_thread=False)
             self._db_path = None
         # Use shared WAL-fallback helper so response_store.db degrades
-        # gracefully on NFS/SMB/FUSE-mounted HERMES_HOME (same filesystem
+        # gracefully on NFS/SMB/FUSE-mounted INDAGIS_HOME (same filesystem
         # issue addressed for state.db/kanban.db — see
         # hermes_state._WAL_INCOMPAT_MARKERS).
         from hermes_state import apply_wal_with_fallback
@@ -1946,9 +1946,9 @@ class APIServerAdapter(BasePlatformAdapter):
 
                 if is_multiplex_active():
                     from gateway.run import _profile_runtime_scope
-                    from hermes_constants import get_hermes_home
+                    from hermes_constants import get_indagis_home
 
-                    return _profile_runtime_scope(get_hermes_home())
+                    return _profile_runtime_scope(get_indagis_home())
             except Exception:
                 pass
             return nullcontext()
@@ -2128,7 +2128,7 @@ class APIServerAdapter(BasePlatformAdapter):
         shows API-server conversations alongside CLI and gateway ones.
 
         Under multiplex ``/p/<profile>/`` requests the profile runtime scope
-        redirects ``get_hermes_home()``, so each profile gets its own DB —
+        redirects ``get_indagis_home()``, so each profile gets its own DB —
         never the default profile's file. Synchronous: used by ``_create_agent``
         (itself sync, and run in both loop and worker contexts). Request
         handlers use ``_ensure_session_db_async`` to keep the SQLite open off
@@ -2138,9 +2138,9 @@ class APIServerAdapter(BasePlatformAdapter):
         if self._session_db is not None:
             return self._session_db
         try:
-            from hermes_constants import get_hermes_home
+            from hermes_constants import get_indagis_home
 
-            return self._open_and_cache_session_db(get_hermes_home())
+            return self._open_and_cache_session_db(get_indagis_home())
         except Exception as e:
             logger.debug("SessionDB unavailable for API server: %s", e)
             return None
@@ -2157,9 +2157,9 @@ class APIServerAdapter(BasePlatformAdapter):
         if self._session_db is not None:
             return self._session_db
         try:
-            from hermes_constants import get_hermes_home
+            from hermes_constants import get_indagis_home
 
-            home = get_hermes_home()
+            home = get_indagis_home()
             key = str(home)
             cache = getattr(self, "_session_dbs", None)
             if cache is not None and cache.get(key) is not None:

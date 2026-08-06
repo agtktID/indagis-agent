@@ -13,7 +13,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 
 logger = logging.getLogger(__name__)
 
@@ -1009,7 +1009,7 @@ def get_host(
 
 def current_profile_key() -> str:
     """Return the canonical profile identity used for runtime isolation."""
-    home = get_hermes_home().expanduser()
+    home = get_indagis_home().expanduser()
     if not home.is_absolute():
         return str(home.resolve())
     raw = str(home)

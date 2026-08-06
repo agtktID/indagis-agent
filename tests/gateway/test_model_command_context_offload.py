@@ -70,8 +70,8 @@ def _runner_with_store(tmp_path, monkeypatch):
             provider_label="OpenRouter",
         ),
     )
-    monkeypatch.setattr("hermes_constants.get_hermes_home", lambda: hermes_home)
-    monkeypatch.setattr("hermes_cli.config.get_hermes_home", lambda: hermes_home)
+    monkeypatch.setattr("hermes_constants.get_indagis_home", lambda: hermes_home)
+    monkeypatch.setattr("hermes_cli.config.get_indagis_home", lambda: hermes_home)
     # No expensive-model confirmation detour.
     monkeypatch.setattr(
         "hermes_cli.model_cost_guard.expensive_model_warning",

@@ -13,86 +13,86 @@ from hermes_constants import (
     find_hermes_node_executable,
     find_node_executable,
     find_node_executable_on_path,
-    get_default_hermes_root,
-    get_hermes_dir,
-    get_hermes_home,
-    get_process_hermes_home,
+    get_default_indagis_root,
+    get_indagis_dir,
+    get_indagis_home,
+    get_process_indagis_home,
     heal_hermes_managed_node,
     hermes_managed_node_tree_present,
     iter_hermes_node_dirs,
     is_container,
     node_tool_runnable,
     parse_reasoning_effort,
-    reset_hermes_home_override,
+    reset_indagis_home_override,
     secure_parent_dir,
-    set_hermes_home_override,
+    set_indagis_home_override,
     with_hermes_node_path,
 )
 
 
 class TestGetDefaultHermesRoot:
-    """Tests for get_default_hermes_root() — Docker/custom deployment awareness."""
+    """Tests for get_default_indagis_root() — Docker/custom deployment awareness."""
 
     def test_no_hermes_home_returns_native(self, tmp_path, monkeypatch):
-        """When HERMES_HOME is not set, returns ~/.hermes."""
-        monkeypatch.delenv("HERMES_HOME", raising=False)
+        """When INDAGIS_HOME is not set, returns ~/.hermes."""
+        monkeypatch.delenv("INDAGIS_HOME", raising=False)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
-        assert get_default_hermes_root() == tmp_path / ".hermes"
+        assert get_default_indagis_root() == tmp_path / ".hermes"
 
 
 
 
 
     def test_docker_profile_active(self, tmp_path, monkeypatch):
-        """When a Docker profile is active (HERMES_HOME=<root>/profiles/<name>),
+        """When a Docker profile is active (INDAGIS_HOME=<root>/profiles/<name>),
         returns the Docker root, not the profile dir."""
         docker_root = tmp_path / "opt" / "data"
         profile = docker_root / "profiles" / "coder"
         profile.mkdir(parents=True)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
-        monkeypatch.setenv("HERMES_HOME", str(profile))
-        assert get_default_hermes_root() == docker_root
+        monkeypatch.setenv("INDAGIS_HOME", str(profile))
+        assert get_default_indagis_root() == docker_root
 
     def test_no_hermes_home_returns_localappdata_root_on_windows(self, tmp_path, monkeypatch):
         """Native Windows falls back to %LOCALAPPDATA%\\hermes, not ~/.hermes."""
         local_appdata = tmp_path / "LocalAppData"
-        monkeypatch.delenv("HERMES_HOME", raising=False)
+        monkeypatch.delenv("INDAGIS_HOME", raising=False)
         monkeypatch.setenv("LOCALAPPDATA", str(local_appdata))
         monkeypatch.setattr(Path, "home", lambda: tmp_path / "Home")
         monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
 
-        assert get_default_hermes_root() == local_appdata / "hermes"
+        assert get_default_indagis_root() == local_appdata / "hermes"
 
 
 
 class TestGetHermesHome:
-    """Tests for get_hermes_home() platform-aware fallback."""
+    """Tests for get_indagis_home() platform-aware fallback."""
 
     def test_windows_fallback_uses_localappdata(self, tmp_path, monkeypatch):
-        """When HERMES_HOME is unset on Windows, use %LOCALAPPDATA%\\hermes."""
+        """When INDAGIS_HOME is unset on Windows, use %LOCALAPPDATA%\\hermes."""
         local_appdata = tmp_path / "LocalAppData"
-        monkeypatch.delenv("HERMES_HOME", raising=False)
+        monkeypatch.delenv("INDAGIS_HOME", raising=False)
         monkeypatch.setenv("LOCALAPPDATA", str(local_appdata))
         monkeypatch.setattr(Path, "home", lambda: tmp_path / "Home")
         monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
         monkeypatch.setattr(hermes_constants, "_profile_fallback_warned", False)
 
-        assert get_hermes_home() == local_appdata / "hermes"
+        assert get_indagis_home() == local_appdata / "hermes"
 
 
 class TestGetProcessHermesHome:
-    """Tests for get_process_hermes_home() — process launch scope.
+    """Tests for get_process_indagis_home() — process launch scope.
 
     Contract: resolve only the process env / platform default, and never
     follow the context-local override that per-task profile scoping installs
-    via set_hermes_home_override().
+    via set_indagis_home_override().
     """
 
     def test_env_set_returns_that_path(self, tmp_path, monkeypatch):
         home = tmp_path / "launch-home"
-        monkeypatch.setenv("HERMES_HOME", str(home))
-        assert get_process_hermes_home() == home
+        monkeypatch.setenv("INDAGIS_HOME", str(home))
+        assert get_process_indagis_home() == home
 
 
 
@@ -105,7 +105,7 @@ class TestHermesManagedNode:
         node_dir.mkdir(parents=True)
         bin_dir.mkdir()
         monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
-        monkeypatch.setenv("HERMES_HOME", str(home))
+        monkeypatch.setenv("INDAGIS_HOME", str(home))
 
         assert iter_hermes_node_dirs() == [node_dir, bin_dir]
 
@@ -116,7 +116,7 @@ class TestHermesManagedNode:
         npm_cmd = node_dir / "npm.cmd"
         npm_cmd.write_text("@echo off\n")
         monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
-        monkeypatch.setenv("HERMES_HOME", str(home))
+        monkeypatch.setenv("INDAGIS_HOME", str(home))
         monkeypatch.setattr(hermes_constants, "node_tool_runnable", lambda path: True)
 
         assert find_hermes_node_executable("npm") == str(npm_cmd)
@@ -133,7 +133,7 @@ class TestHermesManagedNode:
         path_npm = bin_dir / "npm.cmd"
         path_npm.write_text("@echo off\n")
         monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
-        monkeypatch.setenv("HERMES_HOME", str(home))
+        monkeypatch.setenv("INDAGIS_HOME", str(home))
         monkeypatch.setenv("PATH", str(bin_dir))
         monkeypatch.setattr(hermes_constants, "_managed_node_heal_attempted", False)
         monkeypatch.setattr(hermes_constants, "heal_hermes_managed_node", lambda: False)
@@ -178,7 +178,7 @@ class TestNodeToolRunnable:
         system_bin.mkdir()
         self._stub(system_bin, "npm", "#!/bin/sh\necho '11.10.0'\nexit 0\n")
 
-        monkeypatch.setenv("HERMES_HOME", str(profile_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(profile_home))
         monkeypatch.setenv("PATH", str(system_bin))
         monkeypatch.setattr(hermes_constants, "_managed_node_heal_attempted", False)
 
@@ -206,7 +206,7 @@ class TestNodeToolRunnable:
         system_bin.mkdir()
         self._stub(system_bin, "npm", "#!/bin/sh\necho '11.10.0'\nexit 0\n")
 
-        monkeypatch.setenv("HERMES_HOME", str(profile_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(profile_home))
         monkeypatch.setenv("PATH", str(system_bin))
         monkeypatch.setattr(hermes_constants, "_managed_node_heal_attempted", False)
         monkeypatch.setattr(hermes_constants, "heal_hermes_managed_node", lambda: False)
@@ -224,7 +224,7 @@ class TestNodeToolRunnable:
         )
         heal_called = {"value": False}
 
-        monkeypatch.setenv("HERMES_HOME", str(profile_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(profile_home))
         monkeypatch.setenv("PATH", "")
         monkeypatch.setattr(hermes_constants, "_managed_node_heal_attempted", False)
 
@@ -250,7 +250,7 @@ class TestNodeToolRunnable:
             managed_bin, "node", f"#!/bin/sh\necho 'v{target - 1}.20.0'\nexit 0\n"
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(profile_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(profile_home))
         monkeypatch.setenv("PATH", "")
         monkeypatch.setattr(hermes_constants, "_managed_node_heal_attempted", False)
         monkeypatch.setattr(hermes_constants, "heal_hermes_managed_node", lambda: False)
@@ -267,7 +267,7 @@ class TestNodeToolRunnable:
             managed_bin, "node", f"#!/bin/sh\necho 'v{target}.5.1'\nexit 0\n"
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(profile_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(profile_home))
         monkeypatch.setenv("PATH", "")
         monkeypatch.setattr(hermes_constants, "_managed_node_heal_attempted", False)
 
@@ -579,7 +579,7 @@ class TestAgentBrowserRunnable:
 
 
 class TestGetHermesDir:
-    """Tests for ``get_hermes_dir(new_subpath, old_name)``.
+    """Tests for ``get_indagis_dir(new_subpath, old_name)``.
 
     Contract: prefer the legacy ``<old_name>/`` location, but only when
     it has content. An empty legacy stub must fall through to the new
@@ -588,11 +588,11 @@ class TestGetHermesDir:
     """
 
     def _set_home(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
 
     def test_neither_exists_returns_new(self, tmp_path, monkeypatch):
         self._set_home(tmp_path, monkeypatch)
-        result = get_hermes_dir("platforms/pairing", "pairing")
+        result = get_indagis_dir("platforms/pairing", "pairing")
         assert result == tmp_path / "platforms/pairing"
 
 
@@ -608,7 +608,7 @@ class TestGetHermesDir:
         self._set_home(tmp_path, monkeypatch)
         legacy = tmp_path / "image_cache"
         legacy.write_bytes(b"sentinel")
-        result = get_hermes_dir("cache/images", "image_cache")
+        result = get_indagis_dir("cache/images", "image_cache")
         assert result == legacy
 
 
@@ -628,7 +628,7 @@ class TestGetHermesDir:
         new = tmp_path / "platforms" / "pairing"
         new.mkdir(parents=True)
         (new / "discord-approved.json").write_text("[]")
-        result = get_hermes_dir("platforms/pairing", "pairing")
+        result = get_indagis_dir("platforms/pairing", "pairing")
         assert result == new
 
     def test_symlink_to_populated_dir_returns_legacy(self, tmp_path, monkeypatch):
@@ -639,7 +639,7 @@ class TestGetHermesDir:
         (real / "cached.png").write_bytes(b"x")
         legacy = tmp_path / "image_cache"
         legacy.symlink_to(real)
-        result = get_hermes_dir("cache/images", "image_cache")
+        result = get_indagis_dir("cache/images", "image_cache")
         assert result == legacy
 
 

@@ -138,7 +138,7 @@ def _check_dispatcher_presence(
 ) -> tuple[bool, str]:
     """Return ``(running, message)``.
 
-    - ``running=True``: a gateway is alive for this HERMES_HOME and its
+    - ``running=True``: a gateway is alive for this INDAGIS_HOME and its
       config has ``kanban.dispatch_in_gateway`` on (default). Message
       is a short status line.
     - ``running=False``: either no gateway is running, or the gateway
@@ -153,7 +153,7 @@ def _check_dispatcher_presence(
 
     ``hermes_home`` scopes the probe to a named profile's directory. The
     dashboard plugin API passes it because the dashboard backend process can
-    be running under a different HERMES_HOME than the profile the request
+    be running under a different INDAGIS_HOME than the profile the request
     targets, which otherwise produced a "no gateway is running" warning
     against a perfectly healthy profile gateway (#71211). CLI callers leave
     it ``None`` and keep the existing process-level behavior.
@@ -1025,7 +1025,7 @@ def kanban_command(args: argparse.Namespace) -> int:
     # is idempotent, so running it every invocation is cheap (one
     # SELECT against sqlite_master when tables already exist) and
     # prevents "no such table: tasks" on first use from a fresh
-    # HERMES_HOME. Previously only `init` and `daemon` triggered
+    # INDAGIS_HOME. Previously only `init` and `daemon` triggered
     # schema creation; `create` / `list` / every other command would
     # error out on a fresh install.
     with board_scope:
@@ -1183,7 +1183,7 @@ def _dispatch_boards(args: argparse.Namespace) -> int:
     Boards management is deliberately separate from the task-level
     commands: it operates on the filesystem (board directories,
     ``current`` pointer, ``board.json``), not on the per-board SQLite
-    DB, so a fresh HERMES_HOME that has never called ``kanban init``
+    DB, so a fresh INDAGIS_HOME that has never called ``kanban init``
     can still run ``boards create`` / ``boards list``.
     """
     sub = getattr(args, "boards_action", None) or "list"

@@ -33,7 +33,7 @@ from hermes_cli.kanban import run_slash
 def kanban_home(tmp_path, monkeypatch):
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     # Existing crash-detection tests pre-date the grace window; pin to 0
     # so they keep their immediate-reclaim semantics.
     monkeypatch.setenv("HERMES_KANBAN_CRASH_GRACE_SECONDS", "0")
@@ -341,7 +341,7 @@ def test_migration_renames_legacy_event_kinds(tmp_path, monkeypatch):
     in place on init_db()."""
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     # Init fresh.
     kb.init_db()
@@ -611,7 +611,7 @@ def test_migration_backfill_idempotent_under_re_run(tmp_path, monkeypatch):
     dispatcher is simultaneously claiming."""
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
     # Fresh DB, one task left in 'running' with a claim but no run row.

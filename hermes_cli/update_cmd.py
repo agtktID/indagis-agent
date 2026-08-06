@@ -36,7 +36,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from hermes_cli.config import get_hermes_home
+from hermes_cli.config import get_indagis_home
 from hermes_constants import venv_python_path
 
 logger = logging.getLogger(__name__)
@@ -261,9 +261,9 @@ def _gateway_prompt(prompt_text: str, default: str = "", timeout: float = 300.0)
     """
     import json as _json
     import uuid as _uuid
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    home = get_hermes_home()
+    home = get_indagis_home()
     prompt_path = home / ".update_prompt.json"
     response_path = home / ".update_response"
 
@@ -395,11 +395,11 @@ def _print_fts_optimize_available_notice() -> None:
         return
 
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_state import SessionDB
     except Exception:
         return
-    db_path = get_hermes_home() / "state.db"
+    db_path = get_indagis_home() / "state.db"
     if not db_path.exists():
         return
     try:
@@ -1006,7 +1006,7 @@ def _update_via_zip(args):
     try:
         from hermes_cli.backup import _quick_snapshot_root, verify_sqlite_integrity
 
-        _state_path = get_hermes_home() / "state.db"
+        _state_path = get_indagis_home() / "state.db"
         if _state_path.exists():
             _state_ok = verify_sqlite_integrity(
                 _state_path, check_header=True, run_pragma=True
@@ -1017,7 +1017,7 @@ def _update_via_zip(args):
                     "⚠ state.db is corrupted after update: "
                     + _state_ok.get("message", "unknown error")
                 )
-                _snap_root = _quick_snapshot_root(get_hermes_home())
+                _snap_root = _quick_snapshot_root(get_indagis_home())
                 if _snap_root.exists():
                     _snap_dirs = sorted(
                         (d for d in _snap_root.iterdir() if d.is_dir()),
@@ -1491,16 +1491,16 @@ def _count_commits_between(git_cmd: list[str], cwd: Path, base: str, head: str) 
 
 def _should_skip_upstream_prompt() -> bool:
     """Check if user previously declined to add upstream."""
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    return (get_hermes_home() / SKIP_UPSTREAM_PROMPT_FILE).exists()
+    return (get_indagis_home() / SKIP_UPSTREAM_PROMPT_FILE).exists()
 
 def _mark_skip_upstream_prompt():
     """Create marker file to skip future upstream prompts."""
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        (get_hermes_home() / SKIP_UPSTREAM_PROMPT_FILE).touch()
+        (get_indagis_home() / SKIP_UPSTREAM_PROMPT_FILE).touch()
     except Exception:
         pass
 
@@ -1644,9 +1644,9 @@ def _invalidate_update_cache():
     """
     homes = []
     # Default profile home (Docker-aware — uses /opt/data in Docker)
-    from hermes_constants import get_default_hermes_root
+    from hermes_constants import get_default_indagis_root
 
-    default_home = get_default_hermes_root()
+    default_home = get_default_indagis_root()
     homes.append(default_home)
     # Named profiles under <root>/profiles/
     profiles_root = default_home / "profiles"
@@ -1920,7 +1920,7 @@ def _ensure_uv_for_termux(pip_cmd: list[str]) -> str | None:
     """Best-effort uv bootstrap on Termux for faster update installs.
 
     The normal path (``ensure_uv()`` in managed_uv) installs the managed
-    standalone uv into ``$HERMES_HOME/bin/uv``, but on Termux the official
+    standalone uv into ``$INDAGIS_HOME/bin/uv``, but on Termux the official
     installer may not work (glibc vs bionic).  Prefer a uv already on PATH
     (e.g. ``pkg install uv``); only if there is none do we fall back to a
     wheel-only ``pip install uv`` so we never source-build the Rust crate.
@@ -2073,12 +2073,12 @@ def _update_node_dependencies() -> list[str]:
             return failed
         return []
 
-    from hermes_constants import get_default_hermes_root
+    from hermes_constants import get_default_indagis_root
 
     # This cache describes PROJECT_ROOT/node_modules, which is shared by every
     # Hermes profile using this checkout. Keep one per-checkout cache under the
     # shared Hermes root rather than rerunning npm once per named profile.
-    shared_hermes_root = get_default_hermes_root()
+    shared_hermes_root = get_default_indagis_root()
     if not _m()._npm_lockfile_changed(shared_hermes_root):
         logger.info("npm lockfile unchanged, skipping npm install")
         return []
@@ -2558,7 +2558,7 @@ def _run_pre_update_backup(args) -> Optional[str]:
       under ``state-snapshots/``. Files over 1 GiB are skipped with a
       warning so a bloated state.db can never stall the update
       (issues #15733, #34600 are the reason this safety net exists).
-    - ``full``  — the quick snapshot PLUS a full zip of HERMES_HOME under
+    - ``full``  — the quick snapshot PLUS a full zip of INDAGIS_HOME under
       ``backups/`` (restorable via ``hermes import``; the #48200 wrong-path
       wipe is the reason this level exists).
 
@@ -2588,9 +2588,9 @@ def _run_pre_update_backup(args) -> Optional[str]:
         )
 
         # NOTE: this function later does `from hermes_constants import
-        # get_hermes_home`, which makes the name function-local — the
+        # get_indagis_home`, which makes the name function-local — the
         # module-level import is shadowed and unbound here. Alias explicitly.
-        from hermes_cli.config import get_hermes_home as _get_home
+        from hermes_cli.config import get_indagis_home as _get_home
 
         snapshot_id = create_quick_snapshot(
             label="pre-update",
@@ -2699,13 +2699,13 @@ def _run_pre_update_backup(args) -> Optional[str]:
         size_bytes /= 1024
         size_str = f"{size_bytes:.1f} {unit}"
 
-    # Render path using display_hermes_home so the user sees ~/.hermes/...
+    # Render path using display_indagis_home so the user sees ~/.hermes/...
     try:
-        from hermes_constants import get_hermes_home, display_hermes_home
+        from hermes_constants import get_indagis_home, display_indagis_home
 
-        home = get_hermes_home()
+        home = get_indagis_home()
         try:
-            display_path = f"{display_hermes_home()}/{out_path.relative_to(home)}"
+            display_path = f"{display_indagis_home()}/{out_path.relative_to(home)}"
         except ValueError:
             display_path = str(out_path)
     except Exception:
@@ -4063,7 +4063,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
 
         # Clear stale .pyc bytecode cache — prevents ImportError on gateway
         # restart when updated source references names that didn't exist in
-        # the old bytecode (e.g. get_hermes_home added to hermes_constants).
+        # the old bytecode (e.g. get_indagis_home added to hermes_constants).
         removed = _m()._clear_bytecode_cache(_m().PROJECT_ROOT)
         if removed:
             print(
@@ -4255,7 +4255,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
                     tail = "\n".join((build_result.stdout or "").strip().splitlines()[-15:])
                     if tail:
                         print(tail)
-                    from hermes_constants import display_hermes_home as _dhh
+                    from hermes_constants import display_indagis_home as _dhh
                     print(f"  Full build log: {_dhh()}/logs/update.log")
                 else:
                     print("  ✓ Desktop app up to date")
@@ -4271,7 +4271,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
         try:
             from hermes_cli.backup import _quick_snapshot_root, verify_sqlite_integrity
 
-            _state_path = get_hermes_home() / "state.db"
+            _state_path = get_indagis_home() / "state.db"
             if _state_path.exists():
                 _state_ok = verify_sqlite_integrity(
                     _state_path,
@@ -4292,7 +4292,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
                     _pre_snap_id = pre_update_snapshot_id
                     if _pre_snap_id:
                         _snap_state = (
-                            _quick_snapshot_root(get_hermes_home())
+                            _quick_snapshot_root(get_indagis_home())
                             / _pre_snap_id
                             / "state.db"
                         )
@@ -4386,10 +4386,10 @@ def _cmd_update_impl(args, gateway_mode: bool):
             logger.debug("Skills sync during update failed: %s", e)
 
         # Sync bundled skills to all profiles (including the active one).
-        # seed_profile_skills() uses subprocess with an explicit HERMES_HOME so
-        # it is not affected by sync_skills()'s module-level HERMES_HOME cache,
+        # seed_profile_skills() uses subprocess with an explicit INDAGIS_HOME so
+        # it is not affected by sync_skills()'s module-level INDAGIS_HOME cache,
         # which means the active profile is reliably synced regardless of whether
-        # the caller's HERMES_HOME env var points at the default or a named profile.
+        # the caller's INDAGIS_HOME env var points at the default or a named profile.
         try:
             from hermes_cli.profiles import (
                 list_profiles,
@@ -4709,7 +4709,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
         # before we attempt the restart — ensures the new gateway sees it
         # regardless of how we die.
         if gateway_mode:
-            _exit_code_path = get_hermes_home() / ".update_exit_code"
+            _exit_code_path = get_indagis_home() / ".update_exit_code"
             try:
                 _exit_code_path.write_text("0", encoding="utf-8")
             except OSError:
@@ -5322,7 +5322,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
             if failed_or_stale_units:
                 gateway_fleet_restart_incomplete = True
                 if gateway_mode:
-                    _exit_code_path = get_hermes_home() / ".update_exit_code"
+                    _exit_code_path = get_indagis_home() / ".update_exit_code"
                     try:
                         _exit_code_path.write_text("1", encoding="utf-8")
                     except OSError:

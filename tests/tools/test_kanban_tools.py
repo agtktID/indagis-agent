@@ -25,7 +25,7 @@ def test_kanban_tools_hidden_without_env_var(monkeypatch, tmp_path):
     monkeypatch.delenv("HERMES_KANBAN_TASK", raising=False)
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
 
     import tools.kanban_tools  # ensure registered
     from tools.registry import invalidate_check_fn_cache, registry
@@ -46,11 +46,11 @@ def test_kanban_tools_hidden_without_env_var(monkeypatch, tmp_path):
 
 @pytest.fixture
 def worker_env(monkeypatch, tmp_path):
-    """Simulate being a worker: HERMES_HOME isolated, HERMES_KANBAN_TASK set
+    """Simulate being a worker: INDAGIS_HOME isolated, HERMES_KANBAN_TASK set
     after we've created the task."""
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setenv("HERMES_PROFILE", "test-worker")
     monkeypatch.delenv("HERMES_SESSION_ID", raising=False)
     from pathlib import Path as _Path
@@ -167,10 +167,10 @@ def test_complete_goal_mode_rejected_by_judge(monkeypatch, tmp_path):
     from hermes_cli import kanban_db as kb
     from tools import kanban_tools as kt
 
-    # Set up isolated HERMES_HOME
+    # Set up isolated INDAGIS_HOME
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setenv("HERMES_PROFILE", "test-worker")
     monkeypatch.delenv("HERMES_SESSION_ID", raising=False)
     monkeypatch.setattr(_Path, "home", lambda: tmp_path)
@@ -229,14 +229,14 @@ def test_block_happy_path(worker_env):
 
 
 def _make_goal_mode_worker_env(monkeypatch, tmp_path):
-    """Set up an isolated HERMES_HOME with one claimed goal_mode task,
+    """Set up an isolated INDAGIS_HOME with one claimed goal_mode task,
     matching the pattern used by the kanban_complete judge gate tests."""
     from pathlib import Path as _Path
     from hermes_cli import kanban_db as kb
 
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setenv("HERMES_PROFILE", "test-worker")
     monkeypatch.delenv("HERMES_SESSION_ID", raising=False)
     monkeypatch.setattr(_Path, "home", lambda: tmp_path)
@@ -457,7 +457,7 @@ def test_unblock_with_pending_parents_returns_todo(monkeypatch, tmp_path):
     monkeypatch.delenv("HERMES_KANBAN_TASK", raising=False)
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setenv("HERMES_PROFILE", "orchestrator")
     from pathlib import Path as _Path
     monkeypatch.setattr(_Path, "home", lambda: tmp_path)
@@ -666,7 +666,7 @@ def test_orchestrator_complete_any_task_allowed(monkeypatch, tmp_path):
     monkeypatch.delenv("HERMES_KANBAN_TASK", raising=False)
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     from pathlib import Path as _P
     monkeypatch.setattr(_P, "home", lambda: tmp_path)
 
@@ -710,7 +710,7 @@ def multi_board_env(monkeypatch, tmp_path):
     """
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     # Make sure neither HERMES_KANBAN_DB nor HERMES_KANBAN_BOARD pin a
     # board — the test is specifically about the per-call override.
     monkeypatch.delenv("HERMES_KANBAN_DB", raising=False)
@@ -823,7 +823,7 @@ def test_create_respects_auto_subscribe_on_create_false(monkeypatch, worker_env,
     (home / "config.yaml").write_text(
         "kanban:\n  auto_subscribe_on_create: false\n"
     )
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setenv("HERMES_SESSION_PLATFORM", "discord")
     monkeypatch.setenv("HERMES_SESSION_CHAT_ID", "channel-1")
 

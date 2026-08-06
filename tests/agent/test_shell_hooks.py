@@ -27,7 +27,7 @@ def _write_script(tmp_path: Path, name: str, body: str) -> Path:
 
 
 def _allowlist_pair(monkeypatch, tmp_path, event: str, command: str) -> None:
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "hermes_home"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "hermes_home"))
     shell_hooks._record_approval(event, command)
 
 
@@ -179,7 +179,7 @@ class TestCallbackSubprocess:
             'printf \'{"decision": "block", "reason": "blocked-by-shell"}\\n\'\n',
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / "home"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "home"))
         monkeypatch.setenv("HERMES_ACCEPT_HOOKS", "1")
 
         # Fresh manager
@@ -302,7 +302,7 @@ class TestIdempotentRegistration:
 
         script = _write_script(tmp_path, "h.sh",
                                "#!/usr/bin/env bash\nprintf '{}\\n'\n")
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / "home"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "home"))
         monkeypatch.setenv("HERMES_ACCEPT_HOOKS", "1")
 
         plugins._plugin_manager = plugins.PluginManager()
@@ -326,7 +326,7 @@ class TestIdempotentRegistration:
 
         script = _write_script(tmp_path, "h.sh",
                                "#!/usr/bin/env bash\nprintf '{}\\n'\n")
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / "home"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "home"))
         monkeypatch.setenv("HERMES_ACCEPT_HOOKS", "1")
 
         plugins._plugin_manager = plugins.PluginManager()
@@ -365,7 +365,7 @@ class TestAllowlistConcurrency:
         import threading
 
         monkeypatch.setattr(shell_hooks, "fcntl", None)
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / "home"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "home"))
 
         completed = threading.Event()
         errors: list = []
@@ -400,7 +400,7 @@ class TestAllowlistConcurrency:
     def test_save_allowlist_uses_unique_tmp_paths(self, tmp_path, monkeypatch):
         """Two save_allowlist calls in flight must use distinct tmp files
         so the loser's os.replace does not ENOENT on the winner's sweep."""
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / "home"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "home"))
         p = shell_hooks.allowlist_path()
         p.parent.mkdir(parents=True, exist_ok=True)
 

@@ -105,7 +105,7 @@ class TestCombinedGuards:
     """Both guards should work independently without interference."""
 
     def test_env_guard_works_regardless_of_hermes_home(self, tmp_path):
-        """The env basename guard does not depend on HERMES_HOME resolution."""
+        """The env basename guard does not depend on INDAGIS_HOME resolution."""
         hermes_home = tmp_path / ".hermes"
         hermes_home.mkdir()
 

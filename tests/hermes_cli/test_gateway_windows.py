@@ -57,7 +57,7 @@ def test_build_gateway_argv_keeps_venv_console_python_for_uv_venv(monkeypatch, t
     monkeypatch.setattr(gateway, "PROJECT_ROOT", project)
     monkeypatch.setattr(gateway, "get_python_path", lambda: str(venv_python))
     monkeypatch.setattr(gateway, "_profile_arg", lambda hermes_home: "")
-    monkeypatch.setattr("hermes_cli.config.get_hermes_home", lambda: str(hermes_home))
+    monkeypatch.setattr("hermes_cli.config.get_indagis_home", lambda: str(hermes_home))
 
     argv, cwd, env_overlay = gateway_windows._build_gateway_argv()
 
@@ -71,13 +71,13 @@ class TestStableWindowsGatewayWorkingDir:
     def test_stable_gateway_working_dir_uses_hermes_home(self, tmp_path, monkeypatch):
         home = tmp_path / ".hermes"
         home.mkdir()
-        monkeypatch.setattr("hermes_cli.config.get_hermes_home", lambda: home)
+        monkeypatch.setattr("hermes_cli.config.get_indagis_home", lambda: home)
         assert gateway_windows._stable_gateway_working_dir(tmp_path / "checkout") == str(home.resolve())
 
     def test_stable_gateway_working_dir_falls_back_to_project_root(self, tmp_path, monkeypatch):
         missing = tmp_path / "missing" / ".hermes"
         project = tmp_path / "checkout"
-        monkeypatch.setattr("hermes_cli.config.get_hermes_home", lambda: missing)
+        monkeypatch.setattr("hermes_cli.config.get_indagis_home", lambda: missing)
         assert gateway_windows._stable_gateway_working_dir(project) == str(project)
 
 
@@ -217,7 +217,7 @@ def test_gateway_vbs_script_is_console_less(monkeypatch):
     assert "hermes_cli.main" in content
     assert "gateway run" in content
     assert ", 0, False" in content  # hidden window, detached/async
-    for var in ("HERMES_HOME", "PYTHONIOENCODING", "HERMES_GATEWAY_DETACHED", "VIRTUAL_ENV", "PYTHONPATH"):
+    for var in ("INDAGIS_HOME", "PYTHONIOENCODING", "HERMES_GATEWAY_DETACHED", "VIRTUAL_ENV", "PYTHONPATH"):
         assert var in content
     assert "--profile" in content and "work" in content
     assert content.endswith("\r\n")

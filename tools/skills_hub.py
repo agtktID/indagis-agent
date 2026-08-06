@@ -25,7 +25,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from hermes_cli._subprocess_compat import windows_hide_flags
 from agent.skill_utils import is_excluded_skill_path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -61,7 +61,7 @@ def _override(name: str):
 
 
 def _hermes_home() -> Path:
-    return get_hermes_home()
+    return get_indagis_home()
 
 
 def _skills_dir() -> Path:
@@ -100,7 +100,7 @@ def _index_cache_dir() -> Path:
 
 
 _DYNAMIC_PATH_RESOLVERS = {
-    "HERMES_HOME": _hermes_home,
+    "INDAGIS_HOME": _hermes_home,
     "SKILLS_DIR": _skills_dir,
     "HUB_DIR": _hub_dir,
     "LOCK_FILE": _lock_file,

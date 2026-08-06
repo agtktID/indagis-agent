@@ -442,7 +442,7 @@ class TestInstallArchiveMemberValidation:
         archive, checksums = self._write_archive(tmp_path, member, payload)
 
         hermes_home = tmp_path / "hermes-home"
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         with patch("tools.tirith_security._download_file",
                    side_effect=self._download_side_effect(archive, checksums)):
             path, reason = _install_tirith(log_failures=False)
@@ -469,7 +469,7 @@ class TestInstallArchiveMemberValidation:
         archive, checksums = self._write_archive(tmp_path, member)
 
         hermes_home = tmp_path / "hermes-home"
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         with patch("tools.tirith_security._download_file",
                    side_effect=self._download_side_effect(archive, checksums)):
             path, reason = _install_tirith(log_failures=False)
@@ -561,16 +561,16 @@ class TestDiskFailureMarker:
 
 
 # ---------------------------------------------------------------------------
-# HERMES_HOME isolation
+# INDAGIS_HOME isolation
 # ---------------------------------------------------------------------------
 
 class TestHermesHomeIsolation:
     def test_hermes_bin_dir_respects_hermes_home(self):
-        """_hermes_bin_dir must use HERMES_HOME, not hardcoded ~/.hermes."""
+        """_hermes_bin_dir must use INDAGIS_HOME, not hardcoded ~/.hermes."""
         from tools.tirith_security import _hermes_bin_dir
         import tempfile
         tmpdir = tempfile.mkdtemp()
-        with patch.dict(os.environ, {"HERMES_HOME": tmpdir}):
+        with patch.dict(os.environ, {"INDAGIS_HOME": tmpdir}):
             result = _hermes_bin_dir()
         assert result == os.path.join(tmpdir, "bin")
         assert os.path.isdir(result)

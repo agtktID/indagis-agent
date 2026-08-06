@@ -549,7 +549,7 @@ sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))
 
 from gateway.config import Platform, PlatformConfig
 from gateway.session import SessionSource, build_session_key
-from hermes_constants import get_default_hermes_root, get_hermes_dir, get_hermes_home
+from hermes_constants import get_default_indagis_root, get_indagis_dir, get_indagis_home
 
 if TYPE_CHECKING:
     from agent.display import ToolPreview
@@ -694,13 +694,13 @@ async def _ssrf_redirect_guard(response):
 
 # Import-time default. Tests monkeypatch this; the get_*_cache_dir() getters
 # re-resolve per call so the active profile override is honored.
-IMAGE_CACHE_DIR = get_hermes_dir("cache/images", "image_cache")
+IMAGE_CACHE_DIR = get_indagis_dir("cache/images", "image_cache")
 
 
 def _resolve_cache_dir(constant_name: str, new_subpath: str, old_name: str) -> Path:
-    """Resolve fresh via get_hermes_dir (active profile), unless a test has
+    """Resolve fresh via get_indagis_dir (active profile), unless a test has
     monkeypatched the constant away from its import-time default."""
-    fresh = get_hermes_dir(new_subpath, old_name)
+    fresh = get_indagis_dir(new_subpath, old_name)
     current = globals().get(constant_name)
     default = _CACHE_DIR_IMPORT_DEFAULTS.get(constant_name)
     if current is not None and default is not None and current != default:
@@ -951,7 +951,7 @@ def cleanup_image_cache(max_age_hours: int = 24) -> int:
 # here so the STT tool (OpenAI Whisper) can transcribe them from local files.
 # ---------------------------------------------------------------------------
 
-AUDIO_CACHE_DIR = get_hermes_dir("cache/audio", "audio_cache")
+AUDIO_CACHE_DIR = get_indagis_dir("cache/audio", "audio_cache")
 
 
 def get_audio_cache_dir() -> Path:
@@ -1072,7 +1072,7 @@ def cleanup_audio_cache(max_age_hours: int = 24) -> int:
 # here so the agent can reference them by local file path.
 # ---------------------------------------------------------------------------
 
-VIDEO_CACHE_DIR = get_hermes_dir("cache/videos", "video_cache")
+VIDEO_CACHE_DIR = get_indagis_dir("cache/videos", "video_cache")
 
 SUPPORTED_VIDEO_TYPES = {
     ".mp4": "video/mp4",
@@ -1116,8 +1116,8 @@ def cleanup_video_cache(max_age_hours: int = 24) -> int:
 # here so the agent can reference them by local file path.
 # ---------------------------------------------------------------------------
 
-DOCUMENT_CACHE_DIR = get_hermes_dir("cache/documents", "document_cache")
-SCREENSHOT_CACHE_DIR = get_hermes_dir("cache/screenshots", "browser_screenshots")
+DOCUMENT_CACHE_DIR = get_indagis_dir("cache/documents", "document_cache")
+SCREENSHOT_CACHE_DIR = get_indagis_dir("cache/screenshots", "browser_screenshots")
 
 
 def get_screenshot_cache_dir() -> Path:
@@ -1146,8 +1146,8 @@ _CACHE_DIR_IMPORT_DEFAULTS = {
     "SCREENSHOT_CACHE_DIR": SCREENSHOT_CACHE_DIR,
 }
 
-_HERMES_HOME = get_hermes_home()
-_HERMES_ROOT = get_default_hermes_root()
+_HERMES_HOME = get_indagis_home()
+_HERMES_ROOT = get_default_indagis_root()
 MEDIA_DELIVERY_ALLOW_DIRS_ENV = "HERMES_MEDIA_ALLOW_DIRS"
 MEDIA_DELIVERY_TRUST_RECENT_ENV = "HERMES_MEDIA_TRUST_RECENT_FILES"
 MEDIA_DELIVERY_TRUST_RECENT_SECONDS_ENV = "HERMES_MEDIA_TRUST_RECENT_SECONDS"
@@ -1238,12 +1238,12 @@ def _profile_cache_roots() -> List[Path]:
 
     Profile gateways write generated artifacts to
     ``<root>/profiles/<name>/cache/{images,audio,...}``. The static safe-roots
-    list only covers the *active* HERMES_HOME's cache, so a gateway running at
-    the root (e.g. ``HERMES_HOME=/opt/data``) while the model emits a
+    list only covers the *active* INDAGIS_HOME's cache, so a gateway running at
+    the root (e.g. ``INDAGIS_HOME=/opt/data``) while the model emits a
     profile-scoped path silently fails delivery. Enumerated dynamically at
     check time so profiles created after startup are covered, and so the
     resolved profile path is allowlisted *before* the ``/root`` system denylist
-    is consulted (which otherwise wins when HERMES_HOME is symlinked under a
+    is consulted (which otherwise wins when INDAGIS_HOME is symlinked under a
     denied prefix and $HOME is not that prefix). See issue #31733.
     """
     roots: List[Path] = []
@@ -1342,7 +1342,7 @@ def _media_delivery_denied_paths() -> List[Path]:
     # validate_media_delivery_path, so generated media still delivers).
     #
     # These are the per-file credential / secret stores that live at the
-    # HERMES_HOME root. The set mirrors the canonical read guard in
+    # INDAGIS_HOME root. The set mirrors the canonical read guard in
     # agent/file_safety.py (get_read_block_error / build_write_denied_*) so the
     # delivery (read/exfil) side can't trail the write side: a credential the
     # agent is forbidden to write or read must also never be auto-attached to a
@@ -2765,7 +2765,7 @@ class BasePlatformAdapter(ABC):
         self._fatal_error_message: Optional[str] = None
         self._fatal_error_retryable = True
         self._fatal_error_handler: Optional[Callable[["BasePlatformAdapter"], Awaitable[None] | None]] = None
-        # Cross-HERMES_HOME token takeover is armed by GatewayRunner only for
+        # Cross-INDAGIS_HOME token takeover is armed by GatewayRunner only for
         # an adapter's initial connect during an explicit ``gateway run
         # --replace`` startup.  Ordinary starts and every reconnect fail safe
         # through the existing retryable conflict path.
@@ -3217,7 +3217,7 @@ class BasePlatformAdapter(ABC):
     def _acquire_platform_lock(self, scope: str, identity: str, resource_desc: str) -> bool:
         """Acquire a scoped lock for this adapter. Returns True on success.
 
-        A live cross-HERMES_HOME holder may be replaced only when the runner
+        A live cross-INDAGIS_HOME holder may be replaced only when the runner
         explicitly arms this adapter for its initial ``--replace`` connect.
         The status module validates PID/start-time/home ownership, places the
         marker in the target's home, and performs the bounded termination.
@@ -6604,7 +6604,7 @@ class BasePlatformAdapter(ABC):
         resolves the matching profile from guild/chat/thread and stamps it on
         ``source.profile``. Downstream code (``_resolve_profile_home_for_source``
         in run.py) reads that field to enter ``_profile_runtime_scope`` for
-        per-profile HERMES_HOME isolation.
+        per-profile INDAGIS_HOME isolation.
         """
         # Normalize empty topic to None
         if chat_topic is not None and not chat_topic.strip():

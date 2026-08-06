@@ -45,9 +45,9 @@ def has_xai_credentials() -> bool:
         if (get_secret("XAI_API_KEY", "") or "").strip():
             return True
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        auth_path = get_hermes_home() / "auth.json"
+        auth_path = get_indagis_home() / "auth.json"
         if not auth_path.exists():
             return False
         store = json.loads(auth_path.read_text(encoding="utf-8"))
@@ -241,9 +241,9 @@ def maybe_mark_xai_storage_notice_seen(section_name: str) -> Optional[str]:
     if not notice:
         return None
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        marker_dir = get_hermes_home() / "state"
+        marker_dir = get_indagis_home() / "state"
         marker_dir.mkdir(parents=True, exist_ok=True)
         marker = marker_dir / f"{section_name}_xai_storage_notice_seen"
         if marker.exists():

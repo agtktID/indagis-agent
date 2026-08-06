@@ -21,7 +21,7 @@ import subprocess
 from pathlib import Path
 from urllib.parse import urlparse
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from typing import Any, Dict, List, Optional, Tuple
 from utils import base_url_host_matches, base_url_hostname, normalize_proxy_env_vars
 from agent.secret_scope import get_secret as _get_secret
@@ -1482,7 +1482,7 @@ _OAUTH_TOKEN_USER_AGENT = "axios/1.7.9"
 _OAUTH_REDIRECT_URI = "https://console.anthropic.com/oauth/code/callback"
 _OAUTH_SCOPES = "org:create_api_key user:profile user:inference"
 def _get_hermes_oauth_file() -> Path:
-    return get_hermes_home() / ".anthropic_oauth.json"
+    return get_indagis_home() / ".anthropic_oauth.json"
 
 
 def _generate_pkce() -> tuple:

@@ -12,7 +12,7 @@ from agent.secret_scope import (
     set_multiplex_active,
     set_secret_scope,
 )
-from hermes_constants import reset_hermes_home_override, set_hermes_home_override
+from hermes_constants import reset_indagis_home_override, set_indagis_home_override
 from gateway.config import (
     ChannelOverride,
     GatewayConfig,
@@ -299,7 +299,7 @@ class TestLoadGatewayConfig:
         (hermes_home / "config.yaml").write_text(
             template.read_text(encoding="utf-8"), encoding="utf-8"
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -309,7 +309,7 @@ class TestLoadGatewayConfig:
         """With no config.yaml at all, sessions must never auto-reset."""
         hermes_home = tmp_path / ".hermes"
         hermes_home.mkdir()
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -324,7 +324,7 @@ class TestLoadGatewayConfig:
             "session_reset:\n  mode: idle\n  idle_minutes: 30\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -343,7 +343,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.delenv("SLACK_IGNORED_CHANNELS", raising=False)
 
         load_gateway_config()
@@ -363,7 +363,7 @@ class TestLoadGatewayConfig:
             '    typing_status_text: "chasing yarn…"\n',
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -391,7 +391,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -408,7 +408,7 @@ class TestLoadGatewayConfig:
             "  websocket_max_latency_seconds: 30\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         for key in (
             "HERMES_DISCORD_LIVENESS_INTERVAL_SECONDS",
             "HERMES_DISCORD_LIVENESS_FAILURE_THRESHOLD",
@@ -433,7 +433,7 @@ class TestLoadGatewayConfig:
             "gateway:\n  session_reset:\n    mode: idle\n    idle_minutes: 30\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -448,7 +448,7 @@ class TestLoadGatewayConfig:
             "gateway:\n  quick_commands:\n    limits:\n      type: exec\n      command: echo ok\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -465,7 +465,7 @@ class TestLoadGatewayConfig:
             "gateway:\n  stt:\n    enabled: false\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -501,7 +501,7 @@ class TestLoadGatewayConfig:
             "gateway:\n  api_server:\n    enabled: true\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -526,7 +526,7 @@ class TestLoadGatewayConfig:
             "    model_name: my-hermes\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -553,7 +553,7 @@ class TestLoadGatewayConfig:
             "    enabled: true\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -572,7 +572,7 @@ class TestLoadGatewayConfig:
             "gateway:\n  group_sessions_per_user: false\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -587,7 +587,7 @@ class TestLoadGatewayConfig:
             "gateway:\n  reset_triggers:\n    - /new\n    - /clear\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -601,7 +601,7 @@ class TestLoadGatewayConfig:
             "gateway:\n  always_log_local: false\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -616,7 +616,7 @@ class TestLoadGatewayConfig:
             "gateway:\n  unauthorized_dm_behavior: ignore\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -638,7 +638,7 @@ class TestLoadGatewayConfig:
             "    idle_minutes: 30\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -654,7 +654,7 @@ class TestLoadGatewayConfig:
         'relay registered but no inbound' bug)."""
         hermes_home = tmp_path / ".hermes"
         hermes_home.mkdir()
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.setenv("GATEWAY_RELAY_URL", "https://connector.example/relay/")
 
         config = load_gateway_config()
@@ -678,7 +678,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.setenv("DISCORD_THREAD_REQUIRE_MENTION", "true")  # user override
 
         load_gateway_config()
@@ -709,7 +709,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.delenv("DINGTALK_ALLOWED_USERS", raising=False)
 
         config = load_gateway_config()
@@ -742,7 +742,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -774,7 +774,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -800,7 +800,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -821,7 +821,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -838,7 +838,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.setenv("TELEGRAM_PROXY", "socks5://from-env:1080")
 
         load_gateway_config()
@@ -867,7 +867,7 @@ class TestLoadGatewayConfig:
             encoding="utf-8",
         )
 
-        monkeypatch.setenv("HERMES_HOME", str(default_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(default_home))
         monkeypatch.setenv("API_SERVER_ENABLED", "true")
         monkeypatch.setenv("DISCORD_BOT_TOKEN", "default-token")
 
@@ -877,13 +877,13 @@ class TestLoadGatewayConfig:
         # os.environ (single-profile overlay semantics, #67827) and this test
         # would no longer exercise the cross-profile isolation it's about.
         set_multiplex_active(True)
-        home_token = set_hermes_home_override(str(secondary_home))
+        home_token = set_indagis_home_override(str(secondary_home))
         secret_token = set_secret_scope({"DISCORD_BOT_TOKEN": "worker-token"})
         try:
             config = load_gateway_config()
         finally:
             reset_secret_scope(secret_token)
-            reset_hermes_home_override(home_token)
+            reset_indagis_home_override(home_token)
             set_multiplex_active(False)
 
         assert config.multiplex_profiles is True
@@ -920,7 +920,7 @@ class TestWebhookPortBridging:
             "    port: 8649\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.delenv("WEBHOOK_ENABLED", raising=False)
         monkeypatch.delenv("WEBHOOK_PORT", raising=False)
 
@@ -951,7 +951,7 @@ class TestWebhookPortBridging:
             "      secret: extra-secret\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         monkeypatch.delenv("MSGRAPH_WEBHOOK_ENABLED", raising=False)
         monkeypatch.delenv("MSGRAPH_WEBHOOK_PORT", raising=False)
         monkeypatch.delenv("MSGRAPH_WEBHOOK_CLIENT_STATE", raising=False)
@@ -1063,7 +1063,7 @@ class TestMultiplexProfilesEnvOverride:
         hermes_home.mkdir(exist_ok=True)
         if config_text is not None:
             (hermes_home / "config.yaml").write_text(config_text, encoding="utf-8")
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         return load_gateway_config()
 
     # ── Tier 1: env wins ──────────────────────────────────────────────────
@@ -1117,7 +1117,7 @@ class TestMultiplexProfilesConfig:
             "gateway:\n  multiplex_profiles: true\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 
@@ -1142,7 +1142,7 @@ class TestMultiplexProfilesConfig:
             "gateway:\n  multiplex_profiles: true\n",
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
         config = load_gateway_config()
 

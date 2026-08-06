@@ -24,11 +24,11 @@ def server():
     # The sys.modules mocks only need to cover the *initial* import — once
     # tui_gateway.server is cached, they are inert. Keeping them active for
     # the whole test poisons any module first imported inside a test body:
-    # e.g. hermes_cli.active_sessions would bind the mocked get_hermes_home
+    # e.g. hermes_cli.active_sessions would bind the mocked get_indagis_home
     # (a fixed shared path) forever, leaking active-session registry entries
     # across every later test in the process. Scope the patch to the import.
     with patch.dict("sys.modules", {
-        "hermes_constants": MagicMock(get_hermes_home=MagicMock(return_value="/tmp/hermes_test")),
+        "hermes_constants": MagicMock(get_indagis_home=MagicMock(return_value="/tmp/hermes_test")),
         "hermes_cli.env_loader": MagicMock(),
         "hermes_cli.banner": MagicMock(),
         "hermes_state": MagicMock(),
@@ -395,7 +395,7 @@ def test_sync_session_key_after_compress_reanchors_active_session_lease(
     server, monkeypatch, tmp_path
 ):
     home = tmp_path / ".hermes"
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
 
     from hermes_cli.active_sessions import (
         active_session_registry_snapshot,
@@ -592,7 +592,7 @@ def test_skin_live_switch_end_to_end(server, tmp_path, monkeypatch):
     (tmp_path / "skins" / "midnight.yaml").write_text(
         "name: midnight\ndescription: t\ncolors:\n  banner_title: '#00ffcc'\n  background: '#001010'\n"
     )
-    monkeypatch.setattr(skin_engine, "get_hermes_home", lambda: tmp_path)
+    monkeypatch.setattr(skin_engine, "get_indagis_home", lambda: tmp_path)
     monkeypatch.setattr(server, "_hermes_home", tmp_path)
     monkeypatch.setattr(server, "_last_skin_sig", None, raising=False)
     server._cfg_cache = server._cfg_mtime = server._cfg_path = None

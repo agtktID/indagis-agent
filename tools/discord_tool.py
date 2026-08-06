@@ -173,9 +173,9 @@ _capability_bg_lock = threading.Lock()
 
 def _capability_disk_cache_path() -> "Path":
 
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    return get_hermes_home() / "cache" / "discord_capabilities.json"
+    return get_indagis_home() / "cache" / "discord_capabilities.json"
 
 
 def _token_cache_key(token: str) -> str:

@@ -78,7 +78,7 @@ def test_show_session_status_prints_gateway_style_summary():
         "started_at": 1775791440,
     }
 
-    with patch("cli.display_hermes_home", return_value="~/.hermes"):
+    with patch("cli.display_indagis_home", return_value="~/.hermes"):
         cli_obj._show_session_status()
 
     printed = "\n".join(str(call.args[0]) for call in cli_obj.console.print.call_args_list)
@@ -99,7 +99,7 @@ def test_profile_command_reports_custom_root_profile(monkeypatch, tmp_path, caps
     cli_obj = _make_cli()
     profile_home = tmp_path / "profiles" / "coder"
 
-    monkeypatch.setenv("HERMES_HOME", str(profile_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(profile_home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path / "unrelated-home")
 
     cli_obj._handle_profile_command()

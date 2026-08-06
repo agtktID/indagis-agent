@@ -203,7 +203,7 @@ def test_model_flow_nous_does_not_restore_stale_custom_api_key(tmp_path, monkeyp
 
     config_home = tmp_path / "hermes"
     config_home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(config_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(config_home))
 
     config_path = config_home / "config.yaml"
     config_path.write_text(
@@ -273,7 +273,7 @@ def _seed_stale_custom_model(tmp_path, monkeypatch):
 
     config_home = tmp_path / "hermes"
     config_home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(config_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(config_home))
     config_path = config_home / "config.yaml"
     config_path.write_text(
         yaml.safe_dump(

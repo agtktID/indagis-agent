@@ -11,7 +11,7 @@ import os
 import pytest
 
 import tools.terminal_tool as terminal_tool
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 
 
 @pytest.fixture(autouse=True)
@@ -29,7 +29,7 @@ def _reset_bridge_state(monkeypatch):
 
 
 def _write_config(text: str) -> None:
-    home = get_hermes_home()
+    home = get_indagis_home()
     home.mkdir(parents=True, exist_ok=True)
     (home / "config.yaml").write_text(text)
 

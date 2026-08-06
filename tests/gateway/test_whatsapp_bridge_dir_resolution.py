@@ -3,7 +3,7 @@
 Regression coverage for #49561: in the Docker image the install tree
 (/opt/hermes/scripts/whatsapp-bridge) is read-only, so `npm install` fails
 with EACCES. The resolver must detect the read-only install dir and mirror the
-bridge source into a writable HERMES_HOME location instead.
+bridge source into a writable INDAGIS_HOME location instead.
 """
 import importlib
 from pathlib import Path
@@ -21,7 +21,7 @@ def _seed_install_tree(install_bridge: Path) -> None:
 
 
 def test_readonly_install_mirrors_to_hermes_home(tmp_path, monkeypatch):
-    """A read-only install tree is mirrored into a writable HERMES_HOME."""
+    """A read-only install tree is mirrored into a writable INDAGIS_HOME."""
     install_root = tmp_path / "install"
     install_bridge = install_root / "scripts" / "whatsapp-bridge"
     _seed_install_tree(install_bridge)
@@ -34,7 +34,7 @@ def test_readonly_install_mirrors_to_hermes_home(tmp_path, monkeypatch):
         str(install_root / "gateway" / "platforms" / "whatsapp_common.py"),
     )
     monkeypatch.setattr(
-        "hermes_constants.get_hermes_home", lambda: hermes_home
+        "hermes_constants.get_indagis_home", lambda: hermes_home
     )
 
     # Simulate a read-only install tree. chmod(0o555) is unreliable under

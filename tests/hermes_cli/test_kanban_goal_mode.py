@@ -25,7 +25,7 @@ from hermes_cli import goals
 def kanban_home(tmp_path, monkeypatch):
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     kb.init_db()
     return home
@@ -43,7 +43,7 @@ def test_legacy_db_migrates_goal_columns(tmp_path, monkeypatch):
     """A tasks table created without goal columns must gain them on init."""
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
     db_path = kb.kanban_db_path()

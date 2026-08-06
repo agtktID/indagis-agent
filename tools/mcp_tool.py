@@ -160,8 +160,8 @@ def _get_mcp_stderr_log() -> Any:
         if _mcp_stderr_log_fh is not None:
             return _mcp_stderr_log_fh
         try:
-            from hermes_constants import get_hermes_home
-            log_dir = get_hermes_home() / "logs"
+            from hermes_constants import get_indagis_home
+            log_dir = get_indagis_home() / "logs"
             log_dir.mkdir(parents=True, exist_ok=True)
             log_path = log_dir / "mcp-stderr.log"
             # Line-buffered so server output lands on disk promptly; errors=
@@ -669,7 +669,7 @@ def _resolve_stdio_command(command: str, env: dict) -> tuple[str, dict]:
         elif resolved_command in {"npx", "npm", "node"}:
             hermes_home = os.path.expanduser(
                 os.getenv(
-                    "HERMES_HOME", os.path.join(os.path.expanduser("~"), ".hermes")
+                    "INDAGIS_HOME", os.path.join(os.path.expanduser("~"), ".hermes")
                 )
             )
             candidates = [
@@ -4235,10 +4235,10 @@ def _try_acquire_mcp_discovery_lock() -> Any:
     """
     global _MCP_DISCOVERY_LOCK_PATH
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         if _MCP_DISCOVERY_LOCK_PATH is None:
             _MCP_DISCOVERY_LOCK_PATH = str(
-                get_hermes_home() / ".mcp-discovery.lock"
+                get_indagis_home() / ".mcp-discovery.lock"
             )
         lock_path = _MCP_DISCOVERY_LOCK_PATH
     except Exception:
@@ -4398,7 +4398,7 @@ def _ensure_mcp_loop():
 
 
 def _wrap_with_home_override(coro: "Coroutine") -> "Coroutine":
-    """Carry the caller's context-local HERMES_HOME override into ``coro``.
+    """Carry the caller's context-local INDAGIS_HOME override into ``coro``.
 
     Returns ``coro`` unchanged when no override is active. Otherwise wraps
     it so the override is set inside the coroutine's own (task-local)
@@ -4407,23 +4407,23 @@ def _wrap_with_home_override(coro: "Coroutine") -> "Coroutine":
     """
     try:
         from hermes_constants import (
-            get_hermes_home_override,
-            reset_hermes_home_override,
-            set_hermes_home_override,
+            get_indagis_home_override,
+            reset_indagis_home_override,
+            set_indagis_home_override,
         )
 
-        home_override = get_hermes_home_override()
+        home_override = get_indagis_home_override()
     except Exception:
         return coro
     if not home_override:
         return coro
 
     async def _scoped():
-        token = set_hermes_home_override(home_override)
+        token = set_indagis_home_override(home_override)
         try:
             return await coro
         finally:
-            reset_hermes_home_override(token)
+            reset_indagis_home_override(token)
 
     return _scoped()
 
@@ -4472,12 +4472,12 @@ def _run_on_mcp_loop(coro_or_factory, timeout: float = 30):
 
     coro = coro_or_factory() if callable(coro_or_factory) else coro_or_factory
 
-    # Propagate the context-local HERMES_HOME override onto the MCP loop.
+    # Propagate the context-local INDAGIS_HOME override onto the MCP loop.
     # Tasks scheduled via run_coroutine_threadsafe are created INSIDE the
     # loop thread, so they copy the loop thread's context — not the
     # scheduling thread's. A per-request profile scope (the dashboard's
     # ?profile= endpoints, e.g. the MCP "Test server" probe) would silently
-    # vanish here: OAuth token stores and any other get_hermes_home()
+    # vanish here: OAuth token stores and any other get_indagis_home()
     # resolution inside the coroutine would read the process home instead
     # of the selected profile's. Re-establish the override inside the
     # task's own context (task-local — concurrent calls carrying different

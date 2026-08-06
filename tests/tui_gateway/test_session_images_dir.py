@@ -1,7 +1,7 @@
 """Write-side scoping for desktop/clipboard image uploads (#69575).
 
 Attach RPCs (``image.attach_bytes``, ``clipboard.paste``, ``pdf.attach``) run
-before ``prompt.submit`` installs the session's profile HERMES_HOME override, so
+before ``prompt.submit`` installs the session's profile INDAGIS_HOME override, so
 the upload must be written under the session's *stored* ``profile_home`` — the
 same scope the Docker mount and the vision host-read allowlist resolve at run
 time. Otherwise, in a multi-profile / root-gateway deployment, the file is

@@ -3251,7 +3251,7 @@ def compress_context(
                     # mirror _ensure_db_session's stamp ("default" persists as
                     # NULL). publish_compression_child additionally COALESCEs
                     # from the parent row, covering app-global remote sessions
-                    # whose thread lacks the HERMES_HOME context.
+                    # whose thread lacks the INDAGIS_HOME context.
                     try:
                         from hermes_cli.profiles import get_active_profile_name
 

@@ -96,9 +96,9 @@ def _exec_profile(ctx: CommandContext) -> CommandReply:
 
         profile_name = get_active_profile_name()
     if not home_display:
-        from hermes_constants import display_hermes_home
+        from hermes_constants import display_indagis_home
 
-        home_display = display_hermes_home()
+        home_display = display_indagis_home()
 
     return CommandReply(
         f"Profile: {profile_name}\nHome: {home_display}",

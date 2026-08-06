@@ -971,14 +971,14 @@ class TestClaimDispatch:
 
 
 class TestLateEnvRepointScopesStore:
-    """A HERMES_HOME set AFTER cron.jobs import must scope the store even
+    """A INDAGIS_HOME set AFTER cron.jobs import must scope the store even
     without use_cron_store(): fixtures that patch the environment too late
     previously read/wrote the import-time jobs.json — the user's real file."""
 
     def test_late_env_repoint_scopes_store(self, tmp_path, monkeypatch):
         import cron.jobs as jobs
 
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         store = jobs._current_cron_store()
         expected = tmp_path.resolve() / "cron"
         assert store.cron_dir == expected
@@ -991,7 +991,7 @@ class TestLateEnvRepointScopesStore:
     def test_use_cron_store_override_still_wins(self, tmp_path, monkeypatch):
         import cron.jobs as jobs
 
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / "env-home"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "env-home"))
         with jobs.use_cron_store(tmp_path / "override-home"):
             store = jobs._current_cron_store()
             assert store.jobs_file == (tmp_path / "override-home").resolve() / "cron" / "jobs.json"
@@ -1001,7 +1001,7 @@ class TestLateEnvRepointScopesStore:
         self, tmp_path, monkeypatch
     ):
         """The public API, not the store internals: save_jobs()/load_jobs()
-        called after a post-import HERMES_HOME repoint must operate on the NEW
+        called after a post-import INDAGIS_HOME repoint must operate on the NEW
         home's jobs.json and leave the import-time file byte-identical.
 
         The "import-time home" is SIMULATED at a tmp location by patching the
@@ -1032,7 +1032,7 @@ class TestLateEnvRepointScopesStore:
         old_file.write_text(sentinel, encoding="utf-8")
 
         new_home = tmp_path / "late-home"
-        monkeypatch.setenv("HERMES_HOME", str(new_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(new_home))
 
         job = {
             "id": "lateenvjob01",

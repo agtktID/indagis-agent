@@ -90,11 +90,11 @@ class TestSystemdServiceRefresh:
         """Defense in depth: ``refresh_systemd_unit_if_needed()`` runs every
         time ``run_gateway()`` starts. The user-scope unit path resolves
         under ``Path.home()`` (NOT sandboxed by conftest), and
-        ``generate_systemd_unit()`` bakes ``HERMES_HOME`` into the unit's
+        ``generate_systemd_unit()`` bakes ``INDAGIS_HOME`` into the unit's
         ``Environment=`` line. Without this guard, any test that drives
         ``run_gateway()`` end-to-end on a real Linux dev box silently
         rewrites the developer's installed gateway unit with a
-        ``/tmp/pytest-of-.../hermes_test`` HERMES_HOME — silently breaking
+        ``/tmp/pytest-of-.../hermes_test`` INDAGIS_HOME — silently breaking
         their gateway on the next boot. The guard sniffs the generated
         unit body for tmpdir markers and refuses the write. Tests that
         legitimately exercise the refresh flow patch
@@ -107,10 +107,10 @@ class TestSystemdServiceRefresh:
         monkeypatch.setattr(
             gateway_cli, "get_systemd_unit_path", lambda system=False: unit_path
         )
-        # Realistic generated unit referencing a pytest tmpdir HERMES_HOME
+        # Realistic generated unit referencing a pytest tmpdir INDAGIS_HOME
         polluted_unit = (
             "[Service]\n"
-            'Environment="HERMES_HOME=/tmp/pytest-of-alice/pytest-42/'
+            'Environment="INDAGIS_HOME=/tmp/pytest-of-alice/pytest-42/'
             'popen-gw0/test_x/hermes_test"\n'
         )
         monkeypatch.setattr(
@@ -144,7 +144,7 @@ class TestTempHomeServiceDefinitionGuard:
     """_temp_home_in_service_definition() — structural temp-dir detection."""
 
     def test_detects_tmp_home_in_systemd_unit(self):
-        unit = '[Service]\nEnvironment="HERMES_HOME=/tmp/hermes-e2e-41264"\n'
+        unit = '[Service]\nEnvironment="INDAGIS_HOME=/tmp/hermes-e2e-41264"\n'
         assert (
             gateway_cli._temp_home_in_service_definition(unit)
             == "/tmp/hermes-e2e-41264"
@@ -155,7 +155,7 @@ class TestTempHomeServiceDefinitionGuard:
         import tempfile as _tempfile
 
         monkeypatch.setattr(_tempfile, "gettempdir", lambda: str(tmp_path))
-        unit = f'[Service]\nEnvironment="HERMES_HOME={tmp_path}/hermes-home"\n'
+        unit = f'[Service]\nEnvironment="INDAGIS_HOME={tmp_path}/hermes-home"\n'
         assert gateway_cli._temp_home_in_service_definition(unit) is not None
 
 
@@ -279,7 +279,7 @@ class TestLaunchdServiceRecovery:
             gateway_cli,
             "generate_launchd_plist",
             lambda: (
-                "<plist>--replace\n<key>HERMES_HOME</key>"
+                "<plist>--replace\n<key>INDAGIS_HOME</key>"
                 "<string>/Users/alice/.hermes</string></plist>"
             ),
         )
@@ -386,7 +386,7 @@ class TestLaunchdServiceRecovery:
         monkeypatch.setattr(gateway_cli.subprocess, "run", fake_run)
         monkeypatch.setattr("gateway.status.get_running_pid", lambda cleanup_stale=False: 88888)
         # Pre-seed the unsupported marker
-        monkeypatch.setattr(gateway_cli, "get_hermes_home", lambda: tmp_path)
+        monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: tmp_path)
         gateway_cli._write_launchd_unsupported_marker()
 
         gateway_cli.launchd_status()
@@ -613,12 +613,12 @@ class TestDetectVenvDir:
 
 
 class TestSystemUnitHermesHome:
-    """HERMES_HOME in system units must reference the target user, not root."""
+    """INDAGIS_HOME in system units must reference the target user, not root."""
 
     def test_system_unit_uses_target_user_home_not_calling_user(self, monkeypatch):
         # Simulate sudo: Path.home() returns /root, target user is alice
         monkeypatch.setattr(Path, "home", staticmethod(lambda: Path("/root")))
-        monkeypatch.delenv("HERMES_HOME", raising=False)
+        monkeypatch.delenv("INDAGIS_HOME", raising=False)
         monkeypatch.setattr(
             gateway_cli, "_system_service_identity",
             lambda run_as_user=None: ("alice", "alice", "/home/alice"),
@@ -630,16 +630,16 @@ class TestSystemUnitHermesHome:
 
         unit = gateway_cli.generate_systemd_unit(system=True, run_as_user="alice")
 
-        assert 'HERMES_HOME=/home/alice/.hermes' in unit
+        assert 'INDAGIS_HOME=/home/alice/.hermes' in unit
         assert '/root/.hermes' not in unit
 
 
     def test_user_unit_unaffected_by_change(self):
-        # User-scope units should still use the calling user's HERMES_HOME
+        # User-scope units should still use the calling user's INDAGIS_HOME
         unit = gateway_cli.generate_systemd_unit(system=False)
 
-        hermes_home = str(gateway_cli.get_hermes_home().resolve())
-        assert f'HERMES_HOME={hermes_home}' in unit
+        hermes_home = str(gateway_cli.get_indagis_home().resolve())
+        assert f'INDAGIS_HOME={hermes_home}' in unit
 
 
 class TestSystemUnitRefreshSyncsHermesHome:
@@ -674,22 +674,22 @@ class TestSystemUnitRefreshSyncsHermesHome:
         monkeypatch.setattr(gateway_cli, "_run_systemctl", lambda *a, **k: None)
         monkeypatch.delenv("HERMES_RESTART_DRAIN_TIMEOUT", raising=False)
 
-        # Correct installed unit (operator's HERMES_HOME + drain timeout).
-        monkeypatch.setenv("HERMES_HOME", str(alice_hermes))
+        # Correct installed unit (operator's INDAGIS_HOME + drain timeout).
+        monkeypatch.setenv("INDAGIS_HOME", str(alice_hermes))
         good_unit = gateway_cli.generate_systemd_unit(system=True, run_as_user="alice")
         assert "TimeoutStopSec=210" in good_unit
         unit_path.write_text(good_unit, encoding="utf-8")
 
-        # Simulate sudo without inherited HERMES_HOME (falls back to root).
-        monkeypatch.setenv("HERMES_HOME", str(root_hermes))
+        # Simulate sudo without inherited INDAGIS_HOME (falls back to root).
+        monkeypatch.setenv("INDAGIS_HOME", str(root_hermes))
         assert gateway_cli.refresh_systemd_unit_if_needed(system=True) is False
         assert unit_path.read_text(encoding="utf-8") == good_unit
-        assert os.environ["HERMES_HOME"] == str(alice_hermes)
+        assert os.environ["INDAGIS_HOME"] == str(alice_hermes)
         assert gateway_cli.systemd_unit_is_current(system=True) is True
 
     def test_is_current_syncs_before_reading_unit(self, tmp_path, monkeypatch):
         """CHOKEPOINT INVARIANT: systemd_unit_is_current() must adopt the
-        unit's pinned HERMES_HOME *before* it reads/compares the unit.
+        unit's pinned INDAGIS_HOME *before* it reads/compares the unit.
 
         This is the single site that enforces sync-before-compare for every
         path (refresh gates on it; status/install call it). If a future edit
@@ -778,7 +778,7 @@ class TestHermesHomeForTargetUser:
 
     def test_remaps_default_home(self, monkeypatch):
         monkeypatch.setattr(Path, "home", staticmethod(lambda: Path("/root")))
-        monkeypatch.delenv("HERMES_HOME", raising=False)
+        monkeypatch.delenv("INDAGIS_HOME", raising=False)
 
         result = gateway_cli._hermes_home_for_target_user("/home/alice")
         assert result == "/home/alice/.hermes"
@@ -979,8 +979,8 @@ class TestProfileArg:
         root_profile.mkdir(parents=True)
 
         monkeypatch.setattr(Path, "home", lambda: root_home)
-        monkeypatch.setenv("HERMES_HOME", str(root_profile))
-        monkeypatch.setattr(gateway_cli, "get_hermes_home", lambda: root_profile)
+        monkeypatch.setenv("INDAGIS_HOME", str(root_profile))
+        monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: root_profile)
         monkeypatch.setattr(
             gateway_cli,
             "_system_service_identity",
@@ -991,7 +991,7 @@ class TestProfileArg:
 
         assert "ExecStart=" in unit
         assert "--profile mybot gateway run" in unit
-        assert f'HERMES_HOME={target_home / ".hermes" / "profiles" / "mybot"}' in unit
+        assert f'INDAGIS_HOME={target_home / ".hermes" / "profiles" / "mybot"}' in unit
 
 
 
@@ -1004,8 +1004,8 @@ class TestProfileArg:
         profile_home.mkdir()
 
         monkeypatch.setattr(Path, "home", lambda: profile_home)
-        monkeypatch.setenv("HERMES_HOME", str(profile_dir))
-        monkeypatch.setattr(gateway_cli, "get_hermes_home", lambda: profile_dir)
+        monkeypatch.setenv("INDAGIS_HOME", str(profile_dir))
+        monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: profile_dir)
         monkeypatch.setattr(pwd, "getpwuid", lambda uid: SimpleNamespace(pw_dir=str(machine_home)))
 
         plist_path = gateway_cli.get_launchd_plist_path()
@@ -1041,8 +1041,8 @@ class TestSystemUnitPathRemapping:
         target_home = "/home/alice"
 
         monkeypatch.setattr(Path, "home", lambda: root_home)
-        monkeypatch.setenv("HERMES_HOME", str(root_home / ".hermes"))
-        monkeypatch.setattr(gateway_cli, "get_hermes_home", lambda: root_home / ".hermes")
+        monkeypatch.setenv("INDAGIS_HOME", str(root_home / ".hermes"))
+        monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: root_home / ".hermes")
         monkeypatch.setattr(gateway_cli, "PROJECT_ROOT", project)
         monkeypatch.setattr(gateway_cli, "_detect_venv_dir", lambda: project / "venv")
         monkeypatch.setattr(gateway_cli, "get_python_path", lambda: str(venv_bin / "python"))
@@ -1057,7 +1057,7 @@ class TestSystemUnitPathRemapping:
         assert str(root_home) not in unit
         # Target user paths should be present
         assert "/home/alice" in unit
-        # WorkingDirectory is anchored at the target user's HERMES_HOME (stable,
+        # WorkingDirectory is anchored at the target user's INDAGIS_HOME (stable,
         # always exists) — NOT the source checkout under it. Pinning cwd to the
         # checkout is the rot bug fixed alongside this: a relocated/removed
         # checkout would crash-loop the unit on CHDIR (status=200).
@@ -1619,7 +1619,7 @@ class TestGatewayCommandCatchesSystemScopeError:
 
 class TestServiceWorkingDirIsStable:
     """The gateway service must anchor WorkingDirectory at a stable path
-    (HERMES_HOME), never the source checkout / worktree, so a relocated or
+    (INDAGIS_HOME), never the source checkout / worktree, so a relocated or
     deleted checkout can't crash-loop the unit on CHDIR (status=200).
     """
 
@@ -1628,7 +1628,7 @@ class TestServiceWorkingDirIsStable:
     def test_user_unit_workingdirectory_is_hermes_home_not_checkout(self, tmp_path, monkeypatch):
         home = tmp_path / ".hermes"
         home.mkdir()
-        monkeypatch.setattr(gateway_cli, "get_hermes_home", lambda: home)
+        monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: home)
         unit = gateway_cli.generate_systemd_unit(system=False)
         wd = [l for l in unit.splitlines() if l.startswith("WorkingDirectory=")]
         assert wd, "unit has no WorkingDirectory line"
@@ -1642,7 +1642,7 @@ class TestServiceWorkingDirIsStable:
 
         home = tmp_path / ".hermes"
         home.mkdir()
-        monkeypatch.setattr(gateway_cli, "get_hermes_home", lambda: home)
+        monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: home)
         plist = gateway_cli.generate_launchd_plist()
         m = re.search(r"<key>WorkingDirectory</key>\s*<string>(.*?)</string>", plist)
         assert m, "plist has no WorkingDirectory entry"

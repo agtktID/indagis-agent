@@ -13,7 +13,7 @@ import contextvars
 from collections import OrderedDict
 from pathlib import Path
 
-from hermes_constants import get_hermes_home, get_skills_dir, is_wsl
+from hermes_constants import get_indagis_home, get_skills_dir, is_wsl
 from typing import Optional
 
 from agent.runtime_cwd import resolve_agent_cwd
@@ -1371,7 +1371,7 @@ _SKILLS_SNAPSHOT_VERSION = 2
 
 
 def _skills_prompt_snapshot_path() -> Path:
-    return get_hermes_home() / ".skills_prompt_snapshot.json"
+    return get_indagis_home() / ".skills_prompt_snapshot.json"
 
 
 def clear_skills_system_prompt_cache(*, clear_snapshot: bool = False) -> None:
@@ -2002,19 +2002,19 @@ def _truncate_content(
 
 
 def load_soul_md(context_length: Optional[int] = None) -> Optional[str]:
-    """Load SOUL.md from HERMES_HOME and return its content, or None.
+    """Load SOUL.md from INDAGIS_HOME and return its content, or None.
 
     Used as the agent identity (slot #1 in the system prompt).  When this
     returns content, ``build_context_files_prompt`` should be called with
     ``skip_soul=True`` so SOUL.md isn't injected twice.
     """
     try:
-        from hermes_cli.config import ensure_hermes_home
-        ensure_hermes_home()
+        from hermes_cli.config import ensure_indagis_home
+        ensure_indagis_home()
     except Exception as e:
-        logger.debug("Could not ensure HERMES_HOME before loading SOUL.md: %s", e)
+        logger.debug("Could not ensure INDAGIS_HOME before loading SOUL.md: %s", e)
 
-    soul_path = get_hermes_home() / "SOUL.md"
+    soul_path = get_indagis_home() / "SOUL.md"
     if not soul_path.exists():
         return None
     try:
@@ -2143,7 +2143,7 @@ def build_context_files_prompt(
       3. CLAUDE.md / claude.md   (cwd only)
       4. .cursorrules / .cursor/rules/*.mdc  (cwd only)
 
-    SOUL.md from HERMES_HOME is independent and always included when present.
+    SOUL.md from INDAGIS_HOME is independent and always included when present.
 
     Each context source is capped before injection. The cap defaults to the
     model's context window (scaled — see ``_dynamic_context_file_max_chars``)
@@ -2195,7 +2195,7 @@ def build_context_files_prompt(
     if project_context:
         sections.append(project_context)
 
-    # SOUL.md from HERMES_HOME only — skip when already loaded as identity
+    # SOUL.md from INDAGIS_HOME only — skip when already loaded as identity
     if not skip_soul:
         soul_content = load_soul_md(context_length)
         if soul_content:

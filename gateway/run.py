@@ -1761,10 +1761,10 @@ _ensure_ssl_certs()
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-# Resolve Hermes home directory (respects HERMES_HOME override)
-from hermes_constants import get_hermes_home, get_hermes_home_override
+# Resolve Hermes home directory (respects INDAGIS_HOME override)
+from hermes_constants import get_indagis_home, get_indagis_home_override
 from utils import atomic_json_write, is_truthy_value
-_hermes_home = get_hermes_home()
+_hermes_home = get_indagis_home()
 
 # Load environment variables from ~/.hermes/.env first.
 # User-managed env files should override stale shell exports on restart.
@@ -1884,7 +1884,7 @@ def _profile_runtime_scope(profile_home: "Path"):
     """Scope config/skills/memory AND credentials to a profile for one turn.
 
     Combines the two seams the multiplexer needs:
-      1. ``set_hermes_home_override`` — redirects ``get_hermes_home()`` (config,
+      1. ``set_indagis_home_override`` — redirects ``get_indagis_home()`` (config,
          skills, memory, SOUL, sessions) to the profile's home. Contextvar, so
          it propagates into the agent worker thread via ``copy_context()``.
       2. ``set_secret_scope`` — installs the profile's ``.env`` secrets as the
@@ -1898,7 +1898,7 @@ def _profile_runtime_scope(profile_home: "Path"):
     returns an isolated dict — which is what keeps subprocesses (MCP, kanban)
     from inheriting cross-profile secrets.
     """
-    from hermes_constants import set_hermes_home_override, reset_hermes_home_override
+    from hermes_constants import set_indagis_home_override, reset_indagis_home_override
     from agent.secret_scope import (
         build_profile_secret_scope,
         set_secret_scope,
@@ -1906,14 +1906,14 @@ def _profile_runtime_scope(profile_home: "Path"):
     )
     from hermes_cli.env_loader import hydrate_profile_secret_sources
 
-    home_token = set_hermes_home_override(str(profile_home))
+    home_token = set_indagis_home_override(str(profile_home))
     hydrate_profile_secret_sources(Path(profile_home))
     secret_token = set_secret_scope(build_profile_secret_scope(Path(profile_home)))
     try:
         yield
     finally:
         reset_secret_scope(secret_token)
-        reset_hermes_home_override(home_token)
+        reset_indagis_home_override(home_token)
 
 
 def load_gateway_config_for_runner() -> "GatewayConfig":
@@ -1937,7 +1937,7 @@ def load_gateway_config_for_runner() -> "GatewayConfig":
     if not getattr(cfg, "multiplex_profiles", False):
         return cfg
     try:
-        home = get_hermes_home()
+        home = get_indagis_home()
     except Exception:
         return cfg
     try:
@@ -3081,7 +3081,7 @@ def _teams_pipeline_plugin_enabled() -> bool:
 
 def _gateway_config_home() -> Path:
     """Return the Hermes home that gateway config reads should use."""
-    override = get_hermes_home_override()
+    override = get_indagis_home_override()
     if override:
         return Path(override)
     return _hermes_home
@@ -6097,7 +6097,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         except Exception as e:
             # WARNING (not DEBUG) so the failure appears in errors.log — matches
             # cli.py's handling of the same init path.  Users hitting NFS-mounted
-            # HERMES_HOME silently lost /resume, /title, /history, /branch, and
+            # INDAGIS_HOME silently lost /resume, /title, /history, /branch, and
             # session search without this.  The underlying cause (usually
             # "locking protocol" from NFS) is now also captured by
             # hermes_state.get_last_init_error() for slash-command error strings.
@@ -7832,7 +7832,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         observe-the-marker latency the live-validation gate checks (point a).
         Reconciles once at startup. A marker stamped with a PRIOR
         instantiation epoch (one that survived a machine restart on the durable
-        HERMES_HOME volume — NS-570) is treated as absent by ``drain_requested``
+        INDAGIS_HOME volume — NS-570) is treated as absent by ``drain_requested``
         and is NOT honoured; only a marker from the current instantiation flips
         the gateway into drain. Best-effort: any tick error is logged and the
         loop continues (a transient stat() failure must not wedge the gateway).
@@ -10622,7 +10622,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         except (RuntimeError, ValueError, OSError):
             try:
                 _fh_log_dir = getattr(self.config, "log_dir", None) or os.path.join(
-                    str(get_hermes_home()),
+                    str(get_indagis_home()),
                     "logs",
                 )
                 os.makedirs(_fh_log_dir, exist_ok=True)
@@ -10641,7 +10641,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         if _sigusr2 is not None and hasattr(faulthandler, "register"):
             try:
                 _log_dir = getattr(self.config, "log_dir", None) or os.path.join(
-                    str(get_hermes_home()),
+                    str(get_indagis_home()),
                     "logs",
                 )
                 _faulthandler_path = os.path.join(_log_dir, "gateway_faulthandler.log")
@@ -13129,7 +13129,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         0) unless ``gateway.multiplex_profiles`` is on.
 
         Each profile's adapters are created and connected under that profile's
-        HERMES_HOME + secret scope (``_profile_runtime_scope``), stored in
+        INDAGIS_HOME + secret scope (``_profile_runtime_scope``), stored in
         ``self._profile_adapters[profile]``, and given a message handler that
         stamps ``source.profile`` before delegating to the shared
         ``_handle_message`` — so the agent turn resolves that profile's config,
@@ -13195,7 +13195,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             served = [active] + sorted(self._profile_adapters.keys())
             # Per-profile PairingStores so authz_mixin can route pairing
             # checks to the right whitelist. The active profile gets a store
-            # at its HERMES_HOME; additional served profiles resolve from
+            # at its INDAGIS_HOME; additional served profiles resolve from
             # their own profile homes. See gateway.pairing.PairingStore.
             for name in served:
                 if name and name not in self.pairing_stores:
@@ -13559,7 +13559,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
     def _make_default_profile_message_handler(self):
         """Scope a multiplexed default-profile message from ingress onward."""
-        profile_home = Path(get_hermes_home())
+        profile_home = Path(get_indagis_home())
 
         async def _handler(event):
             with _profile_runtime_scope(profile_home):
@@ -23177,9 +23177,9 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             slack_tools = "1" if _slack_tools_loaded() else "0"
 
         try:
-            from hermes_constants import display_hermes_home
+            from hermes_constants import display_indagis_home
 
-            home_display = str(display_hermes_home())
+            home_display = str(display_indagis_home())
         except Exception:
             home_display = ""
 
@@ -24047,7 +24047,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         return None
 
     def _resolve_profile_home_for_source(self, source: SessionSource) -> "Path":
-        """Resolve which profile's HERMES_HOME should serve this inbound source.
+        """Resolve which profile's INDAGIS_HOME should serve this inbound source.
 
         Resolution order:
           1. ``source.profile`` — set by /p/<profile>/ URL prefix, per-credential
@@ -24061,7 +24061,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             get_profile_dir,
             profile_exists,
         )
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         
         # Track whether a profile was explicitly requested (vs. falling back to default)
         explicit_profile = None
@@ -24081,26 +24081,26 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             if explicit_profile and not profile_exists(name):
                 logger.warning(
                     "Profile %r does not exist for source %s/%s (guild_id=%s), "
-                    "falling back to global HERMES_HOME",
+                    "falling back to global INDAGIS_HOME",
                     explicit_profile,
                     source.platform.value,
                     source.chat_id,
                     getattr(source, "guild_id", None),
                 )
-                return get_hermes_home()
+                return get_indagis_home()
             return profile_dir
         except Exception:
             # Catch normalization errors, path errors, etc.
             logger.warning(
                 "Failed to resolve profile directory for source %s/%s (guild_id=%s), "
-                "falling back to global HERMES_HOME: %s",
+                "falling back to global INDAGIS_HOME: %s",
                 source.platform.value,
                 source.chat_id,
                 getattr(source, "guild_id", None),
                 explicit_profile or "(no profile)",
                 exc_info=True,
             )
-            return get_hermes_home()
+            return get_indagis_home()
 
     async def _run_agent_inner(
         self,
@@ -26219,9 +26219,9 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
     record_boot_fingerprint()
 
     # ── Duplicate-instance guard ──────────────────────────────────────
-    # Prevent two gateways from running under the same HERMES_HOME.
-    # The PID file is scoped to HERMES_HOME, so future multi-profile
-    # setups (each profile using a distinct HERMES_HOME) will naturally
+    # Prevent two gateways from running under the same INDAGIS_HOME.
+    # The PID file is scoped to INDAGIS_HOME, so future multi-profile
+    # setups (each profile using a distinct INDAGIS_HOME) will naturally
     # allow concurrent instances without tripping this guard.
     from gateway.status import (
         acquire_gateway_runtime_lock,
@@ -26342,7 +26342,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
             # remove_pid_file() is a no-op when the PID doesn't match.
             # Force-unlink to cover the old-process-crashed case.
             try:
-                (get_hermes_home() / "gateway.pid").unlink(missing_ok=True)
+                (get_indagis_home() / "gateway.pid").unlink(missing_ok=True)
             except Exception:
                 pass
             # Clean up any takeover marker the old process didn't consume
@@ -26366,9 +26366,9 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
             except Exception:
                 pass
         else:
-            hermes_home = str(get_hermes_home())
+            hermes_home = str(get_indagis_home())
             logger.error(
-                "Another gateway instance is already running (PID %d, HERMES_HOME=%s). "
+                "Another gateway instance is already running (PID %d, INDAGIS_HOME=%s). "
                 "Use 'hermes gateway restart' to replace it, or 'hermes gateway stop' first.",
                 existing_pid, hermes_home,
             )
@@ -26624,7 +26624,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
     # Lifecycle ledger (NS-608): report if the previous gateway life died
     # uncleanly (SIGKILL / OOM / VM death — no exit path ran), then claim
     # the sentinel for this life. Placed after the PID-file/lock claim so
-    # only the authoritative gateway for this HERMES_HOME touches the
+    # only the authoritative gateway for this INDAGIS_HOME touches the
     # sentinel — a --replace loser exiting above must not clobber it.
     try:
         from gateway.lifecycle_ledger import record_startup as _lifecycle_record_startup
@@ -26719,7 +26719,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
 
     # Multiplex profiles: tell the built-in ticker which profile homes to
     # tick so secondary-profile cron jobs actually fire (#69377).
-    # Without this, only the process-global HERMES_HOME (default profile)
+    # Without this, only the process-global INDAGIS_HOME (default profile)
     # is iterated and every secondary profile's cron store is silently
     # ignored — jobs show as "scheduled" with a valid next_run_at but
     # never execute because no ticker owns that store.

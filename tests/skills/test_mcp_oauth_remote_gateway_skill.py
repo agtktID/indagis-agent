@@ -1,7 +1,7 @@
 """Tests for the mcp-oauth-remote-gateway optional skill.
 
 Covers the diagnose-oauth-mcp.py decision tree (TOKEN_OK / REFRESH_FIXED /
-SESSION_REVOKED / REFRESH_DEAD), the HERMES_HOME resolution fallback, the
+SESSION_REVOKED / REFRESH_DEAD), the INDAGIS_HOME resolution fallback, the
 atomic --write persistence path, and SKILL.md frontmatter invariants.
 No live network calls — urllib is mocked throughout.
 """
@@ -83,7 +83,7 @@ def _run_main(mod, tokens_dir, argv, responses):
             raise item
         return item
 
-    with patch.object(mod.os, "environ", dict(mod.os.environ, HERMES_HOME=str(tokens_dir.parent))), \
+    with patch.object(mod.os, "environ", dict(mod.os.environ, INDAGIS_HOME=str(tokens_dir.parent))), \
          patch.object(mod.urllib.request, "urlopen", side_effect=fake_urlopen), \
          patch.object(sys, "argv", ["diagnose-oauth-mcp.py", *argv]):
         # Force the env-var fallback path (ignore any importable hermes_constants).

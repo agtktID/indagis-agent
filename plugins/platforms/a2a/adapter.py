@@ -116,8 +116,8 @@ def _profile_home(profile: str) -> Optional[str]:
     except Exception:
         if not profile or profile == "default":
             try:
-                from hermes_cli.config import get_hermes_home
-                return str(get_hermes_home())
+                from hermes_cli.config import get_indagis_home
+                return str(get_indagis_home())
             except Exception:
                 return None
         return os.path.expanduser(f"~/.hermes/profiles/{profile}")
@@ -871,7 +871,7 @@ class A2AAdapter(BasePlatformAdapter):
             env = os.environ.copy()
             home = _profile_home(profile)
             if home:
-                env["HERMES_HOME"] = home
+                env["INDAGIS_HOME"] = home
             env["HERMES_A2A_PEER"] = peer
             start = time.time()
             try:

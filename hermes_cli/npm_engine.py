@@ -14,7 +14,7 @@ npm states the required range in the error, so the recovery reads the
 constraint straight out of the output it just produced.
 
 Scope of the repair is deliberately narrow. Hermes only upgrades an npm that
-lives inside its **own** managed Node tree (``$HERMES_HOME/node``), installing
+lives inside its **own** managed Node tree (``$INDAGIS_HOME/node``), installing
 in place with ``--prefix`` so ``bin/npm`` keeps resolving to the upgraded
 ``lib/node_modules/npm``. A system / nvm / brew / Nix npm belongs to the user
 and their other projects; Hermes never modifies those. When the failing npm is
@@ -36,7 +36,7 @@ from pathlib import Path
 
 from hermes_constants import (
     bootstrap_hermes_managed_node,
-    get_hermes_home,
+    get_indagis_home,
     with_hermes_node_path,
 )
 
@@ -136,14 +136,14 @@ def managed_npm_prefix(npm: str | os.PathLike[str] | None) -> Path | None:
     """Return the Hermes-managed Node root *npm* lives in, else ``None``.
 
     Symlinks are resolved first: an install links ``~/.local/bin/npm`` at
-    ``$HERMES_HOME/node/bin/npm``, which itself links into
+    ``$INDAGIS_HOME/node/bin/npm``, which itself links into
     ``lib/node_modules/npm/bin/npm-cli.js``. Every one of those spellings is
     the managed npm and must be recognised as such, or the repair silently
     declines to fix the very install it owns.
     """
     if not npm:
         return None
-    prefix = get_hermes_home() / "node"
+    prefix = get_indagis_home() / "node"
     try:
         resolved = Path(npm).resolve()
         prefix_resolved = prefix.resolve()
@@ -175,7 +175,7 @@ def upgrade_managed_npm(
     """Upgrade the managed npm at *npm* in place to satisfy *npm_range*.
 
     ``--prefix`` targets the managed tree explicitly: a managed install writes
-    ``prefix=~/.local`` into ``$HERMES_HOME/node/etc/npmrc`` so that global
+    ``prefix=~/.local`` into ``$INDAGIS_HOME/node/etc/npmrc`` so that global
     installs land on PATH, and without the override the "upgrade" would install
     a second npm somewhere else while the managed one stayed stale.
     """
@@ -259,7 +259,7 @@ def _print_manual_fix(npm: str, npm_range: str, actual: str | None) -> None:
 def _provision_managed_npm(npm_range: str | None, *, quiet: bool = False) -> str | None:
     """Provision a Hermes-managed Node tree and return a satisfying npm.
 
-    Installs the managed tree under ``$HERMES_HOME/node`` (reusing a healthy
+    Installs the managed tree under ``$INDAGIS_HOME/node`` (reusing a healthy
     one when present), then upgrades its bundled npm to *npm_range* — a fresh
     Node LTS bundles an npm that may itself be outside the repo's range, so
     without the upgrade the caller's single retry would fail the same way.

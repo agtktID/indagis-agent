@@ -34,9 +34,9 @@ from gateway.whatsapp_identity import (
     normalize_whatsapp_identifier,
 )
 from hermes_constants import (
-    get_default_hermes_root,
-    get_hermes_dir,
-    get_hermes_home,
+    get_default_indagis_root,
+    get_indagis_dir,
+    get_indagis_home,
 )
 from utils import atomic_replace
 
@@ -56,7 +56,7 @@ LOCKOUT_SECONDS = 3600              # Lockout duration after too many failures
 MAX_PENDING_PER_PLATFORM = 3        # Max pending codes per platform
 MAX_FAILED_ATTEMPTS = 5             # Failed approvals before lockout
 
-PAIRING_DIR = get_hermes_dir("platforms/pairing", "pairing")
+PAIRING_DIR = get_indagis_dir("platforms/pairing", "pairing")
 
 
 # Platform value -> its per-platform allowlist env var. When an operator has
@@ -340,8 +340,8 @@ def _load_json_file(path: Path) -> dict:
 def _merge_pairing_dir(active_dir: Path, alternate_dir: Path) -> None:
     """Merge split legacy/new pairing data into the active PairingStore dir.
 
-    Older installs use ``{HERMES_HOME}/pairing`` while newer code/docs may
-    write ``{HERMES_HOME}/platforms/pairing``. If both directories exist, the
+    Older installs use ``{INDAGIS_HOME}/pairing`` while newer code/docs may
+    write ``{INDAGIS_HOME}/platforms/pairing``. If both directories exist, the
     gateway must not silently ignore approved users sitting in the inactive
     location; otherwise already-paired Feishu users get asked for a fresh code.
     """
@@ -368,7 +368,7 @@ def _migrate_split_pairing_dirs(
     home: Optional[Path] = None,
     active: Optional[Path] = None,
 ) -> None:
-    home = home or get_hermes_home()
+    home = home or get_indagis_home()
     old_dir = home / "pairing"
     new_dir = home / "platforms" / "pairing"
     active = active or PAIRING_DIR
@@ -412,23 +412,23 @@ class PairingStore:
       - _rate_limits.json         : rate limit tracking
 
     When constructed with ``profile="<name>"``, storage resolves from that
-    profile's own HERMES_HOME using the same legacy/consolidated layout rules
+    profile's own INDAGIS_HOME using the same legacy/consolidated layout rules
     as ``hermes -p <name> pairing ...``. This keeps multiplex gateways and
     profile-scoped CLI approvals on one whitelist. Without a profile, storage
-    is the global pairing directory for the current HERMES_HOME.
+    is the global pairing directory for the current INDAGIS_HOME.
     """
 
     def __init__(self, profile: Optional[str] = None):
-        # Resolve storage directory lazily — tests use a temp HERMES_HOME
+        # Resolve storage directory lazily — tests use a temp INDAGIS_HOME
         # and PairingStore may be constructed before the env is set.
         if profile:
-            root = get_default_hermes_root()
+            root = get_default_indagis_root()
             profile_home = (
                 root
                 if profile == "default"
                 else root / "profiles" / profile
             )
-            self._dir = get_hermes_dir(
+            self._dir = get_indagis_dir(
                 "platforms/pairing",
                 "pairing",
                 home=profile_home,

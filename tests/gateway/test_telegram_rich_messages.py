@@ -528,7 +528,7 @@ def _reply_message_with_rich_blocks(
 @pytest.mark.asyncio
 async def test_rich_reply_records_and_recovers_text(monkeypatch, tmp_path):
     """A reply to a rich-sent message resolves the original text via the index."""
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     from gateway.platforms.base import MessageType
     from gateway import rich_sent_store
 

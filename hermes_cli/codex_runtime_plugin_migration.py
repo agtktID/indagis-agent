@@ -212,7 +212,7 @@ def _format_toml_value(value: Any) -> str:
         # because TOML basic strings don't allow literal control chars
         # — passing them through would produce invalid TOML that codex
         # would refuse to load. Paths usually don't contain control
-        # chars but env-var passthrough (HERMES_HOME, PYTHONPATH) could
+        # chars but env-var passthrough (INDAGIS_HOME, PYTHONPATH) could
         # in pathological cases.
         escaped = (
             value
@@ -534,7 +534,7 @@ def _looks_like_test_tempdir(path: str) -> bool:
     pytest tempdirs live under ``pytest-of-<user>/pytest-<n>/`` (created via
     ``tmp_path`` / ``tmp_path_factory``) and are reaped between sessions.
     macOS routes ``/tmp`` through ``/private/var/folders/<…>/T`` which is
-    what pytest's tempdir factory uses by default. If a HERMES_HOME pointing
+    what pytest's tempdir factory uses by default. If a INDAGIS_HOME pointing
     at one of those paths is burned into ``~/.codex/config.toml``, every
     codex-routed hermes-tools call fails silently once the directory is GC'd.
 
@@ -561,29 +561,29 @@ def _build_hermes_tools_mcp_entry() -> dict:
 
     The command runs the worktree's Python via the current sys.executable
     so a hermes installed under /opt/, /usr/local/, or a venv all work.
-    HERMES_HOME and PYTHONPATH are passed through so the spawned process
+    INDAGIS_HOME and PYTHONPATH are passed through so the spawned process
     sees the same config + module layout the user is running."""
     import sys
 
     env: dict[str, str] = {}
-    # HERMES_HOME passes through IF SET so the MCP subprocess sees the same
+    # INDAGIS_HOME passes through IF SET so the MCP subprocess sees the same
     # config / auth / sessions DB as the parent CLI. Read from os.environ
-    # (not get_hermes_home()) on purpose: when the env var is unset we want
-    # codex's subprocess to inherit whatever HERMES_HOME its launcher sets
+    # (not get_indagis_home()) on purpose: when the env var is unset we want
+    # codex's subprocess to inherit whatever INDAGIS_HOME its launcher sets
     # at runtime (systemd unit, gateway, kanban dispatcher, custom shell),
     # rather than burning the migrate-time resolved default into config.toml
-    # — that would override the launcher's HERMES_HOME and pin the subprocess
+    # — that would override the launcher's INDAGIS_HOME and pin the subprocess
     # to the wrong profile.
     #
     # The pytest-tempdir guard below catches the issue #26250 Bug C scenario:
-    # a sibling test's monkeypatch.setenv("HERMES_HOME", tmp_path) would
+    # a sibling test's monkeypatch.setenv("INDAGIS_HOME", tmp_path) would
     # otherwise leak a transient pytest tempdir into the user's real
     # ~/.codex/config.toml and silently brick codex once the tempdir is GC'd.
-    hermes_home = os.environ.get("HERMES_HOME") or ""
+    hermes_home = os.environ.get("INDAGIS_HOME") or ""
     if hermes_home and _looks_like_test_tempdir(hermes_home):
         hermes_home = ""
     if hermes_home:
-        env["HERMES_HOME"] = hermes_home
+        env["INDAGIS_HOME"] = hermes_home
     # PYTHONPATH passes through so a worktree-launched hermes finds the
     # branch's modules instead of the installed package.
     pythonpath = os.environ.get("PYTHONPATH")

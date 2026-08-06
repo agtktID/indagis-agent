@@ -51,8 +51,8 @@ class TestUserConfigMerge:
         }
         cfg_path.write_text(yaml.safe_dump(legacy))
 
-        monkeypatch.setenv("HERMES_HOME", str(home))
-        # Force a fresh reimport of config.py so the HERMES_HOME is honored.
+        monkeypatch.setenv("INDAGIS_HOME", str(home))
+        # Force a fresh reimport of config.py so the INDAGIS_HOME is honored.
         import importlib
         import hermes_cli.config as cfg_mod
         importlib.reload(cfg_mod)

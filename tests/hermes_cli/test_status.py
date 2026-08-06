@@ -4,7 +4,7 @@ from hermes_cli.status import show_status
 
 
 def test_show_status_all_does_not_print_tavily_key_value(monkeypatch, capsys, tmp_path):
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     sentinel = "NONSECRET_SENTINEL_VALUE_DO_NOT_PRINT_123456"
     monkeypatch.setenv("TAVILY_API_KEY", sentinel)
 
@@ -23,7 +23,7 @@ def test_show_status_termux_gateway_section_skips_systemctl(monkeypatch, capsys,
     monkeypatch.setenv("TERMUX_VERSION", "0.118.3")
     monkeypatch.setenv("PREFIX", "/data/data/com.termux/files/usr")
     monkeypatch.setattr(status_mod, "get_env_path", lambda: tmp_path / ".env", raising=False)
-    monkeypatch.setattr(status_mod, "get_hermes_home", lambda: tmp_path, raising=False)
+    monkeypatch.setattr(status_mod, "get_indagis_home", lambda: tmp_path, raising=False)
     monkeypatch.setattr(status_mod, "load_config", lambda: {"model": "gpt-5.4"}, raising=False)
     monkeypatch.setattr(status_mod, "resolve_requested_provider", lambda requested=None: "openai-codex", raising=False)
     monkeypatch.setattr(status_mod, "resolve_provider", lambda requested=None, **kwargs: "openai-codex", raising=False)
@@ -49,7 +49,7 @@ def test_show_status_reports_vercel_backend_contract(monkeypatch, capsys, tmp_pa
     import hermes_cli.auth as auth_mod
     import hermes_cli.gateway as gateway_mod
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     monkeypatch.setenv("TERMINAL_ENV", "vercel_sandbox")
     monkeypatch.setenv("TERMINAL_VERCEL_RUNTIME", "python3.13")
     monkeypatch.setenv("TERMINAL_CONTAINER_PERSISTENT", "true")
@@ -86,7 +86,7 @@ def _base_xai_mocks(monkeypatch, tmp_path):
     import hermes_cli.gateway as gateway_mod
 
     monkeypatch.setattr(status_mod, "get_env_path", lambda: tmp_path / ".env", raising=False)
-    monkeypatch.setattr(status_mod, "get_hermes_home", lambda: tmp_path, raising=False)
+    monkeypatch.setattr(status_mod, "get_indagis_home", lambda: tmp_path, raising=False)
     monkeypatch.setattr(status_mod, "load_config", lambda: {"model": "gpt-5.4"}, raising=False)
     monkeypatch.setattr(status_mod, "resolve_requested_provider", lambda requested=None: "openai-codex", raising=False)
     monkeypatch.setattr(status_mod, "resolve_provider", lambda requested=None, **kwargs: "openai-codex", raising=False)
@@ -207,9 +207,9 @@ def test_show_status_reports_gateway_session_last_activity(monkeypatch, capsys, 
     import hermes_state
     import time
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     monkeypatch.setattr(status_mod, "get_env_path", lambda: tmp_path / ".env", raising=False)
-    monkeypatch.setattr(status_mod, "get_hermes_home", lambda: tmp_path, raising=False)
+    monkeypatch.setattr(status_mod, "get_indagis_home", lambda: tmp_path, raising=False)
     monkeypatch.setattr(status_mod, "load_config", lambda: {"model": "gpt-5.4"}, raising=False)
     monkeypatch.setattr(status_mod, "resolve_requested_provider", lambda requested=None: "openai-codex", raising=False)
     monkeypatch.setattr(status_mod, "resolve_provider", lambda requested=None, **kwargs: "openai-codex", raising=False)

@@ -55,7 +55,7 @@ def test_termux_skips_bundled_skill_sync_when_stamp_fresh(monkeypatch, tmp_path,
     calls = []
 
     monkeypatch.setenv("TERMUX_VERSION", "1")
-    monkeypatch.setattr(main_mod, "get_hermes_home", lambda: tmp_path)
+    monkeypatch.setattr(main_mod, "get_indagis_home", lambda: tmp_path)
     monkeypatch.setattr(main_mod, "_termux_bundled_skills_fingerprint", lambda: "fp1")
     main_mod._mark_termux_bundled_skills_synced()
     monkeypatch.setitem(

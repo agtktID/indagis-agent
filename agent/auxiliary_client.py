@@ -113,7 +113,7 @@ OpenAI = _OpenAIProxy()  # module-level name, resolves lazily on call/isinstance
 
 from agent.credential_pool import load_pool
 from agent.model_metadata import MINIMUM_CONTEXT_LENGTH, get_model_context_length
-from hermes_cli.config import get_hermes_home
+from hermes_cli.config import get_indagis_home
 from hermes_constants import OPENROUTER_BASE_URL
 from utils import base_url_host_matches, base_url_hostname, env_float, model_forces_max_completion_tokens, normalize_proxy_env_vars
 
@@ -955,7 +955,7 @@ _OPENROUTER_MODEL = "google/gemini-3.6-flash"
 _NOUS_MODEL = "google/gemini-3.6-flash"
 _NOUS_DEFAULT_BASE_URL = "https://inference-api.nousresearch.com/v1"
 _ANTHROPIC_DEFAULT_BASE_URL = "https://api.anthropic.com"
-_AUTH_JSON_PATH = get_hermes_home() / "auth.json"
+_AUTH_JSON_PATH = get_indagis_home() / "auth.json"
 
 # Codex OAuth endpoint used when a caller explicitly requests
 # provider="openai-codex".  There is deliberately no hardcoded default

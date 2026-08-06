@@ -397,11 +397,11 @@ def _is_hermes_internal_secret(key: str) -> bool:
 def _inject_context_hermes_home(env: dict) -> None:
     """Bridge the context-local Hermes home override into subprocess env."""
     try:
-        from hermes_constants import get_hermes_home_override
+        from hermes_constants import get_indagis_home_override
 
-        value = get_hermes_home_override()
+        value = get_indagis_home_override()
         if value:
-            env["HERMES_HOME"] = value
+            env["INDAGIS_HOME"] = value
     except Exception:
         pass
 
@@ -650,7 +650,7 @@ def hermes_subprocess_env(*, inherit_credentials: bool = False) -> dict[str, str
     # Non-terminal subprocess helpers (browser, lazy-deps, TUI/ACP hosts, etc.)
     # also need the delegate_task child lineage marker.  Otherwise a child
     # context that later imports Kanban DB code in the spawned process would
-    # still see the parent's HERMES_HOME but lose the DB mutation guard.
+    # still see the parent's INDAGIS_HOME but lose the DB mutation guard.
     env = _scrub_delegated_child_kanban_env(env)
 
     return env
@@ -668,7 +668,7 @@ def build_subprocess_env(
     Every spawn site in the codebase should build its env through this
     function (or :func:`hermes_subprocess_env` for the model-driving-CLI
     surface) instead of copying ``os.environ`` directly, so profile-home
-    propagation (``HERMES_HOME`` / subprocess ``HOME`` contract) and the
+    propagation (``INDAGIS_HOME`` / subprocess ``HOME`` contract) and the
     Hermes secret-scrub policy have a single owner.  History: ~11 separate
     commits each fixed one more spawn site that missed profile-HOME or
     secret-scrub propagation; this factory is the fix for the class.
@@ -682,7 +682,7 @@ def build_subprocess_env(
       :func:`_sanitize_subprocess_env`, the long-standing owner of the scrub
       list (provider blocklist + ``_is_hermes_internal_secret`` dynamic
       patterns + kanban/venv-marker/session-context guards) **and** of
-      ``HERMES_HOME`` / subprocess-HOME propagation.  On this path profile
+      ``INDAGIS_HOME`` / subprocess-HOME propagation.  On this path profile
       home propagation is inherent — ``inherit_profile_home`` is ignored
       (always applied), exactly matching today's sanitize semantics.
     * ``scrub_secrets=False`` — preserve the base env content byte-for-byte
@@ -691,17 +691,17 @@ def build_subprocess_env(
       scrubbing could change behavior.  The site is still a win: it becomes
       grep-able and future-fixable.
     * ``inherit_profile_home`` — on the non-scrub path, when True, bridge the
-      context-local Hermes home override into ``HERMES_HOME`` and apply the
+      context-local Hermes home override into ``INDAGIS_HOME`` and apply the
       subprocess HOME contract (``hermes_constants.apply_subprocess_home_env``).
       Pass False to keep the inherited env untouched (exact legacy
       ``os.environ.copy()`` behavior).
     * ``extra`` — applied **last** on the non-scrub path so explicit caller
-      overrides (e.g. a session-scoped ``HERMES_HOME``) always win.  On the
+      overrides (e.g. a session-scoped ``INDAGIS_HOME``) always win.  On the
       scrub path it is forwarded as ``_sanitize_subprocess_env``'s
       ``extra_env`` (same force-prefix / blocklist handling as today).
     """
     if scrub_secrets:
-        # _sanitize_subprocess_env already performs HERMES_HOME override
+        # _sanitize_subprocess_env already performs INDAGIS_HOME override
         # bridging + apply_subprocess_home_env unconditionally; delegating
         # wholesale keeps one owner and zero drift.
         return _sanitize_subprocess_env(
@@ -1148,21 +1148,21 @@ def _managed_runtime_path_entries() -> list[str]:
     itself, so on a machine where Hermes provisioned its own toolchain a
     command the agent runs resolves a system copy instead — or nothing at all:
 
-    - ``$HERMES_HOME/node`` (+ ``/bin``) — installed to satisfy the desktop and
+    - ``$INDAGIS_HOME/node`` (+ ``/bin``) — installed to satisfy the desktop and
       browser toolchain. ``tools/browser_tool.py`` already does this for its own
       subprocesses; the agent's shell deserves the same.
-    - ``$HERMES_HOME/bin`` — the managed ``uv``. ``install.sh`` writes it there
+    - ``$INDAGIS_HOME/bin`` — the managed ``uv``. ``install.sh`` writes it there
       and nothing has ever put that directory on PATH, so an install whose only
       uv is the managed one looks uv-less to both the agent and the model.
 
     Resolved per call rather than cached in a module constant because
-    ``get_hermes_home()`` is profile-scoped and a managed tree can appear
+    ``get_indagis_home()`` is profile-scoped and a managed tree can appear
     mid-process (``heal_hermes_managed_node``, a first browser install).
     """
     try:
-        from hermes_constants import get_hermes_home, iter_hermes_node_dirs
+        from hermes_constants import get_indagis_home, iter_hermes_node_dirs
 
-        candidates = [*iter_hermes_node_dirs(), get_hermes_home() / "bin"]
+        candidates = [*iter_hermes_node_dirs(), get_indagis_home() / "bin"]
         return [str(d) for d in candidates if d.is_dir()]
     except Exception:
         return []
@@ -1442,18 +1442,18 @@ class LocalEnvironment(BaseEnvironment):
         can't open the path, and the Windows default temp (``%TEMP%``) often
         contains spaces (``C:\\Users\\Some Name\\AppData\\Local\\Temp``) that
         break unquoted bash interpolations.  Use a dedicated cache dir under
-        ``HERMES_HOME`` instead — single-word path, guaranteed to exist, same
+        ``INDAGIS_HOME`` instead — single-word path, guaranteed to exist, same
         string resolves in both Git Bash and native Python.
         """
         if _IS_WINDOWS:
-            # Derive a Windows-safe temp dir under HERMES_HOME.  Using
+            # Derive a Windows-safe temp dir under INDAGIS_HOME.  Using
             # forward slashes makes the same string work unchanged in bash
             # command interpolations AND in Python ``open()`` — Windows
             # accepts forward slashes in filesystem paths, and we control
             # the path so we can guarantee no spaces.
             try:
-                from hermes_constants import get_hermes_home
-                cache_dir = get_hermes_home() / "cache" / "terminal"
+                from hermes_constants import get_indagis_home
+                cache_dir = get_indagis_home() / "cache" / "terminal"
             except Exception:
                 cache_dir = Path(tempfile.gettempdir()) / "hermes_terminal"
             cache_dir.mkdir(parents=True, exist_ok=True)

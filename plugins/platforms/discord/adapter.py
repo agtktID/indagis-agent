@@ -296,10 +296,10 @@ class _DiscordNonConversationalMessageTracker:
         self._ids: dict[str, None] = dict.fromkeys(self._load())
 
     def _state_path(self) -> _Path:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
         return (
-            get_hermes_home()
+            get_indagis_home()
             / _DISCORD_COMMAND_SYNC_STATE_SUBDIR
             / _DISCORD_NONCONVERSATIONAL_STATE_FILENAME
         )
@@ -1090,9 +1090,9 @@ class DiscordAdapter(BasePlatformAdapter):
         # shutdown from a runtime websocket crash.
         self._disconnecting = False
         self._missed_message_backfill_task: Optional[asyncio.Task] = None
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from plugins.platforms.discord.recovery import DiscordRecoveryStore
-        self._discord_recovery_store = DiscordRecoveryStore(get_hermes_home())
+        self._discord_recovery_store = DiscordRecoveryStore(get_indagis_home())
         # Dedup cache: prevents duplicate bot responses when Discord
         # RESUME replays events after reconnects.
         self._dedup = MessageDeduplicator()
@@ -1826,9 +1826,9 @@ class DiscordAdapter(BasePlatformAdapter):
         logger.info("[%s] Disconnected", self.name)
 
     def _command_sync_state_path(self) -> _Path:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        directory = get_hermes_home() / _DISCORD_COMMAND_SYNC_STATE_SUBDIR
+        directory = get_indagis_home() / _DISCORD_COMMAND_SYNC_STATE_SUBDIR
         try:
             directory.mkdir(parents=True, exist_ok=True)
         except Exception:
@@ -8702,8 +8702,8 @@ def _define_discord_view_classes() -> None:
 
             # Write response file
             try:
-                from hermes_constants import get_hermes_home
-                home = get_hermes_home()
+                from hermes_constants import get_indagis_home
+                home = get_indagis_home()
                 response_path = home / ".update_response"
                 tmp = response_path.with_suffix(".tmp")
                 tmp.write_text(answer, encoding="utf-8")

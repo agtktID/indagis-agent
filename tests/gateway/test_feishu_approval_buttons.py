@@ -433,7 +433,7 @@ class TestResolveUpdatePrompt:
     @pytest.mark.asyncio
     async def test_writes_response_file(self, tmp_path, monkeypatch):
         adapter = _make_adapter()
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
         (tmp_path / ".hermes").mkdir()
         adapter._update_prompt_state[1] = {
             "session_key": "sess-up-1",

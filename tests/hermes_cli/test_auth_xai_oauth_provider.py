@@ -156,7 +156,7 @@ def test_save_and_read_xai_oauth_tokens_roundtrip(tmp_path, monkeypatch):
     hermes_home = tmp_path / "hermes"
     hermes_home.mkdir(parents=True, exist_ok=True)
     (hermes_home / "auth.json").write_text(json.dumps({"version": 1, "providers": {}}))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     _save_xai_oauth_tokens(
         {
@@ -181,7 +181,7 @@ def test_refresh_xai_oauth_tokens_preserves_active_provider(tmp_path, monkeypatc
     hermes_home = tmp_path / "hermes"
     near = _jwt_with_exp(int(time.time()) + 30)
     _setup_hermes_auth(hermes_home, access_token=near, refresh_token="rt-old")
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     auth_path = hermes_home / "auth.json"
     raw = json.loads(auth_path.read_text())
@@ -218,7 +218,7 @@ def test_read_xai_oauth_tokens_missing(tmp_path, monkeypatch):
     hermes_home = tmp_path / "hermes"
     hermes_home.mkdir(parents=True, exist_ok=True)
     (hermes_home / "auth.json").write_text(json.dumps({"version": 1, "providers": {}}))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     with pytest.raises(AuthError) as exc:
         _read_xai_oauth_tokens()
@@ -240,7 +240,7 @@ def test_resolve_xai_runtime_credentials_refreshes_expiring_token(tmp_path, monk
         refresh_token="rt-old",
         discovery={"token_endpoint": "https://auth.x.ai/oauth2/token"},
     )
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     new_access = _jwt_with_exp(int(time.time()) + 2 * 60 * 60)
     called = {"count": 0}
@@ -315,7 +315,7 @@ def test_resolve_credentials_quarantines_dead_tokens_on_terminal_refresh_failure
     """
     hermes_home = tmp_path / "hermes"
     _seed_xai_oauth_state(hermes_home, dict(_STALE_XAI_OAUTH_STATE), active_provider="nous")
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     def _terminal_refresh(tokens, **kwargs):
         raise AuthError(
@@ -365,7 +365,7 @@ def test_get_xai_oauth_auth_status_logged_out(tmp_path, monkeypatch):
     hermes_home = tmp_path / "hermes"
     hermes_home.mkdir(parents=True, exist_ok=True)
     (hermes_home / "auth.json").write_text(json.dumps({"version": 1, "providers": {}}))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     status = get_xai_oauth_auth_status()
     assert status["logged_in"] is False
@@ -539,7 +539,7 @@ def test_credential_pool_seeds_xai_oauth_from_singleton(tmp_path, monkeypatch):
     hermes_home = tmp_path / "hermes"
     fresh = _jwt_with_exp(int(time.time()) + 2 * 60 * 60)
     _setup_hermes_auth(hermes_home, access_token=fresh, refresh_token="rt-1")
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     pool = load_pool("xai-oauth")
     assert pool.has_credentials()
@@ -563,7 +563,7 @@ def test_credential_pool_device_code_seed_respects_suppression(tmp_path, monkeyp
         access_token=fresh,
         auth_mode="oauth_device_code",
     )
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     suppress_credential_source("xai-oauth", "device_code")
 
@@ -592,7 +592,7 @@ def test_auth_remove_xai_oauth_clears_singleton_and_sticks(tmp_path, monkeypatch
     hermes_home = tmp_path / "hermes"
     fresh = _jwt_with_exp(int(time.time()) + 2 * 60 * 60)
     _setup_hermes_auth(hermes_home, access_token=fresh, refresh_token="rt-1")
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     # Confirm pre-state: pool sees the seeded entry, auth.json has the singleton.
     pool = load_pool("xai-oauth")
@@ -645,7 +645,7 @@ def test_login_xai_oauth_relogin_clears_suppression_and_reseeds(tmp_path, monkey
     hermes_home = tmp_path / "hermes"
     hermes_home.mkdir(parents=True, exist_ok=True)
     (hermes_home / "auth.json").write_text(json.dumps({"version": 1, "providers": {}}))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     monkeypatch.delenv("HERMES_XAI_BASE_URL", raising=False)
     monkeypatch.delenv("XAI_BASE_URL", raising=False)
 
@@ -707,7 +707,7 @@ def test_pool_sync_back_writes_to_singleton(tmp_path, monkeypatch):
     hermes_home = tmp_path / "hermes"
     expired = _jwt_with_exp(int(time.time()) - 10)
     _setup_hermes_auth(hermes_home, access_token=expired, refresh_token="rt-old")
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     new_access = _jwt_with_exp(int(time.time()) + 2 * 60 * 60)
 
@@ -751,7 +751,7 @@ def test_runtime_provider_uses_pool_entry_for_xai_oauth(tmp_path, monkeypatch):
     hermes_home = tmp_path / "hermes"
     fresh = _jwt_with_exp(int(time.time()) + 2 * 60 * 60)
     _setup_hermes_auth(hermes_home, access_token=fresh)
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     monkeypatch.delenv("HERMES_XAI_BASE_URL", raising=False)
     monkeypatch.delenv("XAI_BASE_URL", raising=False)
 
@@ -780,7 +780,7 @@ def test_pool_refresh_recovers_when_other_process_already_refreshed(tmp_path, mo
     hermes_home = tmp_path / "hermes"
     in_memory_at = _jwt_with_exp(int(time.time()) + 30)
     _setup_hermes_auth(hermes_home, access_token=in_memory_at, refresh_token="rt-shared")
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     pool = load_pool("xai-oauth")
 
@@ -828,7 +828,7 @@ def test_pool_manual_entry_does_not_sync_back_to_singleton(tmp_path, monkeypatch
     # Singleton has its own tokens (separate login).
     singleton_at = _jwt_with_exp(int(time.time()) + 2 * 60 * 60)
     _setup_hermes_auth(hermes_home, access_token=singleton_at, refresh_token="rt-singleton")
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     manual_at_old = _jwt_with_exp(int(time.time()) + 30)
     manual_at_new = _jwt_with_exp(int(time.time()) + 7200)
@@ -897,7 +897,7 @@ def test_auxiliary_client_routes_xai_oauth_through_responses_api(tmp_path, monke
     hermes_home = tmp_path / "hermes"
     fresh = _jwt_with_exp(int(time.time()) + 2 * 60 * 60)
     _setup_hermes_auth(hermes_home, access_token=fresh)
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     monkeypatch.delenv("HERMES_XAI_BASE_URL", raising=False)
     monkeypatch.delenv("XAI_BASE_URL", raising=False)
 
@@ -924,7 +924,7 @@ def test_auxiliary_client_xai_oauth_requires_explicit_model(tmp_path, monkeypatc
     hermes_home = tmp_path / "hermes"
     fresh = _jwt_with_exp(int(time.time()) + 2 * 60 * 60)
     _setup_hermes_auth(hermes_home, access_token=fresh)
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     client, model = resolve_provider_client("xai-oauth", model=None)
     assert client is None
@@ -949,7 +949,7 @@ def test_pool_sync_back_preserves_active_provider(tmp_path, monkeypatch):
     hermes_home = tmp_path / "hermes"
     near_expiry = _jwt_with_exp(int(time.time()) + 30)
     _setup_hermes_auth(hermes_home, access_token=near_expiry, refresh_token="rt-xai")
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     # Simulate a multi-provider user whose actual chosen provider is
     # OpenRouter — xai-oauth tokens exist in the singleton but are NOT

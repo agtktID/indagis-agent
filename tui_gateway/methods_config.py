@@ -180,9 +180,9 @@ def _(rid, params: dict) -> dict:
         except Exception as e:
             return _err(rid, 5013, str(e))
     if key == "profile":
-        from hermes_constants import display_hermes_home
+        from hermes_constants import display_indagis_home
 
-        return _ok(rid, {"home": str(_hermes_home), "display": display_hermes_home()})
+        return _ok(rid, {"home": str(_hermes_home), "display": display_indagis_home()})
     if key == "project":
         cfg_terminal = _load_cfg().get("terminal") or {}
         raw = str(params.get("cwd", "") or cfg_terminal.get("cwd", "") or "").strip()

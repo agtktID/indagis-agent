@@ -421,7 +421,7 @@ def _text_resp(text: str) -> dict:
 
 @pytest.fixture()
 def wire_env():
-    """Mock provider + isolated HERMES_HOME + a shared SessionDB.
+    """Mock provider + isolated INDAGIS_HOME + a shared SessionDB.
 
     Yields (make_agent, handler, db, sid): ``make_agent()`` builds a fresh
     AIAgent bound to the shared DB/session, so a second call models a
@@ -436,8 +436,8 @@ def wire_env():
 
     test_home = tempfile.mkdtemp(prefix="hermes_api_content_")
     os.makedirs(os.path.join(test_home, ".hermes"))
-    prev_home = os.environ.get("HERMES_HOME")
-    os.environ["HERMES_HOME"] = os.path.join(test_home, ".hermes")
+    prev_home = os.environ.get("INDAGIS_HOME")
+    os.environ["INDAGIS_HOME"] = os.path.join(test_home, ".hermes")
 
     from run_agent import AIAgent
 
@@ -471,9 +471,9 @@ def wire_env():
         db.close()
         shutil.rmtree(test_home, ignore_errors=True)
         if prev_home is None:
-            os.environ.pop("HERMES_HOME", None)
+            os.environ.pop("INDAGIS_HOME", None)
         else:
-            os.environ["HERMES_HOME"] = prev_home
+            os.environ["INDAGIS_HOME"] = prev_home
 
 
 def _chat_requests(handler) -> list:

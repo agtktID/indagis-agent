@@ -105,7 +105,7 @@ def test_env_lookup_reads_hermes_dotenv(tmp_path, monkeypatch):
         "HYPERLIQUID_USER_ADDRESS=0xdotenv123\nHYPERLIQUID_API_URL=https://api.hyperliquid-testnet.xyz\n",
         encoding="utf-8",
     )
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     monkeypatch.delenv("HYPERLIQUID_USER_ADDRESS", raising=False)
     monkeypatch.delenv("HYPERLIQUID_API_URL", raising=False)
 
@@ -125,7 +125,7 @@ def test_user_dotenv_overrides_project_dotenv(tmp_path, monkeypatch):
     (hermes_home / ".env").write_text("HYPERLIQUID_USER_ADDRESS=0xuserhome\n", encoding="utf-8")
 
     monkeypatch.chdir(project_dir)
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     monkeypatch.delenv("HYPERLIQUID_USER_ADDRESS", raising=False)
 
     assert mod._env_lookup("HYPERLIQUID_USER_ADDRESS") == "0xuserhome"

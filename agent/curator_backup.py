@@ -48,7 +48,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from agent.skill_utils import is_excluded_skill_path
 
 logger = logging.getLogger(__name__)
@@ -68,16 +68,16 @@ _ID_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z(-\d{2})?$")
 
 
 def _backups_dir() -> Path:
-    return get_hermes_home() / "skills" / ".curator_backups"
+    return get_indagis_home() / "skills" / ".curator_backups"
 
 
 def _skills_dir() -> Path:
-    return get_hermes_home() / "skills"
+    return get_indagis_home() / "skills"
 
 
 def _cron_jobs_file() -> Path:
     """Source path for the live cron jobs store (``~/.hermes/cron/jobs.json``)."""
-    return get_hermes_home() / "cron" / "jobs.json"
+    return get_indagis_home() / "cron" / "jobs.json"
 
 
 CRON_JOBS_FILENAME = "cron-jobs.json"

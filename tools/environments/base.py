@@ -22,7 +22,7 @@ from collections import deque
 from pathlib import Path
 from typing import IO, Callable, Iterable, Protocol
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from hermes_cli._subprocess_compat import windows_hide_flags
 from tools.interrupt import is_interrupted
 
@@ -250,13 +250,13 @@ def get_sandbox_dir() -> Path:
     """Return the host-side root for all sandbox storage (Docker workspaces,
     Singularity overlays/SIF cache, etc.).
 
-    Configurable via TERMINAL_SANDBOX_DIR. Defaults to {HERMES_HOME}/sandboxes/.
+    Configurable via TERMINAL_SANDBOX_DIR. Defaults to {INDAGIS_HOME}/sandboxes/.
     """
     custom = os.getenv("TERMINAL_SANDBOX_DIR")
     if custom:
         p = Path(custom)
     else:
-        p = get_hermes_home() / "sandboxes"
+        p = get_indagis_home() / "sandboxes"
     p.mkdir(parents=True, exist_ok=True)
     return p
 
@@ -932,7 +932,7 @@ class BaseEnvironment(ABC):
             # truncated result is recoverable without re-running (the file
             # only gets created if output actually exceeds the cap).
             try:
-                spill_dir = get_hermes_home() / "cache" / "terminal-output"
+                spill_dir = get_indagis_home() / "cache" / "terminal-output"
                 spill_path = spill_dir / f"out-{int(time.time())}-{os.getpid()}-{id(proc) & 0xffff:x}.log"
                 # Opportunistic cleanup of spills older than 7 days.
                 if spill_dir.is_dir():

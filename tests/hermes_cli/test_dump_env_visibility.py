@@ -22,11 +22,11 @@ def _api_key_line(out: str, label: str) -> str:
 
 def test_dump_flags_shell_only_key_not_in_dotenv(monkeypatch, capsys, tmp_path):
     from hermes_cli import dump
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
 
     monkeypatch.setattr(dump, "get_project_root", lambda: tmp_path / "noproject")
 
-    home = get_hermes_home()
+    home = get_indagis_home()
     home.mkdir(parents=True, exist_ok=True)
     # .env has some OTHER key but NOT firecrawl.
     (home / ".env").write_text("OPENROUTER_API_KEY=sk-or-xxxx\n")
@@ -43,12 +43,12 @@ def test_dump_flags_shell_only_key_not_in_dotenv(monkeypatch, capsys, tmp_path):
 
 def test_dump_leaves_unset_key_untouched(monkeypatch, capsys, tmp_path):
     from hermes_cli import dump
-    from hermes_cli.config import get_hermes_home
+    from hermes_cli.config import get_indagis_home
 
     monkeypatch.setattr(dump, "get_project_root", lambda: tmp_path / "noproject")
     monkeypatch.delenv("TAVILY_API_KEY", raising=False)
 
-    home = get_hermes_home()
+    home = get_indagis_home()
     home.mkdir(parents=True, exist_ok=True)
     (home / ".env").write_text("OPENROUTER_API_KEY=sk-or-xxxx\n")
 

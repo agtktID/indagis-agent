@@ -228,7 +228,7 @@ def test_config_bridges_ignored_channels(monkeypatch, tmp_path):
             "ignored_channels": ["111", "222"],
         },
     }))
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     # Use setenv (not delenv) so monkeypatch registers cleanup even when
     # the var doesn't exist yet — load_gateway_config will overwrite it.
     monkeypatch.setenv("DISCORD_IGNORED_CHANNELS", "")

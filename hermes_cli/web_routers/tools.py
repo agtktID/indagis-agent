@@ -596,7 +596,7 @@ async def run_toolset_post_setup(
     ``profile`` spawns the hook as ``hermes -p <profile> tools post-setup``.
     Most hooks install machine-level artifacts (repo node_modules, shared
     pip packages) where the scope is inert, but hooks that read config or
-    write per-profile state must see the same HERMES_HOME the rest of the
+    write per-profile state must see the same INDAGIS_HOME the rest of the
     drawer's writes targeted — so the scope is threaded for consistency.
     """
     from hermes_cli.tools_config import (

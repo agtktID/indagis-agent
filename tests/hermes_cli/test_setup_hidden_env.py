@@ -73,11 +73,11 @@ class TestChannelCards:
 
 class TestCliWizard:
     """`hermes setup gateway` drops the same knobs. Real wizard, scripted
-    stdin, real .env writes under a temp HERMES_HOME."""
+    stdin, real .env writes under a temp INDAGIS_HOME."""
 
     @pytest.fixture
     def home(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         return tmp_path
 
     def _run(self, answers, monkeypatch):
@@ -128,7 +128,7 @@ class TestCliWizard:
 class TestStillConfigurable:
     def test_gateway_still_honors_the_env_vars(self, tmp_path, monkeypatch):
         """Nothing was removed from the product — only from the setup form."""
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         monkeypatch.setenv("DISCORD_BOT_TOKEN", "t")
         monkeypatch.setenv("DISCORD_HOME_CHANNEL", "999")
         monkeypatch.setenv("DISCORD_REPLY_TO_MODE", "off")

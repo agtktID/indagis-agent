@@ -71,7 +71,7 @@ import logging
 import time
 import threading
 
-from hermes_constants import get_hermes_home, display_hermes_home
+from hermes_constants import get_indagis_home, display_indagis_home
 import os
 import re
 from enum import Enum
@@ -140,8 +140,8 @@ def _skills_scan_signature(dirs_to_scan, disabled) -> tuple:
 # All skills live in ~/.hermes/skills/ (seeded from bundled skills/ on install).
 # This is the single source of truth -- agent edits, hub installs, and bundled
 # skills all coexist here without polluting the git repo.
-HERMES_HOME = get_hermes_home()
-SKILLS_DIR = HERMES_HOME / "skills"
+INDAGIS_HOME = get_indagis_home()
+SKILLS_DIR = INDAGIS_HOME / "skills"
 _SKILLS_DIR_AT_IMPORT = SKILLS_DIR
 
 
@@ -149,14 +149,14 @@ def _skills_dir() -> Path:
     """Return the active profile's skills directory at call time.
 
     Some long-lived runtimes import this module before the active profile has
-    set HERMES_HOME. Keep the legacy SKILLS_DIR module attribute for tests and
+    set INDAGIS_HOME. Keep the legacy SKILLS_DIR module attribute for tests and
     external patchers, but when it has not been patched, resolve from the live
-    profile-scoped HERMES_HOME on every call.
+    profile-scoped INDAGIS_HOME on every call.
     """
     configured = Path(SKILLS_DIR)
     if configured != _SKILLS_DIR_AT_IMPORT:
         return configured
-    return get_hermes_home() / "skills"
+    return get_indagis_home() / "skills"
 
 
 # Anthropic-recommended limits for progressive disclosure efficiency
@@ -205,8 +205,8 @@ def _skill_lookup_path_error(name: str) -> Optional[str]:
 
 
 def load_env() -> Dict[str, str]:
-    """Load profile-scoped environment variables from HERMES_HOME/.env."""
-    env_path = get_hermes_home() / ".env"
+    """Load profile-scoped environment variables from INDAGIS_HOME/.env."""
+    env_path = get_indagis_home() / ".env"
     env_vars: Dict[str, str] = {}
     if not env_path.exists():
         return env_vars
@@ -528,7 +528,7 @@ def _gateway_setup_hint() -> str:
 
         return GATEWAY_SECRET_CAPTURE_UNSUPPORTED_MESSAGE
     except Exception:
-        return f"Secure secret entry is not available. Load this skill in the local CLI to be prompted, or add the key to {display_hermes_home()}/.env manually."
+        return f"Secure secret entry is not available. Load this skill in the local CLI to be prompted, or add the key to {display_indagis_home()}/.env manually."
 
 
 def _build_setup_note(
@@ -691,7 +691,7 @@ def _find_all_skills(*, skip_disabled: bool = False) -> List[Dict[str, Any]]:
     disabled = set() if skip_disabled else _get_disabled_skill_names()
 
     # Collect directories to scan — same resolution as the scan loop below
-    # (_skills_dir() resolves the LIVE profile HERMES_HOME; the module-level
+    # (_skills_dir() resolves the LIVE profile INDAGIS_HOME; the module-level
     # SKILLS_DIR can be stale in long-lived runtimes).
     dirs_to_scan: list = []
     active_skills_dir = _skills_dir()
@@ -806,7 +806,7 @@ def skills_list(category: str = None, task_id: str = None) -> str:
                     "success": True,
                     "skills": [],
                     "categories": [],
-                    "message": f"No skills found. Skills directory created at {display_hermes_home()}/skills/",
+                    "message": f"No skills found. Skills directory created at {display_indagis_home()}/skills/",
                 },
                 ensure_ascii=False,
             )

@@ -1151,7 +1151,7 @@ def _route_capture_through_aux_vision(
 ) -> Optional[str]:
     """Pre-analyse the captured PNG via ``vision_analyze`` and return a text result.
 
-    The captured base64 PNG is materialised to ``$HERMES_HOME/cache/vision/``
+    The captured base64 PNG is materialised to ``$INDAGIS_HOME/cache/vision/``
     and handed to ``vision_analyze_tool`` with a generic describe prompt.
     The resulting text description is merged into the existing AX/SOM
     summary so the main model receives a single text payload that mentions
@@ -1169,7 +1169,7 @@ def _route_capture_through_aux_vision(
         import os as _os
         import uuid as _uuid
 
-        from hermes_constants import get_hermes_dir
+        from hermes_constants import get_indagis_dir
         from model_tools import _run_async
         from tools.vision_tools import vision_analyze_tool
     except Exception as exc:  # pragma: no cover - defensive
@@ -1192,7 +1192,7 @@ def _route_capture_through_aux_vision(
             ext = ".jpg"
         else:
             ext = ".png"
-        cache_dir = get_hermes_dir("cache/vision", "temp_vision_images")
+        cache_dir = get_indagis_dir("cache/vision", "temp_vision_images")
         cache_dir.mkdir(parents=True, exist_ok=True)
         temp_image_path = cache_dir / f"computer_use_{_uuid.uuid4().hex}{ext}"
         raw = _shrink_capture_for_vision(raw, ext)

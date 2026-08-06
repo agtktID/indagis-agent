@@ -286,7 +286,7 @@ def wait_for_mcp_discovery(timeout: "float | None" = None) -> None:
     # kicks off a fresh discovery run here instead of leaving the process
     # latched MCP-less for the session. In multi-profile processes this
     # retry runs under the CALLER's profile context (agent build binds the
-    # session profile's HERMES_HOME first), so a launch profile with no
+    # session profile's INDAGIS_HOME first), so a launch profile with no
     # mcp_servers no longer starves selected profiles of discovery (#67605).
     # Gated on _mcp_discovery_enabled so non-MCP sessions never pay the
     # tools.mcp_tool import on the per-agent-build wait path.
@@ -397,7 +397,7 @@ def ensure_mcp_discovery_started() -> None:
     ``main()`` calls this for the stdio/TUI path. WebSocket/Desktop
     entrypoints can accept sessions without running ``main()``, so the
     agent-build path (``server._start_agent_build``) also calls it AFTER
-    binding the session profile's HERMES_HOME override — the shared owner in
+    binding the session profile's INDAGIS_HOME override — the shared owner in
     ``hermes_cli.mcp_startup`` captures the caller's context-local override
     and propagates it into the discovery thread, so discovery reads the
     SELECTED profile's ``mcp_servers``, not the launch profile's (#67605).

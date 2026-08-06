@@ -16,7 +16,7 @@ from dataclasses import asdict, dataclass, field, is_dataclass
 from typing import Dict, List, Optional, Any, Callable
 from enum import Enum
 
-from hermes_cli.config import get_hermes_home
+from hermes_cli.config import get_indagis_home
 from agent.secret_scope import current_secret_scope, get_secret as _get_secret
 from utils import is_truthy_value
 
@@ -891,7 +891,7 @@ class GatewayConfig:
     quick_commands: Dict[str, Any] = field(default_factory=dict)
     
     # Storage paths
-    sessions_dir: Path = field(default_factory=lambda: get_hermes_home() / "sessions")
+    sessions_dir: Path = field(default_factory=lambda: get_indagis_home() / "sessions")
 
     # Whether to keep writing the legacy sessions.json mirror of the gateway
     # routing index. The primary copy lives in state.db (gateway_routing
@@ -923,7 +923,7 @@ class GatewayConfig:
     # When True, the default profile's gateway serves inbound messages for every
     # profile on the host: profiles are stamped into session keys and (in later
     # phases) per-profile adapters/credentials are resolved. When False, the
-    # gateway behaves exactly as before — single HERMES_HOME, no profile stamping.
+    # gateway behaves exactly as before — single INDAGIS_HOME, no profile stamping.
     multiplex_profiles: bool = False
 
     # Opt-in systemd event-loop watchdog. Zero preserves Type=simple and
@@ -1111,7 +1111,7 @@ class GatewayConfig:
         if "default_reset_policy" in data:
             default_policy = SessionResetPolicy.from_dict(data["default_reset_policy"])
         
-        sessions_dir = get_hermes_home() / "sessions"
+        sessions_dir = get_indagis_home() / "sessions"
         if "sessions_dir" in data:
             sessions_dir = Path(data["sessions_dir"])
         
@@ -1256,7 +1256,7 @@ def load_gateway_config() -> GatewayConfig:
     3. ~/.hermes/gateway.json (legacy — provides defaults under config.yaml)
     4. Built-in defaults
     """
-    _home = get_hermes_home()
+    _home = get_indagis_home()
     gw_data: dict = {}
 
     # Legacy fallback: gateway.json provides the base layer.

@@ -37,10 +37,10 @@ logger = logging.getLogger(__name__)
 
 
 def _get_flush_dir():
-    """Return the pending-messages flush directory under the active HERMES_HOME."""
-    from hermes_constants import get_hermes_home
+    """Return the pending-messages flush directory under the active INDAGIS_HOME."""
+    from hermes_constants import get_indagis_home
 
-    flush_dir = get_hermes_home() / "pending_messages"
+    flush_dir = get_indagis_home() / "pending_messages"
     flush_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
     if os.name == "posix":
         os.chmod(flush_dir, 0o700)

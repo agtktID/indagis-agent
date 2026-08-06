@@ -32,14 +32,14 @@ def _make_pconfig(provider_id="deepseek", env_vars=None):
 
 @pytest.fixture
 def isolated_hermes_home(tmp_path, monkeypatch):
-    """Point HERMES_HOME at a temp dir and clear known API key env vars.
+    """Point INDAGIS_HOME at a temp dir and clear known API key env vars.
 
     Also invalidates any cached get_env_value state by patching Path.home().
     """
     home = tmp_path / ".hermes"
     home.mkdir()
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
 
     # Clear all known API key env vars so get_env_value falls through to .env
     for key in [

@@ -31,7 +31,7 @@ def test_ensure_dependency_uses_powershell_on_windows(tmp_path):
          patch("hermes_cli.dep_ensure._DEP_CHECKS", {"node": lambda: False}), \
          patch("hermes_cli.dep_ensure._find_install_script", return_value=(scripts_dir / "install.ps1", "powershell")), \
          patch("hermes_cli.dep_ensure.shutil") as mock_shutil, \
-         patch("hermes_constants.get_hermes_home", return_value=tmp_path / "fakehome"), \
+         patch("hermes_constants.get_indagis_home", return_value=tmp_path / "fakehome"), \
          patch("subprocess.run") as mock_run, \
          patch("sys.stdin") as mock_stdin:
         mock_shutil.which.side_effect = lambda name: "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" if name == "powershell" else None

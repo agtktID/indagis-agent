@@ -60,8 +60,8 @@ from agent.message_sanitization import (
 )
 # Must mirror _STALE_TOOL_CALL_MARKER_RE in hermes_state.py — kept local
 # to avoid importing hermes_state at module load time (its module-level
-# DEFAULT_DB_PATH = get_hermes_home() / "state.db" breaks tests that
-# monkeypatch get_hermes_home to return a str).
+# DEFAULT_DB_PATH = get_indagis_home() / "state.db" breaks tests that
+# monkeypatch get_indagis_home to return a str).
 _STALE_MARKER_RE = re.compile(r"^\[[A-Za-z_][A-Za-z0-9_.-]*\]$")
 from agent.model_metadata import (
     MINIMUM_CONTEXT_LENGTH,
@@ -3984,7 +3984,7 @@ def run_conversation(
                     # Credential refresh didn't help — show diagnostic info.
                     # Most common causes: Portal OAuth expired/revoked,
                     # account out of credits, or agent key blocked.
-                    from hermes_constants import display_hermes_home as _dhh_fn
+                    from hermes_constants import display_indagis_home as _dhh_fn
                     _dhh = _dhh_fn()
                     _body_text = ""
                     try:
@@ -4041,7 +4041,7 @@ def run_conversation(
                         print(f"{agent.log_prefix}   Auth method: {auth_method}")
                         print(f"{agent.log_prefix}   Token prefix: {key[:12]}..." if isinstance(key, str) and len(key) > 12 else f"{agent.log_prefix}   Token: (empty or short)")
                     print(f"{agent.log_prefix}   Troubleshooting:")
-                    from hermes_constants import display_hermes_home as _dhh_fn
+                    from hermes_constants import display_indagis_home as _dhh_fn
                     _dhh = _dhh_fn()
                     print(f"{agent.log_prefix}     • Check ANTHROPIC_TOKEN in {_dhh}/.env for Hermes-managed OAuth/setup tokens")
                     print(f"{agent.log_prefix}     • Check ANTHROPIC_API_KEY in {_dhh}/.env for API keys or legacy token values")

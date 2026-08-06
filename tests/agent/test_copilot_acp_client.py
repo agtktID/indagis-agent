@@ -196,11 +196,11 @@ def test_run_prompt_preserves_real_home_when_profile_home_available(monkeypatch,
     real_home.mkdir()
 
     monkeypatch.setenv("HOME", str(real_home))
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
-    # Hermeticity: an ambient HERMES_REAL_HOME (exported by Hermes' own
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
+    # Hermeticity: an ambient INDAGIS_REAL_HOME (exported by Hermes' own
     # terminal contract on dev boxes) outranks HOME in the candidate ladder,
     # and an ambient TERMINAL_HOME_MODE would change the policy under test.
-    monkeypatch.delenv("HERMES_REAL_HOME", raising=False)
+    monkeypatch.delenv("INDAGIS_REAL_HOME", raising=False)
     monkeypatch.delenv("TERMINAL_HOME_MODE", raising=False)
     # Hermeticity: get_subprocess_home()'s auto mode prefers the profile home
     # when is_container() is True — on a containerized CI runner that real
@@ -216,12 +216,12 @@ def test_run_prompt_preserves_real_home_when_profile_home_available(monkeypatch,
             client._run_prompt("hello", timeout_seconds=1)
 
     assert captured["kwargs"]["env"]["HOME"] == str(real_home)
-    assert captured["kwargs"]["env"]["HERMES_REAL_HOME"] == str(real_home)
+    assert captured["kwargs"]["env"]["INDAGIS_REAL_HOME"] == str(real_home)
 
 
 def test_run_prompt_passes_home_when_parent_env_is_clean(monkeypatch, tmp_path):
     monkeypatch.delenv("HOME", raising=False)
-    monkeypatch.delenv("HERMES_HOME", raising=False)
+    monkeypatch.delenv("INDAGIS_HOME", raising=False)
 
     captured = {}
     client = _make_home_client(tmp_path)

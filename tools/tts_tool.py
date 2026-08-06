@@ -57,7 +57,7 @@ from typing import Callable, Dict, Any, Iterator, Optional
 from urllib.parse import urljoin, urlparse
 
 from hermes_cli._subprocess_compat import windows_hide_flags
-from hermes_constants import display_hermes_home
+from hermes_constants import display_indagis_home
 
 logger = logging.getLogger(__name__)
 def get_env_value(name, default=None):
@@ -259,8 +259,8 @@ TTS_RESPONSE_BODY_LIMIT_BYTES = 16 * 1024 * 1024
 TTS_RESPONSE_BODY_CHUNK_BYTES = 64 * 1024
 
 def _get_default_output_dir() -> str:
-    from hermes_constants import get_hermes_dir
-    return str(get_hermes_dir("cache/audio", "audio_cache"))
+    from hermes_constants import get_indagis_dir
+    return str(get_indagis_dir("cache/audio", "audio_cache"))
 
 DEFAULT_OUTPUT_DIR = _get_default_output_dir()
 
@@ -2102,8 +2102,8 @@ def _resolve_gemini_persona_prompt_path(gemini_config: Dict[str, Any]) -> Option
     path = Path(expanded).expanduser()
     if not path.is_absolute():
         try:
-            from hermes_constants import get_hermes_home
-            path = get_hermes_home() / path
+            from hermes_constants import get_indagis_home
+            path = get_indagis_home() / path
         except Exception:
             path = Path.cwd() / path
     return path
@@ -2552,10 +2552,10 @@ def _get_piper_voices_dir() -> Path:
     """Return the directory where Hermes caches Piper voice models.
 
     Resolves to ``~/.hermes/cache/piper-voices/`` under the active
-    HERMES_HOME so voice downloads follow profile boundaries.
+    INDAGIS_HOME so voice downloads follow profile boundaries.
     """
-    from hermes_constants import get_hermes_dir
-    root = Path(get_hermes_dir("cache/piper-voices", "piper_voices_cache"))
+    from hermes_constants import get_indagis_dir
+    root = Path(get_indagis_dir("cache/piper-voices", "piper_voices_cache"))
     root.mkdir(parents=True, exist_ok=True)
     return root
 
@@ -3919,7 +3919,7 @@ TTS_SCHEMA = {
             },
             "output_path": {
                 "type": "string",
-                "description": f"Optional custom file path to save the audio. Defaults to {display_hermes_home()}/audio_cache/<timestamp>.mp3"
+                "description": f"Optional custom file path to save the audio. Defaults to {display_indagis_home()}/audio_cache/<timestamp>.mp3"
             },
             "speed": {
                 "type": "number",

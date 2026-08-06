@@ -123,9 +123,9 @@ def _discovery_cache_path() -> Optional[Path]:
     try:
         # Deferred import keeps tools/registry.py a no-deps leaf at module
         # import time (hermes_constants itself is stdlib-only, so no cycle).
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        return Path(get_hermes_home()) / "cache" / "tool_discovery_cache.json"
+        return Path(get_indagis_home()) / "cache" / "tool_discovery_cache.json"
     except Exception:
         return None
 
@@ -256,9 +256,9 @@ def check_fn_cache_scope() -> Optional[str]:
 
         if not is_multiplex_active():
             return None
-        from hermes_constants import get_hermes_home_override
+        from hermes_constants import get_indagis_home_override
 
-        override = get_hermes_home_override()
+        override = get_indagis_home_override()
         if not override:
             return CHECK_FN_CACHE_BYPASS
         return str(Path(override).expanduser().resolve())

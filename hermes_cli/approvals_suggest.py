@@ -143,9 +143,9 @@ class Proposal:
 # ---------------------------------------------------------------------------
 
 def default_db_path() -> Path:
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    return get_hermes_home() / "state.db"
+    return get_indagis_home() / "state.db"
 
 
 def _connect_readonly(db_path: Path) -> sqlite3.Connection:

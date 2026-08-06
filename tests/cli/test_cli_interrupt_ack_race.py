@@ -246,7 +246,7 @@ def test_chat_multimodal_note_persists_clean_input_once(tmp_path, monkeypatch):
     from hermes_state import SessionDB
     from run_agent import AIAgent
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
     cli = _make_cli()
     session_id = cli.session_id
     db = SessionDB(db_path=tmp_path / "state.db")
@@ -421,7 +421,7 @@ def test_close_waits_for_atomic_cli_staging_before_snapshot(tmp_path, monkeypatc
     from hermes_state import SessionDB
     from run_agent import AIAgent
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
     cli = _make_cli()
     session_id = cli.session_id
     db = SessionDB(db_path=tmp_path / "state.db")

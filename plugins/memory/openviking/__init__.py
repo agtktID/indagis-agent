@@ -1405,10 +1405,10 @@ def _local_openviking_bind(endpoint: str) -> tuple[str, int]:
 
 def _openviking_server_log_path() -> Path:
     try:
-        from hermes_constants import get_hermes_home
-        home = get_hermes_home()
+        from hermes_constants import get_indagis_home
+        home = get_indagis_home()
     except Exception:
-        home = Path(os.environ.get("HERMES_HOME", "")).expanduser() if os.environ.get("HERMES_HOME") else Path.home() / ".hermes"
+        home = Path(os.environ.get("INDAGIS_HOME", "")).expanduser() if os.environ.get("INDAGIS_HOME") else Path.home() / ".hermes"
     return home / _OPENVIKING_SERVER_LOG_RELATIVE_PATH
 
 
@@ -2694,8 +2694,8 @@ class OpenVikingMemoryProvider(MemoryProvider):
         hermes_home = str(kwargs.get("hermes_home") or "").strip()
         if not hermes_home:
             try:
-                from hermes_constants import get_hermes_home
-                hermes_home = str(get_hermes_home())
+                from hermes_constants import get_indagis_home
+                hermes_home = str(get_indagis_home())
             except Exception:
                 hermes_home = str(Path.home() / ".hermes")
         self._hermes_home = hermes_home
