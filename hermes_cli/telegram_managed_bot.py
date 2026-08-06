@@ -27,7 +27,11 @@ TELEGRAM_ONBOARDING_URL_ENV = "TELEGRAM_ONBOARDING_URL"
 # actual deep link, so this is only used by local helpers/tests.
 DEFAULT_MANAGER_BOT = "HermesSetupBot"
 
-DEFAULT_BOT_NAME = "Hermes Agent"
+# Phase 4 / G1.3: default Telegram bot display name now matches the
+# rebrand-ed CLI product name. The Nous-hosted onboarding service
+# (DEFAULT_MANAGER_BOT above) keeps its upstream identifier — only
+# the visible default for the local bot registration is rebranded.
+DEFAULT_BOT_NAME = "Indagis Agent"
 DEFAULT_POLL_TIMEOUT = 180
 POLL_INTERVAL = 2
 
