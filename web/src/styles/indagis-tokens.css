@@ -1,0 +1,42 @@
+/*
+ * Indagis Agent — design tokens.
+ *
+ * Tailwind 4 syntax (no tailwind.config.js extend). Imported FIRST from
+ * `index.css` so the @theme{} variables are registered before any
+ * `@tailwindcss/vite` purge pass.
+ *
+ * Hex values are the source of truth — do not lighten/darken them in
+ * components. For overlays, use `color-mix(in srgb, var(--color-cyan)
+ * 20%, transparent)` (see --color-border-accent).
+ */
+@import "tailwindcss";
+
+@theme {
+  /* Backgrounds */
+  --color-obsidian:         #0B0F14;
+  --color-slate:            #121A24;
+  --color-graphite:         #1D2733;
+
+  /* Accents */
+  --color-cyan:             #37D5D6;
+  --color-red:              #C74B50;
+  --color-amber:            #E0A33A;
+  --color-green:            #2CB67D;
+
+  /* Text */
+  --color-text-primary:     #E2E8F0;
+  --color-text-secondary:   #B0C4D8;
+  --color-text-muted:       #4A5568;
+
+  /* Borders */
+  --color-border:           #1E2D3D;
+  --color-border-accent:    color-mix(in srgb, #37D5D6 20%, transparent);
+
+  /* Typography */
+  --font-heading:           'Space Grotesk', system-ui, sans-serif;
+  --font-body:              'Inter', system-ui, sans-serif;
+  --font-mono:              'JetBrains Mono', 'Cascadia Code', monospace;
+
+  --text-body:              15px;
+  --leading-body:           1.75;
+}
