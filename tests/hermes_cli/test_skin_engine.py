@@ -143,7 +143,9 @@ class TestUserSkins:
 
         assert skin.name == "broken"
         assert skin.get_color("banner_title") == "#FFD700"
-        assert skin.get_branding("agent_name") == "Hermes Agent"
+        # Phase 4 / G1.3: the default skin agent_name rebranded to
+        # Indagis Agent; this fallback path inherits the new value.
+        assert skin.get_branding("agent_name") == "Indagis Agent"
         assert skin.spinner.get("waiting_faces", []) == []
         assert skin.tool_emojis == {}
         assert skin.tool_prefix == "!"
