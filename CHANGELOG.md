@@ -252,52 +252,83 @@ From §4 of the cahier des charges:
 
 ---
 
-## Recommended Phase 3 — close the gaps
+## Phase 3 — Dashboard runtime coherence
 
-If the user wants the rebranding to fully match the cahier-des-charges
-§3 + §4 and Doc 1 Étape 3, a Phase 3 commit is needed. Estimated scope:
+**Status:** DONE. Commit `f6faecae4f` on `feat/rebranding`.
 
-1. **G1 + G2 + G5 (HIGH)** — replace remaining "Hermes Agent" strings
-   in `hermes_cli/main.py` (CLI help, tips), `hermes_cli/banner.py` (default
-   banner), `hermes_cli/completion.py` (bash/zsh/fish completion headers),
-   `hermes_cli/setup.py`, `hermes_cli/uninstall.py`, and 20 i18n files.
-   Pure string replacement; no logic change. ~250 file touches,
-   ~600 string replacements.
+**Scope:** Close the four priority-1 gaps from the post-Phase 2 audit
+that could cause visible runtime incoherence between the frontend
+(`web/`) and the backend (`hermes_cli/web_server.py`).
 
-2. **G3 (HIGH)** — update `_BUILTIN_DASHBOARD_THEMES` in
-   `hermes_cli/web_server.py:16218` to mirror `web/src/themes/presets.ts`:
-   rename `default` → `indagis`, add `default-large` Indagis label,
-   label `Nous Blue` etc. with their rebrand labels, drop `cyberpunk`'s
-   Matrix-green description.
+**What changed (4 files, 46 insertions / 18 deletions):**
 
-3. **G4 (MEDIUM)** — `web/index.html`: `<title>` to "Indagis Agent -
-   Dashboard", `<link rel="icon">` to a real SVG.
+| Layer | File | Gap closed |
+|---|---|---|
+| Backend | `hermes_cli/web_server.py` | G2 + G7 backend — `_BUILTIN_DASHBOARD_THEMES` label sync + Telegram bot_name fallback; two historical docstring references updated |
+| Frontend | `web/index.html` | G6 — page title + favicon cascade |
+| Frontend | `web/public/favicon.svg` | G6 — NEW cyan-diamond-on-obsidian favicon (mirrors TUI BRAND.icon) |
+| Frontend | `web/src/pages/ChannelsPage.tsx` | G7 frontend — Telegram onboarding passes `"Indagis Agent"` |
 
-4. **G6 (LOW)** — `web/src/pages/DocsPage.tsx`: drop or update
-   `HERMES_DOCS_URL` (no Indagis doc URL exists yet).
+**What changed OUTSIDE the repo:**
 
-5. **G7 (MEDIUM)** — `web/src/pages/ChannelsPage.tsx:1151`: change
-   `bot_name: "Hermes Agent"` to `"Indagis Agent"` (will re-register
-   Telegram bot display name).
+- `~/.indagis/dashboard-themes/indagis.yaml` — NEW user-shippable theme
+  file in the Indagis profile directory. Mirrors Phase 2 defaultTheme
+  exactly. Loaded at runtime by `_discover_user_themes()` when the user
+  selects it via the dashboard theme picker. Closes G9 (cahier §3.3).
+  The file is in the user profile, NOT in the repo, so it's documented
+  in this CHANGELOG but not version-controlled.
 
-6. **G8 (HIGH)** — full `README.md` rebrand: title, badges, description,
-   keep MIT credit + NousResearch link in footer.
+**Loader validation:**
 
-7. **G10 + G11 (MEDIUM)** — generate `assets/branding/indagis-{logo,mark,
-favicon}.svg` and replace `assets/banner.png`.
+The user YAML was dry-runned against the loader's whitelist logic
+extracted from `_normalise_theme_definition`. Result: 0 errors, 0
+warnings. All 8 `colorOverrides` keys are in the whitelist
+(`accent`, `accentForeground`, `destructive`, `primary`,
+`primaryForeground`, `ring`, `success`, `warning`). All other keys are
+either required or optional recognised fields.
 
-8. **G12 (MEDIUM)** — ship `~/.indagis/dashboard-themes/indagis.yaml`
-   example per cahier §3.4. Either place it in `examples/` and document
-   the path, or auto-copy on first install.
+**Verification (HEAD `f6faecae4f`):**
 
-9. **G13 (LOW)** — cosmetic comment cleanup in `hermes_cli/web_server.py`
-   docstrings (`~/.hermes/` → `~/.indagis/`).
+| # | Check | Result |
+|---|---|---|
+| 1 | `hermes_cli/web_server.py` syntax | PASS (`ast.parse`) |
+| 2 | `web` typecheck | PASS (0 errors) |
+| 3 | `web` tests | PASS (27 files, 191/191) |
+| 4 | "Hermes Teal" residue | PASS (0) |
+| 5 | Push to origin | PASS (SHA `f6faecae4f`) |
 
-10. **G14 (HIGH)** — overlap with G1/G5; covered by Phase 3 above.
+**Rollback:** `git revert f6faecae4f`.
 
-Estimated Phase 3 effort: 1-2 sessions, mostly mechanical. Highest-risk
-items are G7 (Telegram bot re-registration visible to users) and G11
-(SVG asset creation).
+---
+
+## Recommended Phase 4 — close the remaining gaps
+
+The remaining gaps are mechanical string replacements plus a few
+asset-creation tasks. Listed in priority order:
+
+1. **G1 + G14 (HIGH)** — replace the ~30 remaining `"Hermes Agent"`
+   strings in `hermes_cli/main.py` (help text, tips, uninstall docstring,
+   update docstring), `hermes_cli/banner.py` (default banner branch),
+   `hermes_cli/completion.py` (3 shell completion file headers),
+   `hermes_cli/setup.py`, `hermes_cli/uninstall.py`. ~250 string
+   replacements across ~5 files.
+
+2. **G4 + G8 (HIGH)** — full `README.md` rebrand (title, badges,
+   description, keep MIT credit + NousResearch link in footer).
+
+3. **G5 (HIGH)** — 20 i18n files (`web/src/i18n/*.ts`). Each contains
+   5-15 user-facing strings with "Hermes Agent" / "Hermes" / "Hermes
+   Teal".
+
+4. **G11 (MEDIUM)** — author `assets/branding/indagis-{logo,mark}.svg`
+   with a richer SVG than the favicon diamond. Visual identity asset,
+   not just code.
+
+5. **G13 (LOW)** — cosmetic docstring cleanup in
+   `hermes_cli/web_server.py` (`~/.hermes/` → `~/.indagis/`).
+
+Estimated Phase 4 effort: 2-3 sessions for G1+G14 (largest), then
+mechanical pass for G4+G5.
 
 ---
 
@@ -344,6 +375,39 @@ reason, and the rollback cost.
   remaining Hermes occurrences. This CHANGELOG serves that purpose AND
   adds full traceability (rollback boundaries, decision log, gap list).
   Avoids two files drifting apart.
+
+---
+
+### D4 — 2026-08-06 — `bun.lock` deleted, not committed
+
+- **Decided by:** agent (per user instruction).
+- **Question:** the working tree had `bun.lock` untracked. Commit it
+  or restore?
+- **Resolution:** delete (the file was a local-environment artefact of
+  `bun install`, not part of the project workflow). The repo already
+  ships a `package-lock.json` (npm) + `uv.lock` (uv) + `flake.lock`
+  (Nix); Bun is not part of the project's documented dependency
+  runtime.
+- **Reason:** (a) the repo upstream uses npm + uv, not bun ;
+  (b) committing a `bun.lock` would create a second source of
+  truth for JS dependencies ; (c) the file is reproducible on demand
+  via `bun install` if a developer ever needs it.
+- **Rollback cost:** 0 — the file can be regenerated trivially.
+
+### D5 — 2026-08-06 — Indagis YAML theme at `~/.indagis/dashboard-themes/`, NOT in repo
+
+- **Decided by:** agent (per cahier §3.3 path).
+- **Question:** where to ship the user-shippable YAML theme?
+- **Resolution:** placed at `~/.indagis/dashboard-themes/indagis.yaml`
+  (user profile), documented in CHANGELOG but not version-controlled.
+- **Reason:** the cahier §3.3 explicitly mandates this path; the loader
+  in `hermes_cli/web_server.py:_discover_user_themes()` reads from
+  there; a repo-committed file would either conflict with the
+  per-user override flow or duplicate it.
+- **Open:** if the user wants a bundled default that ships with the
+  repo (analogous to the bundled built-in themes), we could add
+  `examples/dashboard-themes/indagis.yaml` and document the copy step
+  in the install flow. Defer.
 
 ---
 
