@@ -23,76 +23,93 @@ const NOUS_BLUE = '#0053FD'
 const PSYCHE_BLUE = '#1540B1'
 const PSYCHE_WARM = '#FFE6CB'
 
-const nousTint = (pct: number) => `color-mix(in srgb, ${NOUS_BLUE} ${pct}%, #FFFFFF)`
-const nousTintTransparent = (pct: number) => `color-mix(in srgb, ${NOUS_BLUE} ${pct}%, transparent)`
+// Indagis palette — sourced from web/src/styles/indagis-tokens.css (the
+// single source of truth across web/desktop/installer). Hex values must stay
+// in lockstep with that file.
+const INDAGIS_CYAN = '#37D5D6'
+const INDAGIS_OBSIDIAN = '#0B0F14'
+const INDAGIS_SLATE = '#121A24'
+const INDAGIS_GRAPHITE = '#1D2733'
+const INDAGIS_TEXT = '#E2E8F0'
+const INDAGIS_TEXT_MUTED = '#B0C4D8'
+const INDAGIS_BORDER = '#1E2D3D'
+const INDAGIS_RED = '#C74B50'
+const INDAGIS_AMBER = '#E0A33A'
+const INDAGIS_GREEN = '#2CB67D'
+
+const indagisDarkTint = (pct: number) => `color-mix(in srgb, ${INDAGIS_CYAN} ${pct}%, ${INDAGIS_OBSIDIAN})`
+const indagisDarkTintTransparent = (pct: number) => `color-mix(in srgb, ${INDAGIS_CYAN} ${pct}%, transparent)`
 
 /**
- * Nous — canonical Hermes desktop identity. The palette keeps the current
- * glass geometry neutral, then lets the old bb/gui blue and psyche cream
- * return as accent seeds.
+ * Indagis — the canonical Indagis Agent desktop identity. The palette is the
+ * Obsidian Black canvas with Cyber Cyan accents; light mode flips to a
+ * paper-white canvas with the same identity hues, lifted for legibility.
+ * Mirrors web/src/styles/indagis-tokens.css and ui-tui/src/theme.ts seeds.
  */
 export const nousTheme: DesktopTheme = {
   name: 'nous',
-  label: 'Nous',
-  description: 'Glass neutrals with Nous blue accents',
+  label: 'Indagis',
+  description: 'Premium investigation / SOC centre — Obsidian Black canvas with Cyber Cyan accents',
   colors: {
-    background: '#F8FAFF',
-    foreground: '#17171A',
+    // Light-mode seeds — paper canvas with darkened Indagis accents.
+    background: '#F8FAFC',
+    foreground: INDAGIS_OBSIDIAN,
     card: '#FFFFFF',
-    cardForeground: '#17171A',
-    muted: nousTint(5),
-    mutedForeground: '#666678',
+    cardForeground: INDAGIS_OBSIDIAN,
+    muted: '#EEF2F6',
+    mutedForeground: '#475569',
     popover: '#FFFFFF',
-    popoverForeground: '#17171A',
-    primary: NOUS_BLUE,
-    primaryForeground: '#FCFCFC',
-    secondary: nousTint(7),
-    secondaryForeground: '#242432',
-    accent: nousTint(10),
-    accentForeground: '#202030',
-    border: nousTintTransparent(22),
-    input: nousTintTransparent(30),
-    ring: NOUS_BLUE,
-    midground: NOUS_BLUE,
-    composerRing: NOUS_BLUE,
-    destructive: '#C72E4D',
+    popoverForeground: INDAGIS_OBSIDIAN,
+    primary: '#0E7A7B',         // Cyber Cyan darkened for light bg
+    primaryForeground: '#FFFFFF',
+    secondary: '#E2E8F0',
+    secondaryForeground: '#1E293B',
+    accent: '#D1E7E8',
+    accentForeground: '#0F3D3E',
+    border: '#CBD5E1',
+    input: '#CBD5E1',
+    ring: '#0E7A7B',
+    midground: '#0E7A7B',
+    composerRing: '#0E7A7B',
+    destructive: '#A23A3F',
     destructiveForeground: '#FFFFFF',
-    sidebarBackground: '#F3F7FF',
-    sidebarBorder: nousTintTransparent(18),
-    userBubble: nousTint(6),
-    userBubbleBorder: nousTintTransparent(24)
+    sidebarBackground: '#F1F5F9',
+    sidebarBorder: '#CBD5E1',
+    userBubble: '#D1E7E8',
+    userBubbleBorder: '#9BCFD0'
   },
   darkColors: {
-    background: '#0D2F86',
-    foreground: PSYCHE_WARM,
-    card: '#12378F',
-    cardForeground: PSYCHE_WARM,
-    muted: '#183F9A',
-    mutedForeground: '#B5C7F3',
-    popover: '#123A96',
-    popoverForeground: PSYCHE_WARM,
-    primary: PSYCHE_WARM,
-    primaryForeground: '#0D2F86',
-    secondary: '#1B45A4',
-    secondaryForeground: '#E0E8FF',
-    accent: PSYCHE_BLUE,
-    accentForeground: '#F0F4FF',
-    border: '#3158AD',
-    input: '#0B2566',
-    ring: PSYCHE_WARM,
-    midground: NOUS_BLUE,
-    composerRing: PSYCHE_WARM,
-    destructive: '#C0473A',
+    background: INDAGIS_OBSIDIAN,
+    foreground: INDAGIS_TEXT,
+    card: INDAGIS_SLATE,
+    cardForeground: INDAGIS_TEXT,
+    muted: INDAGIS_GRAPHITE,
+    mutedForeground: INDAGIS_TEXT_MUTED,
+    popover: INDAGIS_SLATE,
+    popoverForeground: INDAGIS_TEXT,
+    primary: INDAGIS_CYAN,
+    primaryForeground: INDAGIS_OBSIDIAN,
+    secondary: INDAGIS_GRAPHITE,
+    secondaryForeground: INDAGIS_TEXT,
+    accent: indagisDarkTint(15),
+    accentForeground: INDAGIS_CYAN,
+    border: INDAGIS_BORDER,
+    input: '#16202B',
+    ring: INDAGIS_CYAN,
+    midground: INDAGIS_CYAN,
+    composerRing: INDAGIS_CYAN,
+    destructive: INDAGIS_RED,
     destructiveForeground: '#FEF2F2',
-    sidebarBackground: '#09286F',
-    sidebarBorder: '#234A9C',
-    userBubble: '#143B91',
-    userBubbleBorder: '#3A63BD'
+    sidebarBackground: '#091117',
+    sidebarBorder: '#162434',
+    userBubble: '#16303A',
+    userBubbleBorder: '#1F4A56'
   },
   typography: {
-    fontSans: SYSTEM_SANS,
-    fontMono: SYSTEM_MONO,
-    fontUrl: 'https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap'
+    fontSans: `"Inter", ${SYSTEM_SANS}`,
+    fontMono: `"JetBrains Mono", ${SYSTEM_MONO}`,
+    fontUrl:
+      'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap'
   }
 }
 
@@ -203,41 +220,43 @@ export const monoTheme: DesktopTheme = {
   }
 }
 
-/** Neon green on black. Matches the CLI cyberpunk skin and dashboard theme. */
+/** Amber-on-black monospace terminal — 80s CRT vibe. Matches the dashboard theme. */
 export const cyberpunkTheme: DesktopTheme = {
   name: 'cyberpunk',
   label: 'Cyberpunk',
-  description: 'Neon green on black — matrix terminal',
+  description: 'Amber-on-black monospace terminal — 80s CRT vibe (no Matrix green)',
   colors: {
-    background: '#000a00',
-    foreground: '#00ff41',
-    card: '#001200',
-    cardForeground: '#00ff41',
-    muted: '#001a00',
-    mutedForeground: '#1a8a30',
-    popover: '#001000',
-    popoverForeground: '#00ff41',
-    primary: '#00ff41',
-    primaryForeground: '#000a00',
-    secondary: '#002800',
-    secondaryForeground: '#00cc34',
-    accent: '#002000',
-    accentForeground: '#00e038',
-    border: '#003000',
-    input: '#003000',
-    ring: '#00ff41',
-    midground: '#00ff41',
-    destructive: '#ff003c',
-    destructiveForeground: '#000a00',
-    sidebarBackground: '#000600',
-    sidebarBorder: '#001800',
-    userBubble: '#001400',
-    userBubbleBorder: '#004800'
+    background: '#08080A',
+    foreground: '#FFB000',
+    card: '#10100A',
+    cardForeground: '#FFB000',
+    muted: '#18180A',
+    mutedForeground: '#A07000',
+    popover: '#0F0F0A',
+    popoverForeground: '#FFB000',
+    primary: '#FFB000',
+    primaryForeground: '#08080A',
+    secondary: '#222208',
+    secondaryForeground: '#FFD060',
+    accent: '#1F1F08',
+    accentForeground: '#FFC040',
+    border: '#333308',
+    input: '#333308',
+    ring: '#FFB000',
+    midground: '#FFB000',
+    destructive: '#FF3355',
+    destructiveForeground: '#08080A',
+    sidebarBackground: '#0A0A06',
+    sidebarBorder: '#222208',
+    userBubble: '#1F1F08',
+    userBubbleBorder: '#444408'
   },
   typography: {
-    fontMono: `"Courier New", Courier, monospace, ${EMOJI_FALLBACK}`,
-    fontSans: `"Courier New", Courier, monospace, ${EMOJI_FALLBACK}`
+    fontMono: `"Share Tech Mono", "JetBrains Mono", ${SYSTEM_MONO}`,
+    fontSans: `"Share Tech Mono", "JetBrains Mono", ${SYSTEM_MONO}`,
+    fontUrl: 'https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;700&display=swap'
   }
+}
 }
 
 /** Cool slate blue for developers. Matches the CLI slate skin. */

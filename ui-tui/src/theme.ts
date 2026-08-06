@@ -250,11 +250,13 @@ export function themeToneHex(tone: string): string {
 // ── Defaults ─────────────────────────────────────────────────────────
 
 const BRAND: ThemeBrand = {
-  name: 'Hermes Agent',
-  icon: '⚕',
+  name: 'Indagis Agent',
+  // Indagis visual identity: investigation / SOC centre. The prompt is a
+  // single chevron — restrained, not branded with a unicode motif.
+  icon: '◆',
   prompt: '❯',
   welcome: 'Type your message or /help for commands.',
-  goodbye: 'Goodbye! ⚕',
+  goodbye: 'Goodbye.',
   tool: '┊',
   helpHeader: '(^_^)? Commands'
 }
@@ -367,52 +369,62 @@ export function buildPalette(seeds: ThemeSeeds, isLight: boolean): ThemeColors {
   }
 }
 
+// Indagis Design System — dark seeds.
+//
+// Palette is sourced from web/src/styles/indagis-tokens.css (the single
+// source of truth across web/desktop/installer). The terminal cannot consume
+// the CSS variables directly, so the same hex values are mirrored here as
+// seeds; the tone ladder in deriveTones() then generates every secondary
+// tone (muted, label, surface, selection) from these by color-mix against
+// the real terminal background, exactly like the desktop's `--theme-*`
+// seeds → `--ui-*` ladder.
+//
+// Identity is "premium investigation / SOC centre" — Obsidian Black canvas,
+// Cyber Cyan accent, restrained semantic hues. Never "Matrix green" or
+// hacker aesthetics.
 export const DARK_SEEDS: ThemeSeeds = {
-  accent: '#FFBF00',
-  // The classic Hermes navy surfaces are IDENTITY, not derivation drift —
-  // keep them as explicit fill seeds (the ladder derives them for skins
-  // that don't care).
-  activeRow: '#333355',
-  bg: '#101014',
-  border: '#CD7F32',
-  error: '#ef5350',
-  ok: '#4caf50',
-  primary: '#FFD700',
-  prompt: '#FFF8DC',
-  selection: '#3a3a55',
-  shellDollar: '#4dabf7',
-  statusBad: '#FF8C00',
-  statusCritical: '#FF6B6B',
-  statusGood: '#8FBC8F',
-  statusWarn: '#FFD700',
-  surface: '#1a1a2e',
-  text: '#FFF8DC',
-  warn: '#ffa726'
+  accent: '#37D5D6',           // Cyber Cyan
+  activeRow: '#1D2733',        // Graphite (identity fill for active list row)
+  bg: '#0B0F14',               // Obsidian Black
+  border: '#1E2D3D',           // Subtle border
+  error: '#C74B50',            // Evidence Red
+  ok: '#2CB67D',               // Success Green
+  primary: '#37D5D6',          // Cyber Cyan (single accent identity)
+  prompt: '#E2E8F0',           // Text primary
+  selection: '#1D2733',        // Graphite
+  shellDollar: '#B0C4D8',      // Text secondary
+  statusBad: '#C74B50',
+  statusCritical: '#C74B50',
+  statusGood: '#2CB67D',
+  statusWarn: '#E0A33A',       // Amber Signal
+  surface: '#121A24',          // Midnight Slate
+  text: '#E2E8F0',
+  warn: '#E0A33A'
 }
 
-// Light-terminal seeds: darker golds/ambers that stay legible on white.
-// The classic light-mode Hermes look was never hand-authored: for years the
-// TUI emitted the DARK golds and hosts with xterm's minimumContrastRatio
-// (Cursor defaults to 4.5) lifted them against white — hue and saturation
-// kept, luminance clamped. These seeds are those exact lifts
-// (liftForContrast(dark, '#ffffff', 4.5)), so hosts WITHOUT a contrast pass
-// render the same thing Cursor always showed. Text/prompt stay ink — body
-// copy historically rendered in the terminal's default near-black fg.
+// Indagis Design System — light seeds.
+//
+// Same palette identity as dark, but lifted against a light background:
+// accent and primary are darkened variants of Cyber Cyan (#37D5D6) that
+// stay legible on near-white surfaces. Text is Obsidian Black so it reads
+// as ink. Status hues are darkened to the same WCAG-safe lift floor the
+// upstream seeds used (sRGB-luminance lift against #ffffff, target ≥4.5).
 export const LIGHT_SEEDS: ThemeSeeds = {
-  accent: '#956E00',
+  accent: '#0E7A7B',           // Cyber Cyan, darkened for light bg
   bg: '#ffffff',
-  border: '#A56628',
-  error: '#C14240',
-  ok: '#367E39',
-  primary: '#867000',
-  prompt: '#2B2014',
-  shellDollar: '#377BB3',
-  statusBad: '#A65A00',
-  statusCritical: '#B94D4D',
-  statusGood: '#5C7A5C',
-  statusWarn: '#867000',
-  text: '#3D2F13',
-  warn: '#956115'
+  border: '#1E2D3D',           // Subtle border (Indagis)
+  error: '#A23A3F',            // Evidence Red, darkened
+  ok: '#1F8A5F',               // Success Green, darkened
+  primary: '#0E7A7B',          // Cyber Cyan (darkened), single accent identity
+  prompt: '#0B0F14',           // Obsidian Black ink
+  shellDollar: '#2C5F8A',      // dim cyan
+  statusBad: '#A23A3F',
+  statusCritical: '#A23A3F',
+  statusGood: '#1F8A5F',
+  statusWarn: '#A07320',       // Amber Signal, darkened
+  surface: '#F1F5F9',          // Slate-100 (lifted Midnight Slate)
+  text: '#0B0F14',
+  warn: '#A07320'
 }
 
 export const DARK_THEME: Theme = {

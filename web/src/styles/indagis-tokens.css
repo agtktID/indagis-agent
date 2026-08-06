@@ -1,0 +1,55 @@
+/*
+ * Indagis Design System — token sheet.
+ *
+ * This file is the single source of truth for Indagis palette and
+ * typography tokens. It is imported FIRST from web/src/index.css so that
+ * every downstream file (Tailwind utilities, @nous-research/ui components,
+ * ad-hoc stylesheets) inherits the same identity. The desktop and the
+ * bootstrap-installer mirror these hex values through their own runtime
+ * applyTheme() paths — apps/desktop/src/themes/presets.ts and
+ * apps/bootstrap-installer/src/styles.css :root.dark — so any change here
+ * must propagate to those files too.
+ *
+ * Palette rules (see task spec — strict, no deviation):
+ *   - Hex exacts only. No `lighten()`, no `opacity-50` on a solid fill.
+ *   - `rgba()` only for semi-transparent overlays/borders, with the base
+ *     hex unchanged.
+ *   - For hover/focus/skeleton states, use `color-mix()` with the nearest
+ *     palette colour — never invent a new hex.
+ *
+ * Identity: premium investigation / SOC centre. Reference: Palantir,
+ * Elastic, Cloudflare, Tines. Forbidden: hacker aesthetics, Matrix, neon
+ * green-on-black, decorative glitches.
+ */
+
+@import "tailwindcss";
+
+@theme {
+  /* Backgrounds */
+  --color-obsidian:          #0B0F14;
+  --color-slate:             #121A24;
+  --color-graphite:          #1D2733;
+
+  /* Accents */
+  --color-cyan:              #37D5D6;
+  --color-red:               #C74B50;
+  --color-amber:             #E0A33A;
+  --color-green:             #2CB67D;
+
+  /* Text */
+  --color-text-primary:      #E2E8F0;
+  --color-text-secondary:    #B0C4D8;
+  --color-text-muted:        #4A5568;
+
+  /* Borders */
+  --color-border:            #1E2D3D;
+  --color-border-accent:     color-mix(in srgb, #37D5D6 20%, transparent);
+
+  /* Typography */
+  --font-heading:            'Space Grotesk', system-ui, sans-serif;
+  --font-body:               'Inter', system-ui, sans-serif;
+  --font-mono:               'JetBrains Mono', 'Cascadia Code', monospace;
+
+  --text-body:               15px;
+  --leading-body:            1.75;
+}

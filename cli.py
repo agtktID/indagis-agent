@@ -3969,7 +3969,10 @@ def _build_compact_banner() -> str:
         from hermes_cli import __release_date__ as _release_date
         from hermes_cli import __version__ as _version
 
-        version_line = f"Hermes Agent v{_version} ({_release_date})"
+        # Indagis Phase 2: keep the Hermes credit visible on the version line,
+        # per the design-system spec ("indagis --version" must end with the
+        # "(Hermes Agent core, MIT)" attribution).
+        version_line = f"Indagis Agent v{_version} ({_release_date}) (Hermes Agent core, MIT)"
     else:
         version_line = format_banner_version_label()
 
