@@ -1,4 +1,4 @@
-"""Shared constants for Hermes Agent.
+"""Shared constants for Indagis Agent.
 
 Import-safe module with no dependencies — can be imported from anywhere
 without risk of circular imports.
@@ -14,8 +14,8 @@ from pathlib import Path
 
 _profile_fallback_warned: bool = False
 _UNSET = object()
-_HERMES_HOME_OVERRIDE: ContextVar[str | object] = ContextVar(
-    "_HERMES_HOME_OVERRIDE", default=_UNSET
+_INDAGIS_HOME_OVERRIDE: ContextVar[str | object] = ContextVar(
+    "_INDAGIS_HOME_OVERRIDE", default=_UNSET
 )
 
 # ── TUI busy-indicator styles ─────────────────────────────────────────
@@ -27,64 +27,64 @@ INDICATOR_STYLES: tuple[str, ...] = ("ascii", "emoji", "kaomoji", "unicode")
 DEFAULT_INDICATOR_STYLE: str = "kaomoji"
 
 
-def set_hermes_home_override(path: str | Path | None) -> Token:
-    """Set a context-local Hermes home override and return its reset token.
+def set_indagis_home_override(path: str | Path | None) -> Token:
+    """Set a context-local Indagis home override and return its reset token.
 
     This is for in-process, per-task scoping.  It deliberately does not mutate
     ``os.environ`` because that is shared by every thread in the process.
     """
     value: str | object = _UNSET if path is None else str(path)
-    return _HERMES_HOME_OVERRIDE.set(value)
+    return _INDAGIS_HOME_OVERRIDE.set(value)
 
 
-def reset_hermes_home_override(token: Token) -> None:
-    """Restore the previous context-local Hermes home override."""
-    _HERMES_HOME_OVERRIDE.reset(token)
+def reset_indagis_home_override(token: Token) -> None:
+    """Restore the previous context-local Indagis home override."""
+    _INDAGIS_HOME_OVERRIDE.reset(token)
 
 
-def get_hermes_home_override() -> str | None:
-    """Return the active context-local Hermes home override, if any."""
-    override = _HERMES_HOME_OVERRIDE.get()
+def get_indagis_home_override() -> str | None:
+    """Return the active context-local Indagis home override, if any."""
+    override = _INDAGIS_HOME_OVERRIDE.get()
     if override is _UNSET or not override:
         return None
     return str(override)
 
 
-def _get_platform_default_hermes_home() -> Path:
-    """Return the platform-native default Hermes home path."""
+def _get_platform_default_indagis_home() -> Path:
+    """Return the platform-native default Indagis home path."""
     if sys.platform == "win32":
         local_appdata = os.environ.get("LOCALAPPDATA", "").strip()
         base = Path(local_appdata) if local_appdata else Path.home() / "AppData" / "Local"
-        return base / "hermes"
-    return Path.home() / ".hermes"
+        return base / "indagis"
+    return Path.home() / ".indagis"
 
 
-def _hermes_home_from_env() -> Path:
-    """Resolve HERMES_HOME from the process environment only.
+def _indagis_home_from_env() -> Path:
+    """Resolve INDAGIS_HOME from the process environment only.
 
-    Reads the ``HERMES_HOME`` env var, falling back to the platform-native
+    Reads the ``INDAGIS_HOME`` env var, falling back to the platform-native
     default.  Deliberately ignores the context-local override installed by
-    :func:`set_hermes_home_override`, so this reflects the process/launch
-    scope rather than a per-task profile.  Shared by :func:`get_hermes_home`
-    and :func:`get_process_hermes_home` so the two never drift.
+    :func:`set_indagis_home_override`, so this reflects the process/launch
+    scope rather than a per-task profile.  Shared by :func:`get_indagis_home`
+    and :func:`get_process_indagis_home` so the two never drift.
     """
-    val = os.environ.get("HERMES_HOME", "").strip()
+    val = os.environ.get("INDAGIS_HOME", "").strip()
     if val:
         return Path(val)
-    return _get_platform_default_hermes_home()
+    return _get_platform_default_indagis_home()
 
 
 def _warn_profile_fallback_once() -> None:
     """Warn once when falling back to the default home while a profile is active.
 
-    Guard: if a non-default profile is sticky-active but ``HERMES_HOME`` is
+    Guard: if a non-default profile is sticky-active but ``INDAGIS_HOME`` is
     unset, the fallback to the default profile is almost certainly wrong.
     """
     global _profile_fallback_warned
     if _profile_fallback_warned:
         return
     try:
-        fallback_home = _get_platform_default_hermes_home()
+        fallback_home = _get_platform_default_indagis_home()
         active_path = fallback_home / "active_profile"
         active = active_path.read_text(encoding="utf-8").strip() if active_path.exists() else ""
     except (UnicodeDecodeError, OSError):
@@ -97,11 +97,11 @@ def _warn_profile_fallback_once() -> None:
         # configured, and (b) root-logger propagation would double-emit
         # on consoles where a StreamHandler is already attached.
         msg = (
-            f"[HERMES_HOME fallback] HERMES_HOME is unset but active "
+            f"[INDAGIS_HOME fallback] INDAGIS_HOME is unset but active "
             f"profile is {active!r}. Falling back to {fallback_home}, which "
             f"is the DEFAULT profile — not {active!r}. Any data this "
             f"process writes will land in the wrong profile. The "
-            f"subprocess spawner should pass HERMES_HOME explicitly "
+            f"subprocess spawner should pass INDAGIS_HOME explicitly "
             f"(see issue #18594)."
         )
         try:
@@ -111,40 +111,40 @@ def _warn_profile_fallback_once() -> None:
             pass
 
 
-def get_hermes_home() -> Path:
-    """Return the Hermes home directory (default: platform-native path).
+def get_indagis_home() -> Path:
+    """Return the Indagis home directory (default: platform-native path).
 
     Resolution order: context-local override (see
-    :func:`set_hermes_home_override`) → ``HERMES_HOME`` env var → the
+    :func:`set_indagis_home_override`) → ``INDAGIS_HOME`` env var → the
     platform-native default.  This is the single source of truth — all other
     copies should import this.
 
-    When ``HERMES_HOME`` is unset but an ``active_profile`` file indicates
+    When ``INDAGIS_HOME`` is unset but an ``active_profile`` file indicates
     a non-default profile is active, logs a loud one-shot warning to
     ``errors.log`` so cross-profile data corruption is diagnosable instead
     of silent.  Behavior is unchanged otherwise — we still return
     the platform-native default — because raising here would brick 30+ module-level
     callers that import this at load time.  Subprocess spawners are
-    expected to propagate ``HERMES_HOME`` explicitly (see the systemd
+    expected to propagate ``INDAGIS_HOME`` explicitly (see the systemd
     template in ``hermes_cli/gateway.py`` and the kanban dispatcher in
     ``hermes_cli/kanban_db.py``).  See https://github.com/NousResearch/hermes-agent/issues/18594.
     """
-    override = get_hermes_home_override()
+    override = get_indagis_home_override()
     if override:
         return Path(override)
 
-    if not os.environ.get("HERMES_HOME", "").strip():
+    if not os.environ.get("INDAGIS_HOME", "").strip():
         _warn_profile_fallback_once()
 
-    return _hermes_home_from_env()
+    return _indagis_home_from_env()
 
 
-def get_process_hermes_home() -> Path:
-    """Return the Hermes home for the running process, ignoring task overrides.
+def get_process_indagis_home() -> Path:
+    """Return the Indagis home for the running process, ignoring task overrides.
 
-    Unlike :func:`get_hermes_home`, this never follows the context-local
-    override set by :func:`set_hermes_home_override`.  It resolves only the
-    process ``HERMES_HOME`` env var (falling back to the platform default),
+    Unlike :func:`get_indagis_home`, this never follows the context-local
+    override set by :func:`set_indagis_home_override`.  It resolves only the
+    process ``INDAGIS_HOME`` env var (falling back to the platform default),
     so it reflects the scope the process was launched under **as long as
     nothing mutates ``os.environ`` in-process**.
 
@@ -155,34 +155,34 @@ def get_process_hermes_home() -> Path:
     for genuinely profile-scoped data (memories, backups, checkpoints,
     provider config) — those should keep following the override.
     """
-    return _hermes_home_from_env()
+    return _indagis_home_from_env()
 
 
-def get_default_hermes_root() -> Path:
-    """Return the root Hermes directory for profile-level operations.
+def get_default_indagis_root() -> Path:
+    """Return the root Indagis directory for profile-level operations.
 
-    In standard deployments this is the platform-native Hermes home
+    In standard deployments this is the platform-native Indagis home
     (``~/.hermes`` on POSIX, ``%LOCALAPPDATA%\\hermes`` on native Windows).
 
-    In Docker or custom deployments where ``HERMES_HOME`` points outside
-    ``~/.hermes`` (e.g. ``/opt/data``), returns ``HERMES_HOME`` directly
+    In Docker or custom deployments where ``INDAGIS_HOME`` points outside
+    ``~/.hermes`` (e.g. ``/opt/data``), returns ``INDAGIS_HOME`` directly
     — that IS the root.
 
-    In profile mode where ``HERMES_HOME`` is ``<root>/profiles/<name>``,
+    In profile mode where ``INDAGIS_HOME`` is ``<root>/profiles/<name>``,
     returns ``<root>`` so that ``profile list`` can see all profiles.
-    Works both for standard (``~/.hermes/profiles/coder``) and Docker
+    Works both for standard (``~/.indagis/profiles/coder``) and Docker
     (``/opt/data/profiles/coder``) layouts.
 
     Import-safe — no dependencies beyond stdlib.
     """
-    native_home = _get_platform_default_hermes_home()
-    env_home = os.environ.get("HERMES_HOME", "")
+    native_home = _get_platform_default_indagis_home()
+    env_home = os.environ.get("INDAGIS_HOME", "")
     if not env_home:
         return native_home
     env_path = Path(env_home)
     try:
         env_path.resolve().relative_to(native_home.resolve())
-        # HERMES_HOME is under ~/.hermes (normal or profile mode)
+        # INDAGIS_HOME is under ~/.hermes (normal or profile mode)
         return native_home
     except ValueError:
         pass
@@ -194,7 +194,7 @@ def get_default_hermes_root() -> Path:
     if env_path.parent.name == "profiles":
         return env_path.parent.parent
 
-    # Not a profile path — HERMES_HOME itself is the root
+    # Not a profile path — INDAGIS_HOME itself is the root
     return env_path
 
 
@@ -202,14 +202,14 @@ def get_optional_skills_dir(default: Path | None = None) -> Path:
     """Return the optional-skills directory, honoring package-manager wrappers.
 
     Packaged installs may ship ``optional-skills`` outside the Python package
-    tree and expose it via ``HERMES_OPTIONAL_SKILLS``.
+    tree and expose it via ``INDAGIS_OPTIONAL_SKILLS``.
     """
-    override = os.getenv("HERMES_OPTIONAL_SKILLS", "").strip()
+    override = os.getenv("INDAGIS_OPTIONAL_SKILLS", "").strip()
     if override:
         return Path(override)
     if default is not None:
         return default
-    return get_hermes_home() / "optional-skills"
+    return get_indagis_home() / "optional-skills"
 
 
 def get_optional_mcps_dir(default: Path | None = None) -> Path:
@@ -218,39 +218,39 @@ def get_optional_mcps_dir(default: Path | None = None) -> Path:
     Mirrors :func:`get_optional_skills_dir` for the MCP catalog (Nous-approved
     Model Context Protocol servers shipped with the repo but disabled by
     default). Packaged installs may ship ``optional-mcps`` outside the Python
-    package tree and expose it via ``HERMES_OPTIONAL_MCPS``.
+    package tree and expose it via ``INDAGIS_OPTIONAL_MCPS``.
     """
-    override = os.getenv("HERMES_OPTIONAL_MCPS", "").strip()
+    override = os.getenv("INDAGIS_OPTIONAL_MCPS", "").strip()
     if override:
         return Path(override)
     if default is not None:
         return default
-    return get_hermes_home() / "optional-mcps"
+    return get_indagis_home() / "optional-mcps"
 
 
 def get_bundled_skills_dir(default: Path | None = None) -> Path:
     """Return the bundled skills directory for source and packaged installs.
 
     Resolution order:
-        1. ``HERMES_BUNDLED_SKILLS`` env var (Nix wrapper / explicit override)
+        1. ``INDAGIS_BUNDLED_SKILLS`` env var (Nix wrapper / explicit override)
         2. Caller-supplied ``default`` (typically the source-checkout path)
-        3. ``<HERMES_HOME>/skills`` last-resort
+        3. ``<INDAGIS_HOME>/skills`` last-resort
     """
-    override = os.getenv("HERMES_BUNDLED_SKILLS", "").strip()
+    override = os.getenv("INDAGIS_BUNDLED_SKILLS", "").strip()
     if override:
         return Path(override)
     if default is not None:
         return default
-    return get_hermes_home() / "skills"
+    return get_indagis_home() / "skills"
 
 
-def get_hermes_dir(
+def get_indagis_dir(
     new_subpath: str,
     old_name: str,
     *,
     home: Path | None = None,
 ) -> Path:
-    """Resolve a Hermes subdirectory with backward compatibility.
+    """Resolve a Indagis subdirectory with backward compatibility.
 
     New installs get the consolidated layout (e.g. ``cache/images``).
     Existing installs that already have the old path (e.g. ``image_cache``)
@@ -265,17 +265,17 @@ def get_hermes_dir(
     ``platforms/pairing/``.
 
     Args:
-        new_subpath: Preferred path relative to HERMES_HOME (e.g. ``"cache/images"``).
-        old_name: Legacy path relative to HERMES_HOME (e.g. ``"image_cache"``).
-        home: Optional explicit Hermes home. Profile-aware callers that manage
+        new_subpath: Preferred path relative to INDAGIS_HOME (e.g. ``"cache/images"``).
+        old_name: Legacy path relative to INDAGIS_HOME (e.g. ``"image_cache"``).
+        home: Optional explicit Indagis home. Profile-aware callers that manage
             more than one home in the same process use this instead of
-            temporarily mutating the process or context-local HERMES_HOME.
+            temporarily mutating the process or context-local INDAGIS_HOME.
 
     Returns:
         Absolute ``Path`` — legacy location if it exists with content,
         otherwise the new location.
     """
-    home = home or get_hermes_home()
+    home = home or get_indagis_home()
     old_path = home / old_name
     if _legacy_path_has_content(old_path):
         return old_path
@@ -283,14 +283,14 @@ def get_hermes_dir(
 
 
 def iter_hermes_node_dirs(home: Path | None = None) -> list[Path]:
-    """Return Hermes-managed Node.js directories in preferred lookup order.
+    """Return Indagis-managed Node.js directories in preferred lookup order.
 
     Windows installs from ``scripts/install.ps1`` unpack portable Node directly
     into ``%LOCALAPPDATA%\\hermes\\node``. POSIX installs use
-    ``$HERMES_HOME/node/bin``. Include both shapes on every platform so mixed
+    ``$INDAGIS_HOME/node/bin``. Include both shapes on every platform so mixed
     or migrated installs still work.
     """
-    root = home or get_hermes_home()
+    root = home or get_indagis_home()
     dirs = [root / "node"]
     bin_dir = root / "node" / "bin"
     # NOTE: keep this ordering in sync with hermesManagedNodePathEntries() in
@@ -325,8 +325,8 @@ _NODE_BOOTSTRAP_SCRIPT = Path(__file__).resolve().parent / "scripts" / "lib" / "
 def node_tool_runnable(path: str | None) -> bool:
     """Return True only when *path* is a Node/npm/npx binary that actually runs.
 
-    Hermes-managed Node trees live under ``$HERMES_HOME/node`` (or a profile's
-    ``HERMES_HOME``). A partial upgrade or interrupted install can leave
+    Indagis-managed Node trees live under ``$INDAGIS_HOME/node`` (or a profile's
+    ``INDAGIS_HOME``). A partial upgrade or interrupted install can leave
     ``bin/npm`` behind while ``lib/cli.js`` is missing — the wrapper exists but
     immediately throws ``MODULE_NOT_FOUND``. ``find_hermes_node_executable``
     used to trust file presence alone, so ``hermes update`` would pick that
@@ -362,7 +362,7 @@ def node_tool_runnable(path: str | None) -> bool:
 
 
 def hermes_managed_node_tree_present(home: Path | None = None) -> bool:
-    """Return True when any Hermes-managed node/npm/npx shim exists on disk."""
+    """Return True when any Indagis-managed node/npm/npx shim exists on disk."""
     names = set()
     for command in ("node", "npm", "npx"):
         names.update(_candidate_node_command_names(command))
@@ -377,7 +377,7 @@ def hermes_managed_node_tree_present(home: Path | None = None) -> bool:
 
 
 def _heal_managed_node_windows() -> bool:
-    """Redownload the portable Node zip into ``%HERMES_HOME%\\node`` on Windows."""
+    """Redownload the portable Node zip into ``%INDAGIS_HOME%\\node`` on Windows."""
     import re
     import tempfile
     import urllib.request
@@ -393,7 +393,7 @@ def _heal_managed_node_windows() -> bool:
     else:
         return False
 
-    home = get_hermes_home()
+    home = get_indagis_home()
     index_url = f"https://nodejs.org/dist/latest-v{_HERMES_NODE_TARGET_MAJOR}.x/"
     try:
         with urllib.request.urlopen(index_url, timeout=60) as response:
@@ -439,7 +439,7 @@ def _heal_managed_node_windows() -> bool:
 
 
 def _bootstrap_managed_node_posix() -> bool:
-    """Install a fresh managed Node under ``$HERMES_HOME/node`` on POSIX.
+    """Install a fresh managed Node under ``$INDAGIS_HOME/node`` on POSIX.
 
     Shells out to ``_nb_install_bundled_node`` in ``scripts/lib/node-bootstrap.sh``
     (the same pinned-nodejs.org path ``install.sh`` uses), so the resulting
@@ -461,7 +461,7 @@ def _bootstrap_managed_node_posix() -> bool:
             ],
             env={
                 **os.environ,
-                "HERMES_HOME": str(get_hermes_home()),
+                "INDAGIS_HOME": str(get_indagis_home()),
                 # Private provisioning: do not symlink node/npm/npx into
                 # ~/.local/bin — the user has their own toolchain on PATH and
                 # this tree must not shadow it.
@@ -477,12 +477,12 @@ def _bootstrap_managed_node_posix() -> bool:
 
 
 def bootstrap_hermes_managed_node() -> str | None:
-    """Install a Hermes-managed Node tree and return its npm path.
+    """Install a Indagis-managed Node tree and return its npm path.
 
     Used when the only Node/npm on the machine belongs to the user (system,
     nvm, brew, Nix) and cannot satisfy the repo's ``engines`` requirements —
-    Hermes never modifies a toolchain it does not own, so instead it provisions
-    its own tree under ``$HERMES_HOME/node`` (the same tree a fresh install
+    Indagis never modifies a toolchain it does not own, so instead it provisions
+    its own tree under ``$INDAGIS_HOME/node`` (the same tree a fresh install
     creates) and works with that.
 
     Returns the managed npm executable path on success, ``None`` on failure.
@@ -513,7 +513,7 @@ def bootstrap_hermes_managed_node() -> str | None:
 
 
 def heal_hermes_managed_node() -> bool:
-    """Redownload Hermes-managed Node when the tree exists but is broken.
+    """Redownload Indagis-managed Node when the tree exists but is broken.
 
     Runs at most once per process. POSIX installs shell out to
     ``heal_managed_node`` in ``scripts/lib/node-bootstrap.sh``; Windows
@@ -541,7 +541,7 @@ def heal_hermes_managed_node() -> bool:
                 "-c",
                 f'source "{_NODE_BOOTSTRAP_SCRIPT}" && heal_managed_node',
             ],
-            env={**os.environ, "HERMES_HOME": str(get_hermes_home())},
+            env={**os.environ, "INDAGIS_HOME": str(get_indagis_home())},
             capture_output=True,
             timeout=300,
             check=False,
@@ -587,7 +587,7 @@ def _managed_node_tree_outdated(home: Path | None = None) -> bool:
 
 
 def find_hermes_node_executable(command: str) -> str | None:
-    """Return a Hermes-managed Node/npm executable path, healing broken trees.
+    """Return a Indagis-managed Node/npm executable path, healing broken trees.
 
     Outdated trees (node major below ``_HERMES_NODE_TARGET_MAJOR``) heal the
     same way broken ones do — the once-per-process heal redownloads the target
@@ -627,7 +627,7 @@ def find_node_executable_on_path(command: str) -> str | None:
 
     ``shutil.which("npm")`` can resolve an extensionless npm shim before the
     ``.cmd`` shim on Windows. Python's CreateProcess cannot execute that shim
-    directly, so prefer the launchable variants explicitly for Hermes-owned
+    directly, so prefer the launchable variants explicitly for Indagis-owned
     subprocesses.
     """
     if sys.platform != "win32":
@@ -651,9 +651,9 @@ def find_node_executable_on_path(command: str) -> str | None:
 
 
 def find_node_executable(command: str) -> str | None:
-    """Resolve a Node.js command, preferring healthy Hermes-managed installs.
+    """Resolve a Node.js command, preferring healthy Indagis-managed installs.
 
-    This is for Hermes-owned subprocesses that should not be broken by a bad,
+    This is for Indagis-owned subprocesses that should not be broken by a bad,
     missing, or elevation-triggering system Node/npm on PATH. When a managed
     tree exists but cannot be healed, returns ``None`` instead of falling back
     to system npm on PATH.
@@ -667,7 +667,7 @@ def find_node_executable(command: str) -> str | None:
 
 
 def with_hermes_node_path(env: dict[str, str] | None = None) -> dict[str, str]:
-    """Return *env* with Hermes-managed Node directories prepended to PATH."""
+    """Return *env* with Indagis-managed Node directories prepended to PATH."""
     merged = dict(os.environ if env is None else env)
     existing = merged.get("PATH", "")
     parts = [p for p in existing.split(os.pathsep) if p]
@@ -776,20 +776,20 @@ def _legacy_path_has_content(path: Path) -> bool:
     return True
 
 
-def display_hermes_home() -> str:
-    """Return a user-friendly display string for the current HERMES_HOME.
+def display_indagis_home() -> str:
+    """Return a user-friendly display string for the current INDAGIS_HOME.
 
     Uses ``~/`` shorthand for readability::
 
         default:  ``~/.hermes``
-        profile:  ``~/.hermes/profiles/coder``
+        profile:  ``~/.indagis/profiles/coder``
         custom:   ``/opt/hermes-custom``
 
     Use this in **user-facing** print/log messages instead of hardcoding
     ``~/.hermes``.  For code that needs a real ``Path``, use
-    :func:`get_hermes_home` instead.
+    :func:`get_indagis_home` instead.
     """
-    home = get_hermes_home()
+    home = get_indagis_home()
     try:
         return "~/" + str(home.relative_to(Path.home()))
     except ValueError:
@@ -801,7 +801,7 @@ def secure_parent_dir(path: Path) -> None:
 
     Refuses to chmod ``/`` or any top-level directory (resolved parent with
     fewer than 3 parts, i.e. ``/`` or any direct child like ``/usr``) to
-    prevent catastrophic host bricking when ``HERMES_HOME`` or other path
+    prevent catastrophic host bricking when ``INDAGIS_HOME`` or other path
     env vars resolve to an unexpected location.
 
     See https://github.com/NousResearch/hermes-agent/issues/25821.
@@ -828,8 +828,8 @@ def _norm_home_path(path: str | None) -> str:
 
 
 def _profile_home_path(env: dict[str, str] | None = None) -> str | None:
-    """Return ``{HERMES_HOME}/home`` when the profile-home directory exists."""
-    hermes_home = get_hermes_home_override() or (env or {}).get("HERMES_HOME") or os.getenv("HERMES_HOME")
+    """Return ``{INDAGIS_HOME}/home`` when the profile-home directory exists."""
+    hermes_home = get_indagis_home_override() or (env or {}).get("INDAGIS_HOME") or os.getenv("INDAGIS_HOME")
     if not hermes_home:
         return None
     profile_home = os.path.join(hermes_home, "home")
@@ -846,7 +846,7 @@ def _iter_real_home_candidates(env: dict[str, str] | None = None) -> list[str]:
     """Return likely OS-user home candidates in trust order."""
     env = env or {}
     candidates: list[str] = []
-    explicit = str(env.get("HERMES_REAL_HOME") or os.getenv("HERMES_REAL_HOME", "")).strip()
+    explicit = str(env.get("INDAGIS_REAL_HOME") or os.getenv("INDAGIS_REAL_HOME", "")).strip()
     if explicit:
         candidates.append(explicit)
     home = str(env.get("HOME") or os.getenv("HOME", "")).strip()
@@ -874,11 +874,11 @@ def _iter_real_home_candidates(env: dict[str, str] | None = None) -> list[str]:
 
 
 def get_real_home(env: dict[str, str] | None = None) -> str:
-    """Return the OS user's real home directory, avoiding Hermes profile HOME.
+    """Return the OS user's real home directory, avoiding Indagis profile HOME.
 
-    ``HERMES_HOME`` scopes Hermes state. ``HOME`` is reserved for the OS/user
+    ``INDAGIS_HOME`` scopes Indagis state. ``HOME`` is reserved for the OS/user
     account and the many external CLIs that store credentials under ``~``.
-    If a parent process is already running with ``HOME={HERMES_HOME}/home``,
+    If a parent process is already running with ``HOME={INDAGIS_HOME}/home``,
     this helper repairs back to the account home when possible.
     """
     profile_home = _profile_home_path(env)
@@ -900,10 +900,10 @@ def get_subprocess_home(env: dict[str, str] | None = None) -> str | None:
     ``TERMINAL_HOME_MODE``):
 
     * ``auto`` (default): host installs keep the real user HOME; containers use
-      ``{HERMES_HOME}/home`` for persistent state. If a host parent already has
+      ``{INDAGIS_HOME}/home`` for persistent state. If a host parent already has
       HOME pointed at the profile home, repair subprocesses back to real HOME.
     * ``real``: always prefer the real OS-user HOME.
-    * ``profile``: use ``{HERMES_HOME}/home`` when it exists, preserving the
+    * ``profile``: use ``{INDAGIS_HOME}/home`` when it exists, preserving the
       older strict per-profile tool-config isolation.
     """
     env = env or {}
@@ -930,10 +930,10 @@ def get_subprocess_home(env: dict[str, str] | None = None) -> str | None:
 
 
 def apply_subprocess_home_env(env: dict[str, str]) -> None:
-    """Apply Hermes' subprocess HOME contract to *env* in-place."""
+    """Apply Indagis' subprocess HOME contract to *env* in-place."""
     real_home = get_real_home(env)
     if real_home:
-        env["HERMES_REAL_HOME"] = real_home
+        env["INDAGIS_REAL_HOME"] = real_home
     home = get_subprocess_home(env)
     if home:
         env["HOME"] = home
@@ -1214,7 +1214,7 @@ def wsl_unc_path_to_posix(path: str) -> str | None:
 
 
 def translate_cwd_for_wsl_backend(cwd: str) -> str:
-    """Normalize a cross-boundary cwd when Hermes itself runs inside WSL.
+    """Normalize a cross-boundary cwd when Indagis itself runs inside WSL.
 
     A Windows-host UI (native picker / drive path / ``\\\\wsl.localhost\\`` UNC)
     can hand the WSL backend a path it can't ``chdir`` into. Map it to the POSIX
@@ -1291,23 +1291,23 @@ def is_container() -> bool:
 
 
 def get_config_path() -> Path:
-    """Return the path to ``config.yaml`` under HERMES_HOME.
+    """Return the path to ``config.yaml`` under INDAGIS_HOME.
 
-    Replaces the ``get_hermes_home() / "config.yaml"`` pattern repeated
+    Replaces the ``get_indagis_home() / "config.yaml"`` pattern repeated
     in 7+ files (skill_utils.py, hermes_logging.py, hermes_time.py, etc.).
     """
-    return get_hermes_home() / "config.yaml"
+    return get_indagis_home() / "config.yaml"
 
 
 def get_skills_dir() -> Path:
-    """Return the path to the skills directory under HERMES_HOME."""
-    return get_hermes_home() / "skills"
+    """Return the path to the skills directory under INDAGIS_HOME."""
+    return get_indagis_home() / "skills"
 
 
 
 def get_env_path() -> Path:
-    """Return the path to the ``.env`` file under HERMES_HOME."""
-    return get_hermes_home() / ".env"
+    """Return the path to the ``.env`` file under INDAGIS_HOME."""
+    return get_indagis_home() / ".env"
 
 
 # ─── Network Preferences ─────────────────────────────────────────────────────
@@ -1408,7 +1408,7 @@ def venv_python_path(venv_dir, *, windows: bool | None = None) -> Path:
 
 # ─── Partial-update diagnostics ──────────────────────────────────────────────
 
-# Top-level packages/modules that ship as part of Hermes itself. An ImportError
+# Top-level packages/modules that ship as part of Indagis itself. An ImportError
 # naming one of these means our own tree is inconsistent; anything else is a
 # third-party problem with different remediation. Single source of truth —
 # `hermes_cli.update_cmd`'s post-update probe consumes this same set so the
@@ -1433,7 +1433,7 @@ FIRST_PARTY_MODULE_ROOTS = frozenset(
 
 
 def is_first_party_module(name: str | None) -> bool:
-    """True when *name* is a module that ships with Hermes.
+    """True when *name* is a module that ships with Indagis.
 
     Matches on the first dotted segment against an exact set — a substring or
     ``startswith`` test would also claim third-party ``agents``, ``agentops``,

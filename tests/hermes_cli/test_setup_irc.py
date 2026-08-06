@@ -148,7 +148,7 @@ class TestIRCGatewaySetupFreshInstall:
         import hermes_cli.gateway as gateway_mod
         from hermes_cli import setup as setup_mod
 
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         _register_irc_platform()
         try:
             for key in ("IRC_SERVER", "IRC_CHANNEL", "IRC_NICKNAME"):
@@ -194,7 +194,7 @@ class TestIRCGatewaySetupFreshInstall:
         import hermes_cli.gateway as gateway_mod
         from hermes_cli import setup as setup_mod
 
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         _register_irc_platform()
         try:
             monkeypatch.setenv("IRC_SERVER", "irc.libera.chat")

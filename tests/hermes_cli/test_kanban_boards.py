@@ -37,15 +37,15 @@ from hermes_cli import kanban_db as kb
 
 @pytest.fixture
 def fresh_home(tmp_path, monkeypatch):
-    """Isolated HERMES_HOME with no prior kanban state.
+    """Isolated INDAGIS_HOME with no prior kanban state.
 
     The autouse hermetic conftest already nukes credentials + TZ; this
-    fixture layers a per-test HERMES_HOME plus a path-init cache reset
+    fixture layers a per-test INDAGIS_HOME plus a path-init cache reset
     so each test sees a truly empty board set.
     """
     home = tmp_path / "hermes_home"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     for var in (
         "HERMES_KANBAN_DB",
         "HERMES_KANBAN_WORKSPACES_ROOT",
@@ -53,7 +53,7 @@ def fresh_home(tmp_path, monkeypatch):
         "HERMES_KANBAN_BOARD",
     ):
         monkeypatch.delenv(var, raising=False)
-    # Also reset hermes_constants cache so get_default_hermes_root() re-reads.
+    # Also reset hermes_constants cache so get_default_indagis_root() re-reads.
     try:
         import hermes_constants
         hermes_constants._cached_default_hermes_root = None  # type: ignore[attr-defined]
@@ -309,7 +309,7 @@ def _cli(args: list[str], env_extra: dict | None = None) -> subprocess.Completed
 
 class TestCLI:
     def test_boards_list_default_only(self, tmp_path):
-        env = {"HERMES_HOME": str(tmp_path)}
+        env = {"INDAGIS_HOME": str(tmp_path)}
         res = _cli(["boards", "list", "--json"], env_extra=env)
         assert res.returncode == 0, res.stderr
         data = json.loads(res.stdout)
@@ -319,7 +319,7 @@ class TestCLI:
 
 
     def test_per_board_task_isolation_via_cli(self, tmp_path):
-        env = {"HERMES_HOME": str(tmp_path)}
+        env = {"INDAGIS_HOME": str(tmp_path)}
         assert _cli(["boards", "create", "projA"], env_extra=env).returncode == 0
         assert _cli(["boards", "create", "projB"], env_extra=env).returncode == 0
 

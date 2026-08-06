@@ -206,7 +206,7 @@ class TestGating:
             json.dumps({"version": 1, "providers": {"nous": {"access_token": "root-token"}}}),
             encoding="utf-8",
         )
-        monkeypatch.setenv("HERMES_HOME", str(root / "profiles" / "work"))
+        monkeypatch.setenv("INDAGIS_HOME", str(root / "profiles" / "work"))
 
         # The profile's own store is empty, so this passes only via the
         # global-root fallback — without which the tools would be hidden.

@@ -1,10 +1,10 @@
 """Hermes-managed uv and Python runtime repair.
 
-Hermes owns its own uv binary at ``$HERMES_HOME/bin/uv`` (or ``uv.exe`` on
+Hermes owns its own uv binary at ``$INDAGIS_HOME/bin/uv`` (or ``uv.exe`` on
 Windows).  Every code path that needs uv resolves it from that single location.
 If the binary is missing, ``ensure_uv()`` bootstraps it via the official
 standalone installer with ``UV_UNMANAGED_INSTALL`` / ``UV_INSTALL_DIR`` pointed
-at ``$HERMES_HOME/bin`` so the installer writes directly there — no PATH
+at ``$INDAGIS_HOME/bin`` so the installer writes directly there — no PATH
 probing, no conda guards, no multi-location resolution chains.
 
 The Python backing the install is different: it is shared by every Hermes
@@ -34,7 +34,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Optional
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from hermes_cli.sqlite_runtime import SQLiteRuntimeInfo, probe_sqlite_runtime
 
 logger = logging.getLogger(__name__)
@@ -53,11 +53,11 @@ _REPAIR_LOCK_NAME = "runtime-repair.lock"
 def managed_uv_path() -> Path:
     """Return the path where Hermes keeps *its* uv binary.
 
-    ``$HERMES_HOME/bin/uv`` on POSIX, ``$HERMES_HOME\\bin\\uv.exe`` on
+    ``$INDAGIS_HOME/bin/uv`` on POSIX, ``$INDAGIS_HOME\\bin\\uv.exe`` on
     Windows.  The directory may not exist yet — callers should use
     ``ensure_uv()`` to bootstrap it.
     """
-    home = get_hermes_home()
+    home = get_indagis_home()
     if platform.system() == "Windows":
         return home / "bin" / "uv.exe"
     return home / "bin" / "uv"
@@ -281,13 +281,13 @@ def _uv_self_update_is_fresh(now: float | None = None) -> bool:
 
     uv releases roughly weekly while many users run ``hermes update`` daily;
     re-running a blocking network self-update on every invocation is waste
-    and, offline, an unbounded hang risk. A stamp file under HERMES_HOME
+    and, offline, an unbounded hang risk. A stamp file under INDAGIS_HOME
     caches the last successful self-update time.
     """
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        stamp = get_hermes_home() / "cache" / ".uv_self_update_stamp"
+        stamp = get_indagis_home() / "cache" / ".uv_self_update_stamp"
         age = (now if now is not None else time.time()) - stamp.stat().st_mtime
         return 0 <= age < UV_SELF_UPDATE_INTERVAL_SECONDS
     except Exception:
@@ -296,9 +296,9 @@ def _uv_self_update_is_fresh(now: float | None = None) -> bool:
 
 def _touch_uv_self_update_stamp() -> None:
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        stamp = get_hermes_home() / "cache" / ".uv_self_update_stamp"
+        stamp = get_indagis_home() / "cache" / ".uv_self_update_stamp"
         stamp.parent.mkdir(parents=True, exist_ok=True)
         stamp.touch()
     except OSError:
@@ -1247,7 +1247,7 @@ def _install_uv(target: Path) -> None:
 
     Uses ``UV_UNMANAGED_INSTALL`` (POSIX) or ``UV_INSTALL_DIR`` (Windows)
     so the astral installer writes the binary directly into
-    ``$HERMES_HOME/bin/`` instead of ``~/.local/bin/``.
+    ``$INDAGIS_HOME/bin/`` instead of ``~/.local/bin/``.
     """
     system = platform.system()
     env = {

@@ -33,7 +33,7 @@ def existing_install(tmp_path, monkeypatch):
     home = tmp_path / ".hermes"
     home.mkdir()
     monkeypatch.setattr("pathlib.Path.home", lambda: tmp_path)
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     return home
 
 
@@ -43,7 +43,7 @@ def fresh_install(tmp_path, monkeypatch):
     home = tmp_path / ".hermes"
     home.mkdir()
     monkeypatch.setattr("pathlib.Path.home", lambda: tmp_path)
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     return home
 
 
@@ -55,7 +55,7 @@ def _enter_existing_install_patches(stack, **extra):
     """
     # Unconditional mocks (no return values to assert against).
     for target, kwargs in [
-        ("hermes_cli.setup.ensure_hermes_home", {}),
+        ("hermes_cli.setup.ensure_indagis_home", {}),
         ("hermes_cli.setup.is_interactive_stdin", {"return_value": True}),
         ("hermes_cli.config.is_managed", {"return_value": False}),
         ("hermes_cli.setup.load_config", {"return_value": {}}),
@@ -76,7 +76,7 @@ def _enter_existing_install_patches(stack, **extra):
 
 def _enter_fresh_install_patches(stack, **extra):
     for target, kwargs in [
-        ("hermes_cli.setup.ensure_hermes_home", {}),
+        ("hermes_cli.setup.ensure_indagis_home", {}),
         ("hermes_cli.setup.is_interactive_stdin", {"return_value": True}),
         ("hermes_cli.config.is_managed", {"return_value": False}),
         ("hermes_cli.setup.load_config", {"return_value": {}}),

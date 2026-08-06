@@ -150,7 +150,7 @@ class TestSessionDbInitTimeout:
         import yaml
 
         monkeypatch.delenv("HERMES_CRON_SESSION_DB_TIMEOUT", raising=False)
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         (tmp_path / "config.yaml").write_text(
             yaml.safe_dump({"cron": {"session_db_timeout_seconds": 0.2}})
         )

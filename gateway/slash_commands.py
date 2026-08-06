@@ -340,7 +340,7 @@ class GatewaySlashCommandsMixin:
         ``_run_agent`` and ``_reset_notice_session_info`` — and the command
         reports the active profile and default home, byte-identical to before.
         """
-        from hermes_constants import display_hermes_home
+        from hermes_constants import display_indagis_home
         from hermes_cli.slash_exec import CommandContext, execute_command
 
         multiplexed = getattr(
@@ -357,9 +357,9 @@ class GatewaySlashCommandsMixin:
 
                 profile_home = self._resolve_profile_home_for_source(source)
                 with _profile_runtime_scope(profile_home):
-                    display = display_hermes_home()
+                    display = display_indagis_home()
             except Exception:
-                display = display_hermes_home()
+                display = display_indagis_home()
 
         # Shared executor resolves process-level fallbacks; the multiplexed
         # per-source overrides (when any) ride in via options.
@@ -2492,7 +2492,7 @@ class GatewaySlashCommandsMixin:
     async def _handle_personality_command(self, event: MessageEvent) -> str:
         """Handle /personality command - list or set a personality."""
         from gateway.run import _hermes_home, _load_gateway_config
-        from hermes_constants import display_hermes_home
+        from hermes_constants import display_indagis_home
 
         args = event.get_command_args().strip().lower()
         config_path = _hermes_home / 'config.yaml'
@@ -2505,7 +2505,7 @@ class GatewaySlashCommandsMixin:
             personalities = {}
 
         if not personalities:
-            return t("gateway.personality.none_configured", path=display_hermes_home())
+            return t("gateway.personality.none_configured", path=display_indagis_home())
 
         if not args:
             lines = [t("gateway.personality.header")]

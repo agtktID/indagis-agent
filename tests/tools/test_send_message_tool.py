@@ -1710,11 +1710,11 @@ class TestCheckSendMessage:
 
     1. ``HERMES_KANBAN_TASK`` is set (worker spawned by the kanban dispatcher
        — parent gateway is by definition running, but the worker's
-       ``HERMES_HOME`` may be a profile dir without a ``gateway.pid``).
+       ``INDAGIS_HOME`` may be a profile dir without a ``gateway.pid``).
     2. ``HERMES_SESSION_PLATFORM`` resolves to a non-empty, non-``local`` value
        (the session is wired to a messaging platform like Telegram).
     3. ``is_gateway_running()`` returns True (CLI / orchestrator profile with
-       a live gateway colocated under the same ``HERMES_HOME``).
+       a live gateway colocated under the same ``INDAGIS_HOME``).
     4. None of the above → False, tool is hidden.
     """
 

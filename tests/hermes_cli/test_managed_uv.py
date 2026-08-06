@@ -75,7 +75,7 @@ def _make_runtime_install(
 
 class TestManagedUvPath:
     def test_posix(self, tmp_path):
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.platform.system", return_value="Linux"):
             from hermes_cli.managed_uv import managed_uv_path
             assert managed_uv_path() == tmp_path / "bin" / "uv"
@@ -89,7 +89,7 @@ class TestResolveUv:
 
     def test_existing_executable(self, tmp_path):
         _make_executable(tmp_path / "bin" / "uv")
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path):
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path):
             from hermes_cli.managed_uv import resolve_uv
             result = resolve_uv()
             assert result == str(tmp_path / "bin" / "uv")
@@ -100,7 +100,7 @@ class TestResolveUv:
         uv.write_text("not a binary")
         # Ensure no execute bit
         uv.chmod(0o644)
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path):
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path):
             from hermes_cli.managed_uv import resolve_uv
             assert resolve_uv() is None
 
@@ -112,7 +112,7 @@ class TestResolveUv:
 class TestEnsureUv:
 
     def test_installs_if_missing(self, tmp_path):
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.repair_vulnerable_runtime", return_value=_RRR("not-applicable")), \
              patch("hermes_cli.managed_uv._install_uv") as mock_install:
             # Simulate the installer creating the binary
@@ -142,7 +142,7 @@ class TestEnsureUv:
 
         observed = []
         with patch(
-            "hermes_cli.managed_uv.get_hermes_home",
+            "hermes_cli.managed_uv.get_indagis_home",
             return_value=tmp_path,
         ), patch(
             "hermes_cli.managed_uv._install_uv",
@@ -178,7 +178,7 @@ class TestEnsureUvUpdateBoundary:
 
     def test_success_usable_as_single_value(self, tmp_path):
         _make_executable(tmp_path / "bin" / "uv")
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.repair_vulnerable_runtime", return_value=_RRR("not-applicable")), \
              patch("hermes_cli.managed_uv.platform.system", return_value="Linux"):
             from hermes_cli.managed_uv import ensure_uv
@@ -188,7 +188,7 @@ class TestEnsureUvUpdateBoundary:
 
     def test_success_unpacks_as_legacy_two_tuple(self, tmp_path):
         _make_executable(tmp_path / "bin" / "uv")
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.repair_vulnerable_runtime", return_value=_RRR("not-applicable")), \
              patch("hermes_cli.managed_uv.platform.system", return_value="Linux"):
             from hermes_cli.managed_uv import ensure_uv
@@ -197,7 +197,7 @@ class TestEnsureUvUpdateBoundary:
             assert fresh is False
 
     def test_failure_unpacks_without_raising(self, tmp_path):
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.repair_vulnerable_runtime", return_value=_RRR("not-applicable")), \
              patch("hermes_cli.managed_uv.platform.system", return_value="Linux"), \
              patch("hermes_cli.managed_uv._install_uv", side_effect=RuntimeError("network down")):
@@ -236,7 +236,7 @@ class TestEnsureUvWindowsSafe:
         import subprocess
         # On (mocked) Windows the managed binary is uv.exe.
         _make_executable(tmp_path / "bin" / "uv.exe")
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.repair_vulnerable_runtime", return_value=_RRR("not-applicable")), \
              patch("hermes_cli.managed_uv.platform.system", return_value="Windows"):
             from hermes_cli.managed_uv import _UvResult, ensure_uv
@@ -262,13 +262,13 @@ class TestUpdateManagedUv:
 
         uv = tmp_path / "bin" / "uv"
         _make_executable(uv)
-        # Fresh stamp under the isolated HERMES_HOME.
+        # Fresh stamp under the isolated INDAGIS_HOME.
         import hermes_constants
-        stamp = hermes_constants.get_hermes_home() / "cache" / ".uv_self_update_stamp"
+        stamp = hermes_constants.get_indagis_home() / "cache" / ".uv_self_update_stamp"
         stamp.parent.mkdir(parents=True, exist_ok=True)
         stamp.touch()
 
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.subprocess.run") as mock_run, \
              patch(
                  "hermes_cli.managed_uv.repair_vulnerable_runtime",
@@ -290,13 +290,13 @@ class TestUpdateManagedUv:
         uv = tmp_path / "bin" / "uv"
         _make_executable(uv)
         import hermes_constants
-        stamp = hermes_constants.get_hermes_home() / "cache" / ".uv_self_update_stamp"
+        stamp = hermes_constants.get_indagis_home() / "cache" / ".uv_self_update_stamp"
         stamp.parent.mkdir(parents=True, exist_ok=True)
         stamp.touch()
         old = _time.time() - UV_SELF_UPDATE_INTERVAL_SECONDS - 60
         _os.utime(stamp, (old, old))
 
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.repair_vulnerable_runtime", return_value=_RRR("not-applicable")), \
              patch("hermes_cli.managed_uv.subprocess.run") as mock_run:
             mock_run.return_value = MagicMock(returncode=0, stdout="uv 0.2.0")
@@ -313,9 +313,9 @@ class TestManagedPythonStore:
         from hermes_cli.managed_uv import managed_python_install_dir
 
         checkout = tmp_path / "checkout"
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / "profiles" / "alpha"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "profiles" / "alpha"))
         alpha = managed_python_install_dir(checkout)
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / "profiles" / "beta"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "profiles" / "beta"))
         beta = managed_python_install_dir(checkout)
 
         expected = checkout / ".hermes-runtime" / "python"
@@ -879,7 +879,7 @@ class TestRefreshManagedUvCatalog:
         uv_path = tmp_path / "bin" / "uv"
         _make_executable(uv_path)
         versions = iter(["uv 0.1.0", "uv 0.2.0"])
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.platform.system", return_value="Linux"), \
              patch("hermes_cli.managed_uv._install_uv"), \
              patch(
@@ -894,7 +894,7 @@ class TestRefreshManagedUvCatalog:
 
         uv_path = tmp_path / "bin" / "uv"
         _make_executable(uv_path)
-        with patch("hermes_cli.managed_uv.get_hermes_home", return_value=tmp_path), \
+        with patch("hermes_cli.managed_uv.get_indagis_home", return_value=tmp_path), \
              patch("hermes_cli.managed_uv.platform.system", return_value="Linux"), \
              patch(
                  "hermes_cli.managed_uv._install_uv",

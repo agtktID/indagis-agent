@@ -115,7 +115,7 @@ def test_two_processes_each_complete_local_mcp_discovery(tmp_path):
     )
 
     env = os.environ.copy()
-    env["HERMES_HOME"] = str(hermes_home)
+    env["INDAGIS_HOME"] = str(hermes_home)
 
     holder_started = tmp_path / "holder-started"
     holder = subprocess.Popen(

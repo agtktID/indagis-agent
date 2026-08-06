@@ -325,7 +325,7 @@ def test_cli_ledger_path_prefers_flag_over_env(sources_mod, tmp_path: Path, monk
 
 def test_cli_ledger_path_defaults_under_hermes_home(sources_mod, tmp_path: Path, monkeypatch) -> None:
     monkeypatch.delenv("HERMES_CITATION_LEDGER", raising=False)
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
     path = sources_mod.resolve_ledger_path(None)
     assert path.parts[-3:] == ("cache", "citations", "ledger.json")
     assert str(tmp_path) in str(path)

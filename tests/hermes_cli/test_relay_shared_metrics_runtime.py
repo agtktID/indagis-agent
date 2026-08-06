@@ -210,7 +210,7 @@ class _Relay:
 @pytest.fixture
 def direct_runtime(tmp_path, monkeypatch):
     fake = _Relay()
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "hermes-home"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "hermes-home"))
     monkeypatch.setattr(relay_runtime, "_load_nemo_relay", lambda: fake)
     monkeypatch.setattr(
         "hermes_cli.config.read_raw_config_readonly",
@@ -229,7 +229,7 @@ def real_binding_runtime(tmp_path, monkeypatch):
     relay = pytest.importorskip("nemo_relay")
     if getattr(relay, "_native", None) is None:
         pytest.skip("NeMo Relay native binding is unavailable on this platform")
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "hermes-home"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "hermes-home"))
     monkeypatch.setattr(
         "hermes_cli.config.read_raw_config_readonly",
         lambda: {"telemetry": {"shared_metrics": {"enabled": True}}},
@@ -1125,8 +1125,8 @@ def test_managed_config_cannot_override_shared_metrics_consent(
 ):
     from hermes_cli import config, managed_scope
     from hermes_constants import (
-        reset_hermes_home_override,
-        set_hermes_home_override,
+        reset_indagis_home_override,
+        set_indagis_home_override,
     )
 
     profile = tmp_path / "profile"
@@ -1152,7 +1152,7 @@ def test_managed_config_cannot_override_shared_metrics_consent(
     config._RAW_CONFIG_CACHE.clear()
     managed_scope.invalidate_managed_cache()
 
-    token = set_hermes_home_override(profile)
+    token = set_indagis_home_override(profile)
     try:
         assert (
             config.load_config_readonly()["telemetry"]["shared_metrics"]["enabled"]
@@ -1160,7 +1160,7 @@ def test_managed_config_cannot_override_shared_metrics_consent(
         )
         assert relay_shared_metrics.enabled() is (profile_enabled is True)
     finally:
-        reset_hermes_home_override(token)
+        reset_indagis_home_override(token)
         relay_shared_metrics._reset_for_tests()
         relay_runtime._reset_for_tests()
         managed_scope.invalidate_managed_cache()
@@ -1176,7 +1176,7 @@ def test_disabling_shared_metrics_stops_collection_and_shutdown_export(
     fake = _Relay()
     profile = tmp_path / "profile"
     policy = {"enabled": True}
-    monkeypatch.setenv("HERMES_HOME", str(profile))
+    monkeypatch.setenv("INDAGIS_HOME", str(profile))
     monkeypatch.setattr(relay_runtime, "_load_nemo_relay", lambda: fake)
     monkeypatch.setattr(
         "hermes_cli.config.read_raw_config_readonly",

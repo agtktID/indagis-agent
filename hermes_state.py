@@ -39,7 +39,7 @@ from agent.skill_commands import (
     SKILL_SCAFFOLD_SQL_LIKE,
     describe_skill_invocation,
 )
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from hermes_cli.sqlite_runtime import (
     is_sqlite_wal_reset_vulnerable as _is_sqlite_wal_reset_vulnerable,
 )
@@ -257,7 +257,7 @@ def _delete_delegate_children(conn, parent_ids: List[str]) -> List[str]:
 
 T = TypeVar("T")
 
-DEFAULT_DB_PATH = get_hermes_home() / "state.db"
+DEFAULT_DB_PATH = get_indagis_home() / "state.db"
 
 # Import-time snapshot used by _default_db_path() to detect a deliberately
 # re-pointed DEFAULT_DB_PATH (tests monkeypatch the constant directly).
@@ -269,19 +269,19 @@ def _default_db_path() -> Path:
 
     ``DEFAULT_DB_PATH`` is computed when this module is first imported, which
     freezes the developer's real ``~/.hermes`` even when a test fixture later
-    redirects ``HERMES_HOME`` — importing this module during collection was
+    redirects ``INDAGIS_HOME`` — importing this module during collection was
     enough to point every default ``SessionDB()`` at the real state.db.
 
     Precedence:
 
     1. A deliberately re-pointed ``DEFAULT_DB_PATH`` (differs from the
        import-time snapshot — the established test escape hatch) wins.
-    2. Otherwise resolve ``get_hermes_home()`` fresh so a runtime
-       ``HERMES_HOME`` redirect takes effect regardless of import order.
+    2. Otherwise resolve ``get_indagis_home()`` fresh so a runtime
+       ``INDAGIS_HOME`` redirect takes effect regardless of import order.
     """
     if DEFAULT_DB_PATH != _IMPORT_DEFAULT_DB_PATH:
         return DEFAULT_DB_PATH
-    return get_hermes_home() / "state.db"
+    return get_indagis_home() / "state.db"
 
 # ---------------------------------------------------------------------------
 # WAL-compatibility fallback
@@ -1167,7 +1167,7 @@ def preflight_db_writability(
     transactions. This preflight:
 
     - **Repairs** permissions with ``chmod u+rw`` when the file lives inside
-      the Hermes home tree (``get_hermes_home()``) — the safe repair scope:
+      the Hermes home tree (``get_indagis_home()``) — the safe repair scope:
       Hermes owns those files, and the OS makes ``chmod`` fail on files the
       user doesn't own, which bounds the repair exactly.
     - **Fails fast with an actionable error** naming the exact file and the
@@ -1184,7 +1184,7 @@ def preflight_db_writability(
         return
 
     try:
-        home: Optional[Path] = Path(get_hermes_home()).resolve()
+        home: Optional[Path] = Path(get_indagis_home()).resolve()
     except Exception:  # pragma: no cover - defensive
         home = None
 
@@ -1633,7 +1633,7 @@ def fts5_cjk_so_path() -> Path:
     env = os.getenv("HERMES_FTS5_CJK_SO")
     if env:
         return Path(env).expanduser()
-    return get_hermes_home() / "lib" / "libfts5_cjk.so"
+    return get_indagis_home() / "lib" / "libfts5_cjk.so"
 
 
 def _cjk_fts_config_enabled() -> bool:

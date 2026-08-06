@@ -16,14 +16,14 @@ def _client():
     except ImportError:
         pytest.skip("fastapi/starlette not installed")
     import hermes_state
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
     from hermes_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
     client = TestClient(app)
     client.headers[_SESSION_HEADER_NAME] = _SESSION_TOKEN
-    # Keep the state DB under the isolated HERMES_HOME for any handler that
+    # Keep the state DB under the isolated INDAGIS_HOME for any handler that
     # touches it.
-    hermes_state.DEFAULT_DB_PATH = get_hermes_home() / "state.db"
+    hermes_state.DEFAULT_DB_PATH = get_indagis_home() / "state.db"
     return client, _SESSION_HEADER_NAME
 
 
@@ -49,7 +49,7 @@ class TestMcpEndpoints:
     def test_http_bearer_auth_separates_secret_from_config(
         self, _isolate_hermes_home
     ):
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
         secret = "dashboard-secret-value"
         response = self.client.post(
@@ -66,7 +66,7 @@ class TestMcpEndpoints:
         assert response.json()["auth"] == "header"
         assert "bearer_token" not in response.json()
 
-        hermes_home = get_hermes_home()
+        hermes_home = get_indagis_home()
         config_text = (hermes_home / "config.yaml").read_text()
         env_text = (hermes_home / ".env").read_text()
         assert secret not in config_text
@@ -216,9 +216,9 @@ class TestMemoryEndpoints:
     @pytest.fixture(autouse=True)
     def _setup(self, _isolate_hermes_home):
         self.client, _ = _client()
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        (get_hermes_home() / "memories").mkdir(parents=True, exist_ok=True)
+        (get_indagis_home() / "memories").mkdir(parents=True, exist_ok=True)
 
     def test_status_and_select(self):
         data = self.client.get("/api/memory").json()
@@ -233,9 +233,9 @@ class TestMemoryEndpoints:
         assert r.status_code == 400
 
     def test_reset_targets(self):
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        mem = get_hermes_home() / "memories"
+        mem = get_indagis_home() / "memories"
         (mem / "MEMORY.md").write_text("notes")
         (mem / "USER.md").write_text("user")
 
@@ -282,9 +282,9 @@ class TestPairingEndpoints:
         as approved.
         """
         from gateway.pairing import PairingStore
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        (get_hermes_home() / "profiles" / "work").mkdir(parents=True, exist_ok=True)
+        (get_indagis_home() / "profiles" / "work").mkdir(parents=True, exist_ok=True)
         PairingStore().generate_code("telegram", "global-1", "GlobalGuy")
         PairingStore(profile="work").generate_code("telegram", "work-1", "WorkGal")
 
@@ -834,9 +834,9 @@ class TestDebugShareEndpoint:
     @pytest.fixture(autouse=True)
     def _setup(self, _isolate_hermes_home):
         self.client, self.header = _client()
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        logs = get_hermes_home() / "logs"
+        logs = get_indagis_home() / "logs"
         logs.mkdir(parents=True, exist_ok=True)
         (logs / "agent.log").write_text("agent line\n")
         (logs / "errors.log").write_text("err line\n")

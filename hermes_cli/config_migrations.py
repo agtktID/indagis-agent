@@ -55,12 +55,12 @@ SUPPORT_FLOOR_VERSION = 12
 
 def support_floor_message() -> str:
     """Human-facing explanation shown when a config is below the floor."""
-    from hermes_constants import display_hermes_home
+    from hermes_constants import display_indagis_home
 
     return (
         f"This config predates version {SUPPORT_FLOOR_VERSION} (~2 years old) "
         "and can no longer be auto-migrated. Back up "
-        f"{display_hermes_home()}/config.yaml and run `hermes setup` to "
+        f"{display_indagis_home()}/config.yaml and run `hermes setup` to "
         f"regenerate, or manually set _config_version: {SUPPORT_FLOOR_VERSION} "
         "after reviewing the changelog."
     )
@@ -322,7 +322,7 @@ def _migrate_to_21(results: Dict[str, Any], quiet: bool) -> None:
     _c = _cfg()
     read_raw_config = _c.read_raw_config
     _persist_migration = _c._persist_migration
-    get_hermes_home = _c.get_hermes_home
+    get_indagis_home = _c.get_indagis_home
     fast_safe_load = _c.fast_safe_load
 
     config = read_raw_config()
@@ -336,10 +336,10 @@ def _migrate_to_21(results: Dict[str, Any], quiet: bool) -> None:
             disabled = []
         disabled_set = set(disabled)
 
-        # Scan ``$HERMES_HOME/plugins/`` for currently installed user plugins.
+        # Scan ``$INDAGIS_HOME/plugins/`` for currently installed user plugins.
         grandfathered: List[str] = []
         try:
-            user_plugins_dir = get_hermes_home() / "plugins"
+            user_plugins_dir = get_indagis_home() / "plugins"
             if user_plugins_dir.is_dir():
                 for child in sorted(user_plugins_dir.iterdir()):
                     if not child.is_dir():
@@ -398,16 +398,16 @@ def _migrate_to_23(results: Dict[str, Any], quiet: bool) -> None:
     #      base_url, api_key, timeout, extra_body) — canonical slot for
     #      routing the curator fork to a cheaper aux model.
     #   3. Creates `~/.hermes/logs/curator/` if missing (belt-and-suspenders
-    #      on top of ensure_hermes_home() — old profiles that predate this
+    #      on top of ensure_indagis_home() — old profiles that predate this
     #      migration still benefit).
     _c = _cfg()
     read_raw_config = _c.read_raw_config
     _persist_migration = _c._persist_migration
-    get_hermes_home = _c.get_hermes_home
+    get_indagis_home = _c.get_indagis_home
     DEFAULT_CONFIG = _c.DEFAULT_CONFIG
 
     try:
-        curator_dir = get_hermes_home() / "logs" / "curator"
+        curator_dir = get_indagis_home() / "logs" / "curator"
         curator_dir.mkdir(parents=True, exist_ok=True)
     except Exception as e:
         results["warnings"].append(f"Could not create {curator_dir}: {e}")

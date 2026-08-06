@@ -20,7 +20,7 @@ def test_key_rotation_clears_exhausted_status(tmp_path, monkeypatch):
     was preserved on the new key — making the pool appear unusable even though
     a fresh valid key was present.
     """
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "hermes"))
     _write_auth_store(
         tmp_path,
         {
@@ -66,7 +66,7 @@ def test_key_rotation_clears_exhausted_status(tmp_path, monkeypatch):
 
 def test_same_key_preserves_exhausted_status(tmp_path, monkeypatch):
     """If the key has NOT changed, _upsert_entry does not clear exhaustion state."""
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "hermes"))
 
     from agent.credential_pool import PooledCredential, _upsert_entry
 

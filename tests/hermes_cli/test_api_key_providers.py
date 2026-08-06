@@ -518,7 +518,7 @@ class TestHasAnyProviderConfigured:
         hermes_home = tmp_path / ".hermes"
         hermes_home.mkdir()
         monkeypatch.setattr(config_module, "get_env_path", lambda: hermes_home / ".env")
-        monkeypatch.setattr(config_module, "get_hermes_home", lambda: hermes_home)
+        monkeypatch.setattr(config_module, "get_indagis_home", lambda: hermes_home)
         monkeypatch.setattr("hermes_cli.copilot_auth.resolve_copilot_token", lambda: ("", ""))
         # Clear all provider env vars so earlier checks don't short-circuit
         _all_vars = {"OPENROUTER_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY",
@@ -553,8 +553,8 @@ class TestHasAnyProviderConfigured:
             "model": {"default": "anthropic/claude-opus-4.6", "provider": "openrouter"},
         }))
         monkeypatch.setattr(config_module, "get_env_path", lambda: hermes_home / ".env")
-        monkeypatch.setattr(config_module, "get_hermes_home", lambda: hermes_home)
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setattr(config_module, "get_indagis_home", lambda: hermes_home)
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         # Clear all provider env vars
         for var in ("OPENROUTER_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY",
                      "ANTHROPIC_TOKEN", "OPENAI_BASE_URL"):
@@ -579,8 +579,8 @@ class TestHasAnyProviderConfigured:
         hermes_home = tmp_path / ".hermes"
         hermes_home.mkdir()
         monkeypatch.setattr(config_module, "get_env_path", lambda: hermes_home / ".env")
-        monkeypatch.setattr(config_module, "get_hermes_home", lambda: hermes_home)
-        monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+        monkeypatch.setattr(config_module, "get_indagis_home", lambda: hermes_home)
+        monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
         self._clear_provider_env(monkeypatch)
         return hermes_home
 

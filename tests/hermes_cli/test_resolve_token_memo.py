@@ -16,7 +16,7 @@ import hermes_cli.auth as auth
 
 @pytest.fixture(autouse=True)
 def _fresh_memo(monkeypatch, tmp_path):
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     monkeypatch.delenv("HERMES_PORTAL_BASE_URL", raising=False)
     monkeypatch.delenv("NOUS_PORTAL_BASE_URL", raising=False)
     monkeypatch.setattr(auth, "_RESOLVE_TOKEN_CACHE", None)

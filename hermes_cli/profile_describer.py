@@ -179,8 +179,8 @@ def describe_profile(
 
     try:
         if canon == "default":
-            from hermes_constants import get_hermes_home  # type: ignore
-            profile_dir = Path(get_hermes_home())
+            from hermes_constants import get_indagis_home  # type: ignore
+            profile_dir = Path(get_indagis_home())
         else:
             profile_dir = profiles_mod.get_profile_dir(canon)
     except Exception as exc:

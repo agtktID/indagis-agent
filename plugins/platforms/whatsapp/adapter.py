@@ -30,7 +30,7 @@ from typing import Dict, Optional, Any
 from hermes_cli._subprocess_compat import windows_detach_popen_kwargs
 from hermes_constants import (
     find_node_executable,
-    get_hermes_dir,
+    get_indagis_dir,
     with_hermes_node_path,
 )
 
@@ -308,7 +308,7 @@ def _is_allowed_bridge_path(url: str) -> bool:
     attached verbatim and sent to the model. Resolve the path (following any
     symlinks) and require it to live under one of the real cache roots — this
     covers both the canonical ``cache/<kind>`` layout and the legacy
-    ``<kind>_cache`` layout that ``get_hermes_dir`` may return.
+    ``<kind>_cache`` layout that ``get_indagis_dir`` may return.
     """
     try:
         resolved = Path(url).resolve()
@@ -425,7 +425,7 @@ class WhatsAppAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
         )
         self._session_path: Path = Path(config.extra.get(
             "session_path",
-            get_hermes_dir("platforms/whatsapp/session", "whatsapp/session")
+            get_indagis_dir("platforms/whatsapp/session", "whatsapp/session")
         ))
         self._reply_prefix: Optional[str] = config.extra.get("reply_prefix")
         self._dm_policy = str(config.extra.get("dm_policy") or _wenv("WHATSAPP_DM_POLICY", "pairing")).strip().lower()
@@ -712,7 +712,7 @@ class WhatsAppAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
             # Pass the profile-aware cache directories so the bridge writes
             # media where the Python side reads it.  Without these the bridge
             # hardcodes ~/.hermes/{image,audio,document}_cache, which diverges
-            # under HERMES_HOME overrides, profiles, and the new cache/ layout.
+            # under INDAGIS_HOME overrides, profiles, and the new cache/ layout.
             from gateway.platforms.base import (
                 get_audio_cache_dir as _get_audio_dir,
                 get_document_cache_dir as _get_doc_dir,

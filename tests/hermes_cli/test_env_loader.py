@@ -345,10 +345,10 @@ def _seed_terminal_home(tmp_path, monkeypatch, *, config_yaml=None, env_text=Non
         (home / "config.yaml").write_text(config_yaml, encoding="utf-8")
     if env_text is not None:
         (home / ".env").write_text(env_text, encoding="utf-8")
-    # The bridge is scoped to the process HERMES_HOME (a different profile's
+    # The bridge is scoped to the process INDAGIS_HOME (a different profile's
     # load must not bridge this process's config), so point the process at
     # the seeded home like a real gateway/cron process would be.
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     return home
 
 
@@ -428,7 +428,7 @@ def test_other_profile_home_does_not_bridge_process_config(tmp_path, monkeypatch
     (process_home / "config.yaml").write_text(
         "terminal:\n  backend: local\n", encoding="utf-8"
     )
-    monkeypatch.setenv("HERMES_HOME", str(process_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(process_home))
 
     other_home = tmp_path / "other-profile"
     other_home.mkdir()

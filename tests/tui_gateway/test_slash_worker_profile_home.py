@@ -11,7 +11,7 @@ import pytest
 def test_slash_worker_accepts_profile_home():
     """_SlashWorker.__init__ accepts profile_home parameter."""
     with patch.dict("sys.modules", {
-        "hermes_constants": MagicMock(get_hermes_home=MagicMock(return_value="/tmp/hermes_test")),
+        "hermes_constants": MagicMock(get_indagis_home=MagicMock(return_value="/tmp/hermes_test")),
     }):
         with patch("subprocess.Popen") as mock_popen:
             mock_popen.return_value.stdout = MagicMock()
@@ -29,9 +29,9 @@ def test_slash_worker_accepts_profile_home():
             # Verify Popen was called
             assert mock_popen.called
             
-            # Check that HERMES_HOME was set in the environment
+            # Check that INDAGIS_HOME was set in the environment
             call_kwargs = mock_popen.call_args[1]
             assert "env" in call_kwargs
-            assert call_kwargs["env"]["HERMES_HOME"] == "/home/luke/.hermes/profiles/work"
+            assert call_kwargs["env"]["INDAGIS_HOME"] == "/home/luke/.hermes/profiles/work"
 
 

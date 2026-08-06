@@ -27,7 +27,7 @@ from tools.environments.local import hermes_subprocess_env
 _IS_WINDOWS = platform.system() == "Windows"
 
 _DEP_CHECKS = {
-    # find_node_executable() rather than a bare which(): $HERMES_HOME/node is
+    # find_node_executable() rather than a bare which(): $INDAGIS_HOME/node is
     # not on PATH, so which() would report Node missing on an install that has
     # a managed one and trigger a redundant re-install.
     "node": lambda: find_node_executable("node") is not None,
@@ -60,12 +60,12 @@ def _has_system_browser() -> bool:
 
 
 def _has_hermes_agent_browser() -> bool:
-    from hermes_constants import get_hermes_home
-    home = get_hermes_home()
+    from hermes_constants import get_indagis_home
+    home = get_indagis_home()
     if _IS_WINDOWS:
         # npm -g --prefix puts .cmd shims directly in the prefix dir on Windows
         return (home / "node" / "agent-browser.cmd").is_file()
-    # install.sh installs globally into $HERMES_HOME/node/bin/ via npm -g --prefix
+    # install.sh installs globally into $INDAGIS_HOME/node/bin/ via npm -g --prefix
     # Also check legacy node_modules/.bin/ path for git-clone installs.
     return (
         (home / "node" / "bin" / "agent-browser").is_file()
@@ -135,7 +135,7 @@ def ensure_dependency(
             return False
 
     if shell == "powershell":
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         ps_bin = shutil.which("powershell") or shutil.which("pwsh")
         if not ps_bin:
             if interactive:
@@ -146,7 +146,7 @@ def ensure_dependency(
             "-ExecutionPolicy", "Bypass",
             "-File", str(script),
             "-Ensure", dep,
-            "-HermesHome", str(get_hermes_home()),
+            "-HermesHome", str(get_indagis_home()),
         ]
     else:
         cmd = ["bash", str(script), "--ensure", dep]

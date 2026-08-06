@@ -577,7 +577,7 @@ class SupermemoryMemoryProvider(MemoryProvider):
 
     def get_config_schema(self):
         # Only prompt for the API key during `hermes memory setup`.
-        # All other options are documented for $HERMES_HOME/supermemory.json
+        # All other options are documented for $INDAGIS_HOME/supermemory.json
         # or the SUPERMEMORY_CONTAINER_TAG env var.
         return [
             {"key": "api_key", "description": "Supermemory API key", "secret": True, "required": True, "env_var": "SUPERMEMORY_API_KEY", "url": _API_KEY_URL},
@@ -592,10 +592,10 @@ class SupermemoryMemoryProvider(MemoryProvider):
         _save_supermemory_config(sanitized, hermes_home)
 
     def get_status_config(self, provider_config: dict) -> dict:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
         del provider_config
-        hermes_home = str(get_hermes_home())
+        hermes_home = str(get_indagis_home())
         api_key = get_secret("SUPERMEMORY_API_KEY", "") or ""
         status = _probe_supermemory_connection(api_key, hermes_home)
         return {"summary": _format_connection_summary(status)}
@@ -651,8 +651,8 @@ class SupermemoryMemoryProvider(MemoryProvider):
         print("\n  Start a new session to activate.\n")
 
     def initialize(self, session_id: str, **kwargs) -> None:
-        from hermes_constants import get_hermes_home
-        self._hermes_home = kwargs.get("hermes_home") or str(get_hermes_home())
+        from hermes_constants import get_indagis_home
+        self._hermes_home = kwargs.get("hermes_home") or str(get_indagis_home())
         self._session_id = session_id
         self._turn_count = 0
         self._config = _load_supermemory_config(self._hermes_home)

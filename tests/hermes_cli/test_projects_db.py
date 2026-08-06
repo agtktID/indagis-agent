@@ -83,7 +83,7 @@ def test_project_for_path_skips_archived(conn):
 
 
 def test_per_profile_isolation(tmp_path):
-    # Two distinct DB paths stand in for two profiles' HERMES_HOME.
+    # Two distinct DB paths stand in for two profiles' INDAGIS_HOME.
     a = pdb.connect(db_path=tmp_path / "a" / "projects.db")
     b = pdb.connect(db_path=tmp_path / "b" / "projects.db")
     try:

@@ -20,7 +20,7 @@ import pytest
 
 @pytest.fixture
 def isolated_home(tmp_path, monkeypatch):
-    """Isolated HERMES_HOME with a writable config.yaml and a clean module cache.
+    """Isolated INDAGIS_HOME with a writable config.yaml and a clean module cache.
 
     These tests deliberately re-import ``hermes_cli`` / ``gateway`` so each
     config write is read fresh. To avoid leaking that purge into sibling test
@@ -29,7 +29,7 @@ def isolated_home(tmp_path, monkeypatch):
     """
     hermes_home = tmp_path / ".hermes"
     hermes_home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     monkeypatch.delenv("HERMES_MAX_TOKENS", raising=False)
 
     _saved = {

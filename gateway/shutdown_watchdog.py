@@ -12,7 +12,7 @@ This module provides:
    completed within ``restart_drain_timeout + grace``, it dumps all-thread
    stacks via ``faulthandler`` plus a metadata snapshot, then ``os._exit`` so
    the service manager can revive the process.
-2. An event-loop heartbeat file at ``<HERMES_HOME>/state/gateway.heartbeat`` so
+2. An event-loop heartbeat file at ``<INDAGIS_HOME>/state/gateway.heartbeat`` so
    external supervision can distinguish "process alive" from "loop frozen"
    (``gateway_state.json`` alone can't — it only rewrites on transitions/turns).
 3. A lifetime thread watchdog that can still diagnose and hard-exit when the
@@ -36,7 +36,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Optional
 
 from gateway.restart import GATEWAY_SERVICE_RESTART_EXIT_CODE
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from utils import atomic_json_write
 
 logger = logging.getLogger(__name__)
@@ -210,15 +210,15 @@ def start_loop_liveness_watchdog(
 
 
 def _process_hermes_home() -> Path:
-    """HERMES_HOME for process-level identity files (ignore profile overrides)."""
-    val = os.environ.get("HERMES_HOME", "").strip()
+    """INDAGIS_HOME for process-level identity files (ignore profile overrides)."""
+    val = os.environ.get("INDAGIS_HOME", "").strip()
     if val:
         return Path(val)
-    return get_hermes_home()
+    return get_indagis_home()
 
 
 def get_loop_heartbeat_path(home: Optional[Path] = None) -> Path:
-    """Return ``<HERMES_HOME>/state/gateway.heartbeat``."""
+    """Return ``<INDAGIS_HOME>/state/gateway.heartbeat``."""
     base = home if home is not None else _process_hermes_home()
     return base.joinpath(*_HEARTBEAT_RELATIVE)
 

@@ -13,9 +13,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-from hermes_cli.config import get_hermes_home, get_env_path, get_project_root, load_config
+from hermes_cli.config import get_indagis_home, get_env_path, get_project_root, load_config
 from hermes_cli.env_loader import load_hermes_dotenv
-from hermes_constants import display_hermes_home
+from hermes_constants import display_indagis_home
 from agent.skill_utils import is_excluded_skill_path
 
 
@@ -288,7 +288,7 @@ def run_dump(args):
     )
 
     project_root = get_project_root()
-    hermes_home = get_hermes_home()
+    hermes_home = get_indagis_home()
 
     try:
         from hermes_cli import __version__
@@ -356,7 +356,7 @@ def run_dump(args):
     lines.append(f"python:           {sys.version.split()[0]}")
     lines.append(f"openai_sdk:       {openai_ver}")
     lines.append(f"profile:          {profile}")
-    lines.append(f"hermes_home:      {display_hermes_home()}")
+    lines.append(f"hermes_home:      {display_indagis_home()}")
     lines.append(f"model:            {model}")
     lines.append(f"provider:         {provider}")
     lines.append(f"terminal:         {backend}")

@@ -42,7 +42,7 @@ def test_slash_worker_popen_uses_utf8_replace():
     """
     with patch.dict("sys.modules", {
         "hermes_constants": MagicMock(
-            get_hermes_home=MagicMock(return_value="/tmp/hermes_test")
+            get_indagis_home=MagicMock(return_value="/tmp/hermes_test")
         ),
     }):
         with patch("subprocess.Popen") as mock_popen:

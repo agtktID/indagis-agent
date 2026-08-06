@@ -211,8 +211,8 @@ class TestOneTurnNeverPersisted:
                 provider_label="OpenRouter",
             ),
         )
-        monkeypatch.setattr("hermes_constants.get_hermes_home", lambda: hermes_home)
-        monkeypatch.setattr("hermes_cli.config.get_hermes_home", lambda: hermes_home)
+        monkeypatch.setattr("hermes_constants.get_indagis_home", lambda: hermes_home)
+        monkeypatch.setattr("hermes_cli.config.get_indagis_home", lambda: hermes_home)
 
         runner = object.__new__(GatewayRunner)
         runner.adapters = {}

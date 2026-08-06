@@ -30,7 +30,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Optional
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 
 OSV_BATCH_URL = "https://api.osv.dev/v1/querybatch"
 OSV_VULN_URL = "https://api.osv.dev/v1/vulns/{vid}"
@@ -419,7 +419,7 @@ def _discover_components(
     hermes_home: Optional[Path] = None,
 ) -> list[Component]:
     """Discover all scannable components across the enabled sources."""
-    home = hermes_home or Path(get_hermes_home())
+    home = hermes_home or Path(get_indagis_home())
     components: list[Component] = []
     if not skip_venv:
         components.extend(_discover_venv())
@@ -538,7 +538,7 @@ def _render_json(findings: list[Finding], total_components: int) -> str:
 
 def cmd_security_audit(args: argparse.Namespace) -> int:
     """Implementation of `hermes security audit`."""
-    home = Path(get_hermes_home())
+    home = Path(get_indagis_home())
     skip_venv = bool(getattr(args, "skip_venv", False))
     skip_plugins = bool(getattr(args, "skip_plugins", False))
     skip_mcp = bool(getattr(args, "skip_mcp", False))

@@ -114,7 +114,7 @@ def test_serialise_object_with_text():
 
 
 def test_get_flush_dir_uses_get_hermes_home(tmp_path, monkeypatch):
-    """Flush dir must use get_hermes_home(), not hardcoded Path.home()."""
+    """Flush dir must use get_indagis_home(), not hardcoded Path.home()."""
     import gateway.shutdown_flush as mod
 
     captured = {}
@@ -125,7 +125,7 @@ def test_get_flush_dir_uses_get_hermes_home(tmp_path, monkeypatch):
         return tmp_path
 
     monkeypatch.setattr(
-        "hermes_constants.get_hermes_home", fake_get_hermes_home
+        "hermes_constants.get_indagis_home", fake_get_hermes_home
     )
     result = mod._get_flush_dir()
     assert captured.get("called") is True

@@ -1,7 +1,7 @@
 """Tests for _web_ui_build_needed — staleness check for the web UI dist.
 
 The freshness check uses a SHA-256 content hash of the web source tree
-(mirroring the desktop build), recorded in a stamp file under $HERMES_HOME,
+(mirroring the desktop build), recorded in a stamp file under $INDAGIS_HOME,
 NOT mtime comparison — so ``git pull`` / ``hermes update`` that rewrite
 source mtimes without changing content no longer fool it.
 
@@ -34,7 +34,7 @@ from hermes_cli.main import (
 @pytest.fixture(autouse=True)
 def _isolated_hermes_home(tmp_path, monkeypatch):
     """Keep web-build-stamp writes inside the test's tmp dir, never the real home."""
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "_hermes_home"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "_hermes_home"))
 
 
 def _touch(path: Path, offset: float = 0.0) -> None:

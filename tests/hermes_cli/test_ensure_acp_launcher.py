@@ -19,7 +19,7 @@ from hermes_cli.main import _ensure_acp_launcher
 @pytest.fixture
 def fake_home(tmp_path, monkeypatch):
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
     bin_dir = tmp_path / ".local" / "bin"
     bin_dir.mkdir(parents=True)
     return bin_dir

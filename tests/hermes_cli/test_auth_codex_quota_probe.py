@@ -224,7 +224,7 @@ def test_resolver_recovers_when_probe_confirms_reset(tmp_path, monkeypatch):
     probe must clear the cooldown and return the pool credential."""
     hermes_home = tmp_path / "hermes"
     _write_auth_store(hermes_home, _pool_only_rate_limited_store())
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     monkeypatch.setattr(
         auth_mod, "_probe_codex_quota_restored", lambda token, **kw: True
@@ -257,7 +257,7 @@ def test_pool_probe_not_fired_for_non_quota_exhaustion(tmp_path, monkeypatch):
     entry["last_error_code"] = 401
     entry["last_error_reason"] = "token_expired"
     entry["last_error_message"] = "expired"
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "hermes"))
     _write_auth_store(tmp_path / "hermes", store)
 
     from agent.credential_pool import load_pool

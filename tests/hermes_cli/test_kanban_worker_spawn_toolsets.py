@@ -57,7 +57,7 @@ agent:
         encoding="utf-8",
     )
     root.joinpath("config.yaml").write_text("toolsets:\n  - kanban\n", encoding="utf-8")
-    monkeypatch.setenv("HERMES_HOME", str(root))
+    monkeypatch.setenv("INDAGIS_HOME", str(root))
 
     from hermes_cli import kanban_db as kb
 
@@ -81,7 +81,7 @@ agent:
     pid = kb._default_spawn(_make_task(kb, assignee="elias"), str(workspace))
 
     assert pid == 4242
-    assert captured["env"]["HERMES_HOME"] == str(profile)
+    assert captured["env"]["INDAGIS_HOME"] == str(profile)
     assert captured["env"]["HERMES_KANBAN_TASK"] == "t_spawn_tools"
     assert "--toolsets" in captured["cmd"]
     pinned = captured["cmd"][captured["cmd"].index("--toolsets") + 1].split(",")
@@ -99,7 +99,7 @@ def test_default_spawn_model_override_survives_real_cli_parse(monkeypatch, tmp_p
     root = tmp_path / ".hermes"
     (root / "profiles" / "elias").mkdir(parents=True)
     root.joinpath("config.yaml").write_text("{}\n", encoding="utf-8")
-    monkeypatch.setenv("HERMES_HOME", str(root))
+    monkeypatch.setenv("INDAGIS_HOME", str(root))
 
     from hermes_cli import kanban_db as kb
     from hermes_cli._parser import build_top_level_parser
@@ -150,7 +150,7 @@ toolsets:
 """.lstrip(),
         encoding="utf-8",
     )
-    monkeypatch.setenv("HERMES_HOME", str(root))
+    monkeypatch.setenv("INDAGIS_HOME", str(root))
 
     from hermes_cli import kanban_db as kb
 

@@ -102,7 +102,7 @@ class TestInstallHangupProtection:
 
 
     def test_wraps_stdout_and_stderr_with_mirror(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         # Nuke any cached home path
         import hermes_cli.config as _cfg
         if hasattr(_cfg, "_HERMES_HOME_CACHE"):
@@ -134,7 +134,7 @@ class TestInstallHangupProtection:
 
 
     def test_non_fatal_if_log_setup_fails(self, monkeypatch):
-        """If get_hermes_home() raises, stdio must be left untouched but SIGHUP still handled."""
+        """If get_indagis_home() raises, stdio must be left untouched but SIGHUP still handled."""
         prev_out, prev_err = sys.stdout, sys.stderr
 
         def _boom():
@@ -142,7 +142,7 @@ class TestInstallHangupProtection:
 
         # Patch the import inside _install_hangup_protection.
         monkeypatch.setattr(
-            "hermes_cli.config.get_hermes_home", _boom, raising=True
+            "hermes_cli.config.get_indagis_home", _boom, raising=True
         )
 
         original_handler = (

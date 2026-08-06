@@ -14,10 +14,10 @@ import tempfile
 import time
 from typing import Optional
 
-from hermes_cli.config import get_hermes_home
+from hermes_cli.config import get_indagis_home
 
 
-CACHE_PATH = get_hermes_home() / "sticker_cache.json"
+CACHE_PATH = get_indagis_home() / "sticker_cache.json"
 
 # Vision prompt for describing stickers -- kept concise to save tokens
 STICKER_VISION_PROMPT = (

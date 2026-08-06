@@ -11,7 +11,7 @@ byte-identical. A symtable/AST closure check found exactly two free variables:
   threaded as a keyword parameter via ``functools.partial`` at the
   ``set_defaults(func=...)`` wiring site in ``main()``.
 
-Helpers that stay in ``hermes_cli.main`` (``get_hermes_home``,
+Helpers that stay in ``hermes_cli.main`` (``get_indagis_home``,
 ``_relative_time``, ``_session_browse_picker``, ``_size_delta_label``) are
 delegated through call-time wrappers below so existing test monkeypatches on
 ``hermes_cli.main.<name>`` keep reaching this code path, and so imports stay
@@ -31,8 +31,8 @@ def _m():
     return main
 
 
-def get_hermes_home():
-    return _m().get_hermes_home()
+def get_indagis_home():
+    return _m().get_indagis_home()
 
 
 def _relative_time(ts):
@@ -535,7 +535,7 @@ def cmd_sessions(args, sessions_parser=None):
                     out_dir = (
                         Path(args.output).expanduser()
                         if args.output and args.output != "-"
-                        else get_hermes_home() / "session-exports"
+                        else get_indagis_home() / "session-exports"
                     )
                     out_dir.mkdir(parents=True, exist_ok=True)
                     exported = 0
@@ -625,7 +625,7 @@ def cmd_sessions(args, sessions_parser=None):
             print("Markdown/QMD export writes files; stdout (-) is only supported with --format jsonl.")
             db.close()
             return
-        output_dir = Path(args.output).expanduser() if args.output else get_hermes_home() / "session-exports"
+        output_dir = Path(args.output).expanduser() if args.output else get_indagis_home() / "session-exports"
 
         def _export_one(session_id: str, *, include_lineage: bool = False):
             data = (
@@ -719,7 +719,7 @@ def cmd_sessions(args, sessions_parser=None):
                         )
                         db.close()
                         return
-                sessions_dir = get_hermes_home() / "sessions"
+                sessions_dir = get_indagis_home() / "sessions"
                 if db.delete_session(
                     resolved_session_id,
                     sessions_dir=sessions_dir,
@@ -788,7 +788,7 @@ def cmd_sessions(args, sessions_parser=None):
             ):
                 print("Cancelled.")
                 return
-        sessions_dir = get_hermes_home() / "sessions"
+        sessions_dir = get_indagis_home() / "sessions"
         if db.delete_session(resolved_session_id, sessions_dir=sessions_dir):
             print(f"Deleted session '{resolved_session_id}'.")
         else:
@@ -895,7 +895,7 @@ def cmd_sessions(args, sessions_parser=None):
                 return
 
         if action == "prune":
-            sessions_dir = get_hermes_home() / "sessions"
+            sessions_dir = get_indagis_home() / "sessions"
             count = db.prune_sessions(sessions_dir=sessions_dir, **filters)
             print(f"Pruned {count} session(s).")
         else:

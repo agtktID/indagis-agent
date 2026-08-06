@@ -78,7 +78,7 @@ def _run_version(env_overrides: dict) -> subprocess.CompletedProcess:
 def test_fast_version_parity_off_termux(tmp_path):
     home = tmp_path / ".hermes"
     home.mkdir()
-    result = _run_version({"HERMES_HOME": str(home), "TERMUX_VERSION": ""})
+    result = _run_version({"INDAGIS_HOME": str(home), "TERMUX_VERSION": ""})
     assert result.returncode == 0, result.stderr
     out = result.stdout
     for field in ("Hermes Agent v", "Install directory:", "Python:", "OpenAI SDK:"):
@@ -90,7 +90,7 @@ def test_fast_version_parity_on_termux(tmp_path):
     home = tmp_path / ".hermes"
     home.mkdir()
     result = _run_version(
-        {"HERMES_HOME": str(home), "TERMUX_VERSION": "0.118"}
+        {"INDAGIS_HOME": str(home), "TERMUX_VERSION": "0.118"}
     )
     assert result.returncode == 0, result.stderr
     assert "Hermes Agent v" in result.stdout
@@ -101,6 +101,6 @@ def test_fast_version_reports_install_method_stamp(tmp_path):
     home = tmp_path / ".hermes"
     home.mkdir()
     (home / ".install_method").write_text("git\n", encoding="utf-8")
-    result = _run_version({"HERMES_HOME": str(home), "TERMUX_VERSION": ""})
+    result = _run_version({"INDAGIS_HOME": str(home), "TERMUX_VERSION": ""})
     assert result.returncode == 0, result.stderr
     assert "Install method: git" in result.stdout

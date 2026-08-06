@@ -11,7 +11,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from hermes_constants import reset_hermes_home_override, set_hermes_home_override
+from hermes_constants import reset_indagis_home_override, set_indagis_home_override
 from hermes_cli.active_sessions import active_session_registry_snapshot
 from hermes_cli.browser_connect import ChromeDebugLaunch
 from tools import async_delegation as ad
@@ -42,7 +42,7 @@ def test_session_slot_is_claimed_on_first_turn_not_on_create(monkeypatch, tmp_pa
     home = tmp_path / ".hermes"
     home.mkdir()
     (home / "config.yaml").write_text("max_concurrent_sessions: 1\n", encoding="utf-8")
-    token = set_hermes_home_override(home)
+    token = set_indagis_home_override(home)
 
     def _clear_server_sessions():
         for session in list(server._sessions.values()):
@@ -87,7 +87,7 @@ def test_session_slot_is_claimed_on_first_turn_not_on_create(monkeypatch, tmp_pa
         server._cfg_cache = None
         server._cfg_mtime = None
         server._cfg_path = None
-        reset_hermes_home_override(token)
+        reset_indagis_home_override(token)
 
 
 def test_session_context_uses_session_cwd(monkeypatch, tmp_path):
@@ -593,9 +593,9 @@ def _write_profile_cfg(home: Path, cwd: str | None) -> Path:
 
 
 def test_profile_scoped_mcp_discovery_uses_target_home(monkeypatch, tmp_path):
-    """MCP discovery must start under the selected profile's HERMES_HOME."""
+    """MCP discovery must start under the selected profile's INDAGIS_HOME."""
     from hermes_cli import mcp_startup
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
     from tui_gateway import entry
 
     profile_home = tmp_path / "profiles" / "sheepyr"
@@ -608,8 +608,8 @@ def test_profile_scoped_mcp_discovery_uses_target_home(monkeypatch, tmp_path):
         encoding="utf-8",
     )
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "default"))
-    token = set_hermes_home_override(str(profile_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "default"))
+    token = set_indagis_home_override(str(profile_home))
 
     seen = []
 
@@ -621,7 +621,7 @@ def test_profile_scoped_mcp_discovery_uses_target_home(monkeypatch, tmp_path):
     monkeypatch.setattr(
         mcp_startup,
         "_discover_mcp_tools_without_interactive_oauth",
-        lambda: seen.append(str(get_hermes_home())),
+        lambda: seen.append(str(get_indagis_home())),
     )
 
     try:
@@ -630,7 +630,7 @@ def test_profile_scoped_mcp_discovery_uses_target_home(monkeypatch, tmp_path):
         assert thread is not None
         thread.join(timeout=2)
     finally:
-        reset_hermes_home_override(token)
+        reset_indagis_home_override(token)
         mcp_startup._mcp_discovery_thread = None
         mcp_startup._mcp_discovery_started = False
 
@@ -643,12 +643,12 @@ def test_profile_scoped_agent_build_starts_mcp_discovery_in_profile_home(
     """Agent construction must start MCP discovery under the selected profile."""
     import threading
 
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
     profile_home = tmp_path / "profiles" / "sheepyr"
     profile_home.mkdir(parents=True)
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "default"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "default"))
 
     seen = []
     built = threading.Event()
@@ -661,7 +661,7 @@ def test_profile_scoped_agent_build_starts_mcp_discovery_in_profile_home(
     )
     monkeypatch.setattr(
         "tui_gateway.entry.ensure_mcp_discovery_started",
-        lambda: seen.append(str(get_hermes_home())),
+        lambda: seen.append(str(get_indagis_home())),
     )
     monkeypatch.setattr(server, "_wire_callbacks", lambda _sid: None)
     monkeypatch.setattr(server, "_SlashWorker", lambda *args: None)
@@ -703,7 +703,7 @@ def test_profile_scoped_agent_build_installs_secret_scope(monkeypatch, tmp_path)
         "PROXMOX_TOKEN=grace-secret\n", encoding="utf-8"
     )
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "default"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "default"))
 
     scopes = []
     built = threading.Event()
@@ -5598,10 +5598,10 @@ def test_config_get_approval_mode_uses_smart_default_when_key_is_missing(
     import yaml
 
     monkeypatch.setattr(server, "_hermes_home", tmp_path)
-    # Point the canonical resolver (load_config → env HERMES_HOME) at the
+    # Point the canonical resolver (load_config → env INDAGIS_HOME) at the
     # temp home too, so the smart default is asserted against THIS config
     # rather than whatever the developer's real ~/.hermes happens to hold.
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     (tmp_path / "config.yaml").write_text(
         yaml.safe_dump({"approvals": {"timeout": 15}})
     )
@@ -5620,9 +5620,9 @@ def test_config_get_approval_mode_fails_safe_to_manual_for_invalid_explicit_valu
     monkeypatch.setattr(server, "_hermes_home", tmp_path)
     # _load_approval_mode delegates to the canonical resolver in
     # tools.approval, which reads via hermes_cli.config.load_config —
-    # that path resolves HERMES_HOME from the environment, not
+    # that path resolves INDAGIS_HOME from the environment, not
     # server._hermes_home.
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     (tmp_path / "config.yaml").write_text(
         yaml.safe_dump({"approvals": {"mode": "sometimes"}})
     )
@@ -5638,8 +5638,8 @@ def test_config_get_approval_mode_normalizes_yaml_off(tmp_path, monkeypatch):
 
     monkeypatch.setattr(server, "_hermes_home", tmp_path)
     # See fail-safe test above: the canonical resolver reads via
-    # load_config, which resolves HERMES_HOME from the environment.
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    # load_config, which resolves INDAGIS_HOME from the environment.
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     (tmp_path / "config.yaml").write_text(
         yaml.safe_dump({"approvals": {"mode": False}})
     )
@@ -5658,8 +5658,8 @@ def test_config_set_approval_mode_persists_three_way_value_and_emits_live_status
     monkeypatch.setattr(server, "_hermes_home", tmp_path)
     # config.set writes via server._hermes_home, but the post-write
     # session.info emit resolves the effective mode through the canonical
-    # tools.approval resolver (load_config → env HERMES_HOME).
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    # tools.approval resolver (load_config → env INDAGIS_HOME).
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     emitted = []
     monkeypatch.setattr(server, "_emit", lambda *args: emitted.append(args))
     server._sessions["sid"] = {"agent": object(), "session_key": "profile-session"}
@@ -11025,7 +11025,7 @@ def test_session_delete_success_returns_deleted_id(monkeypatch):
     assert captured["sid"] == "old-1"
     # sessions_dir must be forwarded so transcript files get cleaned up
     # too — not just the SQLite row.  The autouse _isolate_hermes_home
-    # fixture pins HERMES_HOME to a temp dir; the handler should append
+    # fixture pins INDAGIS_HOME to a temp dir; the handler should append
     # /sessions to it.
     assert captured["sessions_dir"] is not None
     assert str(captured["sessions_dir"]).endswith("sessions")
@@ -11529,7 +11529,7 @@ def test_session_branch_writes_to_parent_profile_db(monkeypatch, tmp_path):
 def test_session_branch_installs_parent_profile_secret_scope(monkeypatch, tmp_path):
     """The branched agent must be built under the parent profile's secrets.
 
-    session.branch already binds the parent's HERMES_HOME and state.db, but the
+    session.branch already binds the parent's INDAGIS_HOME and state.db, but the
     secret scope is what makes get_secret() resolve that profile's .env. Without
     it the build falls through to process os.environ — the LAUNCH profile's
     credentials — which is exactly the cross-profile resolution #67605 fixed for
@@ -12526,7 +12526,7 @@ def test_verification_status_returns_recorded_evidence(tmp_path, monkeypatch):
     profile_home = tmp_path / "profiles" / "verify"
     profile_home.mkdir(parents=True)
     monkeypatch.setattr(server, "_profile_home", lambda p: profile_home if p == "verify" else None)
-    token = set_hermes_home_override(profile_home)
+    token = set_indagis_home_override(profile_home)
     project = tmp_path / "project"
     project.mkdir()
     (project / ".git").mkdir()
@@ -12554,7 +12554,7 @@ def test_verification_status_returns_recorded_evidence(tmp_path, monkeypatch):
             }
         )
     finally:
-        reset_hermes_home_override(token)
+        reset_indagis_home_override(token)
 
     verification = resp["result"]["verification"]
     assert verification["status"] == "passed"
@@ -12575,7 +12575,7 @@ def test_verification_status_outside_workspace_is_not_applicable(monkeypatch, tm
 
     home = tmp_path / ".hermes"
     home.mkdir()
-    token = set_hermes_home_override(home)
+    token = set_indagis_home_override(home)
     try:
         resp = server.handle_request(
             {
@@ -12585,7 +12585,7 @@ def test_verification_status_outside_workspace_is_not_applicable(monkeypatch, tm
             }
         )
     finally:
-        reset_hermes_home_override(token)
+        reset_indagis_home_override(token)
 
     assert resp["result"]["verification"]["status"] == "not_applicable"
 
@@ -13805,7 +13805,7 @@ def test_session_save_writes_under_hermes_home_with_system_prompt(monkeypatch, t
     """
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
 
     # Run from a different CWD to prove the snapshot does NOT leak there.
     work = tmp_path / "workspace"
@@ -15179,9 +15179,9 @@ def test_persist_model_switch_preserves_sibling_model_keys(tmp_path, monkeypatch
         "agent:\n"
         "  system_prompt: keepme\n"
     )
-    # save_config_value() resolves the config path from get_hermes_home() (live
-    # env var), always targeting HERMES_HOME/config.yaml — point it at tmp_path.
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    # save_config_value() resolves the config path from get_indagis_home() (live
+    # env var), always targeting INDAGIS_HOME/config.yaml — point it at tmp_path.
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     monkeypatch.setattr(cli, "_hermes_home", tmp_path)
 
     result = types.SimpleNamespace(
@@ -15214,7 +15214,7 @@ def test_persist_model_switch_clears_stale_base_url(tmp_path, monkeypatch):
         "  provider: custom:mylocal\n"
         "  base_url: http://localhost:1234/v1\n"
     )
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     monkeypatch.setattr(cli, "_hermes_home", tmp_path)
 
     # Switch to a native provider with no base_url.
@@ -16169,10 +16169,10 @@ def test_prompt_submit_releases_old_history_before_heap_trim(monkeypatch):
         monkeypatch.setattr(server, "_get_usage", lambda _a: {})
         monkeypatch.setattr(server, "render_message", lambda _t, _c: "")
         monkeypatch.setattr(server, "_emit", lambda *a: None)
-        monkeypatch.setattr(server, "set_hermes_home_override", lambda _home: object())
+        monkeypatch.setattr(server, "set_indagis_home_override", lambda _home: object())
         monkeypatch.setattr(
             server,
-            "reset_hermes_home_override",
+            "reset_indagis_home_override",
             lambda _token: cleanup_order.append("reset_home"),
         )
         monkeypatch.setattr("hermes_cli.mem_trim.trim_memory", _inspect_trim_frame)

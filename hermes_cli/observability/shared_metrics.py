@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from hermes_cli.sqlite_util import write_txn
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from utils import atomic_json_write
 
 from .shared_metrics_contract import (
@@ -52,7 +52,7 @@ class SharedMetricsStore:
         database_path: Path | None = None,
         outbox_directory: Path | None = None,
     ) -> None:
-        root = get_hermes_home() / "telemetry" / "shared_metrics"
+        root = get_indagis_home() / "telemetry" / "shared_metrics"
         self.database_path = database_path or root / "metrics.sqlite3"
         self.outbox_directory = outbox_directory or root / "outbox"
         self._ensure_private_directory(self.database_path.parent)

@@ -2,9 +2,9 @@
 
 The dashboard is ONE machine-level management surface: config, env, MCP,
 model, and chat-PTY endpoints accept an optional ``profile`` so the global
-profile switcher can target any profile's HERMES_HOME. These tests pin:
+profile switcher can target any profile's INDAGIS_HOME. These tests pin:
 reads/writes land in the REQUESTED profile, the dashboard's own profile
-stays untouched, and the chat PTY env is scoped via HERMES_HOME.
+stays untouched, and the chat PTY env is scoped via INDAGIS_HOME.
 """
 import pytest
 import yaml
@@ -13,10 +13,10 @@ import yaml
 @pytest.fixture
 def isolated_profiles(tmp_path, monkeypatch, _isolate_hermes_home):
     """Isolated default home + one named profile, each with config + .env."""
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
     from hermes_cli import profiles
 
-    default_home = get_hermes_home()
+    default_home = get_indagis_home()
     profiles_root = default_home / "profiles"
     worker_home = profiles_root / "worker_beta"
     for home in (default_home, worker_home):
@@ -37,10 +37,10 @@ def client(monkeypatch, isolated_profiles):
         pytest.skip("fastapi/starlette not installed")
 
     import hermes_state
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
     from hermes_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-    monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_hermes_home() / "state.db")
+    monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_indagis_home() / "state.db")
     c = TestClient(app)
     c.headers[_SESSION_HEADER_NAME] = _SESSION_TOKEN
     return c
@@ -196,7 +196,7 @@ class TestProfileScopedPostSetup:
         self, client, isolated_profiles, monkeypatch
     ):
         """Post-setup runs in a -p scoped subprocess so hooks that read
-        config / write per-profile state see the same HERMES_HOME the rest
+        config / write per-profile state see the same INDAGIS_HOME the rest
         of the drawer's writes targeted."""
         import hermes_cli.web_server as web_server
 
@@ -256,14 +256,14 @@ class TestProfileScopedGateway:
         self, client, isolated_profiles, monkeypatch
     ):
         import hermes_cli.web_server as web_server
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
         seen_homes = []
 
         def fake_get_running_pid(*args, **kwargs):
             # /api/status?profile= now passes pid_path= explicitly (the TTL
             # cache would otherwise serve another profile's PID) — accept it.
-            seen_homes.append(str(get_hermes_home()))
+            seen_homes.append(str(get_indagis_home()))
             return None
 
         monkeypatch.setattr(web_server, "check_config_version", lambda: (1, 1))
@@ -403,7 +403,7 @@ class TestProfileScopedChatPty:
         )
         argv, cwd, env = web_server._resolve_chat_argv(profile="worker_beta")
         assert env is not None
-        assert env["HERMES_HOME"] == str(isolated_profiles["worker_beta"])
+        assert env["INDAGIS_HOME"] == str(isolated_profiles["worker_beta"])
         # Scoped chat must NOT attach to the dashboard's in-memory gateway.
         assert "HERMES_TUI_GATEWAY_URL" not in env
 
@@ -429,9 +429,9 @@ class TestProfileScopedAudio:
         seen = {}
 
         def _fake_transcribe(path):
-            from hermes_constants import get_hermes_home
+            from hermes_constants import get_indagis_home
 
-            seen["home"] = str(get_hermes_home())
+            seen["home"] = str(get_indagis_home())
             return {"success": True, "transcript": "hi", "provider": "fake"}
 
         monkeypatch.setattr(voice_mode, "transcribe_recording", _fake_transcribe)

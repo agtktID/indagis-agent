@@ -168,7 +168,7 @@ def slack_manifest_command(args) -> int:
 
     Flags (all parsed in ``hermes_cli/main.py``):
       --write [PATH]  Write to file instead of stdout (default path:
-                      ``$HERMES_HOME/slack-manifest.json``)
+                      ``$INDAGIS_HOME/slack-manifest.json``)
       --name NAME     Override the bot display name (default: "Hermes")
       --description DESC  Override the bot description
       --long-description TEXT  Override the long app description (175-4,000 characters)
@@ -256,9 +256,9 @@ def slack_manifest_command(args) -> int:
     if write_target is not None:
         if isinstance(write_target, bool) and write_target:
             # --write with no value → default location
-            from hermes_constants import get_hermes_home
+            from hermes_constants import get_indagis_home
 
-            target = Path(get_hermes_home()) / "slack-manifest.json"
+            target = Path(get_indagis_home()) / "slack-manifest.json"
         else:
             target = Path(write_target).expanduser()
         target.parent.mkdir(parents=True, exist_ok=True)

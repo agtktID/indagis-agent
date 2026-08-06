@@ -656,14 +656,14 @@ def create_task(payload: CreateTaskBody, board: Optional[str] = Query(None)):
         if task and task.status == "ready" and task.assignee:
             try:
                 from hermes_cli.kanban import _check_dispatcher_presence
-                from hermes_constants import get_hermes_home
+                from hermes_constants import get_indagis_home
 
                 # Scope the probe to the request's active home. The dashboard
-                # backend can run under a different HERMES_HOME than the
+                # backend can run under a different INDAGIS_HOME than the
                 # profile this board belongs to, which otherwise warned "no
                 # gateway is running" against a live profile gateway (#71211).
                 running, message = _check_dispatcher_presence(
-                    hermes_home=get_hermes_home()
+                    hermes_home=get_indagis_home()
                 )
                 if not running and message:
                     body["warning"] = message
@@ -2563,9 +2563,9 @@ def update_profile_description(profile_name: str, payload: DescribeBody):
         from hermes_cli import profiles as profiles_mod
         canon = profiles_mod.normalize_profile_name(profile_name)
         if canon == "default":
-            from hermes_constants import get_hermes_home  # type: ignore
+            from hermes_constants import get_indagis_home  # type: ignore
             from pathlib import Path as _Path
-            profile_dir = _Path(get_hermes_home())
+            profile_dir = _Path(get_indagis_home())
         else:
             profile_dir = profiles_mod.get_profile_dir(canon)
         if not profile_dir.is_dir():

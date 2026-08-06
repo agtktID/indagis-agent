@@ -17,7 +17,7 @@ def test_run_xai_oauth_login_from_setup_does_not_hijack_active_provider(
     """
     hermes_home = tmp_path / "hermes"
     hermes_home.mkdir(parents=True, exist_ok=True)
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
 
     auth_path = hermes_home / "auth.json"
     auth_path.write_text(

@@ -55,7 +55,7 @@ _PHOTON_ENV = (
 def tmp_hermes_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     home = tmp_path / "hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     for key in _PHOTON_ENV:
         monkeypatch.delenv(key, raising=False)
     yield home

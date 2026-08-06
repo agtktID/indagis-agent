@@ -21,7 +21,7 @@ This module makes that same marker the single lock for **all** update
 entrypoints instead of adding a fourth mechanism. Format and location are
 unchanged and remain byte-compatible with the Rust and Electron readers:
 
-    <HERMES_HOME>/.hermes-update-in-progress   body: "<pid>\\n<started_at_unix>"
+    <INDAGIS_HOME>/.hermes-update-in-progress   body: "<pid>\\n<started_at_unix>"
 
 A marker only counts as a live update when its pid is alive AND it is younger
 than :data:`UPDATE_MARKER_MAX_AGE_MS` — mirroring ``readLiveUpdateMarker`` so a
@@ -86,13 +86,13 @@ def update_marker_path() -> Path:
     """Path of the shared update marker.
 
     Uses the *process* Hermes home (never the context-local profile override):
-    the Rust updater resolves ``$HERMES_HOME`` or the platform default, and the
+    the Rust updater resolves ``$INDAGIS_HOME`` or the platform default, and the
     desktop pins that same value into the updater's env. A profile-scoped path
     here would put the lock somewhere the other two owners never look.
     """
-    from hermes_constants import get_process_hermes_home
+    from hermes_constants import get_process_indagis_home
 
-    return get_process_hermes_home() / MARKER_NAME
+    return get_process_indagis_home() / MARKER_NAME
 
 
 def _pid_alive(pid: int) -> bool:

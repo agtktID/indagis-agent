@@ -107,7 +107,7 @@ def _provider_for_mode(tmp_path, monkeypatch, mode: str):
     config_path.write_text(json.dumps(config))
 
     monkeypatch.setattr(
-        "plugins.memory.hindsight.get_hermes_home", lambda: tmp_path
+        "plugins.memory.hindsight.get_indagis_home", lambda: tmp_path
     )
 
     provider = HindsightMemoryProvider()
@@ -176,7 +176,7 @@ def provider(tmp_path, monkeypatch):
     config_path.write_text(json.dumps(config))
 
     monkeypatch.setattr(
-        "plugins.memory.hindsight.get_hermes_home", lambda: tmp_path
+        "plugins.memory.hindsight.get_indagis_home", lambda: tmp_path
     )
 
     p = HindsightMemoryProvider()
@@ -203,7 +203,7 @@ def provider_with_config(tmp_path, monkeypatch):
         config_path.write_text(json.dumps(config))
 
         monkeypatch.setattr(
-            "plugins.memory.hindsight.get_hermes_home", lambda: tmp_path
+            "plugins.memory.hindsight.get_indagis_home", lambda: tmp_path
         )
 
         p = HindsightMemoryProvider()
@@ -362,7 +362,7 @@ class TestPostSetup:
         user_home = tmp_path / "user-home"
         user_home.mkdir()
         monkeypatch.setenv("HOME", str(user_home))
-        monkeypatch.setattr("plugins.memory.hindsight.get_hermes_home", lambda: hermes_home)
+        monkeypatch.setattr("plugins.memory.hindsight.get_indagis_home", lambda: hermes_home)
 
         save_config = MagicMock()
         which = MagicMock(return_value="/usr/bin/uv")
@@ -773,7 +773,7 @@ class TestSyncTurn:
         config_path = tmp_path / "hindsight" / "config.json"
         config_path.parent.mkdir(parents=True, exist_ok=True)
         config_path.write_text(json.dumps(config))
-        monkeypatch.setattr("plugins.memory.hindsight.get_hermes_home", lambda: tmp_path)
+        monkeypatch.setattr("plugins.memory.hindsight.get_indagis_home", lambda: tmp_path)
 
         p1 = HindsightMemoryProvider()
         p1.initialize(session_id="resumed-session", hermes_home=str(tmp_path), platform="cli")
@@ -1098,7 +1098,7 @@ class TestBankIdTemplate:
         config_path = tmp_path / "hindsight" / "config.json"
         config_path.parent.mkdir(parents=True, exist_ok=True)
         config_path.write_text(json.dumps(config))
-        monkeypatch.setattr("plugins.memory.hindsight.get_hermes_home", lambda: tmp_path)
+        monkeypatch.setattr("plugins.memory.hindsight.get_indagis_home", lambda: tmp_path)
 
         p = HindsightMemoryProvider()
         p.initialize(
@@ -1120,7 +1120,7 @@ class TestBankIdTemplate:
 class TestAvailability:
     def test_available_with_api_key(self, tmp_path, monkeypatch):
         monkeypatch.setattr(
-            "plugins.memory.hindsight.get_hermes_home",
+            "plugins.memory.hindsight.get_indagis_home",
             lambda: tmp_path / "nonexistent",
         )
         monkeypatch.setenv("HINDSIGHT_API_KEY", "test-key")
@@ -1130,7 +1130,7 @@ class TestAvailability:
 
     def test_local_mode_unavailable_when_runtime_import_fails(self, tmp_path, monkeypatch):
         monkeypatch.setattr(
-            "plugins.memory.hindsight.get_hermes_home",
+            "plugins.memory.hindsight.get_indagis_home",
             lambda: tmp_path / "nonexistent",
         )
         monkeypatch.setenv("HINDSIGHT_MODE", "local")
@@ -1153,7 +1153,7 @@ class TestAvailability:
         config_path.parent.mkdir(parents=True, exist_ok=True)
         config_path.write_text(json.dumps(config))
         monkeypatch.setattr(
-            "plugins.memory.hindsight.get_hermes_home", lambda: tmp_path
+            "plugins.memory.hindsight.get_indagis_home", lambda: tmp_path
         )
 
         def _raise(_name):
@@ -1328,7 +1328,7 @@ class TestClientAutoUpgradeRoutesThroughLazyDeps:
         config_path.parent.mkdir(parents=True, exist_ok=True)
         config_path.write_text(json.dumps({"mode": "cloud"}))
         monkeypatch.setattr(
-            "plugins.memory.hindsight.get_hermes_home", lambda: tmp_path
+            "plugins.memory.hindsight.get_indagis_home", lambda: tmp_path
         )
 
         # Simulate an installed-but-outdated client.

@@ -13,7 +13,7 @@ import json
 import sqlite3
 from typing import Dict, Optional
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from hermes_state_common import (
     DEFERRED_INDEX_SQL,
     FTS_CJK_STALE_KEY,
@@ -1039,7 +1039,7 @@ class SessionSchemaMixin:
         can switch to state.db without losing pre-migration sessions.
         Only fills NULL columns — never overwrites data written by newer code.
         """
-        sessions_file = get_hermes_home() / "sessions" / "sessions.json"
+        sessions_file = get_indagis_home() / "sessions" / "sessions.json"
         if not sessions_file.exists():
             return
         with open(sessions_file, "r", encoding="utf-8") as f:

@@ -18,7 +18,7 @@ Usage:
 
 Environment:
   ABEVAL_ROOT    working/results root   (default: ./abeval-workspace)
-  ABEVAL_HOME    HERMES_HOME for runs   (default: $ABEVAL_ROOT/home)
+  ABEVAL_HOME    INDAGIS_HOME for runs   (default: $ABEVAL_ROOT/home)
                  Must be a configured Hermes home with credentials for the
                  models under test. See README.md for a minimal setup.
 
@@ -168,7 +168,7 @@ def run(arm: str, model: str, reps: int, pythonpath: str, only=None):
             env = dict(os.environ)
             env.update({
                 "PYTHONPATH": pythonpath,
-                "HERMES_HOME": str(HOME),
+                "INDAGIS_HOME": str(HOME),
                 "HERMES_NEMO_RELAY_ATOF_ENABLED": "1",
                 "HERMES_NEMO_RELAY_ATOF_OUTPUT_DIRECTORY": str(atof.parent),
                 "HERMES_NEMO_RELAY_ATOF_FILENAME": atof.name,

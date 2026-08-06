@@ -10,7 +10,7 @@ from unittest.mock import patch as mock_patch
 import pytest
 
 import tools.approval as approval_module
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from tools.approval import (
     _get_approval_mode,
     _normalize_approval_mode,
@@ -308,8 +308,8 @@ class TestTeePattern:
             "cat file | tee ~/.ssh/authorized_keys",
             "echo x | tee /dev/sda",
             "echo x | tee ~/.hermes/.env",
-            "echo x | tee $HERMES_HOME/.env",
-            'echo x | tee "$HERMES_HOME/.env"',
+            "echo x | tee $INDAGIS_HOME/.env",
+            'echo x | tee "$INDAGIS_HOME/.env"',
         ):
             dangerous, key, desc = detect_dangerous_command(command)
             assert dangerous is True, command
@@ -335,7 +335,7 @@ class TestHermesConfigWriteProtection:
             "echo 'approvals:' > ~/.hermes/config.yaml",
             "echo '  mode: off' >> ~/.hermes/config.yaml",
             "echo x | tee ~/.hermes/config.yaml",
-            "echo x | tee $HERMES_HOME/config.yaml",
+            "echo x | tee $INDAGIS_HOME/config.yaml",
             "cp /tmp/evil.yaml ~/.hermes/config.yaml",
         ):
             dangerous, key, desc = detect_dangerous_command(command)
@@ -376,7 +376,7 @@ class TestSensitiveRedirectPattern:
     def test_redirect_to_sensitive_target(self):
         authorized_keys = Path.home() / ".ssh" / "authorized_keys"
         for command in (
-            "echo x > $HERMES_HOME/.env",
+            "echo x > $INDAGIS_HOME/.env",
             "cat key >> $HOME/.ssh/authorized_keys",
             "cat key >> ~/.ssh/authorized_keys",
             f"cat key >> {authorized_keys}",
@@ -500,9 +500,9 @@ class TestWindowsAbsolutePathFolding:
     (``C:\\Users\\alice\\.ssh\\authorized_keys``). Detection stripped backslash
     escapes *before* folding, dissolving those separators, so writes to startup,
     SSH, and Hermes config/env files returned "safe" without an approval prompt.
-    The OS-specific ``Path.home()`` / ``get_hermes_home()`` tests above only
+    The OS-specific ``Path.home()`` / ``get_indagis_home()`` tests above only
     exercise this branch on a Windows host; these monkeypatch a Windows-style
-    HOME/HERMES_HOME so the fold is verified on the POSIX CI runner too."""
+    HOME/INDAGIS_HOME so the fold is verified on the POSIX CI runner too."""
 
     def test_windows_home_multiseg_and_forward_slash_fold(self, monkeypatch):
         # The multi-segment suffix (\.ssh\authorized_keys) must also have its

@@ -56,7 +56,7 @@ def _seed_openrouter_pool(token: str = "sk-or-FAKEKEY123") -> None:
 
 def test_auto_detects_openrouter_from_pool(tmp_path, monkeypatch):
     """With only a pool credential (no env var), auto-detection finds it."""
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "hermes"))
     (tmp_path / "hermes").mkdir(parents=True, exist_ok=True)
     _seed_openrouter_pool()
 

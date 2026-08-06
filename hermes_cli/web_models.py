@@ -569,7 +569,7 @@ class ProfileCreate(BaseModel):
     keep_skills: List[str] = []
     # Skills-hub identifiers to install into the new profile. Installed async
     # via a subprocess scoped to the profile (`hermes -p <name> skills install`)
-    # because skills_hub.SKILLS_DIR is import-time-bound and the HERMES_HOME
+    # because skills_hub.SKILLS_DIR is import-time-bound and the INDAGIS_HOME
     # override can't redirect it. Returns spawned PIDs for the UI to poll.
     hub_skills: List[str] = []
 
@@ -582,7 +582,7 @@ class ProfileExport(BaseModel):
     # Optional extra root-level files to stage into the archive, filename →
     # text content (e.g. desktop.json — the desktop appearance overlay).
     extra_files: Dict[str, str] = {}
-    # Where to write the archive. Empty → a staging path under HERMES_HOME.
+    # Where to write the archive. Empty → a staging path under INDAGIS_HOME.
     output: str = ""
 
 

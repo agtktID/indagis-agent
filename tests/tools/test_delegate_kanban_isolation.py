@@ -31,7 +31,7 @@ def _make_running_kanban_task(monkeypatch, tmp_path):
     attachments_root = tmp_path / "attachments"
     workspace = tmp_path / "parent-workspace"
     workspace.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setenv("HERMES_PROFILE", "parent-worker")
     monkeypatch.setenv("HERMES_KANBAN_WORKSPACE", str(workspace))
     monkeypatch.setenv("HERMES_KANBAN_ATTACHMENTS_ROOT", str(attachments_root))
@@ -70,7 +70,7 @@ def test_delegated_child_context_suppresses_env_gated_kanban_tools(monkeypatch, 
     monkeypatch.setenv("HERMES_KANBAN_RUN_ID", "123")
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
 
     import tools.kanban_tools  # noqa: F401 - ensure registered
     from agent.delegation_context import delegated_child_context
@@ -142,7 +142,7 @@ def test_delegate_child_execute_code_env_bridges_contextvar_and_scrubs_kanban(
     """
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setenv("HERMES_KANBAN_TASK", "t_parent")
     monkeypatch.setenv("HERMES_KANBAN_RUN_ID", "123")
     monkeypatch.setenv("HERMES_KANBAN_DB", str(home / "kanban.db"))
@@ -161,7 +161,7 @@ def test_delegate_child_execute_code_env_bridges_contextvar_and_scrubs_kanban(
         )
 
     assert os.environ.get("HERMES_DELEGATED_CHILD_CONTEXT") is None
-    assert env["HERMES_HOME"] == str(home)
+    assert env["INDAGIS_HOME"] == str(home)
     assert env["HERMES_DELEGATED_CHILD_CONTEXT"] == "1"
     assert "HERMES_KANBAN_TASK" not in env
     assert "HERMES_KANBAN_RUN_ID" not in env

@@ -51,13 +51,13 @@ CONFIG = {
 
 @pytest.fixture
 def configured_home(tmp_path, monkeypatch):
-    """A HERMES_HOME with one ``providers:`` entry and one legacy
+    """A INDAGIS_HOME with one ``providers:`` entry and one legacy
     ``custom_providers:`` entry, both credentialled via env."""
     home = tmp_path / ".hermes"
     home.mkdir()
     (home / "config.yaml").write_text(yaml.safe_dump(CONFIG))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-test")
     monkeypatch.setenv("MYLLM_KEY", "sk-mine")
     monkeypatch.setenv("LEGACY_KEY", "sk-legacy")

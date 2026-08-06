@@ -139,7 +139,7 @@ def _truncate_stdout_text(stdout_text: str) -> Tuple[str, Dict[str, Any]]:
 # OS-essential name.  Delegate-task child context is also an exact-name
 # operational marker: without it, a sandbox script that spawns/imports Hermes
 # code can lose the DB-layer Kanban mutation guard while still inheriting
-# HERMES_HOME.
+# INDAGIS_HOME.
 #
 # NB: the broad "HERMES_" prefix was deliberately removed (#27303) — it leaked
 # HERMES_*-named config that lacks a secret substring (e.g. HERMES_BASE_URL,
@@ -166,7 +166,7 @@ _SECRET_SUBSTRINGS = ("KEY", "TOKEN", "SECRET", "PASSWORD", "CREDENTIAL",
 # runtime location) that repo-root modules a sandbox script imports may read at
 # import time.  None match _SECRET_SUBSTRINGS.
 _HERMES_CHILD_ALLOWED = frozenset({
-    "HERMES_HOME",
+    "INDAGIS_HOME",
     "HERMES_PROFILE",
     "HERMES_CONFIG",
     "HERMES_ENV",

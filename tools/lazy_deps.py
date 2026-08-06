@@ -732,7 +732,7 @@ def _venv_pip_install(specs: tuple[str, ...], *, timeout: int = 300) -> _Install
         uv_env["VIRTUAL_ENV"] = str(venv_root)
 
         # Tier 1: uv (preferred — fast, doesn't need pip in the venv)
-        # Managed uv first: $HERMES_HOME/bin is never on PATH, so a bare
+        # Managed uv first: $INDAGIS_HOME/bin is never on PATH, so a bare
         # which() misses the uv Hermes installed and falls through to the
         # slower pip tier. Deliberately a lookup and not ensure_uv(): this runs
         # mid-turn to install an optional dependency, and downloading uv +

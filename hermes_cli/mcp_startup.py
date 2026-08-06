@@ -58,7 +58,7 @@ def start_background_mcp_discovery(*, logger, thread_name: str) -> None:
         if not _has_configured_mcp_servers():
             return
 
-        # Capture the caller's context-local HERMES_HOME override (profile
+        # Capture the caller's context-local INDAGIS_HOME override (profile
         # scoping in multi-profile processes like the dashboard/desktop
         # backend) and re-install it inside the discovery thread. ContextVars
         # do not propagate into bare threads, so without this a session
@@ -66,18 +66,18 @@ def start_background_mcp_discovery(*, logger, thread_name: str) -> None:
         # mcp_servers instead (#67605). The config gate above already runs on
         # the caller's thread, so it sees the same override.
         try:
-            from hermes_constants import get_hermes_home_override
+            from hermes_constants import get_indagis_home_override
 
-            home_override = get_hermes_home_override()
+            home_override = get_indagis_home_override()
         except Exception:
             home_override = None
 
         def _discover() -> None:
             token = None
             try:
-                from hermes_constants import set_hermes_home_override
+                from hermes_constants import set_indagis_home_override
 
-                token = set_hermes_home_override(home_override)
+                token = set_indagis_home_override(home_override)
             except Exception:
                 token = None
             try:
@@ -96,9 +96,9 @@ def start_background_mcp_discovery(*, logger, thread_name: str) -> None:
             finally:
                 if token is not None:
                     try:
-                        from hermes_constants import reset_hermes_home_override
+                        from hermes_constants import reset_indagis_home_override
 
-                        reset_hermes_home_override(token)
+                        reset_indagis_home_override(token)
                     except Exception:
                         pass
                 with _mcp_discovery_lock:

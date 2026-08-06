@@ -20,7 +20,7 @@ def hermes_home(monkeypatch):
     d = tempfile.mkdtemp(prefix="hermes_wa_test_")
     home = os.path.join(d, ".hermes")
     os.makedirs(home)
-    monkeypatch.setenv("HERMES_HOME", home)
+    monkeypatch.setenv("INDAGIS_HOME", home)
     yield home
     shutil.rmtree(d, ignore_errors=True)
 

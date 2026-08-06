@@ -139,7 +139,7 @@ def _set_reasoning_effort(config: Dict[str, Any], effort: str) -> None:
 from hermes_cli.config import (
     cfg_get,
     DEFAULT_CONFIG,
-    get_hermes_home,
+    get_indagis_home,
     get_config_path,
     get_env_path,
     load_config,
@@ -147,9 +147,9 @@ from hermes_cli.config import (
     save_env_value,
     remove_env_value,
     get_env_value,
-    ensure_hermes_home,
+    ensure_indagis_home,
 )
-# display_hermes_home imported lazily at call sites (stale-module safety during hermes update)
+# display_indagis_home imported lazily at call sites (stale-module safety during hermes update)
 
 from hermes_cli.colors import Colors, color
 
@@ -656,7 +656,7 @@ def _print_setup_summary(config: dict, hermes_home):
         print_warning(
             "Some tools are disabled. Run 'hermes setup tools' to configure them,"
         )
-        from hermes_constants import display_hermes_home as _dhh
+        from hermes_constants import display_indagis_home as _dhh
         print_warning(f"or edit {_dhh()}/.env directly to add the missing API keys.")
         print()
 
@@ -680,7 +680,7 @@ def _print_setup_summary(config: dict, hermes_home):
     print()
 
     # Show file locations prominently
-    from hermes_constants import display_hermes_home as _dhh
+    from hermes_constants import display_indagis_home as _dhh
     print(color(f"📁 All your files are in {_dhh()}/:", Colors.CYAN, Colors.BOLD))
     print()
     print(f"   {color('Settings:', Colors.YELLOW)}  {get_config_path()}")
@@ -1224,7 +1224,7 @@ def _setup_tts_provider(config: dict):
                     save_env_value("XAI_API_KEY", api_key)
                     print_success("xAI TTS API key saved")
                 else:
-                    from hermes_constants import display_hermes_home as _dhh
+                    from hermes_constants import display_indagis_home as _dhh
                     print_warning(
                         "No xAI API key provided for TTS. Configure XAI_API_KEY "
                         f"via hermes setup model or {_dhh()}/.env to use xAI TTS. "
@@ -1563,7 +1563,7 @@ def setup_terminal_backend(config: dict):
             print_info("Installing vercel SDK...")
             import subprocess
 
-            # Managed uv first: $HERMES_HOME/bin is never on PATH, so a bare
+            # Managed uv first: $INDAGIS_HOME/bin is never on PATH, so a bare
             # which() misses the uv Hermes installed. Bootstrapping one is
             # welcome here — this is the interactive setup wizard, already
             # mid-install, and the alternative tier is a pip that a `uv venv`
@@ -1879,7 +1879,7 @@ def _setup_telegram_auto_result():
 
     profile_name: str | None = None
     try:
-        profile_name = _profile_name_from_hermes_home(Path(get_hermes_home()))
+        profile_name = _profile_name_from_hermes_home(Path(get_indagis_home()))
     except Exception:
         pass
 
@@ -1887,7 +1887,7 @@ def _setup_telegram_auto_result():
 
 
 def _profile_name_from_hermes_home(hermes_home) -> str | None:
-    """Return the active profile name when HERMES_HOME is a profile dir."""
+    """Return the active profile name when INDAGIS_HOME is a profile dir."""
     if hermes_home.parent.name == "profiles":
         return hermes_home.name
     return None
@@ -2139,7 +2139,7 @@ def _setup_webhooks():
     save_env_value("WEBHOOK_ENABLED", "true")
     print()
     print_success("Webhooks enabled! Next steps:")
-    from hermes_constants import display_hermes_home as _dhh
+    from hermes_constants import display_indagis_home as _dhh
     print_info(f"   1. Define webhook routes in {_dhh()}/config.yaml")
     print_info("   2. Point your service (GitHub, GitLab, etc.) at:")
     print_info("      http://your-server:8644/webhooks/<route-name>")
@@ -2951,7 +2951,7 @@ def run_setup_wizard(args):
     if is_managed():
         managed_error("run setup wizard")
         return
-    ensure_hermes_home()
+    ensure_indagis_home()
 
     reset_requested = bool(getattr(args, "reset", False))
     if reset_requested:
@@ -2962,7 +2962,7 @@ def run_setup_wizard(args):
     quick_requested = bool(getattr(args, "quick", False))
 
     config = load_config()
-    hermes_home = get_hermes_home()
+    hermes_home = get_indagis_home()
 
     # Back up existing config before setup modifies it (#3522)
     config_path = get_config_path()

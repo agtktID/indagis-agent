@@ -39,7 +39,7 @@ def hermes_home_with_config(tmp_path, monkeypatch):
         encoding="utf-8",
     )
 
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     _external_dirs_cache_clear()
     yield home, external, config
@@ -101,12 +101,12 @@ def test_cache_key_is_per_config_path(tmp_path, monkeypatch):
 
     _external_dirs_cache_clear()
 
-    monkeypatch.setenv("HERMES_HOME", str(home_a))
+    monkeypatch.setenv("INDAGIS_HOME", str(home_a))
     assert get_external_skills_dirs() == [ext_a.resolve()]
 
-    monkeypatch.setenv("HERMES_HOME", str(home_b))
+    monkeypatch.setenv("INDAGIS_HOME", str(home_b))
     assert get_external_skills_dirs() == [ext_b.resolve()]
 
     # And switching back still works — both entries coexist in the cache.
-    monkeypatch.setenv("HERMES_HOME", str(home_a))
+    monkeypatch.setenv("INDAGIS_HOME", str(home_a))
     assert get_external_skills_dirs() == [ext_a.resolve()]

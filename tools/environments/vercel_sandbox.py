@@ -2,7 +2,7 @@
 
 Uses the Vercel Python SDK to run commands in cloud sandboxes through Hermes'
 shared ``BaseEnvironment`` shell contract. When persistence is enabled, the
-backend stores task-scoped snapshot metadata under ``HERMES_HOME`` and restores
+backend stores task-scoped snapshot metadata under ``INDAGIS_HOME`` and restores
 new sandboxes from those snapshots on later task reuse.
 """
 
@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING, Any
 
 import httpx
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from tools.environments.base import (
     BaseEnvironment,
     _ThreadedProcessHandle,
@@ -161,7 +161,7 @@ def _extract_result_returncode(result: Any) -> int:
 
 
 def _snapshot_store_path() -> Path:
-    return get_hermes_home() / _SNAPSHOT_STORE_NAME
+    return get_indagis_home() / _SNAPSHOT_STORE_NAME
 
 
 def _load_snapshots() -> dict:

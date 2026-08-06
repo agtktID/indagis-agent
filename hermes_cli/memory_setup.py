@@ -13,7 +13,7 @@ import sys
 import shlex
 from pathlib import Path
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from hermes_cli.secret_prompt import masked_secret_prompt
 
 _CANCELLED = -1
@@ -34,7 +34,7 @@ def _provider_pip_dependencies(provider_name: str, declared: list) -> list:
     if provider_name == "hindsight":
         try:
             import json
-            cfg_path = get_hermes_home() / "hindsight" / "config.json"
+            cfg_path = get_indagis_home() / "hindsight" / "config.json"
             cfg = json.loads(cfg_path.read_text(encoding="utf-8")) if cfg_path.exists() else {}
             mode = cfg.get("mode", "")
             # "local" is a legacy alias for "local_embedded"
@@ -269,7 +269,7 @@ def cmd_setup_provider(provider_name: str) -> None:
         config["memory"] = {}
 
     if hasattr(provider, "post_setup"):
-        hermes_home = str(get_hermes_home())
+        hermes_home = str(get_indagis_home())
         provider.post_setup(hermes_home, config)
         return
 
@@ -325,7 +325,7 @@ def cmd_setup(args) -> None:
     # If the provider has a post_setup hook, delegate entirely to it.
     # The hook handles its own config, connection test, and activation.
     if hasattr(provider, "post_setup"):
-        hermes_home = str(get_hermes_home())
+        hermes_home = str(get_indagis_home())
         provider.post_setup(hermes_home, config)
         return
 
@@ -335,7 +335,7 @@ def cmd_setup(args) -> None:
     if not isinstance(provider_config, dict):
         provider_config = {}
 
-    env_path = get_hermes_home() / ".env"
+    env_path = get_indagis_home() / ".env"
     env_writes = {}
 
     if schema:
@@ -405,7 +405,7 @@ def cmd_setup(args) -> None:
     save_config(config)
 
     # Write non-secret config to provider's native location
-    hermes_home = str(get_hermes_home())
+    hermes_home = str(get_indagis_home())
     if provider_config and hasattr(provider, "save_config"):
         try:
             provider.save_config(provider_config, hermes_home)

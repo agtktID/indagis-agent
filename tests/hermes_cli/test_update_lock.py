@@ -44,10 +44,10 @@ def marker(tmp_path):
 def test_marker_path_follows_process_hermes_home(tmp_path, monkeypatch):
     """The lock must land where the Rust updater and Electron gate look.
 
-    All three resolve the *process* HERMES_HOME; a profile-scoped path would
+    All three resolve the *process* INDAGIS_HOME; a profile-scoped path would
     put the lock somewhere the other two owners never read.
     """
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     assert update_marker_path() == tmp_path / ".hermes-update-in-progress"
 
 

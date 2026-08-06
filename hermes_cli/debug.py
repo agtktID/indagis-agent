@@ -30,7 +30,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from hermes_constants import get_hermes_home
+from hermes_constants import get_indagis_home
 from utils import atomic_replace
 
 logger = logging.getLogger(__name__)
@@ -83,7 +83,7 @@ def _pending_file() -> Path:
     runs an opportunistic sweep on entry as a fallback for CLI-only users
     who never start the gateway.
     """
-    return get_hermes_home() / "pastes" / "pending.json"
+    return get_indagis_home() / "pastes" / "pending.json"
 
 
 def _load_pending() -> list[dict]:
@@ -369,7 +369,7 @@ def _primary_log_path(log_name: str) -> Optional[Path]:
     from hermes_cli.logs import LOG_FILES
 
     filename = LOG_FILES.get(log_name)
-    return (get_hermes_home() / "logs" / filename) if filename else None
+    return (get_indagis_home() / "logs" / filename) if filename else None
 
 
 # Logs written by a client process rather than by this backend. When the

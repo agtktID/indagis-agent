@@ -51,7 +51,7 @@ def _install_fake_tools_package(*, credential_mounts=None):
     hermes_cli.__path__ = []  # type: ignore[attr-defined]
     sys.modules["hermes_cli"] = hermes_cli
     sys.modules["hermes_cli.config"] = types.SimpleNamespace(
-        get_hermes_home=lambda: Path(tempfile.gettempdir()) / "hermes-home",
+        get_indagis_home=lambda: Path(tempfile.gettempdir()) / "hermes-home",
     )
 
     tools_package = types.ModuleType("tools")

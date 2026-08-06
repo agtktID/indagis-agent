@@ -1814,9 +1814,9 @@ class SlackAdapter(BasePlatformAdapter):
         bot_tokens = [t.strip() for t in raw_token.split(",") if t.strip()]
 
         # Also load tokens from OAuth token file
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        tokens_file = get_hermes_home() / "slack_tokens.json"
+        tokens_file = get_indagis_home() / "slack_tokens.json"
         if tokens_file.exists():
             try:
                 # Warn if the token file is world- or group-readable — it
@@ -8621,9 +8621,9 @@ async def _standalone_send(
     # string, which Slack rejects as ``invalid_auth`` (#47547).
     tokens = [t.strip() for t in str(raw_token or "").split(",") if t.strip()]
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        _tokens_file = get_hermes_home() / "slack_tokens.json"
+        _tokens_file = get_indagis_home() / "slack_tokens.json"
         if _tokens_file.exists():
             _saved = json.loads(_tokens_file.read_text(encoding="utf-8"))
             for _entry in _saved.values():
@@ -8863,18 +8863,18 @@ def interactive_setup() -> None:
     )
 
     def _write_slack_manifest_and_instruct() -> None:
-        """Generate the Slack manifest, write it under HERMES_HOME, and print
+        """Generate the Slack manifest, write it under INDAGIS_HOME, and print
         paste-into-Slack instructions. Failures are non-fatal."""
         try:
             from hermes_cli.slack_cli import _build_full_manifest
-            from hermes_constants import get_hermes_home
+            from hermes_constants import get_indagis_home
             import json as _json
 
             manifest = _build_full_manifest(
                 bot_name="Hermes",
                 bot_description="Your Hermes agent on Slack",
             )
-            target = Path(get_hermes_home()) / "slack-manifest.json"
+            target = Path(get_indagis_home()) / "slack-manifest.json"
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(
                 _json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",

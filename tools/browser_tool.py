@@ -67,8 +67,8 @@ from pathlib import Path
 from agent.redact import redact_cdp_url
 from hermes_constants import (
     agent_browser_runnable,
-    get_hermes_home,
-    get_hermes_home_override,
+    get_indagis_home,
+    get_indagis_home_override,
 )
 from utils import env_int, is_truthy_value
 from hermes_cli.config import DEFAULT_CONFIG, cfg_get
@@ -228,7 +228,7 @@ def _discover_homebrew_node_dirs() -> tuple[str, ...]:
 
 def _browser_candidate_path_dirs() -> list[str]:
     """Return ordered browser CLI PATH candidates shared by discovery and execution."""
-    hermes_home = get_hermes_home()
+    hermes_home = get_indagis_home()
     hermes_node_bin = str(hermes_home / "node" / "bin")
     hermes_node_root = str(hermes_home / "node")
     hermes_nm_bin = str(hermes_home / "node_modules" / ".bin")
@@ -1465,7 +1465,7 @@ def _allow_private_urls() -> bool:
 
     # The profile multiplexer scopes config with a ContextVar while sharing
     # this module. Never reuse another profile's private-network opt-out.
-    if get_hermes_home_override() is not None:
+    if get_indagis_home_override() is not None:
         return _resolve_allow_private_urls()
 
     if _allow_private_urls_resolved:
@@ -2395,9 +2395,9 @@ def _find_agent_browser(*, validate: bool = True) -> str:
             candidates = [
                 shutil.which("agent-browser"),
                 shutil.which("agent-browser", path=extended_path) if extended_path else None,
-                shutil.which("agent-browser", path=str(get_hermes_home() / "node_modules" / ".bin")),
-                shutil.which("agent-browser", path=str(get_hermes_home() / "node" / "bin")),
-                shutil.which("agent-browser", path=str(get_hermes_home() / "node")),
+                shutil.which("agent-browser", path=str(get_indagis_home() / "node_modules" / ".bin")),
+                shutil.which("agent-browser", path=str(get_indagis_home() / "node" / "bin")),
+                shutil.which("agent-browser", path=str(get_indagis_home() / "node")),
             ]
             for recheck in candidates:
                 if recheck and agent_browser_runnable(recheck):
@@ -2784,7 +2784,7 @@ def _store_full_snapshot(snapshot_text: str) -> Optional[str]:
     """
     try:
         import hashlib
-        from hermes_constants import get_hermes_dir
+        from hermes_constants import get_indagis_dir
         from agent.redact import redact_sensitive_text
 
         content = redact_sensitive_text(snapshot_text, force=True)
@@ -2794,7 +2794,7 @@ def _store_full_snapshot(snapshot_text: str) -> Optional[str]:
                 + f"\n\n[... stored copy truncated at {MAX_STORED_SNAPSHOT_CHARS:,} chars "
                 f"of {len(content):,} ...]"
             )
-        cache_dir = get_hermes_dir("cache/web", "web_cache")
+        cache_dir = get_indagis_dir("cache/web", "web_cache")
         cache_dir.mkdir(parents=True, exist_ok=True)
         digest = hashlib.sha256(content.encode("utf-8")).hexdigest()[:10]
         path = cache_dir / f"browser-snapshot-{digest}.txt"
@@ -4051,7 +4051,7 @@ def _maybe_start_recording(task_id: str):
             return
     try:
         from hermes_cli.config import read_raw_config
-        hermes_home = get_hermes_home()
+        hermes_home = get_indagis_home()
         cfg = read_raw_config()
         record_enabled = cfg_get(cfg, "browser", "record_sessions", default=False)
 
@@ -4196,8 +4196,8 @@ def browser_vision(question: str, annotate: bool = False, task_id: Optional[str]
 
     import base64
     import uuid as uuid_mod
-    from hermes_constants import get_hermes_dir
-    screenshots_dir = get_hermes_dir("cache/screenshots", "browser_screenshots")
+    from hermes_constants import get_indagis_dir
+    screenshots_dir = get_indagis_dir("cache/screenshots", "browser_screenshots")
     screenshot_path = screenshots_dir / f"browser_screenshot_{uuid_mod.uuid4().hex}.png"
     effective_task_id = _last_session_key(task_id or "default")
 
@@ -4255,8 +4255,8 @@ def browser_vision(question: str, annotate: bool = False, task_id: Optional[str]
             _lp_fallback_warning = fb_result.get("fallback_warning")
             fb_path = fb_result.get("data", {}).get("path", "")
             if fb_path and os.path.exists(fb_path):
-                from hermes_constants import get_hermes_dir
-                screenshots_dir = get_hermes_dir("cache/screenshots", "browser_screenshots")
+                from hermes_constants import get_indagis_dir
+                screenshots_dir = get_indagis_dir("cache/screenshots", "browser_screenshots")
                 screenshots_dir.mkdir(parents=True, exist_ok=True)
                 import shutil as _shutil_vision
                 persistent_path = screenshots_dir / f"browser_screenshot_{uuid_mod.uuid4().hex}.png"
@@ -4499,7 +4499,7 @@ def _cleanup_old_screenshots(screenshots_dir, max_age_hours=24):
 def _cleanup_old_recordings(max_age_hours=72):
     """Remove browser recordings older than max_age_hours to prevent disk bloat."""
     try:
-        hermes_home = get_hermes_home()
+        hermes_home = get_indagis_home()
         recordings_dir = hermes_home / "browser_recordings"
         if not recordings_dir.exists():
             return

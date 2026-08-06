@@ -10,7 +10,7 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def _isolate_config(tmp_path, monkeypatch):
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
     import hermes_cli.config as config_mod
 
     config_mod._LOAD_CONFIG_CACHE.clear()
@@ -150,7 +150,7 @@ def test_migration_disables_existing_dangerous_entry(tmp_path):
 def test_profile_mcp_write_skips_dangerous_entry(tmp_path):
     from hermes_cli.config import load_config
     from hermes_cli.web_server import MCPServerCreate, _write_profile_mcp_servers
-    from hermes_constants import reset_hermes_home_override, set_hermes_home_override
+    from hermes_constants import reset_indagis_home_override, set_indagis_home_override
 
     profile_dir = tmp_path / "profile"
     profile_dir.mkdir()
@@ -162,10 +162,10 @@ def test_profile_mcp_write_skips_dangerous_entry(tmp_path):
     written = _write_profile_mcp_servers(profile_dir, servers)
 
     assert written == 1
-    token = set_hermes_home_override(str(profile_dir))
+    token = set_indagis_home_override(str(profile_dir))
     try:
         config = load_config()
     finally:
-        reset_hermes_home_override(token)
+        reset_indagis_home_override(token)
     assert "evil" not in config.get("mcp_servers", {})
     assert "clean" in config.get("mcp_servers", {})

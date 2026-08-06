@@ -261,12 +261,12 @@ def _is_gateway_approval_context() -> bool:
     return bool(_get_session_platform())
 
 # Sensitive write targets that should trigger approval even when referenced
-# via shell expansions like $HOME or $HERMES_HOME, or by the resolved absolute
+# via shell expansions like $HOME or $INDAGIS_HOME, or by the resolved absolute
 # active profile home path such as /home/hermes/.hermes/config.yaml. The
 # resolved-absolute form is folded into the ~/.hermes/ patterns at detection
 # time by _normalize_command_for_detection() — see the rewrite step there — so
 # these static patterns stay free of any import-time path snapshot (which would
-# go stale when HERMES_HOME is set after this module is imported, e.g. under the
+# go stale when INDAGIS_HOME is set after this module is imported, e.g. under the
 # hermetic test conftest or any deferred-profile-resolution path).
 _SSH_SENSITIVE_PATH = r'(?:~|\$home|\$\{home\})/\.ssh(?:/|$)'
 _HERMES_ENV_PATH = (
@@ -281,7 +281,7 @@ _HERMES_ENV_PATH = (
 # and immediately bypass the gate). Pair the write_file/patch deny (file_tools
 # _check_sensitive_path) with terminal-side coverage so `sed -i`, `tee`, `>`,
 # `cp`, etc. targeting it are gated too — otherwise the deny is unpaired
-# theater. Mirrors _HERMES_ENV_PATH; matches the HERMES_HOME override form as
+# theater. Mirrors _HERMES_ENV_PATH; matches the INDAGIS_HOME override form as
 # well as ~/.hermes/.
 _HERMES_CONFIG_PATH = (
     r'(?:~\/\.hermes/|'
@@ -601,10 +601,10 @@ def _save_blocked_payload(command: str) -> Optional[str]:
     back to the manual write_file recipe).
     """
     try:
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         import time as _time
         import uuid as _uuid
-        script_dir = get_hermes_home() / "cache" / "blocked-scripts"
+        script_dir = get_indagis_home() / "cache" / "blocked-scripts"
         script_dir.mkdir(parents=True, exist_ok=True)
         # Opportunistic cleanup: blocked payloads older than 7 days.
         cutoff = _time.time() - 7 * 86400
@@ -1028,7 +1028,7 @@ def _normalize_command_for_detection(command: str) -> str:
     # ~/ and ~/.hermes/ forms so static user-sensitive patterns catch
     # /home/alice/.bashrc and C:\Users\alice\.bashrc the same way they catch
     # ~/.bashrc. Resolve at detection time (not via an import-time snapshot) so
-    # it tracks HOME / HERMES_HOME even when those are set after this module is
+    # it tracks HOME / INDAGIS_HOME even when those are set after this module is
     # imported — as the hermetic test conftest and profile/session launchers do.
     #
     # This MUST run before the backslash-escape strip below: on Windows the home
@@ -1080,7 +1080,7 @@ def _home_prefix_fold_regex(path: str):
     required (``+``), so a bare home with no path under it is not folded.
 
     Returns ``None`` for an unset or degenerate path — one with fewer than two
-    components below the root — so a stray HOME / HERMES_HOME such as ``/``,
+    components below the root — so a stray HOME / INDAGIS_HOME such as ``/``,
     ``C:\\`` or ``""`` cannot rewrite unrelated filesystem prefixes. Cached
     because the resolved home is stable across calls on this hot path.
     """
@@ -1147,18 +1147,18 @@ def _rewrite_resolved_user_home(command: str) -> str:
 def _rewrite_resolved_hermes_home(command: str) -> str:
     """Rewrite the resolved absolute Hermes home prefix to ``~/.hermes/``.
 
-    Resolves the active ``HERMES_HOME`` at call time (and its symlink-resolved
+    Resolves the active ``INDAGIS_HOME`` at call time (and its symlink-resolved
     form) and folds an occurrence of ``<home>/`` in *command* into
     ``~/.hermes/`` so the static ``_HERMES_CONFIG_PATH`` / ``_HERMES_ENV_PATH``
     patterns match. In Docker and gateway deployments the agent often references
     the resolved absolute path directly (e.g. ``sed -i ...
     /home/hermes/.hermes/config.yaml``) rather than ``~``, ``$HOME``, or
-    ``$HERMES_HOME``. Matches both POSIX and Windows separators. No-op when the
+    ``$INDAGIS_HOME``. Matches both POSIX and Windows separators. No-op when the
     path can't be resolved or doesn't appear.
     """
     try:
-        from hermes_constants import get_hermes_home
-        home = get_hermes_home().expanduser()
+        from hermes_constants import get_indagis_home
+        home = get_indagis_home().expanduser()
         candidates = [
             str(home),
             str(home.resolve(strict=False)),

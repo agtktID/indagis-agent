@@ -18,7 +18,7 @@ bridge, which hit the same wall):
    sidecar deps with ``npm ci`` at build time (deterministic installs,
    NS-559), so no runtime install is ever needed.
 4. Source dir read-only and deps missing or stale → mirror the sidecar
-   source files to ``$HERMES_HOME/photon/sidecar`` (the durable data volume,
+   source files to ``$INDAGIS_HOME/photon/sidecar`` (the durable data volume,
    e.g. ``/opt/data`` on hosted) and return that. The caller's normal
    install/self-heal machinery then works there because it is writable.
 
@@ -117,9 +117,9 @@ def resolve_sidecar_dir(source_dir: Optional[Path] = None) -> Path:
     # Deps missing or stale inside a read-only tree: mirror to the durable
     # data volume so the normal install/self-heal machinery has somewhere
     # writable to work.
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    mirror = get_hermes_home() / "photon" / "sidecar"
+    mirror = get_indagis_home() / "photon" / "sidecar"
     try:
         mirror.mkdir(parents=True, exist_ok=True)
         for name in _MIRROR_FILES:

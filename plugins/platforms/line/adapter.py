@@ -1383,7 +1383,7 @@ class LineAdapter(BasePlatformAdapter):
         from trusted internal code, we recheck the resolved path against
         an allowed-roots set before serving. Sources allowed:
         ``tempfile.gettempdir()``, ``/tmp`` (which resolves to
-        ``/private/tmp`` on macOS), and ``HERMES_HOME``. PR #8398.
+        ``/private/tmp`` on macOS), and ``INDAGIS_HOME``. PR #8398.
         """
         from aiohttp import web
 
@@ -1402,8 +1402,8 @@ class LineAdapter(BasePlatformAdapter):
             return web.Response(status=404, text="not found")
 
         try:
-            from hermes_constants import get_hermes_home
-            hermes_home = Path(get_hermes_home()).resolve()
+            from hermes_constants import get_indagis_home
+            hermes_home = Path(get_indagis_home()).resolve()
         except Exception:
             hermes_home = Path.home().joinpath(".hermes").resolve()
 

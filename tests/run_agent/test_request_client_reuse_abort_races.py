@@ -59,7 +59,7 @@ def _managed_relay_turn(agent, tmp_path, monkeypatch):
     pytest.importorskip("nemo_relay")
     from agent import relay_runtime
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path / "profile"))
+    monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / "profile"))
     relay_runtime._reset_for_tests()
     lease = relay_runtime.SESSION_COORDINATOR.acquire_conversation(
         profile_key=relay_runtime.current_profile_key(),

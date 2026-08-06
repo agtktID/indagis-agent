@@ -18,17 +18,17 @@ works even when the optional migration skill is not installed.
 Mappings
 --------
 claude-code (~/.claude):
-    CLAUDE.md                       → memory entries in HERMES_HOME/memories/MEMORY.md
+    CLAUDE.md                       → memory entries in INDAGIS_HOME/memories/MEMORY.md
     settings.json permissions.allow → config.yaml command_allowlist (Bash(...) rules)
     settings.json permissions.deny  → config.yaml approvals.deny (Bash(...) rules)
     mcpServers (~/.claude.json or settings.json) → config.yaml mcp_servers
-    skills/<name>/SKILL.md          → HERMES_HOME/skills/claude-code-imports/<name>/
+    skills/<name>/SKILL.md          → INDAGIS_HOME/skills/claude-code-imports/<name>/
 
 codex (~/.codex):
-    AGENTS.md                       → memory entries in HERMES_HOME/memories/MEMORY.md
+    AGENTS.md                       → memory entries in INDAGIS_HOME/memories/MEMORY.md
     config.toml [mcp_servers.*]     → config.yaml mcp_servers
-    memories/*.md                   → memory entries in HERMES_HOME/memories/MEMORY.md
-    skills/<name>/SKILL.md          → HERMES_HOME/skills/codex-imports/<name>/
+    memories/*.md                   → memory entries in INDAGIS_HOME/memories/MEMORY.md
+    skills/<name>/SKILL.md          → INDAGIS_HOME/skills/codex-imports/<name>/
 
 Secrets are NEVER imported: credential files (.credentials.json, auth.json)
 are ignored, and MCP server env vars with secret-looking names (KEY, TOKEN,
@@ -805,7 +805,7 @@ class AgentImporter:
             dump_yaml_file(destination, config)
 
     def import_skills(self, source_root: Path) -> None:
-        """skills/<name>/SKILL.md dirs → HERMES_HOME/skills/<category>/<name>."""
+        """skills/<name>/SKILL.md dirs → INDAGIS_HOME/skills/<category>/<name>."""
         category = _SKILL_CATEGORY[self.agent]
         destination_root = self.target_root / "skills" / category
         if not source_root.is_dir():
@@ -844,7 +844,7 @@ class AgentImporter:
 def import_agent_command(args) -> None:
     """Handle ``hermes import-agent`` (invoked from hermes_cli.main)."""
     from hermes_cli.config import get_config_path, load_config, save_config
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
     from hermes_cli.setup import (
         Colors,
         color,
@@ -890,7 +890,7 @@ def import_agent_command(args) -> None:
                     f"{agent} --source /path/to/{_AGENT_DEFAULT_DIRS[agent]}")
         return
 
-    hermes_home = get_hermes_home()
+    hermes_home = get_indagis_home()
     print()
     print_header("Import Settings")
     print_info(f"Agent:       {agent}")

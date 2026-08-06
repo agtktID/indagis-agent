@@ -4194,7 +4194,7 @@ class TestPerformancePragmasEndToEnd:
         )
         home = tmp_path / "hermes_home"
         home.mkdir()
-        monkeypatch.setenv("HERMES_HOME", str(home))
+        monkeypatch.setenv("INDAGIS_HOME", str(home))
         if config_text is not None:
             (home / "config.yaml").write_text(config_text)
         return home

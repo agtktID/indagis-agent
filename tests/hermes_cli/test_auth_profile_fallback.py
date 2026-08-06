@@ -1,6 +1,6 @@
 """Tests for cross-profile auth fallback.
 
-When ``HERMES_HOME`` points to a named profile, ``read_credential_pool()``
+When ``INDAGIS_HOME`` points to a named profile, ``read_credential_pool()``
 and ``get_provider_auth_state()`` fall back to the global-root
 ``auth.json`` per-provider when the profile has no entries for that
 provider.  Writes still target the profile only.
@@ -34,7 +34,7 @@ def profile_env(tmp_path, monkeypatch):
 
     * Path.home() -> tmp_path
     * Global root -> tmp_path/.hermes            (has its own auth.json fixture)
-    * Profile     -> tmp_path/.hermes/profiles/coder   (active, HERMES_HOME points here)
+    * Profile     -> tmp_path/.hermes/profiles/coder   (active, INDAGIS_HOME points here)
 
     This mirrors the real "named profile mounted under the default root"
     layout that profile users actually have on disk.
@@ -44,7 +44,7 @@ def profile_env(tmp_path, monkeypatch):
     global_root.mkdir()
     profile_dir = global_root / "profiles" / "coder"
     profile_dir.mkdir(parents=True)
-    monkeypatch.setenv("HERMES_HOME", str(profile_dir))
+    monkeypatch.setenv("INDAGIS_HOME", str(profile_dir))
     return {"global": global_root, "profile": profile_dir}
 
 
@@ -205,7 +205,7 @@ def test_write_credential_pool_targets_profile_not_global(profile_env):
 def test_auth_lock_reentrancy_is_scoped_after_profile_context_switch(profile_env):
     """Changing profile context cannot inherit another store's lock depth."""
     import hermes_cli.auth as auth
-    from hermes_constants import reset_hermes_home_override, set_hermes_home_override
+    from hermes_constants import reset_indagis_home_override, set_indagis_home_override
 
     profile_b = profile_env["global"] / "profiles" / "reviewer"
     profile_b.mkdir(parents=True)
@@ -215,7 +215,7 @@ def test_auth_lock_reentrancy_is_scoped_after_profile_context_switch(profile_env
         holder_a = auth._auth_lock_holder_for(profile_env["profile"] / "auth.json")
         assert getattr(holder_a, "depth", 0) == 1
 
-        token = set_hermes_home_override(profile_b)
+        token = set_indagis_home_override(profile_b)
         try:
             holder_b = auth._auth_lock_holder_for(profile_b / "auth.json")
             assert holder_b is not holder_a
@@ -226,7 +226,7 @@ def test_auth_lock_reentrancy_is_scoped_after_profile_context_switch(profile_env
                 assert profile_b_lock.exists()
                 assert getattr(holder_b, "depth", 0) == 1
         finally:
-            reset_hermes_home_override(token)
+            reset_indagis_home_override(token)
 
     assert getattr(holder_a, "depth", 0) == 0
 
@@ -238,13 +238,13 @@ def test_auth_lock_reentrancy_is_scoped_after_profile_context_switch(profile_env
 
 @pytest.fixture()
 def classic_env(tmp_path, monkeypatch):
-    """Classic single-root layout (HERMES_HOME != ~/.hermes, no profiles)."""
+    """Classic single-root layout (INDAGIS_HOME != ~/.hermes, no profiles)."""
     fake_home = tmp_path / "home"
     fake_home.mkdir()
     monkeypatch.setattr(Path, "home", lambda: fake_home)
     hermes_home = tmp_path / "classic"
     hermes_home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     return hermes_home
 
 

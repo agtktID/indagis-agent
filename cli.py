@@ -216,7 +216,7 @@ _COMMAND_SPINNER_FRAMES = ("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧
 
 # Load .env from ~/.hermes/.env first, then project root as dev fallback.
 # User-managed env files should override stale shell exports on restart.
-from hermes_constants import get_hermes_home, display_hermes_home
+from hermes_constants import get_indagis_home, display_indagis_home
 from hermes_cli.browser_connect import (
     DEFAULT_BROWSER_CDP_URL,
     is_browser_debug_ready,
@@ -226,7 +226,7 @@ from hermes_cli.browser_connect import (
 from hermes_cli.env_loader import load_hermes_dotenv
 from utils import base_url_host_matches, fast_safe_load
 
-_hermes_home = get_hermes_home()
+_hermes_home = get_indagis_home()
 _project_env = Path(__file__).parent / '.env'
 load_hermes_dotenv(hermes_home=_hermes_home, project_env=_project_env)
 
@@ -423,7 +423,7 @@ def load_cli_config() -> Dict[str, Any]:
     Credentials in ``.env`` are still loaded — this flag only suppresses
     behavioral/config settings.
     """
-    # Check user config first ({HERMES_HOME}/config.yaml)
+    # Check user config first ({INDAGIS_HOME}/config.yaml)
     user_config_path = _hermes_home / 'config.yaml'
     project_config_path = Path(__file__).parent / 'cli-config.yaml'
 
@@ -1848,7 +1848,7 @@ _WORKTREE_MERGE_CACHE_MAX = 1000
 
 def _worktree_merge_cache_path() -> Path:
     """Path of the patch-equivalence verdict cache (profile-aware)."""
-    return get_hermes_home() / "cache" / "worktree_merge_verdicts.json"
+    return get_indagis_home() / "cache" / "worktree_merge_verdicts.json"
 
 
 def _load_worktree_merge_cache() -> Dict[str, bool]:
@@ -2130,7 +2130,7 @@ def _run_state_db_auto_maintenance(session_db) -> None:
         return
     try:
         from hermes_cli.config import load_config as _load_full_config
-        from hermes_constants import get_hermes_home as _get_hermes_home
+        from hermes_constants import get_indagis_home as _get_hermes_home
         _hermes_home_maint = _get_hermes_home()
 
         # One-time prune of empty TUI ghost sessions.
@@ -4112,20 +4112,20 @@ def save_config_value(key_path: str, value: any) -> bool:
     Returns:
         True if successful, False otherwise
     """
-    # Runtime persistence ALWAYS targets the user's HERMES_HOME config.yaml,
-    # creating it if needed. Resolve HERMES_HOME live (not the import-time
+    # Runtime persistence ALWAYS targets the user's INDAGIS_HOME config.yaml,
+    # creating it if needed. Resolve INDAGIS_HOME live (not the import-time
     # _hermes_home constant) so profile switches and test isolation land right.
     #
     # We deliberately do NOT fall back to the repo's project cli-config.yaml:
     # that file is a shipped default/template, and most config readers
-    # (load_config → get_hermes_home()/config.yaml, including
+    # (load_config → get_indagis_home()/config.yaml, including
     # load_wake_word_config) never read it. Writing a user setting there means
     # the reader never sees it. This was the "wake-word ear reverts to disabled
     # after restart" bug — the toggle's persist wrote to cli-config.yaml (which
-    # exists in the checkout) while startup read HERMES_HOME/config.yaml, so the
+    # exists in the checkout) while startup read INDAGIS_HOME/config.yaml, so the
     # setting silently vanished every restart on any install whose
-    # HERMES_HOME/config.yaml didn't exist yet.
-    config_path = get_hermes_home() / 'config.yaml'
+    # INDAGIS_HOME/config.yaml didn't exist yet.
+    config_path = get_indagis_home() / 'config.yaml'
     
     try:
         # Ensure parent directory exists (for ~/.hermes/config.yaml on first use)
@@ -4600,7 +4600,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
 
         # Opportunistic state.db maintenance — runs at most once per
         # min_interval_hours, tracked via state_meta in state.db itself so
-        # it's shared across all Hermes processes for this HERMES_HOME.
+        # it's shared across all Hermes processes for this INDAGIS_HOME.
         # Never blocks startup on failure.
         _run_state_db_auto_maintenance(self._session_db)
 
@@ -7399,7 +7399,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
         """
         from hermes_cli.clipboard import save_clipboard_image
 
-        img_dir = get_hermes_home() / "images"
+        img_dir = get_indagis_home() / "images"
         self._image_counter += 1
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         img_path = img_dir / f"clip_{ts}_{self._image_counter}.png"
@@ -7660,7 +7660,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
             "Hermes CLI Status",
             "",
             f"Session ID: {self.session_id}",
-            f"Path: {display_hermes_home()}",
+            f"Path: {display_indagis_home()}",
         ]
         if title:
             lines.append(f"Title: {title}")
@@ -8060,7 +8060,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
         if getattr(self, "conversation_history", None):
             return False
         try:
-            from hermes_constants import get_hermes_home as _ghh
+            from hermes_constants import get_indagis_home as _ghh
             return self._session_db.delete_session_if_empty(
                 session_id, sessions_dir=_ghh() / "sessions"
             )
@@ -8373,7 +8373,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
             return
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        saved_dir = get_hermes_home() / "sessions" / "saved"
+        saved_dir = get_indagis_home() / "sessions" / "saved"
         try:
             saved_dir.mkdir(parents=True, exist_ok=True)
         except Exception as e:
@@ -9819,7 +9819,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
             print("  To start the gateway:")
             print("    python cli.py --gateway")
             print()
-            print(f"  Configuration file: {display_hermes_home()}/config.yaml")
+            print(f"  Configuration file: {display_indagis_home()}/config.yaml")
             print()
             
         except Exception as e:
@@ -9829,7 +9829,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
             print("    1. Set environment variables:")
             print("       TELEGRAM_BOT_TOKEN=your_token")
             print("       DISCORD_BOT_TOKEN=your_token")
-            print(f"    2. Or configure settings in {display_hermes_home()}/config.yaml")
+            print(f"    2. Or configure settings in {display_indagis_home()}/config.yaml")
             print()
     
     def process_command(self, command: str) -> bool:
@@ -10209,7 +10209,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
                 if not user_entries:
                     print("No user plugins installed.")
                     print("  Install one: hermes plugins install owner/repo")
-                    print(f"  Or drop a plugin directory into {display_hermes_home()}/plugins/")
+                    print(f"  Or drop a plugin directory into {display_indagis_home()}/plugins/")
                     if bundled_count:
                         print(f"  ({bundled_count} bundled plugins available — see: hermes plugins list)")
                 else:
@@ -14658,7 +14658,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
             # include `-p <profile>` for non-default profiles. Without this,
             # copying the hint from a non-default profile fails to find the
             # session on the next invocation. The "default" and "custom"
-            # profile names use the standard HERMES_HOME, so no -p needed.
+            # profile names use the standard INDAGIS_HOME, so no -p needed.
             try:
                 from hermes_cli.profiles import get_active_profile_name
                 _active_profile = get_active_profile_name()
@@ -17818,7 +17818,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin, CLIBillingMixin):
                 # and SQLite history. Ported from google-gemini/gemini-cli#19332.
                 if getattr(self, '_delete_session_on_exit', False):
                     try:
-                        from hermes_constants import get_hermes_home as _ghh
+                        from hermes_constants import get_indagis_home as _ghh
                         _sessions_dir = _ghh() / "sessions"
                         _sid = self.agent.session_id
                         if self._session_db.delete_session(_sid, sessions_dir=_sessions_dir):

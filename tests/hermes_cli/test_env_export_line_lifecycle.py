@@ -28,7 +28,7 @@ NEW_PAT = "ghp_" + "B" * 36
 def hermes_home(monkeypatch, tmp_path):
     home = tmp_path / "pat_home"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     from hermes_cli.config import invalidate_env_cache
 
     invalidate_env_cache()

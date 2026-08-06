@@ -14,17 +14,17 @@ from pathlib import Path
 from hermes_cli.config import (
     detect_install_method,
     get_env_path,
-    get_hermes_home,
+    get_indagis_home,
     get_project_root,
     recommended_update_command_for_method,
 )
 from hermes_cli.env_loader import load_hermes_dotenv
-from hermes_constants import display_hermes_home
+from hermes_constants import display_indagis_home
 from hermes_constants import agent_browser_runnable
 
 PROJECT_ROOT = get_project_root()
-HERMES_HOME = get_hermes_home()
-_DHH = display_hermes_home()  # user-facing display path (e.g. ~/.hermes or ~/.hermes/profiles/coder)
+INDAGIS_HOME = get_indagis_home()
+_DHH = display_indagis_home()  # user-facing display path (e.g. ~/.hermes or ~/.hermes/profiles/coder)
 
 # Load environment variables from ~/.hermes/.env so API key checks work
 _env_path = get_env_path()
@@ -914,7 +914,7 @@ def run_doctor(args):
     # Managed scope (administrator-pinned config/env), when present.
     managed_scope_check()
     # Check ~/.hermes/.env (primary location for user config)
-    env_path = HERMES_HOME / '.env'
+    env_path = INDAGIS_HOME / '.env'
     if env_path.exists():
         check_ok(f"{_DHH}/.env file exists")
         
@@ -955,7 +955,7 @@ def run_doctor(args):
                 issues.append("Run 'hermes setup' to create .env")
     
     # Check ~/.hermes/config.yaml (primary) or project cli-config.yaml (fallback)
-    config_path = HERMES_HOME / 'config.yaml'
+    config_path = INDAGIS_HOME / 'config.yaml'
     if config_path.exists():
         check_ok(f"{_DHH}/config.yaml exists")
 
@@ -1174,7 +1174,7 @@ def run_doctor(args):
                 check_warn("config.yaml not found", "(using defaults)")
 
     # Check config version and stale keys
-    config_path = HERMES_HOME / 'config.yaml'
+    config_path = INDAGIS_HOME / 'config.yaml'
     if config_path.exists():
         try:
             from hermes_cli.config import check_config_version, migrate_config
@@ -1427,7 +1427,7 @@ def run_doctor(args):
         pass
 
     _section("Directory Structure")
-    hermes_home = HERMES_HOME
+    hermes_home = INDAGIS_HOME
     if hermes_home.exists():
         check_ok(f"{_DHH} directory exists")
     elif should_fix:
@@ -1907,10 +1907,10 @@ def run_doctor(args):
                 return None
 
         _managed_ab = (
-            _which_in(HERMES_HOME / "node" / "bin")
-            or _which_in(HERMES_HOME / "node")
+            _which_in(INDAGIS_HOME / "node" / "bin")
+            or _which_in(INDAGIS_HOME / "node")
         )
-        _legacy_ab = _which_in(HERMES_HOME / "node_modules" / ".bin")
+        _legacy_ab = _which_in(INDAGIS_HOME / "node_modules" / ".bin")
         if agent_browser_path.exists():
             check_ok("agent-browser (Node.js)", "(browser automation)")
             agent_browser_ok = True
@@ -2006,7 +2006,7 @@ def run_doctor(args):
         # glob (which pulls in Electron, node-pty, etc.) is never resolved
         # for a routine security check. The web and ui-tui workspaces are
         # audited separately via --workspace flags. See #38772.
-        # The WhatsApp bridge may live under a writable HERMES_HOME mirror
+        # The WhatsApp bridge may live under a writable INDAGIS_HOME mirror
         # instead of the (possibly read-only) install tree in Docker — resolve
         # it through the shared helper so we audit the dir that actually holds
         # node_modules. See #49561.
@@ -2562,7 +2562,7 @@ def run_doctor(args):
         check_warn("Could not check tool availability", f"({e})")
     
     _section("Skills Hub")
-    hub_dir = HERMES_HOME / "skills" / ".hub"
+    hub_dir = INDAGIS_HOME / "skills" / ".hub"
     if hub_dir.exists():
         check_ok("Skills Hub directory exists")
         lock_file = hub_dir / "lock.json"
@@ -2606,7 +2606,7 @@ def run_doctor(args):
     _active_memory_provider = ""
     try:
         from hermes_cli.config import read_user_config_raw as _read_raw_mem
-        _mem_cfg_path = HERMES_HOME / "config.yaml"
+        _mem_cfg_path = INDAGIS_HOME / "config.yaml"
         if _mem_cfg_path.exists():
             # Raw-file diagnostic (+ managed overlay below, unchanged).
             _raw_cfg = _read_raw_mem(_mem_cfg_path)

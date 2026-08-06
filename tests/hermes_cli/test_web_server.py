@@ -39,7 +39,7 @@ _EXAMPLE_PLUGIN_FIXTURE = (
 
 @pytest.fixture
 def _install_example_plugin(_isolate_hermes_home):
-    """Drop the example-dashboard fixture into the per-test HERMES_HOME
+    """Drop the example-dashboard fixture into the per-test INDAGIS_HOME
     user-plugins directory and force the web_server's dashboard plugin
     cache + API mount to rediscover it.
 
@@ -48,7 +48,7 @@ def _install_example_plugin(_isolate_hermes_home):
     user's sidebar. It is now a tests-only fixture: any test that needs
     ``/api/plugins/example/hello`` or ``/dashboard-plugins/example/...``
     requests this fixture so the plugin appears only for that test's
-    isolated ``HERMES_HOME``.
+    isolated ``INDAGIS_HOME``.
 
     The user-plugin source is preferred over a transient
     ``HERMES_BUNDLED_PLUGINS`` override because the bundled dir is
@@ -58,10 +58,10 @@ def _install_example_plugin(_isolate_hermes_home):
     all). User plugins are first in the discovery search order, so
     laying down the fixture here is enough.
     """
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
     from hermes_cli import web_server
 
-    user_plugins_dir = get_hermes_home() / "plugins"
+    user_plugins_dir = get_indagis_home() / "plugins"
     user_plugins_dir.mkdir(parents=True, exist_ok=True)
     dst = user_plugins_dir / "example-dashboard"
     if dst.exists():
@@ -90,7 +90,7 @@ def _install_example_plugin(_isolate_hermes_home):
     #   1. Identify the routes the mount call appends.
     #   2. Restore the original list on teardown — otherwise leftover
     #      ``/api/plugins/example/*`` routes leak into subsequent tests
-    #      and start serving requests against a torn-down HERMES_HOME.
+    #      and start serving requests against a torn-down INDAGIS_HOME.
     app = web_server.app
     original_routes = list(app.router.routes)
 
@@ -243,17 +243,17 @@ class TestWebServerEndpoints:
 
     @pytest.fixture(autouse=True)
     def _setup_test_client(self, monkeypatch, _isolate_hermes_home):
-        """Create a TestClient and isolate the state DB under the test HERMES_HOME."""
+        """Create a TestClient and isolate the state DB under the test INDAGIS_HOME."""
         try:
             from starlette.testclient import TestClient
         except ImportError:
             pytest.skip("fastapi/starlette not installed")
 
         import hermes_state
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_hermes_home() / "state.db")
+        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_indagis_home() / "state.db")
 
         self.client = TestClient(app)
         self.client.headers[_SESSION_HEADER_NAME] = _SESSION_TOKEN
@@ -264,11 +264,11 @@ class TestWebServerEndpoints:
         import sqlite3
 
         from hermes_cli import web_server
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_state import SessionDB
 
         web_server._last_auto_archive_check.clear()
-        db_path = get_hermes_home() / "state.db"
+        db_path = get_indagis_home() / "state.db"
         wal_path = Path(f"{db_path}-wal")
         writer = SessionDB(db_path=db_path)
         monitor = None
@@ -354,10 +354,10 @@ class TestWebServerEndpoints:
     def test_get_sessions_auto_archive_uses_maintenance_writer(self):
         from hermes_cli import web_server
         from hermes_cli.config import load_config, save_config
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_state import SessionDB
 
-        db_path = get_hermes_home() / "state.db"
+        db_path = get_indagis_home() / "state.db"
         seed = SessionDB(db_path=db_path)
         try:
             seed.create_session("stale", source="cli")
@@ -402,10 +402,10 @@ class TestWebServerEndpoints:
     def test_get_sessions_heals_stale_schema_store(self, missing_column):
         import sqlite3
 
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_state import SessionDB
 
-        db_path = get_hermes_home() / "state.db"
+        db_path = get_indagis_home() / "state.db"
         seed = SessionDB(db_path=db_path)
         try:
             seed.create_session("stale-schema", source="cli")
@@ -435,9 +435,9 @@ class TestWebServerEndpoints:
         assert missing_column in columns
 
     def test_get_sessions_zero_byte_store_returns_empty_list(self):
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        db_path = get_hermes_home() / "state.db"
+        db_path = get_indagis_home() / "state.db"
         db_path.parent.mkdir(parents=True, exist_ok=True)
         db_path.touch()
 
@@ -471,7 +471,7 @@ class TestWebServerEndpoints:
         """?profile=<name> must resolve liveness from the profile's own home.
 
         The gateway status readers resolve process-level paths and ignore the
-        HERMES_HOME contextvar override (#56986), so /api/messaging/platforms
+        INDAGIS_HOME contextvar override (#56986), so /api/messaging/platforms
         has to pass the profile directory explicitly — otherwise it reports a
         DIFFERENT profile's gateway as this profile's, which hides a real
         outage behind a false "connected" (issue #71211).
@@ -602,7 +602,7 @@ class TestWebServerEndpoints:
 
 
     def test_declared_surface_put_writes_config_and_secret(self):
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_cli.config import load_env
 
         resp = self.client.put(
@@ -620,7 +620,7 @@ class TestWebServerEndpoints:
         assert resp.json() == {"ok": True}
         assert load_env()["HINDSIGHT_API_KEY"] == "hs-declared-key"
 
-        config_path = get_hermes_home() / "hindsight" / "config.json"
+        config_path = get_indagis_home() / "hindsight" / "config.json"
         provider_config = json.loads(config_path.read_text(encoding="utf-8"))
         assert provider_config["mode"] == "local_external"
         assert provider_config["api_url"] == "http://localhost:8888"
@@ -680,7 +680,7 @@ class TestWebServerEndpoints:
 
 
     def test_put_memory_provider_config_writes_config_and_secret(self):
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_cli.config import load_config, load_env
 
         resp = self.client.put(
@@ -701,7 +701,7 @@ class TestWebServerEndpoints:
         assert load_config()["memory"]["provider"] == "hindsight"
         assert load_env()["HINDSIGHT_API_KEY"] == "hs-test-key"
 
-        config_path = get_hermes_home() / "hindsight" / "config.json"
+        config_path = get_indagis_home() / "hindsight" / "config.json"
         provider_config = json.loads(config_path.read_text(encoding="utf-8"))
         assert provider_config["mode"] == "local_external"
         assert provider_config["api_url"] == "http://localhost:8888"
@@ -740,11 +740,11 @@ class TestWebServerEndpoints:
 
     @pytest.fixture(autouse=True)
     def _isolate_honcho_config(self):
-        # Honcho tests write the suite-wide HERMES_HOME honcho.json; snapshot and
+        # Honcho tests write the suite-wide INDAGIS_HOME honcho.json; snapshot and
         # restore it so provider status/config state never leaks across tests.
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        path = get_hermes_home() / "honcho.json"
+        path = get_indagis_home() / "honcho.json"
         before = path.read_bytes() if path.exists() else None
         yield
         if before is None:
@@ -754,9 +754,9 @@ class TestWebServerEndpoints:
 
     @staticmethod
     def _seed_local_honcho(cfg=None):
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
 
-        path = get_hermes_home() / "honcho.json"
+        path = get_indagis_home() / "honcho.json"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(cfg if cfg is not None else {}), encoding="utf-8")
         return path
@@ -767,7 +767,7 @@ class TestWebServerEndpoints:
         monkeypatch.setenv("HONCHO_API_KEY", "guard")
         monkeypatch.delenv("HONCHO_API_KEY")
         self._seed_local_honcho()
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_cli.config import load_config, load_env
 
         resp = self.client.put(
@@ -790,7 +790,7 @@ class TestWebServerEndpoints:
         assert load_config()["memory"]["provider"] == "honcho"
         assert load_env()["HONCHO_API_KEY"] == "hch-test-key"
 
-        cfg = json.loads((get_hermes_home() / "honcho.json").read_text(encoding="utf-8"))
+        cfg = json.loads((get_indagis_home() / "honcho.json").read_text(encoding="utf-8"))
         # baseUrl is root-scoped; the rest live in the active host block.
         assert cfg["baseUrl"] == "https://honcho.example.dev"
         assert cfg["hosts"]["hermes"]["workspace"] == "myws"
@@ -1938,10 +1938,10 @@ class TestNewEndpoints:
             pytest.skip("fastapi/starlette not installed")
 
         import hermes_state
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_hermes_home() / "state.db")
+        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_indagis_home() / "state.db")
 
         self.client = TestClient(app)
         self.client.headers[_SESSION_HEADER_NAME] = _SESSION_TOKEN
@@ -1959,7 +1959,7 @@ class TestNewEndpoints:
     def test_profiles_create_builder_mcp_auth_is_profile_scoped(
         self, monkeypatch
     ):
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         import hermes_cli.profiles as profiles_mod
 
         monkeypatch.setattr(profiles_mod, "create_wrapper_script", lambda name: None)
@@ -2004,7 +2004,7 @@ class TestNewEndpoints:
         assert resp.status_code == 200
         assert resp.json()["mcp_written"] == 3
 
-        root = get_hermes_home()
+        root = get_indagis_home()
         profile_dir = root / "profiles" / "builder-auth"
         config_text = (profile_dir / "config.yaml").read_text(encoding="utf-8")
         config = yaml.safe_load(config_text)
@@ -2870,12 +2870,12 @@ class TestDiscoverUserThemes:
     """Tests for _discover_user_themes() — scans ~/.hermes/dashboard-themes/."""
 
     def test_returns_empty_when_dir_missing(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         from hermes_cli import web_server
         assert web_server._discover_user_themes() == []
 
     def test_loads_and_normalises_yaml(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         themes_dir = tmp_path / "dashboard-themes"
         themes_dir.mkdir()
         (themes_dir / "ocean.yaml").write_text(
@@ -2900,7 +2900,7 @@ class TestDiscoverUserThemes:
 
 
     def test_ignores_transient_profile_override(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         themes_dir = tmp_path / "dashboard-themes"
         themes_dir.mkdir()
         (themes_dir / "mine.yaml").write_text("name: mine\n", encoding="utf-8")
@@ -2909,16 +2909,16 @@ class TestDiscoverUserThemes:
         other.mkdir()
 
         from hermes_constants import (
-            reset_hermes_home_override,
-            set_hermes_home_override,
+            reset_indagis_home_override,
+            set_indagis_home_override,
         )
         from hermes_cli import web_server
 
-        token = set_hermes_home_override(str(other))
+        token = set_indagis_home_override(str(other))
         try:
             results = web_server._discover_user_themes()
         finally:
-            reset_hermes_home_override(token)
+            reset_indagis_home_override(token)
 
         assert [r["name"] for r in results] == ["mine"]
 
@@ -2949,7 +2949,7 @@ class TestThemeBootstrapCSS:
     def test_user_theme_renders_bundle_vars(self, tmp_path, monkeypatch):
         """Active user theme → style block with ONLY variable names the
         bundle actually consumes (layerVars/typographyVars tokens)."""
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         self._write_theme(tmp_path)
         from hermes_cli import web_server
         monkeypatch.setattr(
@@ -2998,7 +2998,7 @@ class TestThemeBootstrapCSS:
         return TestClient(spa_app)
 
     def test_serve_index_injects_bootstrap_for_user_theme(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         self._write_theme(tmp_path)
         import hermes_cli.web_server as ws
         monkeypatch.setattr(
@@ -3084,11 +3084,11 @@ class TestDeleteSessionEndpoint:
             pytest.skip("fastapi/starlette not installed")
 
         import hermes_state
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
         monkeypatch.setattr(
-            hermes_state, "DEFAULT_DB_PATH", get_hermes_home() / "state.db"
+            hermes_state, "DEFAULT_DB_PATH", get_indagis_home() / "state.db"
         )
 
         self.auth_client = TestClient(app)
@@ -3147,11 +3147,11 @@ class TestBulkDeleteSessionsEndpoint:
             pytest.skip("fastapi/starlette not installed")
 
         import hermes_state
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
         monkeypatch.setattr(
-            hermes_state, "DEFAULT_DB_PATH", get_hermes_home() / "state.db"
+            hermes_state, "DEFAULT_DB_PATH", get_indagis_home() / "state.db"
         )
 
         self.client = TestClient(app)
@@ -3234,13 +3234,13 @@ class TestDeleteEmptySessionsEndpoint:
             pytest.skip("fastapi/starlette not installed")
 
         import hermes_state
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-        # Pin the SessionDB to the isolated HERMES_HOME so each test
+        # Pin the SessionDB to the isolated INDAGIS_HOME so each test
         # starts with a clean state.db.
         monkeypatch.setattr(
-            hermes_state, "DEFAULT_DB_PATH", get_hermes_home() / "state.db"
+            hermes_state, "DEFAULT_DB_PATH", get_indagis_home() / "state.db"
         )
 
         self.client = TestClient(app)
@@ -3343,7 +3343,7 @@ class TestPluginAPIAuth:
         Pulls in ``_install_example_plugin`` so ``test_plugin_route_allows_auth``
         has the ``/api/plugins/example/hello`` endpoint available — the
         example plugin is no longer a bundled plugin, so the fixture
-        installs it into the per-test ``HERMES_HOME``.
+        installs it into the per-test ``INDAGIS_HOME``.
         """
         try:
             from starlette.testclient import TestClient
@@ -3351,10 +3351,10 @@ class TestPluginAPIAuth:
             pytest.skip("fastapi/starlette not installed")
 
         import hermes_state
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         from hermes_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_hermes_home() / "state.db")
+        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_indagis_home() / "state.db")
 
         self.client = TestClient(app)
         self.auth_client = TestClient(app)
@@ -3365,7 +3365,7 @@ class TestPluginAPIAuth:
         """Plugin API routes should work with a valid session token.
 
         Uses ``/api/plugins/example/hello`` from the example-dashboard
-        test fixture (installed into HERMES_HOME by the class-level
+        test fixture (installed into INDAGIS_HOME by the class-level
         ``_install_example_plugin`` fixture) — a stable, side-effect-free
         GET that's only loaded for tests. With a valid token the handler
         should run (200); without one the middleware should 401 before
@@ -3450,7 +3450,7 @@ class TestDashboardPluginManifestExtensions:
         return plug_dir
 
     def test_override_and_hidden_carried_through(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         self._write_plugin(tmp_path, "skin-home", {
             "name": "skin-home",
             "label": "Skin Home",
@@ -3470,10 +3470,10 @@ class TestDashboardPluginManifestExtensions:
     def test_user_plugins_ignore_profile_home_override(self, tmp_path, monkeypatch):
         """Regression: user dashboard extensions are a dashboard-owned asset
         (like theme YAML), so they must stay visible after a context-local
-        HERMES_HOME override scopes a request to another profile."""
+        INDAGIS_HOME override scopes a request to another profile."""
         from hermes_constants import (
-            reset_hermes_home_override,
-            set_hermes_home_override,
+            reset_indagis_home_override,
+            set_indagis_home_override,
         )
         launch_home = tmp_path / "launch"
         launch_home.mkdir()
@@ -3486,13 +3486,13 @@ class TestDashboardPluginManifestExtensions:
         other = tmp_path / "other-profile"
         other.mkdir()
 
-        monkeypatch.setenv("HERMES_HOME", str(launch_home))
+        monkeypatch.setenv("INDAGIS_HOME", str(launch_home))
         from hermes_cli import web_server
-        token = set_hermes_home_override(str(other))
+        token = set_indagis_home_override(str(other))
         try:
             plugins = web_server._discover_dashboard_plugins()
         finally:
-            reset_hermes_home_override(token)
+            reset_indagis_home_override(token)
         assert any(p["name"] == "skin-home" for p in plugins)
 
 
@@ -3757,7 +3757,7 @@ class TestDashboardPluginStaticAssetAllowlist:
         is served while ``plugin_api.py`` and ``__pycache__/*.pyc``
         from the same directory are not. Since the example plugin is
         no longer bundled, ``_install_example_plugin`` lays it down in
-        the per-test ``HERMES_HOME`` user-plugins dir.
+        the per-test ``INDAGIS_HOME`` user-plugins dir.
         """
         try:
             from starlette.testclient import TestClient
@@ -4173,10 +4173,10 @@ class TestDashboardComponentHealth:
             pytest.skip("fastapi/starlette not installed")
 
         import hermes_state
-        from hermes_constants import get_hermes_home
+        from hermes_constants import get_indagis_home
         import hermes_cli.web_server as ws
 
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_hermes_home() / "state.db")
+        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_indagis_home() / "state.db")
         # Fresh state holder per test so counters don't leak across tests.
         monkeypatch.setattr(ws, "DASHBOARD_HEALTH", ws.DashboardHealth())
         self.ws = ws

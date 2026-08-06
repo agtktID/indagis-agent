@@ -1385,10 +1385,10 @@ class AutoSetHomeMiddleware(InboundMiddleware):
                 adapter._auto_sethome_done = True  # DM seen — no further upgrades needed
             if _should_set:
                 try:
-                    from hermes_constants import get_hermes_home
+                    from hermes_constants import get_indagis_home
                     from hermes_cli.config import atomic_config_write, read_user_config_raw
 
-                    _home = get_hermes_home()
+                    _home = get_indagis_home()
                     config_path = _home / "config.yaml"
                     # Write-back round-trip: raw read is correct (merged
                     # defaults must not be persisted to the user's file).

@@ -544,7 +544,7 @@ def test_config_bridges_telegram_group_settings(monkeypatch, tmp_path):
         encoding="utf-8",
     )
 
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     # Clear the TELEGRAM_* vars this test exercises so a developer's ambient
     # shell/.env values don't pre-empt the YAML→env bridge (env-over-YAML
     # precedence, adapter.py::_apply_yaml_config). The authoritative assertions
@@ -602,7 +602,7 @@ def test_top_level_require_mention_bridges_to_telegram(monkeypatch, tmp_path):
         encoding="utf-8",
     )
 
-    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("INDAGIS_HOME", str(hermes_home))
     monkeypatch.delenv("TELEGRAM_REQUIRE_MENTION", raising=False)
 
     config = load_gateway_config()

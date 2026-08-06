@@ -36,10 +36,10 @@ pytestmark = [
 
 @pytest.fixture()
 def hermes_home(tmp_path, monkeypatch):
-    """Isolated HERMES_HOME so the repair scope covers tmp DBs."""
+    """Isolated INDAGIS_HOME so the repair scope covers tmp DBs."""
     home = tmp_path / ".hermes"
     home.mkdir()
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("INDAGIS_HOME", str(home))
     return home
 
 

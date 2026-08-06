@@ -43,7 +43,7 @@ class TestNonInteractiveSetup:
         """--reset should rewrite config.yaml even when the wizard cannot run interactively."""
         from hermes_cli.setup import run_setup_wizard
 
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path))
         cfg = load_config()
         cfg["model"] = {"provider": "custom", "base_url": "http://localhost:8080/v1", "default": "llama3"}
         cfg["agent"]["max_turns"] = 12

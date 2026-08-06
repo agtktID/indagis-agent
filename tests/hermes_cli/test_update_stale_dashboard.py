@@ -348,7 +348,7 @@ class TestManualBackendRespawn:
     def test_respawn_adds_no_open_to_dashboard_commands(self, tmp_path, monkeypatch):
         """Respawned `dashboard` argv gains --no-open; `serve` argv untouched."""
         live = self._live()
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
         spawned: list[list[str]] = []
 
         class _FakePopen:
@@ -367,7 +367,7 @@ class TestManualBackendRespawn:
 
     def test_respawn_failure_returned(self, tmp_path, monkeypatch, capsys):
         live = self._live()
-        monkeypatch.setenv("HERMES_HOME", str(tmp_path / ".hermes"))
+        monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))
 
         with patch.object(live.subprocess, "Popen", side_effect=OSError("no such file")):
             failed = live._respawn_dashboard_processes([["hermes", "serve"]])

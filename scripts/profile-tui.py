@@ -38,18 +38,18 @@ from typing import Any
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT))
 try:
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 except ImportError:
-    def get_hermes_home() -> Path:  # type: ignore[misc]
-        val = (os.environ.get("HERMES_HOME") or "").strip()
+    def get_indagis_home() -> Path:  # type: ignore[misc]
+        val = (os.environ.get("INDAGIS_HOME") or "").strip()
         return Path(val) if val else Path.home() / ".hermes"
 
 DEFAULT_TUI_DIR = Path(
     os.environ.get("HERMES_TUI_DIR")
     or str(Path(__file__).resolve().parent.parent / "ui-tui")
 )
-DEFAULT_LOG = Path(os.environ.get("HERMES_PERF_LOG", str(get_hermes_home() / "perf.log")))
-DEFAULT_STATE_DB = get_hermes_home() / "state.db"
+DEFAULT_LOG = Path(os.environ.get("HERMES_PERF_LOG", str(get_indagis_home() / "perf.log")))
+DEFAULT_STATE_DB = get_indagis_home() / "state.db"
 
 # Keystroke escape sequences.  Matches what xterm/VT220 send when the
 # terminal has bracketed-paste disabled and the key-repeat handler fires.

@@ -805,7 +805,7 @@ def _pip_install(
     venv_root = Path(sys.executable).parent.parent
     uv_env = {**os.environ, "VIRTUAL_ENV": str(venv_root)}
 
-    # Managed uv first: $HERMES_HOME/bin is never on PATH, so a bare which()
+    # Managed uv first: $INDAGIS_HOME/bin is never on PATH, so a bare which()
     # misses the uv Hermes installed and prefers a system one when both exist.
     # ensure_uv() rather than a pure lookup because this runs during setup,
     # where installing uv is in scope — and tier 2 is a pip that the Windows
@@ -1635,7 +1635,7 @@ def _run_post_setup(post_setup_key: str):
 
     if post_setup_key in {"agent_browser", "browserbase"}:
         node_modules = PROJECT_ROOT / "node_modules" / "agent-browser"
-        # Managed Node first — $HERMES_HOME/node is not on PATH, so a bare
+        # Managed Node first — $INDAGIS_HOME/node is not on PATH, so a bare
         # which() reports "no npm" on installs whose only Node is the one
         # Hermes installed for exactly this toolchain.
         npm_bin = find_node_executable("npm")
@@ -1659,8 +1659,8 @@ def _run_post_setup(post_setup_key: str):
             if result.returncode == 0:
                 _print_success("    Node.js dependencies installed")
             else:
-                from hermes_constants import display_hermes_home
-                _print_warning(f"    npm install failed - run manually: cd {display_hermes_home()}/hermes-agent && npm install --workspaces=false")
+                from hermes_constants import display_indagis_home
+                _print_warning(f"    npm install failed - run manually: cd {display_indagis_home()}/hermes-agent && npm install --workspaces=false")
                 if result.stderr:
                     _print_info(f"      {result.stderr.strip()[:200]}")
         elif node_modules.exists():
@@ -5164,8 +5164,8 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
         platform_choices[idx] = f"Configure {pinfo['label']}  ({new_count}/{total} enabled)"
 
     print()
-    from hermes_constants import display_hermes_home
-    print(color(f"  Tool configuration saved to {display_hermes_home()}/config.yaml", Colors.DIM))
+    from hermes_constants import display_indagis_home
+    print(color(f"  Tool configuration saved to {display_indagis_home()}/config.yaml", Colors.DIM))
     print(color("  Changes take effect on next 'hermes' or gateway restart.", Colors.DIM))
     print()
 

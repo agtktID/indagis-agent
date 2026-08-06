@@ -28,9 +28,9 @@ def parse_node_kind(node_id: str) -> str:
 
 
 def _memories_dir() -> Path:
-    from hermes_constants import get_hermes_home
+    from hermes_constants import get_indagis_home
 
-    return get_hermes_home() / "memories"
+    return get_indagis_home() / "memories"
 
 
 def _parse_memory_id(node_id: str) -> tuple[str, int]:

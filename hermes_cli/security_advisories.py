@@ -326,8 +326,8 @@ _BANNER_REPEAT_HOURS = 24
 
 def _banner_cache_path() -> Optional[Path]:
     try:
-        from hermes_constants import get_hermes_home
-        cache_dir = Path(get_hermes_home()) / "cache"
+        from hermes_constants import get_indagis_home
+        cache_dir = Path(get_indagis_home()) / "cache"
         cache_dir.mkdir(parents=True, exist_ok=True)
         return cache_dir / _BANNER_CACHE_FILE
     except Exception:
