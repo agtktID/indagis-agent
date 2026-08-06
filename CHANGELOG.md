@@ -301,34 +301,91 @@ either required or optional recognised fields.
 
 ---
 
-## Recommended Phase 4 — close the remaining gaps
+## Phase 4 — Identité technique (banner, completion, CLI skins)
 
-The remaining gaps are mechanical string replacements plus a few
-asset-creation tasks. Listed in priority order:
+**Status:** DONE. Pushed on `rebrand/step3-g1-g2-g3` (SHA `1af26f80d7`).
 
-1. **G1 + G14 (HIGH)** — replace the ~30 remaining `"Hermes Agent"`
-   strings in `hermes_cli/main.py` (help text, tips, uninstall docstring,
-   update docstring), `hermes_cli/banner.py` (default banner branch),
-   `hermes_cli/completion.py` (3 shell completion file headers),
-   `hermes_cli/setup.py`, `hermes_cli/uninstall.py`. ~250 string
-   replacements across ~5 files.
+**Scope:** Per cahier v3 §G1, apply the Indagis visual identity to the
+CLI user-facing surfaces (banner, shell completion, skin branding,
+Telegram bot name, web server title). Presentation only — no logic.
 
-2. **G4 + G8 (HIGH)** — full `README.md` rebrand (title, badges,
-   description, keep MIT credit + NousResearch link in footer).
+**Commits in this phase (6 total):**
 
-3. **G5 (HIGH)** — 20 i18n files (`web/src/i18n/*.ts`). Each contains
-   5-15 user-facing strings with "Hermes Agent" / "Hermes" / "Hermes
-   Teal".
+| SHA | Étape | What |
+|---|---|---|
+| `b45611f107` | G14 audit | Phase 4 inventory report (`reports/phase-4-brand-audit.md`) |
+| `05ad3c62aa` | G1.1 | `banner.py` — `format_banner_version_label()` rebrand |
+| `b149a96ff5` | G14 artefacts | G1 extraction artefacts under `reports/g1-*` |
+| `db20cb4fb3` | G1.2 | `completion.py` — bash/zsh/fish scripts now target `indagis` command |
+| `cc0540117f` | G1.3 | `skin_engine.py` (5 skins rebrand, 4 personality preserved), `projects_cmd.py`, `telegram_managed_bot.py`, `web_server.py` |
+| `1af26f80d7` | G1.3.1 | `tests/hermes_cli/test_skin_engine.py:146` + `tests/hermes_cli/test_completion.py:84` updated to match the rebrand |
 
-4. **G11 (MEDIUM)** — author `assets/branding/indagis-{logo,mark}.svg`
-   with a richer SVG than the favicon diamond. Visual identity asset,
-   not just code.
+**What changed (cumulative 6 code files + 2 tests):**
 
-5. **G13 (LOW)** — cosmetic docstring cleanup in
-   `hermes_cli/web_server.py` (`~/.hermes/` → `~/.indagis/`).
+| File | Gap closed |
+|---|---|
+| `hermes_cli/banner.py` (G1.1) | `format_banner_version_label()`: "Hermes Agent v…" → "Indagis Agent v…" |
+| `hermes_cli/completion.py` (G1.2) | bash/zsh/fish completion scripts now register on `indagis` command; labels rebrand; internal `_hermes_profiles` / `_hermes_completion` functions kept (cahier §3.2) |
+| `hermes_cli/skin_engine.py` (G1.3) | 5 skins rebrand (default, mono, slate, daylight, warm-lightmode) — `agent_name`, `welcome`, `response_label` = Indagis. 4 personality skins (ares, poseidon, sisyphus, charizard) preserved. 1 default-skin comment in the module docstring updated. |
+| `hermes_cli/projects_cmd.py` (G1.3) | argparse help example: "Hermes Agent" → "Indagis Agent" |
+| `hermes_cli/telegram_managed_bot.py` (G1.3) | `DEFAULT_BOT_NAME` = "Indagis Agent"; `DEFAULT_MANAGER_BOT` kept (Nous-hosted upstream service identifier, not the local bot) |
+| `hermes_cli/web_server.py` (G1.3) | `FastAPI(title=…)` = "Indagis Agent" (visible in OpenAPI Swagger UI at `/docs`) |
+| `tests/hermes_cli/test_skin_engine.py` (G1.3.1) | line 146: fallback `agent_name` expectation updated to "Indagis Agent" |
+| `tests/hermes_cli/test_completion.py` (G1.3.1) | line 84: bash completion script assertion updated to `complete -F _hermes_completion indagis` |
 
-Estimated Phase 4 effort: 2-3 sessions for G1+G14 (largest), then
-mechanical pass for G4+G5.
+**Preserved throughout the phase (cahier §3.3 attribution rules):**
+- Internal module names: `hermes_cli/`, `hermes_constants.py`, `hermes_logging.py`.
+- Internal imports: `from hermes_cli import …` and friends unchanged.
+- Upstream attribution URLs in `banner.py`: `_UPSTREAM_REPO_URL`,
+  `_OFFICIAL_REPO_CANONICAL`, `_RELEASE_URL_BASE` (all pointing to
+  `github.com/NousResearch/hermes-agent`).
+- Policy comment at `web_server.py:16227` explaining the
+  default/non-default split in the themes catalogue.
+- Internal shell function names in the completion scripts:
+  `_hermes_profiles`, `_hermes_completion`, `__hermes_profiles`. These
+  are identifiers the user has already sourced into their `.bashrc` /
+  `.zshrc`; renaming them would silently break existing user shells.
+
+**Verification matrix (HEAD `1af26f80d7`):**
+
+| # | Check | Result |
+|---|---|---|
+| 1 | `hermes_cli/web_server.py` syntax | PASS (`ast.parse`) |
+| 2 | `compileall hermes_cli/` (skip web_server.py: requires fastapi) | PASS (exit 0) |
+| 3 | `web` typecheck | PASS (0 errors) |
+| 4 | `web` tests | PASS (27 files, 191/191) |
+| 5 | `ui-tui` hermes-ink build | PASS |
+| 6 | `ui-tui` typecheck | PASS (exit 0) |
+| 7 | `ui-tui` theme.test.ts | PASS (49/49) |
+| 8 | `web` build (`bunx vite build`) | PASS |
+| 9 | Python tests (pytest with deps: pytest, pyyaml, httpx, rich, prompt_toolkit, python-dotenv) | PASS (60/60 in 6 files: test_skin_engine, test_skin_palettes, test_telegram_managed_bot, test_completion, test_banner_git_state, test_banner_skills) |
+| 10 | "Hermes Teal" residue in active code | PASS (0) |
+| 11 | Push `origin/rebrand/step3-g1-g2-g3` | PASS (SHA `1af26f80d7`) |
+
+### Known pre-existing test failures (independent of this phase)
+
+**1. `ui-tui/__tests__/markdown.test.ts`**
+- **Statut** : FAIL préexistant (confirmé via git stash baseline en Phase 2)
+- **Cause** : le test importe `chalk` qui n'est pas déclaré dans `ui-tui/package.json`
+- **Scope** : hors rebrand G1.1-G1.3.1, à traiter séparément (probablement en ajoutant `chalk` ou en remplaçant par le wrapper existant `@hermes/ink`)
+- **Commit de référence** : `1af26f80d7` (HEAD)
+- **Date** : 2026-08-06
+
+**2. `tests/hermes_cli/test_projects_cli.py::test_rename_and_archive`**
+- **Statut** : FAIL préexistant (confirmé via `git stash` baseline, vérifié encore après G1.3)
+- **Cause** : isolation DB du fixture — le test ne réinitialise pas l'état projects DB entre les runs, donc la persistance du projet créé dans `test_create_list_show` fuite dans `test_rename_and_archive`
+- **Scope** : hors rebrand G1.1-G1.3.1, à traiter séparément (probablement en nettoyant la DB dans une fixture `setup_method` ou en utilisant un `tmp_path` DB par test)
+- **Commit de référence** : `1af26f80d7` (HEAD)
+- **Date** : 2026-08-06
+
+**3. `tests/cli/test_cli_skin_integration.py` (not executed in sandbox)**
+- **Statut** : non exécuté — nécessite `uv pip install -e ".[all,dev]"` (cahier §12)
+- **Cause** : dépendances transitives massives (rich, prompt_toolkit, dotenv, plus toute la chaîne `agent.*`)
+- **Scope** : à valider dans l'environnement de développement réel
+
+**Rollback:**
+- Soft: `git revert 1af26f80d7` (removes G1.3.1 only) → `git revert cc0540117f` → …
+- Hard: `git revert b45611f107..1af26f80d7` (entire Phase 4) → state returns to `f6faecae4f` (Phase 3 only).
 
 ---
 
