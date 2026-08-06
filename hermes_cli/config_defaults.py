@@ -1,4 +1,4 @@
-"""Default configuration data for Hermes Agent.
+"""Default configuration data for Indagis Agent.
 
 Pure-data leaf module: DEFAULT_CONFIG and OPTIONAL_ENV_VARS, extracted
 verbatim from hermes_cli/config.py. Must not import from hermes_cli.config.
