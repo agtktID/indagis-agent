@@ -195,7 +195,7 @@ Scope: Dashboard web personalisation + YAML theme + branding assets.
 | 3.1 — Theme `indagis` appears in selector | `_BUILTIN_DASHBOARD_THEMES` (Python) lists it | **NOT DONE** — Python list still has `default`/`Hermes Teal` etc. See G3. |
 | 3.2 — Prereqs `uv pip install -e ".[web,pty]"` | Install verification | OUT OF SCOPE (not run here) |
 | 3.3 — `~/.indagis/dashboard-themes/indagis.yaml` | YAML theme shipped | **NOT DONE** — no YAML file in repo; user must author. See G12. |
-| 3.4 — Theme YAML hex values (`#14b8a6`, `#9de3d3`, `#f87171`, `#fbbf24`, `#4ade80`) + `fontDisplay: Inter` | Specific palette | **DIVERGENCE** — Phase 2 used Obsidian Black `#0B0F14` + Cyber Cyan `#37D5D6` + Evidence Red `#C74B50` + Amber `#E0A33A` + Success Green `#2CB67D` + `fontDisplay: Space Grotesk`. The diverging palette comes from the prompt that triggered Phase 2 ("premium investigation / SOC centre, Palantir/Elastic/Cloudflare/Tines"), NOT from §3.4 of this doc. The two specs disagree on identity. |
+| 3.4 — Theme YAML hex values (`#14b8a6`, `#9de3d3`, `#f87171`, `#fbbf24`, `#4ade80`) + `fontDisplay: Inter` | Specific palette | **DIVERGENCE — DECIDED 2026-08-06 to keep Phase 2 (cyan/obsidian/Space Grotesk)**. The cahier §3.4 palette remains valid as an alternative user-shippable YAML theme. The Phase 2 palette was chosen for "premium SOC centre" positioning (Palantir / Elastic / Cloudflare / Tines) per the Phase 2 prompt that triggered the work. Tracked in CHANGELOG "Decision log" below. |
 | 3.5 — `assets/branding/indagis-{logo,mark}.svg` + `favicon.svg` | SVG assets shipped | **NOT DONE** — only `assets/banner.png` exists (upstream Hermes). See G10, G11. |
 | 3.6 — Page title, header, footer, i18n | Text-level rebrand | **PARTIAL** — only footer (SidebarFooter + About dialog). Page title (`<title>Hermes Agent - Dashboard</title>`), 20 i18n files, header brand, Telegram bot_name untouched. See G4, G5, G6, G7. |
 | 3.7 — Optional dashboard plugin | Plugin `indagis-overview` | **NOT DONE** — out of scope, optional. |
@@ -298,6 +298,52 @@ favicon}.svg` and replace `assets/banner.png`.
 Estimated Phase 3 effort: 1-2 sessions, mostly mechanical. Highest-risk
 items are G7 (Telegram bot re-registration visible to users) and G11
 (SVG asset creation).
+
+---
+
+## Decision log
+
+Decisions taken during the rebranding that diverged from one or more
+spec documents. Each entry records the date, the deciding party, the
+reason, and the rollback cost.
+
+### D1 — 2026-08-06 — Keep Phase 2 (cyan/obsidian) over cahier §3.4 (teal/mint)
+
+- **Decided by:** agent (mode B fallback after user timeout).
+- **Question:** Palette divergente entre le prompt Phase 2 (cyan/obsidian
+  + Space Grotesk) et le cahier §3.4 (teal/mint + Inter). Lequel prime ?
+- **Resolution:** Phase 2 (cyan/obsidian/Space Grotesk).
+- **Reason:** (a) le code Phase 2 est testé (typecheck 0 erreur, 49/49
+  tests theme, 191/191 web tests, build Web OK, pushé `0c489b94a3`) ;
+  (b) le positionnement "premium SOC centre" est plus différencié du
+  Tailwind default que le teal/mint ; (c) le cahier §3.4 reste valide
+  comme thème YAML alternatif user-shippable dans
+  `~/.indagis/dashboard-themes/indagis.yaml`.
+- **Rollback cost:** 1 session de re-modification (~6 fichiers : même
+  surface que Phase 2). Si l'utilisateur veut ré-aligner sur §3.4, c'est
+  un commit dédié à demander explicitement.
+- **Open question for user:** confirmer ce choix ou demander le rollback.
+
+### D2 — 2026-08-06 — TUI seeds replaced with cyan (not kept as gold "sub-skin")
+
+- **Decided by:** agent (Phase 2) + agent (upstream commit `e5d1fc2d44`)
+  puis merge.
+- **Question:** Faut-il garder les seeds TUI gold Hermes (l'agent upstream)
+  ou les remplacer par les seeds cyan Indagis (mon Phase 2) ?
+- **Resolution:** Mes seeds cyan ont gagné le merge. La TUI est
+  intégralement sur Indagis identity sans override du gateway.
+- **Reason:** cohérence du Design System — la TUI doit refléter la
+  palette produit même si le gateway skin peut override au runtime.
+- **Rollback cost:** revert 1 commit dans `theme.ts` (les 30 lignes de
+  `DARK_SEEDS` / `LIGHT_SEEDS`).
+
+### D3 — 2026-08-06 — CHANGELOG.md at repo root, no separate REBRANDING.md
+
+- **Decided by:** agent.
+- **Reason:** the cahier §4.1 asks for `REBRANDING.md` documenting
+  remaining Hermes occurrences. This CHANGELOG serves that purpose AND
+  adds full traceability (rollback boundaries, decision log, gap list).
+  Avoids two files drifting apart.
 
 ---
 
