@@ -29,8 +29,9 @@ export interface ThemePalette {
   background: ThemeLayer;
   /** Primary text + accent. Most UI chrome reads this. */
   midground: ThemeLayer;
-  /** Top-layer highlight. In LENS_0 this is white @ alpha 0 — invisible by
-   *  default but still drives `--color-ring`-style accents. */
+  /** Top-layer highlight. In the default Hermes teal skin this is white @
+   *  alpha 0 — invisible by default but still drives `--color-ring`-style
+   *  accents. The Indagis theme overrides this with concrete values. */
   foreground: ThemeLayer;
   /** Legacy palette field — kept for theme YAML compat. */
   warmGlow: string;
