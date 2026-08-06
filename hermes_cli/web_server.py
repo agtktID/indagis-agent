@@ -9077,7 +9077,9 @@ async def _telegram_onboarding_request(
 
 @app.post("/api/messaging/telegram/onboarding/start")
 async def start_telegram_onboarding(body: TelegramOnboardingStart):
-    bot_name = (body.bot_name or "Hermes Agent").strip() or "Hermes Agent"
+    # Phase 3: default bot display name is now "Indagis Agent". Callers that
+    # pass an explicit bot_name still win; only the silent fallback rebranded.
+    bot_name = (body.bot_name or "Indagis Agent").strip() or "Indagis Agent"
     payload = await _telegram_onboarding_request(
         "POST",
         "/v1/telegram/pairings",
@@ -15962,8 +15964,8 @@ def _render_active_theme_bootstrap_css() -> str:
     ``ThemeProvider.applyTheme()`` installs once the
     ``/api/dashboard/themes`` round-trip completes.  The goal is to
     eliminate the green flash where the first paint shows the bundle's
-    default Hermes Teal canvas before the SPA flips the configured user
-    theme into place.
+    default Indagis (Obsidian Black / Cyber Cyan) canvas before the SPA
+    flips the configured user theme into place.
 
     Built-in themes return an empty string — their full definitions live
     in ``web/src/themes/presets.ts`` and are applied by the bundle
@@ -16122,10 +16124,11 @@ def mount_spa(application: FastAPI):
         # Theme flash mitigation: when the active theme is a user theme
         # (``INDAGIS_HOME/dashboard-themes/<name>.yaml``), inject a minimal
         # critical-CSS block so the first paint uses the target palette.
-        # Without this the SPA paints the default Hermes Teal canvas, then
-        # ``ThemeProvider`` flips the CSS variables once
-        # ``/api/dashboard/themes`` resolves.  Built-in themes are already
-        # in the bundle's ``presets.ts`` so no shim is needed for them.
+        # Without this the SPA paints the default Indagis (Obsidian /
+        # Cyber Cyan) canvas, then ``ThemeProvider`` flips the CSS
+        # variables once ``/api/dashboard/themes`` resolves.  Built-in
+        # themes are already in the bundle's ``presets.ts`` so no shim is
+        # needed for them.
         theme_bootstrap = _render_active_theme_bootstrap_css()
         if theme_bootstrap:
             html = html.replace("</head>", f"{theme_bootstrap}</head>", 1)
@@ -16215,15 +16218,22 @@ def mount_spa(application: FastAPI):
 
 # Built-in dashboard themes — label + description only.  The actual color
 # definitions live in the frontend (web/src/themes/presets.ts).
+#
+# The two `default*` entries are the Indagis identity (rebranded in
+# Phase 2, see CHANGELOG.md). The other entries are inherited from the
+# upstream Hermes palette catalogue; they remain selectable so users with
+# a persisted `display.skin = ...` value keep their previous look until
+# they switch. New label/description text for those reflects the
+# upstream palette identity, not "Hermes Agent" branding.
 _BUILTIN_DASHBOARD_THEMES = [
-    {"name": "default",       "label": "Hermes Teal",         "description": "Classic dark teal — the canonical Hermes look"},
-    {"name": "default-large", "label": "Hermes Teal (Large)", "description": "Hermes Teal with bigger fonts and roomier spacing"},
-    {"name": "nous-blue",     "label": "Nous Blue",           "description": "Light mode — vivid Nous-blue accents on cream canvas"},
-    {"name": "midnight",      "label": "Midnight",            "description": "Deep blue-violet with cool accents"},
-    {"name": "ember",     "label": "Ember",          "description": "Warm crimson and bronze — forge vibes"},
-    {"name": "mono",      "label": "Mono",           "description": "Clean grayscale — minimal and focused"},
-    {"name": "cyberpunk", "label": "Cyberpunk",      "description": "Neon green on black — matrix terminal"},
-    {"name": "rose",      "label": "Rosé",           "description": "Soft pink and warm ivory — easy on the eyes"},
+    {"name": "default",       "label": "Indagis",                       "description": "Premium investigation / SOC centre — Obsidian Black canvas with Cyber Cyan accents"},
+    {"name": "default-large", "label": "Indagis (Large)",               "description": "Indagis identity with bigger fonts and roomier spacing"},
+    {"name": "nous-blue",     "label": "Nous Blue",                     "description": "Light mode — vivid Nous-blue accents on cream canvas"},
+    {"name": "midnight",      "label": "Midnight",                      "description": "Deep blue-violet with cool accents"},
+    {"name": "ember",         "label": "Ember",                         "description": "Warm crimson and bronze — forge vibes"},
+    {"name": "mono",          "label": "Mono",                          "description": "Clean grayscale — minimal and focused"},
+    {"name": "cyberpunk",     "label": "Cyberpunk",                     "description": "Amber-on-black monospace terminal — 80s CRT vibe"},
+    {"name": "rose",          "label": "Rosé",                          "description": "Soft pink and warm ivory — easy on the eyes"},
 ]
 
 
