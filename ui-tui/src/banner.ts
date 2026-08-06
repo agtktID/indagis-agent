@@ -98,3 +98,19 @@ export const caduceus = (c: ThemeColors, customHero?: string): Line[] =>
 export const artWidth = (lines: Line[]) => lines.reduce((m, [, t]) => Math.max(m, t.length), 0)
 
 type Line = [string, string]
+
+
+/**
+ * Indagis Agent banner — used by the Ink launcher until the gateway
+ * arrives its skin. Cyber Cyan #37D5D6 on transparent terminal.
+ */
+export const INDAGIS_BANNER: string = [
+  '[#37D5D6]  ██╗███╗   ██╗██████╗  █████╗  ██████╗ ██╗███████╗[/#]',
+  '[#37D5D6]  ██║████╗  ██║██╔══██╗██╔══██╗██╔════╝ ██║██╔════╝[/#]',
+  '[#37D5D6]  ██║██╔██╗ ██║██║  ██║███████║██║  ███╗██║███████╗[/#]',
+  '[#37D5D6]  ██║██║╚██╗██║██║  ██║██╔══██║██║   ██║██║╚════██║[/#]',
+  '[#37D5D6]  ██║██║ ╚████║██████╔╝██║  ██║╚██████╔╝██║███████║[/#]',
+  '[#37D5D6]  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝╚══════╝[/#]',
+  '',
+  '[#B0C4D8]  Indagis Agent v0.1  ·  Built on Hermes Agent (NousResearch, MIT)[/#]'
+].join('\n')

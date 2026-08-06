@@ -262,3 +262,12 @@ scripts/run_tests.sh
 MIT — see [LICENSE](LICENSE).
 
 Built by [Nous Research](https://nousresearch.com).
+
+
+## Fondations
+
+Indagis Agent est bâti sur [Hermes Agent](https://github.com/NousResearch/hermes-agent) (NousResearch, MIT License). Hermes Agent fournit le moteur d'agent, la couche de providers LLM, le gateway de messagerie, l'orchestration de skills et la persistance de sessions. Indagis Agent rebrand le shell utilisateur, applique la palette Indagis et adapte les composants UI au contexte d'investigation cybersécurité.
+
+**Moteur** : Hermes Agent v0.20 (MIT) — `agent/`, `providers/`, `tools/`, `gateway/`, `skills/`
+**Identité** : Indagis Agent v0.1 (Ce dépôt)
+**Licence** : MIT (NousResearch + Indagis Agent)

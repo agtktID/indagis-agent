@@ -86,3 +86,28 @@
   --dt-destructive: #C74B50;
   --dt-destructive-foreground: #FEF2F2;
 }
+
+/* ------------------------------------------------------------------ */
+/* Indagis Agent — premium-investigation palette overlay.               */
+/*                                                                    */
+/* The desktop stylesheet (Nous defaults) is the inherited base; this  */
+/* block layers Indagis values on top so the installer reads the      */
+/* Indagis palette without forking the desktop's design system.       */
+/* Variables match the Indagis design tokens in                      */
+/* web/src/styles/indagis-tokens.css.                                 */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --color-obsidian:       #0B0F14;
+  --color-slate:          #121A24;
+  --color-graphite:       #1D2733;
+  --color-cyan:           #37D5D6;
+  --color-red:            #C74B50;
+  --color-amber:          #E0A33A;
+  --color-green:          #2CB67D;
+  --color-text-primary:   #E2E8F0;
+  --color-text-secondary: #B0C4D8;
+  --color-text-muted:     #4A5568;
+  --color-border:         #1E2D3D;
+  --color-border-accent:  color-mix(in srgb, #37D5D6 20%, transparent);
+}

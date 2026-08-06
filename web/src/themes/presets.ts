@@ -252,3 +252,41 @@ export const BUILTIN_THEMES: Record<string, DashboardTheme> = {
   cyberpunk: cyberpunkTheme,
   rose: roseTheme,
 };
+
+
+// ---------------------------------------------------------------------------
+// Indagis Agent — premium-investigation dashboard theme
+// ---------------------------------------------------------------------------
+// Brand-mapped preset: maps the Indagis palette onto the dashboard theme
+// contract. Built-in to the web build so the default landing pages can
+// opt-in without depending on a runtime skin.
+import type { DashboardTheme } from "./types";
+
+export const INDAGIS_DASHBOARD_THEME: DashboardTheme = {
+  id: "indagis",
+  name: "Indagis",
+  // Palette mirrors web/src/styles/indagis-tokens.css. The token names
+  // match so any element using `var(--color-cyan)` from the CSS layer
+  // gets the same hex through the JS theme object.
+  colors: {
+    accent: "#37D5D6",
+    background: "#0B0F14",
+    border: "#1E2D3D",
+    text: "#E2E8F0",
+    muted: "#B0C4D8",
+    ok: "#2CB67D",
+    warn: "#E0A33A",
+    bad: "#C74B50",
+  },
+  typography: {
+    fontSans: "'Inter', system-ui, sans-serif",
+    fontMono: "'JetBrains Mono', 'Cascadia Code', monospace",
+    baseSize: "15px",
+    lineHeight: "1.75",
+    letterSpacing: "0",
+  },
+  layout: {
+    radius: "4px",
+    density: "comfortable",
+  },
+};
