@@ -297,6 +297,7 @@ export const slateTheme: DesktopTheme = {
 
 export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
   nous: nousTheme,
+  indagis: indagisTheme,
   midnight: midnightTheme,
   ember: emberTheme,
   mono: monoTheme,
@@ -304,7 +305,64 @@ export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
   slate: slateTheme
 }
 
-export const BUILTIN_THEME_LIST = Object.values(BUILTIN_THEMES)
+export const BUILTIN_THEME_LIST = Object.values(BUILTIN_THEMES).filter(t => t.name !== "indagis")
+export const ALL_THEMES_INCLUDING_INDAGIS = [...BUILTIN_THEME_LIST, indagisTheme]
 
 /** Skin used when nothing is persisted or the persisted name is retired. */
-export const DEFAULT_SKIN_NAME = 'nous'
+export const DEFAULT_SKIN_NAME = 'indagis'
+
+
+/**
+ * Indagis — premium-investigation theme for Indagis Agent.
+ *
+ * Built-in so the desktop app boots with a coherent identity even before
+ * the gateway skin arrives. Maps the Indagis palette (web/src/styles/indagis-tokens.css)
+ * onto the desktop theme contract: deep obsidian surfaces, Cyber Cyan accent,
+ * rust-free evidence colors.
+ */
+const INDAGIS_CYAN     = '#37D5D6'
+const INDAGIS_OBSIDIAN = '#0B0F14'
+const INDAGIS_SLATE    = '#121A24'
+const INDAGIS_GRAPHITE = '#1D2733'
+const INDAGIS_BORDER   = '#1E2D3D'
+const INDAGIS_TEXT     = '#E2E8F0'
+const INDAGIS_MUTED    = '#B0C4D8'
+const INDAGIS_RED      = '#C74B50'
+const INDAGIS_AMBER    = '#E0A33A'
+const INDAGIS_GREEN    = '#2CB67D'
+
+export const indagisTheme: DesktopTheme = {
+  name: 'indagis',
+  label: 'Indagis',
+  description: 'Indagis Agent — deep obsidian surfaces, Cyber Cyan accent',
+  colors: {
+    background: INDAGIS_OBSIDIAN,
+    foreground: INDAGIS_TEXT,
+    card: INDAGIS_SLATE,
+    cardForeground: INDAGIS_TEXT,
+    muted: INDAGIS_GRAPHITE,
+    mutedForeground: INDAGIS_MUTED,
+    popover: INDAGIS_SLATE,
+    popoverForeground: INDAGIS_TEXT,
+    primary: INDAGIS_CYAN,
+    primaryForeground: INDAGIS_OBSIDIAN,
+    secondary: INDAGIS_GRAPHITE,
+    secondaryForeground: INDAGIS_TEXT,
+    accent: INDAGIS_CYAN,
+    accentForeground: INDAGIS_OBSIDIAN,
+    border: INDAGIS_BORDER,
+    input: INDAGIS_BORDER,
+    ring: INDAGIS_CYAN,
+    midground: INDAGIS_CYAN,
+    destructive: INDAGIS_RED,
+    destructiveForeground: '#FEF2F2',
+    sidebarBackground: INDAGIS_OBSIDIAN,
+    sidebarBorder: INDAGIS_BORDER,
+    userBubble: INDAGIS_GRAPHITE,
+    userBubbleBorder: 'color-mix(in srgb, ' + INDAGIS_CYAN + ' 20%, transparent)'
+  },
+  typography: {
+    fontSans: "'Inter', system-ui, sans-serif, " + EMOJI_FALLBACK,
+    fontMono: '"JetBrains Mono", "Cascadia Code", Menlo, Monaco, monospace, ' + EMOJI_FALLBACK
+  }
+}
