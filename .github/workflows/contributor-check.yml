@@ -24,8 +24,9 @@ jobs:
       - name: Check for unmapped contributor emails
         id: check-emails
         run: |
+          # TODO(Phase 5): revert to origin/main once main exists on this fork
           # Get the merge base between this PR and main
-          MERGE_BASE=$(git merge-base origin/main HEAD)
+          MERGE_BASE=$(git merge-base origin/feat/rebranding HEAD)
 
           # Find any new author emails in this PR's commits
           NEW_EMAILS=$(git log ${MERGE_BASE}..HEAD --format='%ae' --no-merges | sort -u)
