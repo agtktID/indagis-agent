@@ -1,7 +1,8 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Hermes Agent" width="100%">
+  <img src="assets/indagis-banner.png" alt="Indagis Agent banner" width="100%" />
 </p>
 
+<h1 align="center">Indagis Agent</h1>
 # Hermes Agent ☤
 <p align="center">
   <a href="https://hermes-agent.nousresearch.com/">Hermes Agent</a> | <a href="https://hermes-agent.nousresearch.com/">Hermes Desktop</a>
