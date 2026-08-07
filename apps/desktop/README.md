@@ -1,4 +1,4 @@
-# Hermes Desktop ☤
+# Indagis Desktop
 
 <p align="center">
   <a href="https://github.com/NousResearch/hermes-agent/releases"><img src="https://img.shields.io/badge/Download-macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-FFD700?style=for-the-badge" alt="Download"></a>
@@ -7,13 +7,13 @@
   <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
 </p>
 
-**The native desktop app for [Hermes Agent](../../README.md) — the self-improving AI agent from [Nous Research](https://nousresearch.com).** Same agent, same skills, same memory as the CLI and gateway, in a polished native window — chat with streaming tool output, side-by-side previews, a file browser, voice, and settings, no terminal required. Available for **macOS, Windows, and Linux**.
+**The native desktop app for [Indagis Agent](../../README.md) — a rebrand of Nous Research's [Hermes Agent](https://github.com/NousResearch/hermes-agent) tailored for cybersecurity investigation workflows.** Same agent, same skills, same memory as the CLI and gateway, in a polished native window — chat with streaming tool output, side-by-side previews, a file browser, voice, and settings, no terminal required. Available for **macOS, Windows, and Linux**.
 
 <table>
-<tr><td><b>Chat with the full agent</b></td><td>Streaming responses, live tool activity, structured tool summaries, and the same conversation history as every other Hermes surface.</td></tr>
+<tr><td><b>Chat with the full agent</b></td><td>Streaming responses, live tool activity, structured tool summaries, and the same conversation history as every other Indagis Agent surface (CLI, gateway, web dashboard).</td></tr>
 <tr><td><b>Side-by-side previews</b></td><td>Render web pages, files, and tool outputs in a right-hand pane while you keep chatting.</td></tr>
 <tr><td><b>File browser</b></td><td>Explore and preview the working directory without leaving the app.</td></tr>
-<tr><td><b>Voice</b></td><td>Talk to Hermes and hear it back.</td></tr>
+<tr><td><b>Voice</b></td><td>Talk to your agent and hear it back.</td></tr>
 <tr><td><b>Settings & onboarding</b></td><td>Manage providers, models, tools, and credentials from a real UI. First-run setup gets you to your first message in seconds.</td></tr>
 <tr><td><b>Stays current</b></td><td>Built-in updates pull the latest agent and rebuild the app in place.</td></tr>
 </table>
@@ -22,19 +22,19 @@
 
 ## Install
 
-### Install with Hermes (recommended)
+### Install with Indagis Agent (recommended)
 
-Already have the Hermes CLI? Just run:
+Already have the Indagis CLI? Just run:
 
 ```bash
-hermes desktop
+indagis desktop
 ```
 
-It builds and launches the GUI against your existing install — same config, keys, sessions, and skills. If Desktop cannot find a usable runtime or saved remote connection, first launch lets you connect to an existing Hermes gateway or install Hermes locally. Local onboarding then walks you through choosing a provider and model.
+It builds and launches the GUI against your existing install — same config, keys, sessions, and skills. If Desktop cannot find a usable runtime or saved remote connection, first launch lets you connect to an existing gateway or install locally. Local onboarding then walks you through choosing a provider and model.
 
 ### Prebuilt installers
 
-Prebuilt installers are built and distributed via [the Hermes Desktop website.](https://hermes-agent.nousresearch.com/).
+Prebuilt installers are built and distributed via [the upstream Indagis Agent releases page.](https://github.com/Labscreatis/indagis-agent/releases) (placeholder — the fork's release pipeline will publish here once the Indagis-branded Electron build is green; the URL `https://hermes-agent.nousresearch.com/` is the upstream reference while we wait.)
 
 ---
 
@@ -43,7 +43,7 @@ Prebuilt installers are built and distributed via [the Hermes Desktop website.](
 The app checks for updates in the background and offers a one-click update when one is ready. You can also update any time from the CLI:
 
 ```bash
-hermes update
+indagis update
 ```
 
 ---
@@ -88,9 +88,11 @@ Installers are built and uploaded to GitHub Releases manually. macOS/Windows sig
 ### How it works
 
 The packaged app ships the Electron shell and a native React chat surface. On
-first launch it can install the Hermes Agent runtime into `HERMES_HOME`
-(`~/.hermes`, or `%LOCALAPPDATA%\hermes` on Windows), using the same layout as a
-CLI install.
+first launch it can install the Indagis Agent runtime into `HERMES_HOME`
+(`~/.hermes`, or `%LOCALAPPDATA%\hermes` on Windows — these directory
+names remain under the current Hermes-install contract and are scheduled
+for `indagis`-path migration in Phase 5, see the **Fondations** section
+in the root README), using the same layout as a CLI install.
 
 The app has three boundaries:
 
@@ -98,9 +100,15 @@ The app has three boundaries:
   filesystem/git/window capabilities, and exposes a narrow preload bridge.
 - **React** owns the Desktop routes, panes, interaction state, and
   `@assistant-ui/react` transcript.
-- **Hermes Agent** runs as a headless `hermes serve` process and exposes the
+- **Indagis Agent** runs as a headless `hermes serve` subprocess and exposes the
   `tui_gateway` JSON-RPC/WebSocket API. The renderer connects through
   [`apps/shared`](../shared/), which is also used by the browser dashboard.
+
+  > **Note on command names:** the runtime entry point is `indagis serve`
+  > (the user-facing shell command); the existing backend forks a child
+  > labelled `hermes serve` because the upstream protocol/server module
+  > is still imported under its module path `hermes_cli`. Migrating this
+  > label to `indagis-serve` or `indagis serve` is scheduled for Phase 5.
 
 Backend resolution is an ordered ladder:
 
@@ -108,7 +116,7 @@ Backend resolution is an ordered ladder:
 2. the current source checkout during development
 3. a completed managed install
 4. `HERMES_DESKTOP_HERMES`, or `hermes` on `PATH`
-5. a system Python that can import the Hermes runtime
+5. a system Python that can import the Indagis Agent runtime
 6. the first-launch bootstrap installer
 
 Candidates are probed before use; an existing shim or interpreter is not enough.
@@ -130,12 +138,10 @@ Before changing the app, read:
 
 ### Connections, projects, and switching
 
-Desktop supports a managed local backend, explicit remote gateways, and Hermes
-Cloud connections. Remote and cloud modes use the same remote-capability path;
-authentication and discovery differ, not the renderer feature model.
+Desktop supports a managed local backend, explicit remote gateways, and (when configured) remote cloud connections. Remote and cloud modes use the same remote-capability path; authentication and discovery differ, not the renderer feature model.
 
 When no usable local runtime or saved remote connection exists, the first-run
-screen offers **Connect to existing Hermes** before starting the local installer.
+screen offers **Connect to existing Indagis Agent** before starting the local installer.
 Desktop probes the gateway to discover token or OAuth authentication, requires a
 successful HTTP and WebSocket connection test, and saves the connection using
 the same encrypted Desktop configuration used by Settings. A saved remote
@@ -144,7 +150,7 @@ still includes the local-install option; this is a remote operating mode, not a
 separate client-only application.
 
 In remote mode the gateway host is the execution boundary: agent tools,
-terminal commands, and file operations run against the remote Hermes host, not
+terminal commands, and file operations run against the remote Indagis Agent host, not
 the computer displaying the Desktop UI.
 
 Projects are the workspace abstraction. A project may own multiple folders,
@@ -197,15 +203,15 @@ Remove-Item "$env:LOCALAPPDATA\hermes\hermes-agent\.hermes-bootstrap-complete"
 Remove-Item -Recurse -Force "$env:LOCALAPPDATA\hermes\hermes-agent\venv"
 ```
 
-> The default Hermes home on Windows is `%LOCALAPPDATA%\hermes`. Set the `HERMES_HOME` env var if you've relocated it.
+> The default Indagis Agent install home on Windows is `%LOCALAPPDATA%\hermes` (the path is inherited from the upstream installer contract; see **Fondations** in the root README for the Phase 5 migration plan). Set the `HERMES_HOME` env var if you've relocated it.
 
 ---
 
 ## Community
 
-- 💬 [Discord](https://discord.gg/NousResearch)
-- 📖 [Documentation](https://hermes-agent.nousresearch.com/docs/)
-- 🐛 [Issues](https://github.com/NousResearch/hermes-agent/issues)
+- 💬 [Discord](https://discord.gg/NousResearch) — NousResearch (upstream project's community)
+- 📖 [Documentation](https://hermes-agent.nousresearch.com/docs/) (upstream — required reading for the shared agent runtime)
+- 🐛 [Indagis Desktop issues](https://github.com/Labscreatis/indagis-agent/issues) · [Hermes Agent upstream issues](https://github.com/NousResearch/hermes-agent/issues)
 
 ---
 
@@ -213,4 +219,18 @@ Remove-Item -Recurse -Force "$env:LOCALAPPDATA\hermes\hermes-agent\venv"
 
 MIT — see [LICENSE](../../LICENSE).
 
-Built by [Nous Research](https://nousresearch.com).
+Built on [Hermes Agent](https://github.com/NousResearch/hermes-agent) (NousResearch). The Indagis Agent rebrand of the user-facing shell, themes, palette, and a small set of presentation-layer strings is also MIT, attributed to the Indagis Agent contributors.
+
+---
+
+## Compat-contract notes (read this before renaming)
+
+A few inherited technical identifiers remain under their Hermes-era names because the upstream installer or the upstream Electron build still writes or reads them — they are explicitly **out of scope** for the Phase 4 rebrand because changing them now would break the install-on-existing-machine contract users have today:
+
+- **`HERMES_HOME`** (installer contract): the directory where the upstream `install.sh` and `install.ps1` place the runtime, venv, logs, and `bin/uv.exe`. Default is `~/.hermes` on Linux/macOS/WSL2 and `%LOCALAPPDATA%\hermes` on Windows. **Migrating `HERMES_HOME` to `INDAGIS_HOME`** is scheduled for **Phase 5** and requires forking the installer. Do **not** rename this env var in user-facing documentation until the installer has been forked.
+- **`HERMES_DESKTOP_*`** (Electron technical identifiers): all of `HERMES_DESKTOP_HERMES_ROOT`, `HERMES_DESKTOP_HERMES`, `HERMES_HOME`, `HERMES_DESKTOP_DEV`, etc. read by the bundled Electron process to locate the runtime, find the dev sources, and bind single-instance locks. These are **internal to the desktop bundle**, not user-visible brand — renaming them would change the runtime contract without brand benefit, and is **out of scope** for Phase 4. See `apps/desktop/electron/main.ts` for the full list.
+- **macOS bundle identifier `com.nousresearch.hermes`** (Electron technical identifier): same category as `HERMES_DESKTOP_*`. Migration to `com.labscreatis.indagis.desktop` is scheduled for **Phase 5** when the installer is forked.
+- **Filesystem paths** `~/.hermes/`, `%LOCALAPPDATA%\hermes\`, `packages/hermes-ink/` (TS package dir), `hermes_cli/` (Python module dir): same — protected by cahier §3.2 ("modules internes Hermes conservés").
+- **The user-facing command name** is `indagis` (set by the G1.2 shell-completion rebrand); the upstream sub-command identity `hermes serve` is **preserved** as a backend module name (the Electron app still forks it from `hermes_cli.__main__`). Migration is logged for **Phase 5** and is documented above the "Connections, projects, and switching" section.
+
+If you fork this project and want to rename any of those identifiers, **read `apps/desktop/AGENTS.md` first** — it explains how the resolver / fallback chain depends on them.
