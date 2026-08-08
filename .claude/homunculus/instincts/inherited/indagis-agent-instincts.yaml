@@ -1,0 +1,147 @@
+# Instincts generated from https://github.com/Labscreatis/indagis-agent
+# Generated: 2026-08-08T04:02:48.854Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: indagis-agent-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/Labscreatis/indagis-agent
+---
+
+# Indagis Agent Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: chore, rebrand, fix, feat, docs
+
+## Evidence
+
+- 20 commits analyzed
+- Detected conventional commit pattern
+- Examples: feat(g1): rebrand default banner label (Hermes Agent -> Indagis Agent), audit(g1): extraction of user-facing Hermes occurrences in hermes_cli/
+
+---
+id: indagis-agent-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/Labscreatis/indagis-agent
+---
+
+# Indagis Agent Commit Length
+
+## Action
+
+Write moderate-length commit messages (~60 characters)
+
+## Evidence
+
+- Average commit message length: 60 chars
+- Based on 20 commits
+
+---
+id: indagis-agent-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/Labscreatis/indagis-agent
+---
+
+# Indagis Agent Naming Files
+
+## Action
+
+Use snake_case naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: snake_case
+
+---
+id: indagis-agent-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/Labscreatis/indagis-agent
+---
+
+# Indagis Agent Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: indagis-agent-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/Labscreatis/indagis-agent
+---
+
+# Indagis Agent Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: indagis-agent-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/Labscreatis/indagis-agent
+---
+
+# Indagis Agent Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: indagis-agent-test-naming
+trigger: "when creating a test file"
+confidence: 0.85
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/Labscreatis/indagis-agent
+---
+
+# Indagis Agent Test Naming
+
+## Action
+
+Name test files using the pattern: *.test.ts
+
+## Evidence
+
+- File pattern: *.test.ts
+- Consistent across test files
+
