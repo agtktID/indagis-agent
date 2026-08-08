@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Indagis Agent" width="100%">
+  <img src="assets/indagis-banner.png" alt="Indagis Agent" width="100%">
 </p>
 
 # Indagis Agent
