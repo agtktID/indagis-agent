@@ -135,7 +135,7 @@ def test_dockerfile_entrypoint_routes_through_the_init(dockerfile_text):
     if any(name in entrypoint_line for name in _KNOWN_INIT_TOKENS):
         return
 
-    assert "/opt/hermes/docker/entrypoint-dispatch.sh" in entrypoint_line, (
+    assert "/opt/indagis/docker/entrypoint-dispatch.sh" in entrypoint_line, (
         f"Unexpected Dockerfile ENTRYPOINT: {entrypoint_line!r}"
     )
     assert ENTRYPOINT_DISPATCH.exists(), (

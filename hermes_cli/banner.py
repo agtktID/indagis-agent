@@ -274,7 +274,7 @@ def _check_via_local_git(repo_dir: Path) -> Optional[int]:
 
 
 def check_for_updates() -> Optional[int]:
-    """Check whether a Hermes update is available.
+    """Check whether an Indagis Agent update is available.
 
     Two paths: if ``HERMES_REVISION`` is set (nix builds embed it), compare
     it to upstream main via ``git ls-remote``. Otherwise look for a local
@@ -346,11 +346,12 @@ def check_for_updates() -> Optional[int]:
 
 
 def _resolve_repo_dir() -> Optional[Path]:
-    """Return the active Hermes git checkout, or None if this isn't a git install.
+    """Return the active Indagis Agent git checkout, or None if this isn't a git install.
 
     Prefers the running code's location over the profile-scoped path
     because ``$INDAGIS_HOME/hermes-agent/`` may be a stale copy carried
-    over by ``--clone-all``.
+    over by ``--clone-all``. (The upstream repo directory keeps its
+    ``hermes-agent`` name; the Python module tree is ``indagis-agent``.)
     """
     repo_dir = Path(__file__).parent.parent.resolve()
     if not (repo_dir / ".git").exists():
@@ -487,7 +488,10 @@ def get_latest_release_tag(repo_dir: Optional[Path] = None) -> Optional[tuple]:
 
 def format_banner_version_label() -> str:
     """Return the version label shown in the startup banner title."""
-    base = f"Hermes Agent v{VERSION} ({RELEASE_DATE})"
+    # Phase 4 / G1: rebrand the default banner label so the version line
+    # matches `Indagis Agent` identity. The upstream attribution credit
+    # remains in the banner (Nous Research, see _RELEASE_URL_BASE).
+    base = f"Indagis Agent v{VERSION} ({RELEASE_DATE})"
     state = get_git_banner_state()
     if not state:
         return base

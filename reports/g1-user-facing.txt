@@ -1,0 +1,824 @@
+
+=== hermes_cli/_parser.py (3 chaînes) ===
+  L   94 [USER_FACING] description="Hermes Agent - AI assistant with tool-calling capabilities",
+  L  284 [USER_FACING] description="Start an interactive chat session with Hermes Agent",
+  L  443 [USER_FACING] help="Troubleshooting mode: disable ALL customizations — user config, AGENTS.md/memory injection, plugins, and MCP servers (implies --ignore
+
+=== hermes_cli/_startup_fast.py (1 chaînes) ===
+  L  186 [USER_FACING] print(f"Hermes Agent v{__version__} ({__release_date__})")
+
+=== hermes_cli/_subprocess_compat.py (1 chaînes) ===
+  L  251 [DOCSTRING] during a dependency's import, not from Hermes' own code.
+
+=== hermes_cli/active_sessions.py (1 chaînes) ===
+  L  112 [USER_FACING] f"Hermes is at the active session limit ({active_count}/{max_sessions})."
+
+=== hermes_cli/agent_import.py (3 chaînes) ===
+  L  487 [USER_FACING] "Claude slash commands have no direct Hermes equivalent — "
+  L  760 [USER_FACING] "MCP server already exists in Hermes config")
+  L  883 [USER_FACING] print(color("│          ⚕ Hermes — Import From Another Agent          │", Colors.MAGENTA))
+
+=== hermes_cli/auth.py (30 chaînes) ===
+  L  129 [USER_FACING] SPOTIFY_DOCS_URL = "https://hermes-agent.nousresearch.com/docs/user-guide/features/spotify"
+  L  133 [USER_FACING] OAUTH_OVER_SSH_DOCS_URL = "https://hermes-agent.nousresearch.com/docs/guides/oauth-over-ssh"
+  L 3259 [USER_FACING] print("       App name:     anything (e.g. hermes-agent)")
+  L 3337 [USER_FACING] print("Open this URL to authorize Hermes:")
+  L 3546 [USER_FACING] print(f"Hermes is waiting for the OAuth callback on {redirect_uri}")
+  L 3719 [DOCSTRING] """Save Codex OAuth tokens to Hermes auth store (~/.hermes/auth.json)."""
+  L 3719 [USER_FACING] """Save Codex OAuth tokens to Hermes auth store (~/.hermes/auth.json)."""
+  L 3747 [DOCSTRING] """Adopt a valid Codex CLI token pair into Hermes auth, if available."""
+  L 3747 [USER_FACING] """Adopt a valid Codex CLI token pair into Hermes auth, if available."""
+  L 3768 [DOCSTRING] """Refresh Codex OAuth tokens without mutating Hermes auth state."""
+  L 3768 [USER_FACING] """Refresh Codex OAuth tokens without mutating Hermes auth state."""
+  L 3980 [DOCSTRING] """Resolve runtime credentials from Hermes's own Codex token store.
+  L 5758 [USER_FACING] "custom self-heal hook, or another Hermes install sharing "
+  L 5759 [USER_FACING] "~/.hermes/auth.json) called POST /api/oauth/token with Hermes's "
+  L 5761 [USER_FACING] "Nous refresh tokens are single-use — only Hermes may call the "
+  L 5878 [USER_FACING] "Hermes is not logged into Nous Portal.",
+  L 6223 [USER_FACING] raise AuthError("Hermes is not logged into Nous Portal.",
+  L 7122 [USER_FACING] "pip install azure-identity  (or rely on Hermes' "
+  L 7768 [USER_FACING] print("Existing Codex credentials found in Hermes auth store.")
+  L 7789 [USER_FACING] print("Hermes will create its own session to avoid conflicts with Codex CLI / VS Code.")
+  L 7800 [USER_FACING] print("Hermes will keep working independently with its own session.")
+  L 7807 [USER_FACING] print("(Hermes creates its own session — won't affect Codex CLI or VS Code)")
+  L 7835 [USER_FACING] print("Existing xAI OAuth credentials found in Hermes auth store.")
+  L 7854 [USER_FACING] print("(Hermes creates its own local OAuth session)")
+  L 8475 [DOCSTRING] """Persist MiniMax OAuth state to Hermes auth store (~/.hermes/auth.json)."""
+  L 8475 [USER_FACING] """Persist MiniMax OAuth state to Hermes auth store (~/.hermes/auth.json)."""
+  L 8500 [USER_FACING] print(f"Starting Hermes login via MiniMax ({region}) OAuth...")
+  L 8815 [USER_FACING] print(f"Starting Hermes login via {pconfig.name}...")
+  L 9234 [USER_FACING] print("Hermes will use OpenRouter for inference.")
+  L 9236 [USER_FACING] print("Run `hermes model` or configure an API key to use Hermes.")
+
+=== hermes_cli/azure_detect.py (2 chaînes) ===
+  L  161 [USER_FACING] req.add_header("User-Agent", "hermes-agent/azure-detect")
+  L  272 [USER_FACING] req.add_header("User-Agent", "hermes-agent/azure-detect")
+
+=== hermes_cli/backup.py (17 chaînes) ===
+  L   52 [USER_FACING] "hermes-agent",     # the codebase repo — re-clone instead
+  L  139 [DOCSTRING] """Raised when another process already owns the Hermes backup slot."""
+  L  139 [USER_FACING] """Raised when another process already owns the Hermes backup slot."""
+  L  169 [USER_FACING] raise BackupInProgressError("another Hermes backup is already running")
+  L  181 [USER_FACING] raise BackupInProgressError("another Hermes backup is already running")
+  L  303 [USER_FACING] if part == "hermes-agent" and part != parts[0]:
+  L  587 [DOCSTRING] """Create a zip backup of the Hermes home directory."""
+  L  587 [USER_FACING] """Create a zip backup of the Hermes home directory."""
+  L  591 [USER_FACING] print(f"Error: Hermes home directory not found at {hermes_root}")
+  L  641 [USER_FACING] if d not in _EXCLUDED_DIRS or (d == "hermes-agent" and not is_root)
+  L  826 [USER_FACING] "zip does not appear to be a Hermes backup "
+  L  858 [DOCSTRING] """Restore a Hermes backup from a zip file."""
+  L  858 [USER_FACING] """Restore a Hermes backup from a zip file."""
+  L  894 [USER_FACING] print("Warning: Target directory already has Hermes configuration.")
+  L 1064 [USER_FACING] if not (hermes_root / "hermes-agent").is_dir():
+  L 1065 [USER_FACING] print("Note: The hermes-agent codebase was not included in the backup.")
+  L 1074 [USER_FACING] print("Done. Your Hermes configuration has been restored.")
+
+=== hermes_cli/banner.py (9 chaînes) ===
+  L  130 [USER_FACING] _UPSTREAM_REPO_URL = "https://github.com/NousResearch/hermes-agent.git"
+  L  131 [USER_FACING] _OFFICIAL_REPO_CANONICAL = "github.com/nousresearch/hermes-agent"
+  L  328 [USER_FACING] repo_dir = hermes_home / "hermes-agent"
+  L  349 [DOCSTRING] """Return the active Hermes git checkout, or None if this isn't a git install.
+  L  358 [USER_FACING] repo_dir = hermes_home / "hermes-agent"
+  L  440 [USER_FACING] _RELEASE_URL_BASE = "https://github.com/NousResearch/hermes-agent/releases/tag"
+  L  490 [USER_FACING] base = f"Hermes Agent v{VERSION} ({RELEASE_DATE})"
+  L  660 [USER_FACING] left_lines.append(f"[{accent}]MoA: {preset_name}[/]{agg_str}{ctx_str} [dim {dim}]·[/] [dim {dim}]Nous Research[/]")
+  L  677 [USER_FACING] left_lines.append(f"[{accent}]{model_short}[/]{ctx_str} [dim {dim}]·[/] [dim {dim}]Nous Research[/]")
+
+=== hermes_cli/browser_connect.py (2 chaînes) ===
+  L    1 [DOCSTRING] """Shared helpers for attaching Hermes to a local Chromium-family CDP port."""
+  L    1 [USER_FACING] """Shared helpers for attaching Hermes to a local Chromium-family CDP port."""
+
+=== hermes_cli/claw.py (8 chaînes) ===
+  L  137 [USER_FACING] "Hermes may try to use the same token, causing disconnects."
+  L  172 [USER_FACING] "Hermes gateway is running with active connections: "
+  L  307 [USER_FACING] print("  migrate          Migrate settings from OpenClaw to Hermes")
+  L  314 [DOCSTRING] """Run the OpenClaw → Hermes migration."""
+  L  314 [USER_FACING] """Run the OpenClaw → Hermes migration."""
+  L  351 [USER_FACING] "│          ⚕ Hermes — OpenClaw Migration                 │",
+  L  522 [USER_FACING] "Re-run with --no-backup to skip, or free up disk space under the Hermes home."
+  L  577 [USER_FACING] "│          ⚕ Hermes — OpenClaw Cleanup                   │",
+
+=== hermes_cli/cli_agent_setup_mixin.py (4 chaînes) ===
+  L   23 [DOCSTRING] """Agent construction + session-resume display methods for ``HermesCLI``."""
+  L   23 [USER_FACING] """Agent construction + session-resume display methods for ``HermesCLI``."""
+  L  831 [USER_FACING] lines.append("  ◆ Hermes: ", style=f"bold {_assistant_label_c}")
+  L  837 [USER_FACING] lines.append("  ◆ Hermes: ", style=f"dim bold {_assistant_label_c}")
+
+=== hermes_cli/cli_billing_mixin.py (6 chaînes) ===
+  L  855 [USER_FACING] reason="A billing admin can turn it on from the portal's Hermes Agent page to add funds here.",
+  L  970 [USER_FACING] reason="A billing admin can turn it on from the portal's Hermes Agent page before adding funds.",
+  L 1111 [USER_FACING] "By confirming, you allow Nous Research to charge your card."
+  L 1243 [USER_FACING] print("  Remote spending is off for this account — a billing admin can turn it on from the portal's Hermes Agent page.")
+  L 1320 [USER_FACING] print("  Remote Spending is allowed for this terminal, but it's still off for this org. A billing admin can turn it on from the portal's Her
+  L 1481 [USER_FACING] f"By confirming, you authorize Nous Research to charge {card.masked} "
+
+=== hermes_cli/cli_commands_mixin.py (11 chaînes) ===
+  L  245 [USER_FACING] print("  No changes — Hermes hasn't edited any files here yet.")
+  L 2050 [USER_FACING] label = _skin.get_branding("response_label", "⚕ Hermes")
+  L 2054 [USER_FACING] label = "⚕ Hermes"
+  L 2283 [USER_FACING] "just because CDP is connected. This is typically a Hermes-managed isolated debug "
+  L 2491 [USER_FACING] f"Hermes keeps working until it is, you pause/clear it, or the budget is "
+  L 3136 [USER_FACING] behavior = "Enter will queue follow-up input while Hermes is busy."
+  L 3140 [USER_FACING] behavior = "Enter will redirect the current run while Hermes is busy; /stop still cancels it."
+  L 3282 [USER_FACING] print(f"  ✗ {format_managed_message('update Hermes Agent')}")
+  L 3290 [USER_FACING] ("once", "Update Now", "exit the current session and update Hermes Agent"),
+  L 3294 [USER_FACING] title="⚕  Update Hermes Agent",
+  L 3344 [DOCSTRING] """Handle /wake [on|off|status] — the 'Hey Hermes' hotword listener.
+
+=== hermes_cli/codex_runtime_plugin_migration.py (9 chaînes) ===
+  L    1 [DOCSTRING] """Migrate Hermes' MCP server config and Codex's installed curated plugins
+  L   51 [USER_FACING] "# managed by hermes-agent — `hermes codex-runtime migrate` regenerates this section"
+  L   54 [USER_FACING] "# end hermes-agent managed section"
+  L   87 [USER_FACING] lines.append("No MCP servers found in Hermes config.")
+  L  194 [USER_FACING] skipped.append(f"{key} (unknown Hermes key)")
+  L  266 [USER_FACING] out.append("# (no MCP servers, plugins, or permissions configured by Hermes)")
+  L  308 [DOCSTRING] """Insert Hermes' managed Codex TOML block while keeping root keys root-scoped.
+  L  558 [DOCSTRING] """Build the codex stdio-transport entry that launches Hermes' own
+  L  652 [USER_FACING] "mcp_servers in Hermes config is not a dict; cannot migrate."
+
+=== hermes_cli/codex_runtime_switch.py (5 chaînes) ===
+  L    3 [DOCSTRING] Toggles `model.openai_runtime` between "auto" (= chat_completions, Hermes'
+  L  246 [USER_FACING] "Hermes tool callback registered: codex can now use "
+  L  253 [USER_FACING] "only on the default Hermes runtime — they need the "
+  L  264 [USER_FACING] "Hermes tools available via MCP callback)."
+  L  271 [USER_FACING] msg_lines.append("OpenAI/Codex turns will use the default Hermes runtime.")
+
+=== hermes_cli/colors.py (2 chaînes) ===
+  L    1 [DOCSTRING] """Shared ANSI color utilities for Hermes CLI modules."""
+  L    1 [USER_FACING] """Shared ANSI color utilities for Hermes CLI modules."""
+
+=== hermes_cli/commands.py (8 chaînes) ===
+  L  134 [USER_FACING] CommandDef("snapshot", "Create or restore state snapshots of Hermes config/state", "Session",
+  L  159 [USER_FACING] CommandDef("goal", "Set a standing goal Hermes works on across turns until achieved", "Session",
+  L  238 [USER_FACING] CommandDef("wake", "Toggle the 'Hey Hermes' wake word listener", "Configuration",
+  L  241 [USER_FACING] CommandDef("busy", "Control what Enter does while Hermes is working", "Configuration",
+  L  326 [USER_FACING] CommandDef("update", "Update Hermes Agent to the latest version", "Info",
+  L  328 [USER_FACING] CommandDef("version", "Show Hermes Agent version", "Info", aliases=("v",),
+  L 1305 [USER_FACING] entries.append(("hermes", "Talk to Hermes or run a subcommand", "[subcommand] [args]"))
+  L 1360 [USER_FACING] def slack_app_manifest(request_url: str = "https://hermes-agent.local/slack/commands") -> dict[str, Any]:
+
+=== hermes_cli/completion.py (1 chaînes) ===
+  L  257 [USER_FACING] "# Hermes Agent fish completion",
+
+=== hermes_cli/config.py (15 chaînes) ===
+  L  229 [USER_FACING] "PYTHONPATH, PATH, EDITOR, ...) or Hermes runtime location "
+  L  383 [USER_FACING] "Update Hermes through the Nix source that installed it "
+  L  411 [DOCSTRING] """Detect how Hermes was installed: 'docker', 'nix', 'nixos', 'git', or 'unknown'.
+  L  548 [USER_FACING] return "docker pull nousresearch/hermes-agent:latest"
+  L  613 [USER_FACING] def format_managed_message(action: str = "modify this Hermes installation") -> str:
+  L  621 [USER_FACING] f"Cannot {action}: this Hermes installation is managed by NixOS "
+  L  623 [USER_FACING] "Edit services.hermes-agent.settings in your configuration.nix and run:\n"
+  L  628 [USER_FACING] f"Cannot {action}: this Hermes installation is managed by {managed_system}.\n"
+  L  629 [USER_FACING] "Use your package manager to upgrade or reinstall Hermes."
+  L  674 [USER_FACING] container_name = info.get("container_name", "hermes-agent")
+  L 2028 [USER_FACING] "custom_providers defined but no 'model' section — Hermes won't know which provider to use",
+  L 3622 [DOCSTRING] """Parse the small .env value subset Hermes writes itself."""
+  L 3622 [USER_FACING] """Parse the small .env value subset Hermes writes itself."""
+  L 4254 [USER_FACING] print(color("│              ⚕ Hermes Configuration                    │", Colors.CYAN))
+  L 5034 [USER_FACING] "but Hermes may not read it.",
+
+=== hermes_cli/config_defaults.py (9 chaînes) ===
+  L 2393 [USER_FACING] "url": "https://hermes-agent.nousresearch.com/docs/api/model-catalog.json",
+  L 3176 [USER_FACING] "credentials Hermes mints short-lived tokens from. Falls back to "
+  L 3612 [USER_FACING] "description": "Explicit Nous Subscriber access token for tool-gateway requests (optional; otherwise read from the Hermes auth store)",
+  L 3740 [USER_FACING] "description": "Picovoice access key for the Porcupine 'Hey Hermes' wake word engine (optional; openWakeWord is the free default)",
+  L 3971 [USER_FACING] "description": "Comma-separated Slack member IDs allowed to use Hermes, e.g. U01ABC2DEF3. Without this, Slack may connect but deny messages 
+  L 4235 [USER_FACING] "description": "Model name advertised on /v1/models. Defaults to the profile name (or 'hermes-agent' for the default profile). Useful for mu
+  L 4243 [USER_FACING] "description": "URL of a remote Hermes API server to forward messages to (proxy mode). When set, the gateway handles platform I/O only — all
+  L 4244 [USER_FACING] "prompt": "Remote Hermes API server URL (e.g. http://192.168.1.100:8642)",
+  L 4251 [USER_FACING] "description": "Bearer token for authenticating with the remote Hermes API server (proxy mode). Must match the API_SERVER_KEY on the remote 
+
+=== hermes_cli/console_engine.py (41 chaînes) ===
+  L   46 [USER_FACING] handler: Callable[["HermesConsoleEngine", list[str]], str]
+  L  383 [USER_FACING] ) -> Callable[["HermesConsoleEngine", list[str]], str]:
+  L  405 [USER_FACING] ) -> Callable[["HermesConsoleEngine", list[str]], str]:
+  L  427 [USER_FACING] ) -> Callable[["HermesConsoleEngine", list[str]], str]:
+  L  448 [USER_FACING] ) -> Callable[["HermesConsoleEngine", list[str]], str]:
+  L  463 [USER_FACING] engine: "HermesConsoleEngine",
+  L  467 [USER_FACING] handler_factory: Callable[[Sequence[str]], Callable[["HermesConsoleEngine", list[str]], str]],
+  L  490 [DOCSTRING] """Curated line-command executor for Hermes Console."""
+  L  490 [USER_FACING] """Curated line-command executor for Hermes Console."""
+  L  512 [USER_FACING] "Hermes Console does not run shell syntax. Use one supported "
+  L  513 [USER_FACING] "Hermes command at a time."
+  L  545 [USER_FACING] "Hermes Console",
+  L  562 [USER_FACING] self.register(("status",), "status", "Show Hermes component status.", _status)
+  L  564 [USER_FACING] self.register(("logs",), "logs [name] [-n N]", "Show recent Hermes logs.", _logs)
+  L  575 [USER_FACING] confirmation="Update Hermes configuration?",
+  L  606 [DOCSTRING] """Register non-admin CLI commands that are safe for Hermes Console."""
+  L  606 [USER_FACING] """Register non-admin CLI commands that are safe for Hermes Console."""
+  L  875 [USER_FACING] confirmation="Update Hermes configuration with missing defaults?",
+  L 1122 [USER_FACING] handler: Callable[["HermesConsoleEngine", list[str]], str],
+  L 1170 [USER_FACING] raise ConsoleCommandError(f"Unsupported Hermes Console command: {probe}.{suffix}")
+  L 1175 [USER_FACING] return f"{first} is not available in Hermes Console."
+  L 1201 [USER_FACING] return f"`hermes {first}` is not available in Hermes Console."
+  L 1203 [USER_FACING] ("config", "edit"): "`config edit` opens an editor and is not available in Hermes Console.",
+  L 1204 [USER_FACING] ("mcp", "serve"): "`mcp serve` starts a server and is not available in Hermes Console.",
+  L 1205 [USER_FACING] ("profile", "alias"): "`profile alias` creates shell wrappers and is not available in Hermes Console.",
+  L 1206 [USER_FACING] ("skills", "config"): "`skills config` is interactive and is not available in Hermes Console.",
+  L 1207 [USER_FACING] ("skills", "publish"): "`skills publish` is not available in Hermes Console.",
+  L 1208 [USER_FACING] ("portal", "login"): "`portal login` is interactive and is not available in Hermes Console.",
+  L 1209 [USER_FACING] ("portal", "open"): "`portal open` opens a browser and is not available in Hermes Console.",
+  L 1210 [USER_FACING] ("kanban", "tail"): "`kanban tail` streams output and is not available in Hermes Console.",
+  L 1211 [USER_FACING] ("kanban", "watch"): "`kanban watch` streams output and is not available in Hermes Console.",
+  L 1212 [USER_FACING] ("kanban", "daemon"): "`kanban daemon` starts a service and is not available in Hermes Console.",
+  L 1213 [USER_FACING] ("kanban", "dispatcher"): "`kanban dispatcher` starts a worker and is not available in Hermes Console.",
+  L 1214 [USER_FACING] ("kanban", "swarm"): "`kanban swarm` starts agent work and is not available in Hermes Console.",
+  L 1215 [USER_FACING] ("kanban", "decompose"): "`kanban decompose` starts agent work and is not available in Hermes Console.",
+  L 1216 [USER_FACING] ("kanban", "specify"): "`kanban specify` starts agent work and is not available in Hermes Console.",
+  L 1217 [USER_FACING] ("kanban", "gc"): "`kanban gc` is not available in Hermes Console.",
+  L 1224 [USER_FACING] return "`sessions delete` and `sessions prune` are not available in Hermes Console."
+  L 1258 [USER_FACING] raise ConsoleCommandError("auth add --type api-key requires --api-key in Hermes Console.")
+  L 1294 [USER_FACING] raise ConsoleCommandError("`logs -f` is not available in Hermes Console.")
+  L 1606 [USER_FACING] print("Hermes Console. Type `help` for commands, `exit` to quit.", file=stdout)
+
+=== hermes_cli/copilot_auth.py (3 chaînes) ===
+  L  214 [USER_FACING] "User-Agent": "HermesAgent/1.0",
+  L  260 [USER_FACING] "User-Agent": "HermesAgent/1.0",
+  L  685 [USER_FACING] "User-Agent": "HermesAgent/1.0",
+
+=== hermes_cli/debug.py (6 chaînes) ===
+  L  250 [USER_FACING] headers={"User-Agent": "hermes-agent/debug-share"},
+  L  283 [USER_FACING] "User-Agent": "hermes-agent/debug-share",
+  L  298 [USER_FACING] boundary = "----HermesDebugBoundary9f3c"
+  L  319 [USER_FACING] "User-Agent": "hermes-agent/debug-share",
+  L  382 [USER_FACING] "written by Hermes Desktop on the machine running the app, not by this "
+  L  912 [USER_FACING] print("\nShare these links with the Hermes team for support.")
+
+=== hermes_cli/default_soul.py (5 chaînes) ===
+  L    4 [USER_FACING] "You are Hermes Agent, an intelligent AI assistant created by Nous Research. "
+  L   25 [USER_FACING] "# Hermes Agent Persona\n"
+  L   30 [USER_FACING] "Edit this to customize how Hermes communicates with you.\n"
+  L   45 [USER_FACING] "# Hermes Agent Persona\n"
+  L   50 [USER_FACING] "Edit this to customize how Hermes communicates with you.\n"
+
+=== hermes_cli/dep_ensure.py (1 chaînes) ===
+  L  149 [USER_FACING] "-HermesHome", str(get_indagis_home()),
+
+=== hermes_cli/diagnostics_upload.py (1 chaînes) ===
+  L   39 [USER_FACING] _USER_AGENT = "hermes-agent/debug-share"
+
+=== hermes_cli/doctor.py (8 chaînes) ===
+  L   91 [USER_FACING] action = f"run `{command}`, then recreate all Hermes containers"
+  L  754 [USER_FACING] print(color("│                 🩺 Hermes Doctor                        │", Colors.CYAN))
+  L 1464 [USER_FACING] check_warn(f"{_DHH}/SOUL.md not found", "(create it to give Hermes a custom personality)")
+  L 1468 [USER_FACING] "# Hermes Agent Persona\n\n"
+  L 1469 [USER_FACING] "<!-- Edit this file to customize how Hermes communicates. -->\n\n"
+  L 1470 [USER_FACING] "You are Hermes, a helpful AI assistant.\n",
+  L 1856 [USER_FACING] "(pip install 'hermes-agent[vercel]')",
+  L 1857 [USER_FACING] "Install the Vercel optional dependency: pip install 'hermes-agent[vercel]'",
+
+=== hermes_cli/env_loader.py (2 chaînes) ===
+  L    1 [DOCSTRING] """Helpers for loading Hermes .env files consistently across entrypoints."""
+  L    1 [USER_FACING] """Helpers for loading Hermes .env files consistently across entrypoints."""
+
+=== hermes_cli/fallback_cmd.py (1 chaînes) ===
+  L  131 [USER_FACING] print("  Docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/fallback-providers")
+
+=== hermes_cli/gateway.py (21 chaînes) ===
+  L  636 [DOCSTRING] """Return running gateway PIDs mapped to Hermes profiles via PID files."""
+  L  636 [USER_FACING] """Return running gateway PIDs mapped to Hermes profiles via PID files."""
+  L 1751 [USER_FACING] SERVICE_DESCRIPTION = "Hermes Agent Gateway - Messaging Platform Integration"
+  L 2160 [DOCSTRING] """Return True when any legacy Hermes gateway unit files exist."""
+  L 2160 [USER_FACING] """Return True when any legacy Hermes gateway unit files exist."""
+  L 2173 [USER_FACING] print_warning("Legacy Hermes gateway unit(s) detected from an older install:")
+  L 2205 [USER_FACING] print("No legacy Hermes gateway units found.")
+  L 2212 [USER_FACING] print("Legacy Hermes gateway unit(s) found:")
+  L 3159 [USER_FACING] f"↻ Updated gateway {_service_scope_label(system)} service definition to match the current Hermes install"
+  L 4330 [USER_FACING] "↻ Updated gateway launchd service definition to match the current Hermes install"
+  L 4648 [USER_FACING] print("✓ Service definition matches the current Hermes install")
+  L 4650 [USER_FACING] print("⚠ Service definition is stale relative to the current Hermes install")
+  L 4901 [USER_FACING] "Refusing to run the Hermes gateway as root inside the official Docker image."
+  L 4906 [USER_FACING] "/opt/hermes/docker/entrypoint.sh before the Hermes command."
+  L 4993 [USER_FACING] print("│           ⚕ Hermes Gateway Starting...                 │")
+  L 5226 [USER_FACING] "help": "Channel ID where Hermes delivers cron results and notifications.",
+  L 5265 [USER_FACING] "5. Hermes connects via the BlueBubbles REST API and receives",
+  L 5346 [USER_FACING] "4. Enter them below and Hermes will connect automatically over WebSocket",
+  L 5856 [USER_FACING] print_info("  1. Hermes will open Tencent iLink QR login in this terminal.")
+  L 5859 [USER_FACING] "  3. Hermes will store the returned account_id/token in ~/.hermes/.env."
+  L 6178 [USER_FACING] print_info('    signal-cli link -n "HermesAgent"')
+
+=== hermes_cli/gateway_windows.py (7 chaînes) ===
+  L   58 [USER_FACING] _TASK_NAME_DEFAULT = "Hermes_Gateway"
+  L   59 [USER_FACING] _TASK_DESCRIPTION = "Hermes Agent Gateway - Messaging Platform Integration"
+  L  201 [DOCSTRING] """Return CLI args that preserve the current Hermes profile."""
+  L  201 [USER_FACING] """Return CLI args that preserve the current Hermes profile."""
+  L 1082 [USER_FACING] print("✓ Launched elevated Hermes gateway install prompt.")
+  L 1123 [USER_FACING] print("✓ Launched elevated Hermes gateway install prompt.")
+  L 1226 [USER_FACING] print("✓ Launched elevated Hermes gateway uninstall prompt.")
+
+=== hermes_cli/gui_uninstall.py (12 chaînes) ===
+  L   25 [DOCSTRING] the app name ("Hermes"), separate from ``$INDAGIS_HOME``:
+  L   67 [USER_FACING] return hermes_home / "hermes-agent"
+  L   73 [DOCSTRING] Mirrors Electron's ``app.getPath('userData')`` for an app named "Hermes"
+  L   79 [USER_FACING] return home / "Library" / "Application Support" / "Hermes"
+  L   83 [USER_FACING] return base / "Hermes"
+  L   87 [USER_FACING] return base / "Hermes"
+  L  116 [DOCSTRING] electron-builder output locations for the "Hermes" product.
+  L  122 [USER_FACING] Path("/Applications/Hermes.app"),
+  L  123 [USER_FACING] home / "Applications" / "Hermes.app",
+  L  130 [USER_FACING] local_base / "Programs" / "Hermes",
+  L  137 [USER_FACING] paths.append(Path(program_files) / "Hermes")
+  L  154 [USER_FACING] data_base / "applications" / "Hermes.desktop",
+
+=== hermes_cli/hooks.py (1 chaînes) ===
+  L  311 [USER_FACING] print(f"      parsed (Hermes wire shape): {json.dumps(parsed)}")
+
+=== hermes_cli/init_command.py (1 chaînes) ===
+  L   82 [USER_FACING] "AGENTS.md is the instruction file coding agents (Hermes included) "
+
+=== hermes_cli/journey.py (1 chaînes) ===
+  L  201 [USER_FACING] "[grey62]No learning yet — use Hermes a while and your learned skills and "
+
+=== hermes_cli/kanban.py (2 chaînes) ===
+  L  225 [USER_FACING] "Durable SQLite-backed task board shared across Hermes profiles. "
+  L  228 [USER_FACING] "See https://hermes-agent.nousresearch.com/docs/user-guide/features/kanban "
+
+=== hermes_cli/kanban_db.py (5 chaînes) ===
+  L 8759 [DOCSTRING] """Return the interpreter-bound Hermes CLI invocation."""
+  L 8759 [USER_FACING] """Return the interpreter-bound Hermes CLI invocation."""
+  L 8767 [DOCSTRING] """Return an absolute filesystem path for a resolved Hermes shim."""
+  L 8767 [USER_FACING] """Return an absolute filesystem path for a resolved Hermes shim."""
+  L 9169 [USER_FACING] "Install Hermes Agent or activate its venv before running the kanban dispatcher."
+
+=== hermes_cli/lifecycle.py (2 chaînes) ===
+  L    1 [DOCSTRING] """Hermes lifecycle dispatch for first-party observers and plugins."""
+  L    1 [USER_FACING] """Hermes lifecycle dispatch for first-party observers and plugins."""
+
+=== hermes_cli/linux_desktop_entry.py (4 chaînes) ===
+  L   93 [USER_FACING] "Name=Hermes\n"
+  L   94 [USER_FACING] "GenericName=Hermes Desktop\n"
+  L   95 [USER_FACING] "Comment=Launch Hermes Desktop\n"
+  L  101 [USER_FACING] "StartupWMClass=Hermes\n"
+
+=== hermes_cli/logs.py (1 chaînes) ===
+  L  182 [USER_FACING] print("(Logs are created when Hermes runs — try 'hermes chat' first)")
+
+=== hermes_cli/main.py (55 chaînes) ===
+  L 1923 [USER_FACING] "Error: the TUI workspace is missing from this Hermes checkout.\n"
+  L 1927 [USER_FACING] "  1. From the Hermes checkout, run `git restore -- ui-tui`\n"
+  L 2616 [USER_FACING] "It looks like Hermes isn't configured yet -- no API keys or providers found."
+  L 2775 [USER_FACING] print("How will you use WhatsApp with Hermes?")
+  L 2979 [USER_FACING] print("  Tip: Agent responses are prefixed with '⚕ Hermes Agent'")
+  L 2986 [USER_FACING] print("  Tip: Agent responses are prefixed with '⚕ Hermes Agent'")
+  L 3681 [USER_FACING] print("  Hermes only falls back to a lightweight backend (OpenRouter,")
+  L 3978 [USER_FACING] "Use Hermes URL heuristics; best for standard OpenAI-compatible endpoints.",
+  L 4483 [USER_FACING] f"    Hermes will use Claude's credential store directly instead of copying a setup-token into {_dhh_fn()}/.env."
+  L 4554 [DOCSTRING] """Authenticate Hermes CLI with a provider."""
+  L 4554 [USER_FACING] """Authenticate Hermes CLI with a provider."""
+  L 4904 [DOCSTRING] """Back up Hermes home directory to a zip file."""
+  L 4904 [USER_FACING] """Back up Hermes home directory to a zip file."""
+  L 4916 [DOCSTRING] """Restore a Hermes backup from a zip file."""
+  L 4916 [USER_FACING] """Restore a Hermes backup from a zip file."""
+  L 4975 [DOCSTRING] """Uninstall Hermes Agent (or just the Chat GUI with --gui)."""
+  L 4975 [USER_FACING] """Uninstall Hermes Agent (or just the Chat GUI with --gui)."""
+  L 5941 [USER_FACING] candidates = list(release_dir.glob("mac*/Hermes.app/Contents/MacOS/Hermes"))
+  L 5944 [USER_FACING] release_dir / "win-unpacked" / "Hermes.exe",
+  L 5945 [USER_FACING] release_dir / "win-ia32-unpacked" / "Hermes.exe",
+  L 5946 [USER_FACING] release_dir / "win-arm64-unpacked" / "Hermes.exe",
+  L 5951 [USER_FACING] release_dir / "linux-unpacked" / "Hermes",
+  L 5953 [USER_FACING] release_dir / "linux-arm64-unpacked" / "Hermes",
+  L 6284 [USER_FACING] print(f"✗ The built Hermes.exe failed its integrity check: {error}")
+  L 6298 [USER_FACING] print("  ↩ Update aborted — restored the previous working Hermes.exe from backup.")
+  L 6304 [USER_FACING] print("    Run `hermes desktop --force-build` to rebuild, or re-run the Hermes")
+  L 6351 [DOCSTRING] '…/linux-unpacked/Hermes'`` desktop build failure: a corrupt zip in the
+  L 6528 [DOCSTRING] an unrelated "Hermes" process is never touched. Best-effort: never raises.
+  L 6778 [DOCSTRING] "Hermes is damaged and can't be opened" — and macOS TCC forgets every
+  L 6914 [USER_FACING] print(f"✗ Hermes Desktop is missing Electron's Linux sandbox helper: {sandbox}")
+  L 6934 [USER_FACING] print("✗ Hermes Desktop requires sudo to configure Electron's Linux sandbox helper.")
+  L 7172 [USER_FACING] print("  If this says \"Access is denied\" on Hermes.exe, close any")
+  L 7173 [USER_FACING] print("  running Hermes desktop window and retry.")
+  L 7229 [USER_FACING] print("→ Launching Hermes Desktop from source build...")
+  L 7247 [USER_FACING] print(f"→ Launching packaged Hermes Desktop: {' '.join(launch_command)}")
+  L 7908 [USER_FACING] "  Hermes is still running from the launcher that needs "
+  L 7909 [USER_FACING] "replacing. Close other Hermes windows, restart from a "
+  L 8039 [USER_FACING] names = set(_load_console_script_names()) or {"hermes", "hermes-agent", "hermes-acp"}
+  L 8142 [USER_FACING] "    Close Hermes Desktop, exit other `hermes` REPLs, stop the "
+  L 9112 [USER_FACING] managed_error("update Hermes Agent")
+  L 9816 [USER_FACING] print(f"Requires:     Hermes {data['hermes_requires']}")
+  L 9845 [USER_FACING] print(f"  Requires: Hermes {mf.hermes_requires}")
+  L10015 [USER_FACING] "  Docs: https://hermes-agent.nousresearch.com/docs/"
+  L10552 [DOCSTRING] """View and filter Hermes log files."""
+  L10552 [USER_FACING] """View and filter Hermes log files."""
+  L10573 [DOCSTRING] """Open the safe Hermes command console."""
+  L10573 [USER_FACING] """Open the safe Hermes command console."""
+  L11048 [DOCSTRING] """Launch Hermes Agent as an ACP server."""
+  L11048 [USER_FACING] """Launch Hermes Agent as an ACP server."""
+  L11137 [USER_FACING] f"(optional extra: hermes-agent[otlp])")
+  L11268 [USER_FACING] "https://hermes-agent.nousresearch.com/docs/user-guide/features/fallback-providers"
+  L11302 [USER_FACING] "https://hermes-agent.nousresearch.com/docs/user-guide/secrets/"
+  L11352 [USER_FACING] "https://hermes-agent.nousresearch.com/docs/user-guide/egress/iron-proxy"
+  L11709 [USER_FACING] "and Hermes shows it reacting to agent activity across the CLI, "
+  L11834 [USER_FACING] "terminal or the Hermes app. `status` reports the driver's grant\n"
+
+=== hermes_cli/managed_uv.py (6 chaînes) ===
+  L   89 [DOCSTRING] """Return a sanitized environment for Hermes-private uv Python commands."""
+  L   89 [USER_FACING] """Return a sanitized environment for Hermes-private uv Python commands."""
+  L  147 [USER_FACING] "    Sessions stay protected meanwhile: Hermes keeps databases "
+  L  587 [USER_FACING] logger.warning("uv resolved Python outside the Hermes generation: %s", python)
+  L  957 [USER_FACING] return True, f"other Hermes processes still hold the venv (PID {pids})"
+  L 1156 [USER_FACING] "  ⚠ Hermes venv links SQLite "
+
+=== hermes_cli/mcp_catalog.py (4 chaînes) ===
+  L  138 [DOCSTRING] """Return the optional-mcps/ directory shipped with this Hermes install."""
+  L  138 [USER_FACING] """Return the optional-mcps/ directory shipped with this Hermes install."""
+  L  174 [USER_FACING] f"(this Hermes understands version {_MANIFEST_VERSION})"
+  L  800 [USER_FACING] f"Start a new Hermes session to load its tools.",
+
+=== hermes_cli/mcp_picker.py (2 chaînes) ===
+  L  125 [USER_FACING] "Start a new Hermes session for changes to take effect.",
+  L  261 [USER_FACING] f"  ⚠ '{name}' requires a newer Hermes — run `hermes update` "
+
+=== hermes_cli/mem_trim.py (2 chaînes) ===
+  L   34 [DOCSTRING] """Return fail-open settings from the normal Hermes config path."""
+  L   34 [USER_FACING] """Return fail-open settings from the normal Hermes config path."""
+
+=== hermes_cli/model_catalog.py (2 chaînes) ===
+  L   66 [USER_FACING] "https://hermes-agent.nousresearch.com/docs/api/model-catalog.json"
+  L   75 [USER_FACING] "https://raw.githubusercontent.com/NousResearch/hermes-agent/main/website/static/api/model-catalog.json",
+
+=== hermes_cli/model_cost_guard.py (3 chaînes) ===
+  L   20 [DOCSTRING] """Confirmation payload for models above Hermes' cost guardrail."""
+  L   20 [USER_FACING] """Confirmation payload for models above Hermes' cost guardrail."""
+  L  113 [USER_FACING] f"{model} has known pricing above Hermes' safety threshold.",
+
+=== hermes_cli/model_normalize.py (2 chaînes) ===
+  L  244 [DOCSTRING] """Resolve provider aliases to Hermes' canonical ids."""
+  L  244 [USER_FACING] """Resolve provider aliases to Hermes' canonical ids."""
+
+=== hermes_cli/model_setup_flows.py (8 chaînes) ===
+  L  987 [USER_FACING] f"Hermes will still save it."
+  L 1200 [USER_FACING] print("Anthropic-style API endpoints.  Hermes will probe your")
+  L 1288 [USER_FACING] "  Hermes will install it now (the preflight below "
+  L 1925 [USER_FACING] print("  GitHub Copilot ACP delegates Hermes turns to `copilot --acp`.")
+  L 1926 [USER_FACING] print("  Hermes currently starts its own ACP subprocess for each request.")
+  L 1927 [USER_FACING] print("  Hermes uses your selected model as a hint for the Copilot ACP session.")
+  L 2751 [USER_FACING] "   Hermes typically makes 3-10 API calls per user turn "
+  L 2761 [USER_FACING] "   To use Gemini with Hermes, enable billing on your "
+
+=== hermes_cli/model_switch.py (4 chaînes) ===
+  L  207 [USER_FACING] "Nous Research Hermes 3 & 4 models are NOT agentic and are not designed "
+  L  208 [USER_FACING] "for use with Hermes Agent. They lack the tool-calling capabilities "
+  L  286 [DOCSTRING] """Return a warning string if *model_name* is a Nous Hermes 3/4 chat model."""
+  L  286 [USER_FACING] """Return a warning string if *model_name* is a Nous Hermes 3/4 chat model."""
+
+=== hermes_cli/models.py (9 chaînes) ===
+  L  180 [DOCSTRING] """Append Hermes-curated xAI models that are missing from models.dev."""
+  L  180 [USER_FACING] """Append Hermes-curated xAI models that are missing from models.dev."""
+  L 2538 [DOCSTRING] """Normalize provider aliases to Hermes' canonical provider ids.
+  L 2606 [DOCSTRING] """Return whether Hermes should expose the /fast toggle for this model."""
+  L 2606 [USER_FACING] """Return whether Hermes should expose the /fast toggle for this model."""
+  L 3437 [USER_FACING] "User-Agent": "HermesAgent/1.0",
+  L 4333 [USER_FACING] headers["X-Goog-Api-Client"] = f"hermes-agent/{_HERMES_VERSION}"
+  L 4930 [USER_FACING] f"Hermes will still save `{requested}`, but the endpoint should expose `/models` for verification."
+  L 5058 [USER_FACING] "\n  MiniMax does not expose a /models endpoint, so Hermes cannot verify the model name."
+
+=== hermes_cli/nous_account.py (5 chaînes) ===
+  L  208 [USER_FACING] f"Hermes could not verify your Nous Portal entitlement, so {capability} "
+  L  216 [USER_FACING] f"Nous inference credentials are configured, but Hermes cannot verify "
+  L  228 [USER_FACING] f"Hermes could not verify your Nous Portal paid access, so {capability} "
+  L  242 [USER_FACING] f"Hermes could not find a Nous Portal account or organisation for this "
+  L  250 [USER_FACING] message += " If you recently bought credits, run `hermes model` to refresh Hermes."
+
+=== hermes_cli/npm_engine.py (3 chaînes) ===
+  L  184 [USER_FACING] f"→ Upgrading Hermes-managed npm to satisfy {npm_range}…",
+  L  252 [USER_FACING] "  Hermes could not provision its own Node.js runtime and never\n"
+  L  272 [USER_FACING] "→ Provisioning a Hermes-managed Node.js runtime "
+
+=== hermes_cli/onepassword_secrets_cli.py (4 chaînes) ===
+  L  122 [USER_FACING] "Hermes resolves [cyan]op://vault/item/field[/cyan] references through your\n"
+  L  247 [USER_FACING] "Hermes will warn and skip 1Password on next startup.[/yellow]"
+  L  354 [USER_FACING] "Takes effect on the next Hermes invocation."
+  L  467 [USER_FACING] "next Hermes invocation.\n"
+
+=== hermes_cli/plugins.py (1 chaînes) ===
+  L  393 [DOCSTRING] """Return the active Hermes profile name (e.g. ``"default"``).
+
+=== hermes_cli/plugins_cmd.py (2 chaînes) ===
+  L  525 [USER_FACING] f"Run {recommended_update_command()} to update Hermes.",
+  L  598 [USER_FACING] f"or __init__.py. It may not be a valid Hermes plugin.",
+
+=== hermes_cli/portal_cli.py (1 chaînes) ===
+  L   31 [USER_FACING] DOCS_URL = "https://hermes-agent.nousresearch.com/docs/user-guide/features/tool-gateway"
+
+=== hermes_cli/profile_describer.py (1 chaînes) ===
+  L   73 [DOCSTRING] - Never write "Hermes Agent profile" or other meta-narration.
+
+=== hermes_cli/profile_distribution.py (5 chaînes) ===
+  L  117 [USER_FACING] "hermes-agent", ".worktrees", "profiles", "bin", "node_modules",
+  L  341 [USER_FACING] f"This distribution requires Hermes {op}{target}, "
+  L  354 [USER_FACING] "# Environment variables required by this Hermes distribution.",
+  L  433 [USER_FACING] "This repository is not a Hermes profile distribution."
+  L  524 [USER_FACING] "this source is not a Hermes distribution."
+
+=== hermes_cli/profiles.py (5 chaînes) ===
+  L   97 [USER_FACING] "hermes-agent",
+  L  205 [USER_FACING] "hermes-agent",         # repo checkout (multi-GB)
+  L  349 [USER_FACING] f"the Hermes installation itself or a common system binary.  "
+  L 1127 [USER_FACING] "# Per-profile secrets for this Hermes profile.\n"
+  L 1274 [USER_FACING] "# Per-profile secrets for this Hermes profile.\n"
+
+=== hermes_cli/projects_cmd.py (1 chaînes) ===
+  L   39 [USER_FACING] p_create.add_argument("name", help="Human name, e.g. 'Hermes Agent'")
+
+=== hermes_cli/prompt_stash.py (2 chaînes) ===
+  L   63 [DOCSTRING] """Render in the shape ``HermesCLI._render_stash_panel`` consumes."""
+  L   63 [USER_FACING] """Render in the shape ``HermesCLI._render_stash_panel`` consumes."""
+
+=== hermes_cli/providers.py (2 chaînes) ===
+  L   36 [DOCSTRING] """Hermes-specific provider metadata layered on top of models.dev."""
+  L   36 [USER_FACING] """Hermes-specific provider metadata layered on top of models.dev."""
+
+=== hermes_cli/proxy_cli.py (1 chaînes) ===
+  L  280 [USER_FACING] "tokens in every running Hermes sandbox.  They will start "
+
+=== hermes_cli/pty_bridge.py (1 chaînes) ===
+  L  132 [USER_FACING] "Hermes Agent supports Windows only via WSL."
+
+=== hermes_cli/relaunch.py (1 chaînes) ===
+  L  198 [USER_FACING] f"\nHermes relaunch failed: {exc}\n"
+
+=== hermes_cli/secrets_cli.py (4 chaînes) ===
+  L  300 [USER_FACING] "Secrets will be pulled at the start of every Hermes process."
+  L  359 [USER_FACING] f"\n  [yellow]Enabled but {token_env} is not set — Hermes will skip BSM "
+  L  439 [USER_FACING] "Takes effect on the next Hermes invocation."
+  L  533 [USER_FACING] "Hermes invocation.\n"
+
+=== hermes_cli/security_audit_startup.py (1 chaînes) ===
+  L   55 [USER_FACING] "full host compromise. Run Hermes as an unprivileged user (or in a "
+
+=== hermes_cli/send_cmd.py (1 chaînes) ===
+  L  397 [USER_FACING] "Pipe text from any shell script to any messaging platform Hermes "
+
+=== hermes_cli/session_export.py (1 chaînes) ===
+  L  171 [USER_FACING] lines.append("# Hermes sessions export")
+
+=== hermes_cli/session_export_html.py (2 chaînes) ===
+  L  812 [USER_FACING] title = s.get("title") or "Hermes Session"
+  L  859 [USER_FACING] page_title="Hermes Session Export" if is_multi else _escape_html(sessions[0].get("title", "Hermes Session")),
+
+=== hermes_cli/session_recovery.py (1 chaînes) ===
+  L  337 [USER_FACING] "Stop every Hermes process using this profile and retry."
+
+=== hermes_cli/setup.py (31 chaînes) ===
+  L   33 [USER_FACING] _DOCS_BASE = "https://hermes-agent.nousresearch.com/docs"
+  L  186 [USER_FACING] print(color("⚕ Hermes Setup — Non-interactive mode", Colors.CYAN, Colors.BOLD))
+  L  192 [USER_FACING] print_info("Configure Hermes using environment variables or config commands:")
+  L  412 [USER_FACING] print_warning("No inference provider is configured — Hermes cannot chat yet.")
+  L 1327 [USER_FACING] print_info("Choose where Hermes runs shell commands and code.")
+  L 1558 [USER_FACING] print_info("Requires the optional SDK: pip install 'hermes-agent[vercel]'")
+  L 1589 [USER_FACING] print_warning("Install failed — run manually: pip install 'hermes-agent[vercel]'")
+  L 2007 [USER_FACING] print_info("📬 Home Channel: where Hermes delivers cron job results,")
+  L 2045 [USER_FACING] print_info("Connects Hermes to iMessage via BlueBubbles — a free, open-source")
+  L 2121 [USER_FACING] print_info("   Full guide: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/webhooks/")
+  L 2148 [USER_FACING] print_info("   https://hermes-agent.nousresearch.com/docs/user-guide/messaging/webhooks/#configuring-routes")
+  L 2159 [USER_FACING] print_info("Connect to messaging platforms to chat with Hermes from anywhere.")
+  L 2418 [USER_FACING] print_info("Packages stay under this Hermes profile and are not uploaded.")
+  L 2629 [USER_FACING] "gateway": "⚠ Gateway/messaging — this will configure Hermes to use your OpenClaw messaging channels",
+  L 2630 [USER_FACING] "telegram": "⚠ Telegram — this will point Hermes at your OpenClaw Telegram bot",
+  L 2631 [USER_FACING] "slack": "⚠ Slack — this will point Hermes at your OpenClaw Slack workspace",
+  L 2632 [USER_FACING] "discord": "⚠ Discord — this will point Hermes at your OpenClaw Discord bot",
+  L 2633 [USER_FACING] "whatsapp": "⚠ WhatsApp — this will point Hermes at your OpenClaw WhatsApp connection",
+  L 2634 [USER_FACING] "config": "⚠ Config values — OpenClaw settings may not map 1:1 to Hermes equivalents",
+  L 2678 [USER_FACING] print(color("  Would overwrite (conflicts with existing Hermes config):", Colors.YELLOW))
+  L 2699 [USER_FACING] print(color("  Note: OpenClaw config values may have different semantics in Hermes.", Colors.YELLOW))
+  L 2700 [USER_FACING] print(color("  For example, OpenClaw's tool_call_execution: \"auto\" ≠ Hermes's yolo mode.", Colors.YELLOW))
+  L 2723 [USER_FACING] print_info("Hermes can preview what would be imported before making any changes.")
+  L 2824 [USER_FACING] print_info(f"Skipped {conflicts} item(s) that already exist in Hermes (use hermes claw migrate --overwrite to force).")
+  L 2879 [USER_FACING] print(color("│     ⚕ Hermes Setup — Nous Portal (one-shot)             │", Colors.MAGENTA))
+  L 3010 [USER_FACING] print(color(f"│     ⚕ Hermes Setup — {label:<34s} │", Colors.MAGENTA))
+  L 3046 [USER_FACING] "│             ⚕ Hermes Agent Setup Wizard                │", Colors.MAGENTA
+  L 3057 [USER_FACING] "│  Let's configure your Hermes Agent installation.       │", Colors.MAGENTA
+  L 3086 [USER_FACING] print_success("You already have Hermes configured.")
+  L 3111 [USER_FACING] "How would you like to set up Hermes?",
+  L 3575 [USER_FACING] print_info("Connect Hermes to messaging apps to chat from anywhere.")
+
+=== hermes_cli/setup_whatsapp_cloud.py (4 chaînes) ===
+  L  244 [USER_FACING] print("This wizard configures Hermes to talk to WhatsApp via Meta's")
+  L  468 [USER_FACING] print("  Hermes needs a public HTTPS URL to receive WhatsApp messages.")
+  L  484 [USER_FACING] print("    3. Start the Hermes gateway in another terminal:")
+  L  538 [USER_FACING] print("  Docs: https://hermes-agent.nousresearch.com/docs/user-guide/")
+
+=== hermes_cli/skills_hub.py (5 chaînes) ===
+  L  431 [USER_FACING] c.print(f"[bright_cyan]★ {official_count} official optional skill(s) from Nous Research[/]")
+  L  702 [USER_FACING] "[bold bright_cyan]This is an official optional skill maintained by Nous Research.[/]\n\n"
+  L  703 [USER_FACING] "It ships with hermes-agent but is not activated by default.\n"
+  L 1619 [USER_FACING] "body": f"Submitting the `{skill_name}` skill via Hermes Skills Hub.\n\n"
+  L 1620 [USER_FACING] f"This skill was scanned by the Hermes Skills Guard before submission.",
+
+=== hermes_cli/skin_engine.py (19 chaînes) ===
+  L   97 [DOCSTRING] agent_name: "Hermes Agent"          # Banner title, status display
+  L  100 [DOCSTRING] response_label: " ⚕ Hermes "       # Response box header label
+  L  122 [DOCSTRING] print(skin.get_branding("agent_name"))  # "Hermes Agent"
+  L  204 [USER_FACING] "description": "Classic Hermes — gold and kawaii",
+  L  277 [USER_FACING] "agent_name": "Hermes Agent",
+  L  278 [USER_FACING] "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
+  L  280 [USER_FACING] "response_label": " ⚕ Hermes ",
+  L  398 [USER_FACING] "agent_name": "Hermes Agent",
+  L  399 [USER_FACING] "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
+  L  401 [USER_FACING] "response_label": " ⚕ Hermes ",
+  L  442 [USER_FACING] "agent_name": "Hermes Agent",
+  L  443 [USER_FACING] "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
+  L  445 [USER_FACING] "response_label": " ⚕ Hermes ",
+  L  488 [USER_FACING] "agent_name": "Hermes Agent",
+  L  489 [USER_FACING] "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
+  L  491 [USER_FACING] "response_label": " ⚕ Hermes ",
+  L  534 [USER_FACING] "agent_name": "Hermes Agent",
+  L  535 [USER_FACING] "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
+  L  537 [USER_FACING] "response_label": " \u2695 Hermes ",
+
+=== hermes_cli/slack_cli.py (7 chaînes) ===
+  L  110 [USER_FACING] "assistant_description": "Chat with Hermes in threads and DMs.",
+  L  121 [USER_FACING] "agent_description": "Chat with Hermes in Slack Messages.",
+  L  134 [USER_FACING] "description": (bot_description or "Your Hermes agent on Slack")[:140],
+  L  172 [DOCSTRING] --name NAME     Override the bot display name (default: "Hermes")
+  L  186 [USER_FACING] name = getattr(args, "name", None) or "Hermes"
+  L  187 [USER_FACING] description = getattr(args, "description", None) or "Your Hermes agent on Slack"
+  L  269 [USER_FACING] "  1. Open https://api.slack.com/apps and pick your Hermes app\n"
+
+=== hermes_cli/status.py (4 chaînes) ===
+  L  116 [DOCSTRING] """Show status of all Hermes Agent components."""
+  L  116 [USER_FACING] """Show status of all Hermes Agent components."""
+  L  121 [USER_FACING] print(color("│                 ⚕ Hermes Agent Status                  │", Colors.CYAN))
+  L  451 [USER_FACING] sdk_label = "installed" if sdk_ok else "missing (install: pip install 'hermes-agent[vercel]')"
+
+=== hermes_cli/stdio.py (3 chaînes) ===
+  L  170 [DOCSTRING] The prompt_toolkit buffer's ``open_in_editor`` and Hermes's
+  L  196 [DOCSTRING] """Prepend well-known Hermes-managed tool directories to os.environ['PATH'].
+  L  235 [USER_FACING] os.path.join(local_appdata, "hermes", "hermes-agent", "venv", "Scripts"),
+
+=== hermes_cli/telegram_managed_bot.py (5 chaînes) ===
+  L   23 [USER_FACING] DEFAULT_API_URL = "https://setup.hermes-agent.nousresearch.com"
+  L   28 [USER_FACING] DEFAULT_MANAGER_BOT = "HermesSetupBot"
+  L   30 [USER_FACING] DEFAULT_BOT_NAME = "Hermes Agent"
+  L  289 [USER_FACING] print(f"  Contacting Hermes Telegram onboarding service: {resolved_api_url}")
+  L  293 [USER_FACING] print("  ✗ Could not reach the Hermes Telegram onboarding service.")
+
+=== hermes_cli/tips.py (19 chaînes) ===
+  L   59 [USER_FACING] "Ctrl+Z suspends Hermes to the background — run fg in your shell to resume.",
+  L   92 [USER_FACING] "hermes mcp serve runs Hermes itself as an MCP server for other agents.",
+  L   96 [USER_FACING] "hermes backup creates a zip backup of your entire Hermes home directory.",
+  L  100 [USER_FACING] "hermes gateway install sets up Hermes as a system service (systemd/launchd).",
+  L  131 [USER_FACING] "execute_code runs Python scripts that call Hermes tools programmatically — results stay out of context.",
+  L  161 [USER_FACING] "When exiting, Hermes prints a resume command with session ID and stats.",
+  L  195 [USER_FACING] "Hermes runs on 21 messaging platforms: Telegram, Discord, Slack, WhatsApp, Signal, Matrix, IRC, Microsoft Teams, email, and more.",
+  L  198 [USER_FACING] "BlueBubbles brings iMessage to Hermes via a local macOS server.",
+  L  219 [USER_FACING] "Hermes loads project context from .hermes.md, AGENTS.md, CLAUDE.md, or .cursorrules (first match).",
+  L  262 [USER_FACING] "hermes acp runs Hermes as an ACP server for VS Code, Zed, and JetBrains integration.",
+  L  275 [USER_FACING] "SOUL.md completely replaces the agent's default identity — rewrite it to make Hermes your own.",
+  L  279 [USER_FACING] "Before a gateway session reset, Hermes auto-flushes important facts to memory in the background.",
+  L  301 [USER_FACING] "Profiles scope Hermes state via INDAGIS_HOME; host tool subprocesses keep your real HOME unless terminal.home_mode is profile.",
+  L  343 [USER_FACING] '/goal <text> sets a standing Ralph-loop objective — Hermes auto-continues turn after turn until a judge says done.',
+  L  344 [USER_FACING] '/snapshot create [label] saves a full state snapshot of Hermes config; /snapshot restore <id> reverts later.',
+  L  349 [USER_FACING] '/busy queue|steer|interrupt controls what pressing Enter does while Hermes is working.',
+  L  384 [USER_FACING] 'hermes dashboard embeds the full Hermes TUI in your browser via xterm.js and a WebSocket PTY.',
+  L  436 [USER_FACING] 'hermes import restores a full Hermes backup zip; session JSON/JSONL exports import from the dashboard Sessions page.',
+  L  465 [USER_FACING] 'security.tirith_fail_open: false makes Hermes block commands when the tirith scanner itself errors out.',
+
+=== hermes_cli/tools_config.py (8 chaînes) ===
+  L  574 [USER_FACING] "Hermes routes X searches through xAI's built-in x_search "
+  L 1603 [USER_FACING] _print_info("    Both must allow the terminal / Hermes process.")
+  L 1663 [USER_FACING] _print_warning(f"    npm install failed - run manually: cd {display_indagis_home()}/hermes-agent && npm install --workspaces=false")
+  L 1671 [USER_FACING] _print_warning("    Node.js not found - browser tools require: npm install (in hermes-agent directory)")
+  L 1708 [USER_FACING] "      docker pull ghcr.io/nousresearch/hermes-agent:latest"
+  L 1939 [USER_FACING] _print_info("    Restart Hermes for tracing to take effect.")
+  L 4885 [USER_FACING] print(color("⚕ Hermes Tool Configuration", Colors.CYAN, Colors.BOLD))
+  L 4888 [USER_FACING] print(color("  Guide: https://hermes-agent.nousresearch.com/docs/user-guide/features/tools", Colors.DIM))
+
+=== hermes_cli/uninstall.py (28 chaînes) ===
+  L   54 [DOCSTRING] """Remove Hermes PATH entries from shell configuration files."""
+  L   54 [USER_FACING] """Remove Hermes PATH entries from shell configuration files."""
+  L   69 [USER_FACING] if '# Hermes Agent' in line or '# hermes-agent' in line:
+  L  117 [USER_FACING] Path.home() / ".local" / "bin" / "hermes-agent",
+  L  120 [USER_FACING] Path("/usr/local/bin/hermes-agent"),
+  L  129 [USER_FACING] if 'hermes_cli' in content or 'hermes-agent' in content:
+  L  340 [DOCSTRING] """Path-entry substrings that identify Hermes-owned User-PATH entries."""
+  L  340 [USER_FACING] """Path-entry substrings that identify Hermes-owned User-PATH entries."""
+  L  344 [USER_FACING] markers = [root + "\\hermes-agent", root + "\\git", root + "\\node", root + "\\venv"]
+  L  532 [USER_FACING] print(color("│         ⚕ Hermes Chat GUI Uninstaller                  │", Colors.MAGENTA, Colors.BOLD))
+  L  537 [USER_FACING] print("No Hermes Chat GUI installation was found.")
+  L  541 [USER_FACING] print(color("This removes the Chat GUI only. The Hermes agent stays installed.", Colors.CYAN))
+  L  553 [USER_FACING] print(f"  • The Hermes agent at {hermes_home / 'hermes-agent'}")
+  L  579 [USER_FACING] print("The Hermes agent is still installed. Run 'hermes' to use the CLI,")
+  L  629 [USER_FACING] print(color("│            ⚕ Hermes Agent Uninstaller                  │", Colors.MAGENTA, Colors.BOLD))
+  L  699 [USER_FACING] print(color("⚠️  WARNING: This will permanently delete ALL Hermes data!", Colors.RED, Colors.BOLD))
+  L  708 [USER_FACING] print("This will remove the Hermes code but keep your configuration and data.")
+  L  739 [USER_FACING] print("  • Hermes PATH entries from shell configs / Windows User PATH")
+  L  740 [USER_FACING] print("  • Hermes wrapper scripts and Hermes-managed node/npm/npx symlinks")
+  L  744 [USER_FACING] print(f"  • Hermes config/data: {hermes_home}")
+  L  752 [USER_FACING] print(f"  • Keep Hermes config/data: {hermes_home}")
+  L  802 [USER_FACING] log_info("No Hermes-owned PATH entries in User environment")
+  L  810 [USER_FACING] log_info("No Hermes-set User env vars to remove")
+  L  824 [USER_FACING] log_info("Removing Hermes-managed node/npm/npx symlinks...")
+  L  830 [USER_FACING] log_info("No Hermes-managed node/npm/npx symlinks found")
+  L  919 [USER_FACING] print(color("  iex (irm https://hermes-agent.nousresearch.com/install.ps1)", Colors.DIM))
+  L  921 [USER_FACING] print(color("  curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash", Colors.DIM))
+  L  931 [USER_FACING] print("Thank you for using Hermes Agent! ⚕")
+
+=== hermes_cli/update_cmd.py (33 chaînes) ===
+  L  370 [USER_FACING] "  Docs:         https://hermes-agent.nousresearch.com/docs/user-guide/features/curator"
+  L  755 [USER_FACING] f"https://github.com/NousResearch/hermes-agent/archive/refs/heads/{branch}.zip"
+  L  761 [USER_FACING] zip_path = os.path.join(tmp_dir, f"hermes-agent-{branch}.zip")
+  L  792 [USER_FACING] extracted = os.path.join(tmp_dir, f"hermes-agent-{branch}")
+  L  879 [USER_FACING] "reinstall from https://hermes-agent.nousresearch.com"
+  L 1256 [USER_FACING] print("  Review the result afterward if Hermes behaves unexpectedly.")
+  L 1332 [USER_FACING] "⚠ Local changes were restored, but Hermes couldn't find the stash entry to drop."
+  L 1347 [USER_FACING] "⚠ Local changes were restored, but Hermes couldn't drop the saved stash entry."
+  L 1359 [USER_FACING] print("  Review `git diff` / `git status` if Hermes behaves unexpectedly.")
+  L 1385 [USER_FACING] "but Hermes couldn't find the stash entry to drop."
+  L 1398 [USER_FACING] "⚠ Configured to discard local changes, but Hermes couldn't drop "
+  L 1410 [USER_FACING] "https://github.com/NousResearch/hermes-agent.git",
+  L 1411 [USER_FACING] "git@github.com:NousResearch/hermes-agent.git",
+  L 1412 [USER_FACING] "https://github.com/NousResearch/hermes-agent",
+  L 1413 [USER_FACING] "git@github.com:NousResearch/hermes-agent",
+  L 1416 [USER_FACING] OFFICIAL_REPO_URL = "https://github.com/NousResearch/hermes-agent.git"
+  L 1541 [USER_FACING] print("ℹ Your fork is not tracking the official Hermes repository.")
+  L 1542 [USER_FACING] print("  This means you may miss updates from NousResearch/hermes-agent.")
+  L 1556 [USER_FACING] "  ✓ Added upstream: https://github.com/NousResearch/hermes-agent.git"
+  L 1564 [USER_FACING] "  Skipped. Run 'git remote add upstream https://github.com/NousResearch/hermes-agent.git' to add later."
+  L 1697 [USER_FACING] lines.append("  Close Hermes Desktop, exit any open `hermes` REPLs, and")
+  L 2418 [USER_FACING] "# Hermes Agent — ensure /usr/local/bin is on PATH " "(RHEL non-login shells)"
+  L 2486 [USER_FACING] "# Hermes Agent — ACP launcher (written by `hermes update`).\n"
+  L 2930 [USER_FACING] "✗ Other Hermes processes are running from this install's venv:",
+  L 2936 [USER_FACING] hint = "  ← Hermes Desktop backend (close the desktop app)"
+  L 2950 [USER_FACING] "  Close the Hermes desktop app / other Hermes terminals, then re-run:"
+  L 3156 [USER_FACING] print("→ Stopping Windows gateway process(es) before updating Hermes...")
+  L 3599 [USER_FACING] print("⚕ Updating Hermes Agent...")
+  L 3681 [USER_FACING] "  curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash"
+  L 3932 [USER_FACING] print("  Close all Hermes windows/gateways and re-run: hermes update")
+  L 3941 [USER_FACING] "  Any running Hermes gateways, Desktop backends, or other "
+  L 4201 [USER_FACING] print("    https://hermes-agent.nousresearch.com")
+  L 5397 [USER_FACING] print("⚠ Legacy Hermes gateway unit(s) detected:")
+
+=== hermes_cli/update_lock.py (3 chaînes) ===
+  L   34 [DOCSTRING] against itself on every attempt ("Hermes is still running", retry forever).
+  L   47 [DOCSTRING] ancestry check those users get exit 2 ("Hermes is still running") on every
+  L  211 [USER_FACING] f"✗ Another Hermes update is already running (PID {holder.pid}, "
+
+=== hermes_cli/web_git.py (1 chaînes) ===
+  L  577 [USER_FACING] "user.name=Hermes",
+
+=== hermes_cli/web_server.py (53 chaînes) ===
+  L  313 [USER_FACING] app = FastAPI(title="Hermes Agent", version=__version__, lifespan=_lifespan)
+  L  335 [USER_FACING] _SESSION_HEADER_NAME = "X-Hermes-Session-Token"
+  L  996 [USER_FACING] "When the chat app / gateway updates Hermes (no terminal prompt), "
+  L 4090 [USER_FACING] "Hermes updates are managed outside this dashboard in "
+  L 4249 [USER_FACING] "Hermes updates are managed outside this dashboard in "
+  L 7636 [USER_FACING] "description": "Run Hermes from Telegram DMs, groups, and topics.",
+  L 7643 [USER_FACING] "description": "Connect Hermes to Discord DMs, channels, and threads.",
+  L 7653 [USER_FACING] "description": "Use Hermes from Slack via Socket Mode. Add allowed Slack member IDs so connected bots can respond.",
+  L 7660 [USER_FACING] "description": "Connect Hermes to Mattermost channels and direct messages.",
+  L 7667 [USER_FACING] "description": "Use Hermes in Matrix rooms and direct messages.",
+  L 7686 [USER_FACING] "description": "Use Hermes through the bundled WhatsApp bridge with QR-based auth.",
+  L 7698 [USER_FACING] "description": "Control your smart home from Hermes via Home Assistant.",
+  L 7705 [USER_FACING] "description": "Talk to Hermes through an IMAP/SMTP mailbox.",
+  L 7706 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/",
+  L 7729 [USER_FACING] "description": "Connect Hermes to DingTalk groups (钉钉).",
+  L 7736 [USER_FACING] "description": "Use Hermes inside Feishu / Lark.",
+  L 7748 [USER_FACING] "description": "Connect Hermes to Google Chat via Cloud Pub/Sub.",
+  L 7749 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/google_chat",
+  L 7778 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/weixin/",
+  L 7784 [USER_FACING] "description": "Use Hermes through iMessage via a BlueBubbles server.",
+  L 7795 [USER_FACING] "description": "Connect Hermes to a QQ Bot from the QQ Open Platform.",
+  L 7804 [USER_FACING] "description": "Connect Hermes to Microsoft Teams chats via the Bot Framework.",
+  L 7805 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/teams",
+  L 7811 [USER_FACING] "description": "Relay messages between an IRC channel (or DMs) and Hermes.",
+  L 7812 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+  L 7815 [USER_FACING] "description": "Use Hermes from LINE via the LINE Messaging API webhook.",
+  L 7816 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/line",
+  L 7819 [USER_FACING] "description": "Chat with Hermes over ntfy push topics (ntfy.sh or self-hosted).",
+  L 7820 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/ntfy",
+  L 7823 [USER_FACING] "description": "Use Hermes through iMessage via Photon's managed Spectrum platform.",
+  L 7824 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/photon",
+  L 7828 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/raft",
+  L 7831 [USER_FACING] "description": "Talk to Hermes over SimpleX Chat via a local simplex-chat daemon.",
+  L 7832 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/simplex",
+  L 7836 [USER_FACING] "description": "Connect Hermes to Tencent Yuanbao.",
+  L 7842 [USER_FACING] "description": "Expose Hermes as an OpenAI-compatible HTTP API for tools like Open WebUI.",
+  L 7843 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/",
+  L 7856 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/webhooks/",
+  L 7863 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/msgraph-webhook",
+  L 7868 [USER_FACING] "description": "Use Hermes via Meta's hosted WhatsApp Cloud API (no local bridge).",
+  L 7869 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/whatsapp-cloud",
+  L 7873 [USER_FACING] "description": "Generic relay adapter fronted by the Hermes Relay connector.",
+  L 8928 [USER_FACING] _TELEGRAM_ONBOARDING_DEFAULT_URL = "https://setup.hermes-agent.nousresearch.com"
+  L 8929 [USER_FACING] _TELEGRAM_ONBOARDING_USER_AGENT = f"HermesDashboard/{__version__}"
+  L 9578 [USER_FACING] "source_label": f"Hermes PKCE ({_get_hermes_oauth_file() if _get_hermes_oauth_file else None})",
+  L 9717 [USER_FACING] "docs_url": "https://hermes-agent.nousresearch.com/docs/guides/xai-grok-oauth",
+  L 9877 [USER_FACING] return "Managed outside Hermes — run the disconnect command to remove it."
+  L10787 [USER_FACING] "account may need device-code authorization enabled before Hermes "
+  L13248 [USER_FACING] "hermes-index": "Hermes Index",
+  L15426 [USER_FACING] "Command timed out. Hermes Console returned to the prompt."
+  L15704 [USER_FACING] "\x1b[33mInstall Hermes inside WSL2 to use the dashboard's /chat "
+  L17650 [USER_FACING] print(f"  Hermes backend listening on {host}:{actual_port}")
+  L17652 [USER_FACING] print(f"  Hermes Web UI → http://{host}:{actual_port}")
+
+=== hermes_cli/windows_ssh_runtime.py (3 chaînes) ===
+  L  393 [USER_FACING] raise ValueError("Hermes path must be absolute")
+  L  403 [USER_FACING] raise ValueError("Hermes Python runtime was not found")
+  L  442 [USER_FACING] raise ValueError("Hermes path is not an executable file")
+
+=== hermes_cli/xai_retirement.py (2 chaînes) ===
+  L   37 [DOCSTRING] """A reference to a retired xAI model found in a Hermes config."""
+  L   37 [USER_FACING] """A reference to a retired xAI model found in a Hermes config."""
+
+=== TOTAL: 642 Hermes occurrences across hermes_cli/ ===
