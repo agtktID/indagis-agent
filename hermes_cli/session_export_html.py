@@ -563,7 +563,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             {sessions_html}
             
             <footer>
-                Built with ☤ Hermes Agent • Generated on {generated_at}
+                Built with ☤ Indagis Agent • Generated on {generated_at}
             </footer>
         </div>
     </div>

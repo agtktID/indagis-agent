@@ -1,5 +1,5 @@
 """
-Security advisory checker for Hermes Agent.
+Security advisory checker for Indagis Agent.
 
 Detects known-compromised Python packages installed in the active venv
 (supply-chain attacks like the Mini Shai-Hulud worm of May 2026 that

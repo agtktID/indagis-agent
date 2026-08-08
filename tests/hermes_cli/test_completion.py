@@ -81,7 +81,11 @@ class TestGenerateBash:
     def test_contains_completion_function_and_register(self):
         out = generate_bash(_make_parser())
         assert "_hermes_completion()" in out
-        assert "complete -F _hermes_completion hermes" in out
+        # Phase 4 / G1.2: the bash completion script now registers the
+        # completion on the `indagis` command (was `hermes` before the
+        # rebrand). The internal shell function `_hermes_completion` is
+        # kept as-is (per cahier §3.2 — internal module names preserved).
+        assert "complete -F _hermes_completion indagis" in out
 
 
     def test_valid_bash_syntax(self):
