@@ -300,6 +300,111 @@ public static extern int GetLongPathNameW(string lpszShortPath, System.Text.Stri
     return $rebuilt
 }
 
+function Get-IndagisHome {
+    # Resolves the Indagis home directory using the same 5-priority ladder
+    # as hermes_constants.get_indagis_home() (Python Draft 1) and
+    # install_helpers.sh:resolve_indagis_home() (bash Draft 2):
+    #
+    #   P1: $env:INDAGIS_HOME           -> path              [no warning]
+    #   P2: ~/.indagis exists           -> path              [no warning]
+    #   P3: $env:HERMES_HOME            -> legacy path       [WARNING -- emitted by orchestrator, NOT here]
+    #   P4: ~/.hermes exists            -> legacy path       [WARNING -- emitted by orchestrator, NOT here]
+    #   P5: ~/.indagis                   -> default (create)  [no warning]
+    #
+    # PURE-RESOLVER CONTRACT (Draft 2.1):
+    # This function returns only the resolved path. It MUST NOT emit
+    # warnings, errors, or any other side-effect to the host. The
+    # orchestrator (install.ps1 entry point) decides whether to inform
+    # the user about a legacy fallback. This separation matters because
+    # PowerShell functions invoked in the same script scope share
+    # module-level state, but variables set inside this function DO NOT
+    # leak to the caller -- the orchestrator must fire its own warning
+    # BEFORE calling this function. See scripts/ci/test_install_ps1_home_resolution.ps1.
+    #
+    # Returns: the resolved path as a string.
+
+    # P1: explicit $env:INDAGIS_HOME.
+    if ($env:INDAGIS_HOME) { return $env:INDAGIS_HOME }
+
+    # P2: ~/.indagis (POSIX) or %LOCALAPPDATA%\indagis (Windows) exists.
+    $default = Get-IndagisPlatformDefaultHome
+    if (Test-Path -LiteralPath $default -PathType Container) { return $default }
+
+    # P3: $env:HERMES_HOME (legacy alias). The orchestrator is responsible
+    # for emitting the deprecation warning BEFORE this function is called.
+    # Here we just return the value.
+    if ($env:HERMES_HOME) { return $env:HERMES_HOME }
+
+    # P4: ~/.hermes or %LOCALAPPDATA%\hermes exists. Same orchestrator-
+    # fires-warning contract as P3.
+    $legacyDefault = Get-IndagisLegacyAliasHome
+    if ($legacyDefault) { return $legacyDefault }
+
+    # P5: fall back to the default path (will be created on first use).
+    return $default
+}
+
+function Get-IndagisPlatformDefaultHome {
+    # Returns %LOCALAPPDATA%\indagis (Windows) or ~/.indagis (POSIX).
+    # Used by Get-IndagisHome P2 and P5. No side-effects.
+    if ($env:LOCALAPPDATA) {
+        return (Join-Path $env:LOCALAPPDATA 'indagis')
+    }
+    if ($env:USERPROFILE) {
+        return (Join-Path (Join-Path $env:USERPROFILE 'AppData') (Join-Path 'Local' 'indagis'))
+    }
+    # POSIX fallback (in case install.ps1 is ever run under pwsh on Linux).
+    if ($env:HOME) {
+        return (Join-Path $env:HOME '.indagis')
+    }
+    return '.indagis'
+}
+
+function Get-IndagisLegacyAliasHome {
+    # Returns the legacy Hermes alias path if it exists on disk, or $null
+    # if it doesn't. Used by Get-IndagisHome P4. No side-effects.
+    $legacy = $null
+    if ($env:LOCALAPPDATA) {
+        $legacy = Join-Path $env:LOCALAPPDATA 'hermes'
+    } elseif ($env:USERPROFILE) {
+        $legacy = Join-Path (Join-Path $env:USERPROFILE 'AppData') (Join-Path 'Local' 'hermes')
+    } elseif ($env:HOME) {
+        $legacy = Join-Path $env:HOME '.hermes'
+    }
+    if ($legacy -and (Test-Path -LiteralPath $legacy -PathType Container)) {
+        return $legacy
+    }
+    return $null
+}
+
+function Write-IndagisLegacyAliasWarning {
+    # Emits the Indagis legacy-alias deprecation warning to stderr.
+    # Called by the orchestrator (install.ps1 entry point) BEFORE the
+    # first capture of Get-IndagisHome, so the warning appears exactly
+    # once per install.ps1 invocation regardless of how many times the
+    # resolver is called.
+    #
+    # Args:
+    #   $ResolvedVia -- short tag, e.g. "HERMES_HOME" or "~/.hermes"
+    #   $LegacyPath  -- the legacy path being used as fallback
+    param(
+        [Parameter(Mandatory = $true)][string]$ResolvedVia,
+        [Parameter(Mandatory = $true)][string]$LegacyPath
+    )
+
+    if ($IsWindows -or $env:OS -match '^Windows') {
+        $migrateCmd = 'move %LOCALAPPDATA%\hermes %LOCALAPPDATA%\indagis'
+    } else {
+        $migrateCmd = 'mv ~/.hermes ~/.indagis'
+    }
+    [Console]::Error.WriteLine("")
+    [Console]::Error.WriteLine("WARNING: Indagis Agent: $ResolvedVia ($LegacyPath) is used as a fallback.")
+    [Console]::Error.WriteLine("  The deprecation alias will be removed in a future Indagis Agent release.")
+    [Console]::Error.WriteLine("  Migrate by running:")
+    [Console]::Error.WriteLine("    $migrateCmd")
+    [Console]::Error.WriteLine("  Then re-source your shell or restart the desktop app.")
+}
+
 function Set-LongProfileEnvVars {
     # Normalize every profile-rooted variable the install reads, not just
     # %TEMP%: the desktop stage derives InstallDir from %LOCALAPPDATA%, and a
@@ -331,19 +436,25 @@ $script:NormalizedProfilePaths = Set-LongProfileEnvVars
 # long. An explicitly passed -HermesHome / -InstallDir is normalized in place
 # rather than replaced, so a caller's choice is never overwritten by a default.
 # $PSBoundParameters is only meaningful at script scope, so this stays inline.
+#
+# Pure-resolver contract (Draft 2.1): the orchestrator fires the legacy-
+# alias deprecation warning BEFORE the first capture of Get-IndagisHome.
+# This way the warning appears exactly once per install.ps1 invocation,
+# regardless of how many times the resolver is invoked afterwards.
+if ($env:HERMES_HOME) {
+    Write-IndagisLegacyAliasWarning 'HERMES_HOME' $env:HERMES_HOME
+} elseif ($env:LOCALAPPDATA -and (Test-Path -LiteralPath (Join-Path $env:LOCALAPPDATA 'hermes') -PathType Container)) {
+    Write-IndagisLegacyAliasWarning '~/.hermes' (Join-Path $env:LOCALAPPDATA 'hermes')
+}
 if ($PSBoundParameters.ContainsKey('HermesHome')) {
     $HermesHome = ConvertTo-LongPath $HermesHome
 } else {
-    $HermesHome = ConvertTo-LongPath $(
-        if ($env:HERMES_HOME) { $env:HERMES_HOME } else { "$env:LOCALAPPDATA\hermes" }
-    )
+    $HermesHome = ConvertTo-LongPath (Get-IndagisHome)
 }
 if ($PSBoundParameters.ContainsKey('InstallDir')) {
     $InstallDir = ConvertTo-LongPath $InstallDir
 } else {
-    $InstallDir = ConvertTo-LongPath $(
-        if ($env:HERMES_HOME) { "$env:HERMES_HOME\hermes-agent" } else { "$env:LOCALAPPDATA\hermes\hermes-agent" }
-    )
+    $InstallDir = ConvertTo-LongPath (Join-Path (Get-IndagisHome) 'hermes-agent')
 }
 if ($script:NormalizedProfilePaths) {
     # Which paths the install actually settled on. Absent from every report of
