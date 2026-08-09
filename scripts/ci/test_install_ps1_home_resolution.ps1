@@ -71,41 +71,143 @@ $hasLegacyWarning = ($bodyText -match '(?i)(write-warning|write-error).*(legacy|
 Assert-True (-not $hasLegacyWarning) "resolver body has no Write-Warning/-Error mentioning legacy/deprecation"
 
 # Verify the 5 priorities are all addressed in the function body.
-$hasP1 = $bodyText -match '\$env:INDAGIS_HOME'
-$hasP2 = $bodyText -match '\.indagis'
-$hasP3 = $bodyText -match '\$env:HERMES_HOME'
-$hasP5 = $bodyText -match '\$HOME'  # P5 default uses HOME-based path
-Assert-True $hasP1 "P1 references \$env:INDAGIS_HOME"
+# Use double-quoted here-strings and escape the $ as needed, OR compare
+# against the literal substrings using a method that does NOT expand
+# the variable. PowerShell expands $env:FOO inside single-quoted
+# strings only when the single-quoted string contains a real $-prefixed
+# token -- which makes naive Contains() broken for our purposes.
+# Solution: build the search needle via [char] concatenation so the
+# $-sign is treated as a literal character, not a variable.
+$needle1 = [char]36 + 'env:INDAGIS_HOME'
+$needle2 = '.indagis'
+$needle3 = [char]36 + 'env:HERMES_HOME'
+$needle5a = [char]36 + 'env:HOME'
+$needle5b = [char]36 + 'env:LOCALAPPDATA'
+$hasP1 = $bodyText.Contains($needle1)
+$hasP2 = $bodyText.Contains($needle2)
+$hasP3 = $bodyText.Contains($needle3)
+# P5 default uses HOME (POSIX) or LOCALAPPDATA (Windows). The actual
+# $env:HOME / $env:LOCALAPPDATA references live in the helper function
+# Get-IndagisPlatformDefaultHome -- not in the resolver body itself.
+# Check the helper functions for the references, then verify they are
+# CALLED from the resolver (i.e. P5 delegates to a helper that knows the
+# platform default).
+$helperResolver = $ast.Find({
+    param($n)
+    $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
+    $n.Name -eq 'Get-IndagisPlatformDefaultHome'
+}, $true)
+$helperBody = if ($helperResolver) { $helperResolver.Body.Extent.Text } else { '' }
+$hasP5 = $bodyText.Contains('Get-IndagisPlatformDefaultHome') -and
+         ($helperBody.Contains($needle5a) -or $helperBody.Contains($needle5b))
+Assert-True $hasP1 "P1 references `$env:INDAGIS_HOME"
 Assert-True $hasP2 "P2 references ~/.indagis path"
-Assert-True $hasP3 "P3 references \$env:HERMES_HOME"
-Assert-True $hasP5 "P5 references \$HOME for default path"
+Assert-True $hasP3 "P3 references `$env:HERMES_HOME"
+Assert-True $hasP5 "P5 delegates to Get-IndagisPlatformDefaultHome which references HOME or LOCALAPPDATA"
 
 # Verify the orchestrator pattern: install.ps1 should call
-# _indagis_warn_legacy_alias_in_use_once OR an equivalent Indagis-branded
-# warning helper at least once in the orchestrator scope (before any
-# resolve_indagis_home capture).
+# Write-IndagisLegacyAliasWarning (the warning helper) before any
+# capture of Get-IndagisHome. We check for the function call AND for
+# the resulting warning text in the source.
 $installPs1Text = Get-Content -Raw $installPs1
-$hasOrchestratorWarning = $installPs1Text -match '(?i)Write-Warning.+Indagis Agent.+legacy' -or
-                          $installPs1Text -match '(?i)legacy.+deprecation.+Indagis Agent'
-Assert-True $hasOrchestratorWarning "install.ps1 emits the Indagis legacy-alias warning in the orchestrator scope"
+$hasOrchestratorWarning = $installPs1Text -match 'Write-IndagisLegacyAliasWarning' -and
+                          $installPs1Text -match 'Indagis Agent:.*legacy|legacy.*Indagis Agent'
+Assert-True $hasOrchestratorWarning "install.ps1 calls Write-IndagisLegacyAliasWarning in the orchestrator scope"
 
-# Verify the resolver does not re-emit on multiple invocations in the same scope.
-# Run the function twice and verify stdout is identical both times AND no extra
-# warning is emitted by the function itself (the wrapper would catch any Write-*).
-function Test-Resolver-Purity {
-    # Run in a clean pwsh scope with controlled env. We dot-source the script
-    # in -WhatIf mode if available, or extract just the resolver function and
-    # execute it directly with mocked env vars.
-    $scriptContent = Get-Content -Raw $installPs1
-    # Strip the param block from the resolver so we can call it without
-    # providing args. We invoke it via the AST body extent.
-    $calls = @()
-    $body = $resolver.Body.Extent.Text
-    # We can't easily invoke the body without re-parsing in this harness; we
-    # rely on the contract checks above. If they pass, the resolver is pure.
-    return $true
+# Verify the resolver does NOT re-emit the warning on multiple invocations
+# in the same scope. This is the load-bearing test for the pure-resolver
+# contract (Draft 2.1): if Get-IndagisHome emitted the warning itself,
+# calling it twice would produce 2 copies of the warning text in stderr.
+#
+# Strategy: extract the relevant functions from install.ps1 into a temp
+# harness script, dot-source the harness in a clean pwsh scope with
+# HERMES_HOME set (forces P3 path), then:
+#   1. Orchestrator calls Write-IndagisLegacyAliasWarning once.
+#   2. Resolve Get-IndagisHome twice in the same process.
+#   3. Count occurrences of 'is used as a fallback' in stderr.
+#
+# Expected: exactly 1 occurrence (the orchestrator's single fire).
+# Bug scenario (broken contract): 3 occurrences (orchestrator + 2 resolver calls).
+
+$runtimeHarness = Join-Path ([System.IO.Path]::GetTempPath()) ('harness_' + [Guid]::NewGuid().ToString('N') + '.ps1')
+try {
+    # Read the source and extract the function definitions we need.
+    # We grab the full extent of each function from the AST, plus the
+    # param block (already included in Extent.Text for FunctionDefinitionAst).
+    $harnessSource = @()
+    $harnessSource += '# Harness extracted by test_install_ps1_home_resolution.ps1'
+    $harnessSource += '# Mirrors install.ps1 L436+ orchestrator pattern.'
+    $harnessSource += '$ErrorActionPreference = "Stop"'
+    $harnessSource += ''
+
+    foreach ($fnName in @('Get-IndagisHome', 'Get-IndagisPlatformDefaultHome', 'Get-IndagisLegacyAliasHome', 'Write-IndagisLegacyAliasWarning')) {
+        $fnDef = $ast.Find({
+            param($n)
+            $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
+            $n.Name -eq $fnName
+        }, $true)
+        if (-not $fnDef) {
+            throw "Could not extract function $fnName from $installPs1"
+        }
+        $harnessSource += $fnDef.Extent.Text
+        $harnessSource += ''
+    }
+
+    # Orchestrator pattern (mirrors install.ps1 L436+):
+    $harnessSource += '# Orchestrator fires the warning ONCE before any capture.'
+    $harnessSource += 'if ($env:HERMES_HOME) {'
+    $harnessSource += '    Write-IndagisLegacyAliasWarning ''HERMES_HOME'' $env:HERMES_HOME'
+    $harnessSource += '}'
+    $harnessSource += ''
+    $harnessSource += '# Two captures (the bug scenario from bash Draft 2.1).'
+    $harnessSource += '$r1 = Get-IndagisHome'
+    $harnessSource += '$r2 = Get-IndagisHome'
+
+    Set-Content -Path $runtimeHarness -Value $harnessSource
+
+    # Run the harness in a clean pwsh process. Capture stderr by
+    # redirecting 2>&1 to a file, then count occurrences of the
+    # warning marker.
+    $stderrFile = Join-Path ([System.IO.Path]::GetTempPath()) ('stderr_' + [Guid]::NewGuid().ToString('N') + '.txt')
+    try {
+        # Use an isolated HOME so neither ~/.indagis nor ~/.hermes exists,
+        # forcing P3 (HERMES_HOME env var) to win. Without this isolation
+        # the sandbox's own ~/.indagis (P2) or ~/.hermes (P4) would
+        # short-circuit before P3 fires.
+        $isolatedHome = Join-Path ([System.IO.Path]::GetTempPath()) ('indagis_test_' + [Guid]::NewGuid().ToString('N'))
+        $null = New-Item -ItemType Directory -Path $isolatedHome -Force
+        $env:HERMES_HOME = Join-Path $isolatedHome 'legacy_hermes_dir'
+        $env:HOME = $isolatedHome
+        $env:LOCALAPPDATA = $isolatedHome
+        $env:USERPROFILE = $isolatedHome
+        pwsh -NoProfile -File $runtimeHarness `
+              -ExecutionPolicy Bypass `
+              -OutputFormat Text `
+              *> $stderrFile `
+              2>&1
+        Remove-Item Env:\HERMES_HOME -ErrorAction SilentlyContinue
+        Remove-Item Env:\HOME -ErrorAction SilentlyContinue
+        Remove-Item Env:\LOCALAPPDATA -ErrorAction SilentlyContinue
+        Remove-Item Env:\USERPROFILE -ErrorAction SilentlyContinue
+        Remove-Item -Recurse -Force $isolatedHome -ErrorAction SilentlyContinue
+
+        $stderrContent = Get-Content -Raw $stderrFile -ErrorAction SilentlyContinue
+        # Count occurrences of the warning marker (one per fire).
+        $marker = 'is used as a fallback'
+        $occurrences = ([regex]::Matches($stderrContent, [regex]::Escape($marker))).Count
+        if ($occurrences -eq 1) {
+            Write-Host "  PASS  runtime: warning fires exactly once across orchestrator + 2 Get-IndagisHome calls ($occurrences occurrence)"
+        } else {
+            Write-Host "  FAIL  runtime: warning fired $occurrences times, expected 1"
+            Write-Host "        stderr content: [$stderrContent]"
+            $script:failures++
+        }
+    } finally {
+        Remove-Item $stderrFile -ErrorAction SilentlyContinue
+    }
+} finally {
+    Remove-Item $runtimeHarness -ErrorAction SilentlyContinue
 }
-Assert-True (Test-Resolver-Purity) "resolver is pure (no Write-* in body)"
 
 if ($script:failures -gt 0) {
     Write-Host ""
