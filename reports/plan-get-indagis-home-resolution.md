@@ -635,3 +635,52 @@ Conformément à la convention de la branche : **un commit par fichier, validati
 ## Statut d'ouverture
 
 **OUVERT — à programmer en tranche dédiée** après validation de ce plan + des 3 drafts. Conformément à la consigne 5 du brief 2026-08-08, l'application se fera **un fichier à la fois, avec diff soumis avant commit** pour chaque fichier (Python, bash, PowerShell, et les 3 fichiers de test).
+
+## Rapport Draft 2 — Bash (2026-08-09)
+
+### Implémentation effective
+
+- **`scripts/install_helpers.sh`** (NOUVEAU, ~140 lignes) — contient `resolve_indagis_home()` + helpers. Source-able par install.sh et par les tests.
+- **`scripts/install.sh`** (MODIFIÉ, L48-58) — remplace `HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"` par un appel à `resolve_indagis_home` via le helper.
+- **`tests/scripts/test_install_helpers_home_resolution.sh`** (NOUVEAU) — 8 tests bash (5 priorités + stdout purity + warning-once + stderr canal).
+
+### Contrat stdout/stderr — confirmation explicite
+
+Le warning de dépréciation legacy (P3/P4) est émis sur **stderr (`>&2`)** exclusivement. Le path résolu est émis sur **stdout** exclusivement. Vérification runtime :
+
+```bash
+$ env -i HOME=/tmp/foo USERPROFILE=/tmp/foo LOCALAPPDATA="" bash -c \
+    "mkdir -p /tmp/foo/.hermes; source scripts/install_helpers.sh; \
+     resolved=\"\$(resolve_indagis_home)\"; echo \"captured: \$resolved\""
+captured: /tmp/foo/.hermes        ← stdout propre
+⚠ Indagis Agent: ~/.hermes (/tmp/foo/.hermes) is used as a fallback.
+  The deprecation alias will be removed in a future Indagis Agent release.
+  Migrate by running:
+    mv ~/.hermes ~/.indagis
+  Then re-source your shell or restart the desktop app.    ← stderr séparé
+```
+
+Tout appelant qui capture `$(resolve_indagis_home)` reçoit **uniquement** le path, sans contamination. C'est la garantie testée par les 2 tests "stdout stays clean" / "stdout is exactly the resolved path".
+
+### Pourquoi un fichier helper séparé (et non inline dans install.sh)
+
+`install.sh` est un script de 3370 lignes avec une structure de fonctions longues. Tester `resolve_indagis_home` directement nécessiterait soit : (a) sourcer tout install.sh dans chaque test (lourd, charge de nombreux helpers), soit (b) extraire la fonction dans un fichier source-able léger. L'option (b) garde la fonction pure (pas de side-effects au source), testable en isolation, et réutilisable depuis d'autres scripts à venir.
+
+### TDD discipline observée
+
+1. Tests bash écrits d'abord, ciblant le comportement CIBLE.
+2. Helper `install_helpers.sh` implémenté.
+3. Tests exécutés : **7 fails / 1 pass** au premier essai (erreurs de harness — `;` en trop quand env_setup vide, sortie non capturée par $(), $TEST_TMP non interpolé dans le subshell).
+4. Harness corrigé, fonction validée : **8/8 verts**.
+5. `install.sh` branché sur le helper, syntax `bash -n` OK, `--help` rendu inchangé.
+6. Régression check : `tests/test_install_sh_install_method_stamp.py`, `tests/test_install_no_initial_commit.py`, `tests/test_install_unmerged_index.py`, `tests/test_install_ps1_ascii_only.py` → **4/4 verts**.
+
+### Différences vs spec initiale du plan
+
+- **Pas de cache process-global** : la fonction relit l'env à chaque appel, contrairement au draft Python (qui cache pour la cohérence intra-scope). Raison : bash n'a pas d'équivalent direct aux `ContextVar` ; un cache global bash (`_INDAGIS_HOME=`) survivrait aux entrées de scope mais perdrait l'invalidation automatique dont bénéficie Python. **Décision** : pas de cache en bash. Le coût de relecture (5 `test -d` / `${VAR:-}`) est négligeable. Le test `warning fires once per session` garantit quand même que le warning lui-même est one-shot via un guard `_INDAGIS_LEGACY_ALIAS_WARNED`.
+
+- **L48 — substitution inline plutôt que déclaration séparée** : le helper est appelé dans la commande de substitution `$(...)` directement à L48, pas dans une fonction dédiée d'install.sh. Raison : `install.sh` est lu top-to-bottom, la variable `HERMES_HOME` doit être définie tôt pour que le parser d'arguments L150+ puisse la voir.
+
+### Note CI
+
+`scripts/run_tests.sh` est orienté pytest et ne collecte pas les fichiers `.sh`. Le test bash doit être câblé dans la cible `make test-scripts` (ou équivalent) — pas dans le runner pytest. **Action ouverte** : ajouter une cible `scripts/test_scripts.sh` qui itère sur `tests/scripts/*.sh` et exit sur le 1er fail. En attendant, le test est lancé manuellement avec `bash tests/scripts/test_install_helpers_home_resolution.sh`.
