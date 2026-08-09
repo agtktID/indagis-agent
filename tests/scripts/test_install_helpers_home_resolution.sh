@@ -111,17 +111,21 @@ run_test "P2 ~/.indagis exists" \
     ""
 rmdir "$TEST_TMP/.indagis"
 
-# ─── P3: HERMES_HOME env var, legacy fallback + warning on stderr ──
-run_test "P3 HERMES_HOME legacy alias" \
+# ─── P3: HERMES_HOME env var, legacy fallback ──────────────────────
+# resolve_indagis_home itself does NOT emit the warning (the warning
+# is emitted by install.sh, not the function — see install_helpers.sh
+# comments). This test verifies the function returns the right path
+# and stderr stays clean. install.sh separately fires the warning.
+run_test "P3 HERMES_HOME legacy alias returns path, stderr clean" \
     "$TEST_TMP/legacy" \
-    "HERMES_HOME" \
+    "" \
     "export HERMES_HOME='$TEST_TMP/legacy'"
 
-# ─── P4: ~/.hermes exists, legacy fallback + warning on stderr ──────
+# ─── P4: ~/.hermes exists, legacy fallback ─────────────────────────
 mkdir -p "$TEST_TMP/.hermes"
-run_test "P4 ~/.hermes exists" \
+run_test "P4 ~/.hermes exists returns path, stderr clean" \
     "$TEST_TMP/.hermes" \
-    "~/.hermes" \
+    "" \
     ""
 rmdir "$TEST_TMP/.hermes"
 
@@ -152,38 +156,63 @@ else
 fi
 rmdir "$TEST_TMP/.hermes"
 
-# ─── Warning fires once per shell session (process-level guard) ─────
+# ─── Bug regression: warning must fire EXACTLY ONCE per install.sh
+#     invocation, even when resolve_indagis_home is called multiple
+#     times via $(...) captures. Each $(...) spawns a subshell whose
+#     _INDAGIS_LEGACY_ALIAS_WARNED guard is invisible to the parent,
+#     so any warning emitted inside resolve_indagis_home repeats
+#     every time the function is called.
+#
+# Scenario (mirrors install.sh L48-55):
+#   1. Orchestrator fires the warning ONCE explicitly.
+#   2. Two $(resolve_indagis_home) captures happen.
+#   3. Total calls to _indagis_warn_legacy_alias_in_use_once = 1.
+#
+# RED before the fix: 3 calls (1 orchestrator + 2 captures).
+# GREEN after the fix: 1 call (orchestrator only).
+#
+# Implementation: wrap _indagis_warn_legacy_alias_in_use_once to count
+# its invocations. The counter is a fresh file per scenario, written
+# from inside the wrap function, so it's unaffected by subshell state.
 mkdir -p "$TEST_TMP/.hermes"
-# Capture stderr from THREE consecutive resolve_indagis_home calls in the
-# same shell session, and verify the warning fires exactly once.
-err_thrice="$(
-    env -i HOME="$TEST_TMP" USERPROFILE="$TEST_TMP" LOCALAPPDATA="" PATH="/usr/bin:/bin" \
-        bash -c "
-            source '$HELPERS'
-            resolve_indagis_home >/dev/null
-            resolve_indagis_home >/dev/null
-            resolve_indagis_home >/dev/null
-        " 2>&1 >/dev/null
-)"
-err_lines="$(printf '%s\n' "$err_thrice" | wc -l)"
-if [ "$err_lines" -eq 6 ]; then
-    # 6 lines = one full warning (6 lines in install_helpers.sh):
-    # line 1: blank header
-    # line 2: ⚠ Indagis Agent: ...
-    # line 3: The deprecation alias...
-    # line 4: Migrate by running:
-    # line 5: mv ~/.hermes ~/.indagis
-    # line 6: Then re-source your shell ...
+SCENARIO_DIR="$(mktemp -d)"
+COUNTER="$SCENARIO_DIR/warning_call_count"
+
+# Wrapper that increments a per-scenario counter file before delegating.
+SCENARIO_BODY="$SCENARIO_DIR/body.sh"
+{
+    printf '%s\n' '# P3 scenario: user has set HERMES_HOME, so P3 (legacy alias) is the active priority.'
+    printf 'export HERMES_HOME=%q\n' "$TEST_TMP/user_legacy"
+    printf 'source %q\n' "$HELPERS"
+    printf '%s\n' '_warn_orig=_indagis_warn_legacy_alias_in_use_once'
+    printf '%s\n' '_indagis_warn_legacy_alias_in_use_once() {'
+    printf '%s\n' "    printf 'x' >>$(printf '%q' "$COUNTER")"
+    printf '%s\n' '    _warn_orig "$@"'
+    printf '%s\n' '}'
+    printf '%s\n' "_indagis_warn_legacy_alias_in_use_once 'HERMES_HOME' \"\$HERMES_HOME\" 2>/dev/null"
+    printf '%s\n' 'resolved1=$(resolve_indagis_home 2>/dev/null)'
+    printf '%s\n' 'resolved2=$(resolve_indagis_home 2>/dev/null)'
+} >"$SCENARIO_BODY"
+chmod +x "$SCENARIO_BODY"
+
+# Run the scenario in a clean env.
+env -i HOME="$TEST_TMP" USERPROFILE="$TEST_TMP" LOCALAPPDATA="" PATH="/usr/bin:/bin" \
+    bash "$SCENARIO_BODY"
+
+# Count how many 'x' bytes the counter accumulated. Each fire = 1 byte.
+warn_count="$(wc -c <"$COUNTER" 2>/dev/null || echo 0)"
+
+# Expected: exactly 1 (orchestrator). Pre-fix = 3 (orchestrator + 2 captures).
+if [ "$warn_count" -eq 1 ]; then
     PASS=$((PASS + 1))
-    echo "  PASS: legacy alias warning fires exactly once per session (6 lines for 3 calls)"
+    echo "  PASS: warning fires exactly once total across orchestrator + 2 \$(...) captures"
 else
     FAIL=$((FAIL + 1))
-    FAILURES+=("warning produced $err_lines lines for 3 calls, expected 6 (one full warning block)")
-    echo "  FAIL: warning produced $err_lines lines for 3 calls, expected 6"
-    echo "  --- captured stderr ---"
-    printf '%s\n' "$err_thrice"
-    echo "  --- end ---"
+    FAILURES+=("warning fired $warn_count times; expected 1 (warning fires inside resolve_indagis_home on every \$(...) capture — bug not fixed)")
+    echo "  FAIL: warning fired $warn_count times, expected 1"
 fi
+
+rm -rf "$SCENARIO_DIR"
 rmdir "$TEST_TMP/.hermes"
 
 # ─── Summary ────────────────────────────────────────────────────────

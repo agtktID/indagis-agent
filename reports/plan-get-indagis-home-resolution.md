@@ -677,9 +677,118 @@ Tout appelant qui capture `$(resolve_indagis_home)` reçoit **uniquement** le pa
 
 ### Différences vs spec initiale du plan
 
-- **Pas de cache process-global** : la fonction relit l'env à chaque appel, contrairement au draft Python (qui cache pour la cohérence intra-scope). Raison : bash n'a pas d'équivalent direct aux `ContextVar` ; un cache global bash (`_INDAGIS_HOME=`) survivrait aux entrées de scope mais perdrait l'invalidation automatique dont bénéficie Python. **Décision** : pas de cache en bash. Le coût de relecture (5 `test -d` / `${VAR:-}`) est négligeable. Le test `warning fires once per session` garantit quand même que le warning lui-même est one-shot via un guard `_INDAGIS_LEGACY_ALIAS_WARNED`.
+- **Pas de cache process-global** : la fonction relit l'env à chaque appel, contrairement au draft Python (qui cache pour la cohérence intra-scope). Raison : bash n'a pas d'équivalent direct aux `ContextVar` ; un cache global bash (`_INDAGIS_HOME=`) survivrait aux entrées de scope mais perdrait l'invalidation automatique dont bénéficie Python. **Décision** : pas de cache en bash. Le coût de relecture (5 `test -d` / `${VAR:-}`) est négligeable.
 
-- **L48 — substitution inline plutôt que déclaration séparée** : le helper est appelé dans la commande de substitution `$(...)` directement à L48, pas dans une fonction dédiée d'install.sh. Raison : `install.sh` est lu top-to-bottom, la variable `HERMES_HOME` doit être définie tôt pour que le parser d'arguments L150+ puisse la voir.
+- **L48 — substitution inline plutôt que déclaration séparée** : le helper est appelé dans la commande de substitution `$(...)` directement à L48, pas dans une fonction dédiée d'install.sh. Raison : `install.sh` est lu top-to-bottom, la variable `HERMES_HOME` doit être définie tôt pour que le parser d'arguments L150+ puisse la voir. *Note : ce point a été révisé en Draft 2.1 — voir section dédiée ci-dessous.*
+
+## Rapport Draft 2.1 — Contrat de pureté du résolveur (2026-08-09)
+
+### Bug identifié
+
+Le Draft 2 livrait `resolve_indagis_home()` avec le warning de dépréciation legacy émis **à l'intérieur** de la fonction (P3 + P4). Reproduction factuelle du bug, capturée dans `tests/scripts/test_install_helpers_home_resolution.sh` :
+
+```
+Scenario install.sh L48-55 :
+  1. Orchestrateur fire le warning explicitement  →  1 fire
+  2. resolved1=$(resolve_indagis_home)            →  1 fire (BUG)
+  3. resolved2=$(resolve_indagis_home)            →  1 fire (BUG)
+  Total : 3 fires attendus avant fix, 1 attendu après fix.
+```
+
+Le warning est répété à chaque `$(resolve_indagis_home)` parce que **chaque substitution de commande spawn un subshell frais**, dont les variables sont invisibles au shell parent et aux subshells successeurs. Le guard `_INDAGIS_LEGACY_ALIAS_WARNED` à l'intérieur de la fonction est reset à chaque appel.
+
+### Solution prescrite dans le brief (NON retenue)
+
+Le brief proposait : geler `_INDAGIS_USER_HERMES_HOME="${HERMES_HOME:-}"` avant la 1ère capture, et faire lire P3 sur cette variable figée.
+
+**Test factuel** : cette approche ne résout PAS le bug. J'ai rejoué le scénario avec ce design, et le warning continuait à firer à chaque `$(...)` capture. Raison : la variable figée est dans le shell parent ; les subshells `$(...)` en héritent par export, mais ne peuvent pas la modifier pour signaler aux appels suivants "warning déjà émis". Le problème est sur le **guard** (doit survivre aux subshells), pas sur la **valeur lue par P3**.
+
+### Solution retenue — contrat de pureté du résolveur
+
+Le résolveur `resolve_indagis_home()` est désormais une **fonction pure** : elle retourne le chemin résolu sur stdout et n'émet **jamais** rien sur stderr. Le warning de dépréciation est déplacé vers **l'orchestrateur** (`install.sh` L48-55), qui le fire explicitement une fois avant toute capture `$(...)`.
+
+**Contrat formel** (à respecter par tout futur appelant du helper) :
+
+1. `resolve_indagis_home()` ne fait JAMAIS `>&2` (aucun side-effect sur stderr).
+2. Toute décision d'émettre un avertissement utilisateur est de la responsabilité de l'appelant.
+3. Si l'appelant veut informer l'utilisateur du fallback legacy, il doit :
+   - détecter lui-même la condition (P3 : `$HERMES_HOME` set, P4 : `~/.hermes` existe),
+   - appeler `_indagis_warn_legacy_alias_in_use_once "..." "..."` une seule fois,
+   - **puis** capturer `$(resolve_indagis_home)` pour la valeur.
+4. Le warning n'est jamais émis depuis un subshell `$(...)` — toujours depuis le shell orchestrateur.
+
+**Avantages** :
+
+- Le warning est émis **une seule fois par invocation** de l'orchestrateur, indépendamment du nombre de captures `$(...)`.
+- Le résolveur est testable en isolation, sans side-effect polluant.
+- La logique "décider d'informer l'utilisateur" reste explicite et lisible dans l'orchestrateur.
+
+**Inconvénient** :
+
+- Duplication apparente de la logique de détection P3/P4 dans l'orchestrateur (l'orchestrateur doit savoir si P3 ou P4 s'applique pour décider d'émettre le warning, sans appeler le résolveur — sinon on retombe dans le bug).
+
+### Implémentation effective
+
+**`scripts/install_helpers.sh`** (+32/-7) : P3 et P4 retirent leur appel à `_indagis_warn_legacy_alias_in_use_once`. Commentaire détaillé ajouté au-dessus de chaque bloc expliquant pourquoi le warning n'est plus là.
+
+**`scripts/install.sh`** (+18/-1) : source le helper une fois, fire le warning explicitement avant la 1ère capture :
+
+```bash
+_SCRIPT_DIR_HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+source "$_SCRIPT_DIR_HERE/install_helpers.sh"
+if [ -n "${HERMES_HOME:-}" ]; then
+    _indagis_warn_legacy_alias_in_use_once "HERMES_HOME" "$HERMES_HOME"
+elif [ -d "${HOME:-}/.hermes" ]; then
+    _indagis_warn_legacy_alias_in_use_once "~/.hermes" "${HOME}/.hermes"
+fi
+HERMES_HOME="$(resolve_indagis_home)"
+export HERMES_HOME
+```
+
+**`tests/scripts/test_install_helpers_home_resolution.sh`** : refonte des tests P3/P4 (le warning n'est plus dans la fonction, donc stderr doit être vide à l'appel du résolveur) + nouveau test "warning fires exactly once" qui wrappe `_indagis_warn_legacy_alias_in_use_once` avec un compteur fichier (pour compter les invocations à travers les subshells, là où les variables shell ne traversent pas).
+
+### TDD discipline observée
+
+1. **Test ROUGE avant fix** : P3 + P4 firent toujours le warning → compteur = 3 (1 orchestrateur + 2 captures) → 8/9 verts, 1 fail. Sortie verbatim :
+
+   ```
+   FAIL: warning fired 3 times, expected 1
+   ```
+
+2. **Fix appliqué** : warning retiré de P3 et P4, déplacé dans install.sh.
+
+3. **Test VERT après fix** : compteur = 1 (orchestrateur uniquement) → 8/8 verts. Sortie verbatim :
+
+   ```
+   PASS: warning fires exactly once total across orchestrator + 2 $(...) captures
+   === Summary: 8 passed, 0 failed ===
+   ```
+
+4. **Non-régression** : `tests/test_install_sh_install_method_stamp.py`, `tests/test_install_no_initial_commit.py`, `tests/test_install_unmerged_index.py`, `tests/test_install_ps1_ascii_only.py` → 4/4 verts. `bash -n scripts/install.sh` → OK.
+
+### Point d'attention pour Draft 4 (node-bootstrap.sh) — contrat à respecter
+
+Le helper `install_helpers.sh` est conçu pour être réutilisable par d'autres scripts shell du projet. Si **Draft 4** (`scripts/node-bootstrap.sh`) doit aussi résoudre le home Indagis et informer l'utilisateur d'un fallback legacy, il **doit** respecter le contrat de pureté :
+
+- **NE PAS** appeler `_indagis_warn_legacy_alias_in_use_once` depuis P3/P4 (il n'y est plus).
+- **DOIT** détecter lui-même la condition P3/P4 et fire le warning explicitement avant la 1ère capture `$(resolve_indagis_home)`.
+- **DOIT** appeler `resolve_indagis_home` uniquement pour la valeur, jamais pour l'effet de bord warning.
+
+**Pattern obligatoire** (à appliquer tel quel dans `node-bootstrap.sh`) :
+
+```bash
+source "<path>/install_helpers.sh"
+if [ -n "${HERMES_HOME:-}" ]; then
+    _indagis_warn_legacy_alias_in_use_once "HERMES_HOME" "$HERMES_HOME"
+elif [ -d "${HOME:-}/.hermes" ]; then
+    _indagis_warn_legacy_alias_in_use_once "~/.hermes" "${HOME}/.hermes"
+fi
+INDAGIS_HOME="$(resolve_indagis_home)"
+```
+
+**Risque si non respecté** : régression du bug Draft 2.1 (warning qui spamme l'utilisateur à chaque `$(...)` capture). Le test "warning fires exactly once" pourrait être promu en test d'intégration partagé entre install.sh et node-bootstrap.sh si on veut le garantir cross-script.
+
+**Action ouverte** : lorsque Draft 4 sera traité, ajouter un test dans `tests/scripts/` qui vérifie que **tous** les scripts qui source `install_helpers.sh` respectent ce contrat. Une approche simple : un test qui grep tous les `scripts/*.sh` pour des appels directs à `_indagis_warn_legacy_alias_in_use_once` en dehors des sources attendus (install.sh, node-bootstrap.sh futur), et échoue si un nouveau script appelle le warning en P3/P4 du résolveur. Cette check est grossière mais capture l'erreur de régression principale.
 
 ### Note CI
 

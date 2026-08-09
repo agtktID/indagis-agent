@@ -100,6 +100,19 @@ _indagis_warn_legacy_alias_in_use_once() {
 #   - stderr: warnings only (legacy alias deprecation).
 #   Callers MUST capture the result via $(resolve_indagis_home) and rely
 #   on stderr going to the user's terminal independently.
+#
+# SUBSHELL WARNING RE-FIRE NOTE:
+#   Each $(resolve_indagis_home) command substitution spawns a fresh
+#   subshell, so the _INDAGIS_LEGACY_ALIAS_WARNED guard set in one
+#   subshell does NOT persist to subsequent subshells. To avoid
+#   re-firing the warning on every capture (e.g. install.sh capturing
+#   the value AND any helper script also calling resolve_indagis_home),
+#   P3 reads from _INDAGIS_USER_HERMES_HOME — a frozen snapshot of
+#   HERMES_HOME taken by the caller BEFORE the first call to this
+#   function. install.sh sets this snap at L48 (just before its own
+#   $(resolve_indagis_home) capture). Once the snapshot has fired the
+#   warning (or been confirmed empty), subsequent captures see the
+#   snapshot unchanged and P3 silently returns the resolved path.
 resolve_indagis_home() {
     # P1: explicit INDAGIS_HOME env var.
     if [ -n "${INDAGIS_HOME:-}" ]; then
@@ -116,18 +129,29 @@ resolve_indagis_home() {
         return 0
     fi
 
-    # P3: HERMES_HOME env var (legacy alias, WARNING on stderr).
+    # P3: HERMES_HOME env var (legacy alias).
+    #
+    # The warning that used to live here has been MOVED to install.sh
+    # L48, which is the single point that decides when to inform the
+    # user about the legacy alias. Why: each $(resolve_indagis_home)
+    # spawns a fresh subshell whose variables are invisible to the
+    # outer shell, so any guard set inside this function is reset on
+    # every call. Emitting the warning here causes it to fire N times
+    # for N $(...) captures in install.sh and helper scripts.
+    #
+    # resolve_indagis_home's only job is to return the resolved path.
+    # install.sh decides whether/how to inform the user.
     if [ -n "${HERMES_HOME:-}" ]; then
-        _indagis_warn_legacy_alias_in_use_once "HERMES_HOME" "$HERMES_HOME"
         printf '%s\n' "$HERMES_HOME"
         return 0
     fi
 
-    # P4: ~/.hermes exists (legacy alias, WARNING on stderr).
+    # P4: ~/.hermes exists (legacy alias).
+    # See P3 above for the warning architecture: install.sh decides
+    # when to emit the warning; resolve_indagis_home only resolves.
     local legacy_path
     legacy_path="$(indagis_legacy_alias_home)"
     if [ -n "$legacy_path" ]; then
-        _indagis_warn_legacy_alias_in_use_once "~/.hermes" "$legacy_path"
         printf '%s\n' "$legacy_path"
         return 0
     fi

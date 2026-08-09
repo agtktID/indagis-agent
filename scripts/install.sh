@@ -51,7 +51,23 @@ REPO_URL_HTTPS="https://github.com/NousResearch/hermes-agent.git"
 # (Draft 2). The helper writes the path to stdout (captured here) and any
 # legacy-alias deprecation warning to stderr — keeping these channels
 # separate prevents the warning from corrupting the captured value.
-HERMES_HOME="$(SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"; source "$SCRIPT_DIR/install_helpers.sh"; resolve_indagis_home)"
+#
+# Warning emission happens HERE, not inside resolve_indagis_home. The
+# reason: each $(resolve_indagis_home) spawns a fresh subshell whose
+# internal guard variable is reset on every call, so a warning fired
+# inside the function would repeat on every $(...) capture. Emitting
+# it once from the orchestrator (install.sh) is the only way to keep
+# it once per install.sh invocation. install.sh must mirror the same
+# P3/P4 detection logic that resolve_indagis_home applies, but only
+# for the warning — the path capture delegates to resolve_indagis_home.
+_SCRIPT_DIR_HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+source "$_SCRIPT_DIR_HERE/install_helpers.sh"
+if [ -n "${HERMES_HOME:-}" ]; then
+    _indagis_warn_legacy_alias_in_use_once "HERMES_HOME" "$HERMES_HOME"
+elif [ -d "${HOME:-}/.hermes" ]; then
+    _indagis_warn_legacy_alias_in_use_once "~/.hermes" "${HOME}/.hermes"
+fi
+HERMES_HOME="$(resolve_indagis_home)"
 export HERMES_HOME
 # INSTALL_DIR is resolved AFTER arg parsing and OS detection so we can pick an
 # FHS-style layout for root installs.  Track whether the user gave us an
