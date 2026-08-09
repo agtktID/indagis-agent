@@ -13,9 +13,13 @@ from pathlib import Path
 
 
 _profile_fallback_warned: bool = False
+_legacy_alias_warned: bool = False
 _UNSET = object()
 _INDAGIS_HOME_OVERRIDE: ContextVar[str | object] = ContextVar(
     "_INDAGIS_HOME_OVERRIDE", default=_UNSET
+)
+_INDAGIS_HOME_CACHE: ContextVar[Path | object] = ContextVar(
+    "_INDAGIS_HOME_CACHE", default=_UNSET
 )
 
 # ── TUI busy-indicator styles ─────────────────────────────────────────
@@ -33,12 +37,14 @@ def set_indagis_home_override(path: str | Path | None) -> Token:
     This is for in-process, per-task scoping.  It deliberately does not mutate
     ``os.environ`` because that is shared by every thread in the process.
     """
+    _INDAGIS_HOME_CACHE.set(_UNSET)
     value: str | object = _UNSET if path is None else str(path)
     return _INDAGIS_HOME_OVERRIDE.set(value)
 
 
 def reset_indagis_home_override(token: Token) -> None:
     """Restore the previous context-local Indagis home override."""
+    _INDAGIS_HOME_CACHE.set(_UNSET)
     _INDAGIS_HOME_OVERRIDE.reset(token)
 
 
@@ -72,6 +78,54 @@ def _indagis_home_from_env() -> Path:
     if val:
         return Path(val)
     return _get_platform_default_indagis_home()
+
+
+def _legacy_indagis_home_alias_path() -> Path | None:
+    """Return the legacy ``~/.hermes`` path on POSIX, or ``%LOCALAPPDATA%\\hermes`` on Windows.
+
+    Returns ``None`` if the legacy alias directory does not exist (P4 not applicable).
+    Mirrors :func:`_get_platform_default_indagis_home` for the default location.
+    """
+    if sys.platform == "win32":
+        local_appdata = os.environ.get("LOCALAPPDATA", "").strip()
+        base = Path(local_appdata) if local_appdata else Path.home() / "AppData" / "Local"
+        candidate = base / "hermes"
+    else:
+        candidate = Path.home() / ".hermes"
+    return candidate if candidate.exists() else None
+
+
+def _warn_legacy_alias_in_use_once(resolved_via: str, legacy_path: Path) -> None:
+    """Warn once when resolution fell back to the legacy Hermes alias.
+
+    Triggered when P3 (``HERMES_HOME`` env var) or P4 (``~/.hermes`` exists)
+    resolves the Indagis home. The alias will be removed in a future
+    Indagis Agent release; users must migrate by moving the directory and
+    re-sourcing their shell.
+
+    ``resolved_via`` is a short tag (``"HERMES_HOME"`` or ``"~/.hermes"``)
+    used in the warning so the user knows which alias triggered it.
+    """
+    global _legacy_alias_warned
+    if _legacy_alias_warned:
+        return
+    _legacy_alias_warned = True
+    if sys.platform == "win32":
+        migrate_cmd = "move %LOCALAPPDATA%\\hermes %LOCALAPPDATA%\\indagis"
+    else:
+        migrate_cmd = "mv ~/.hermes ~/.indagis"
+    msg = (
+        f"\n⚠ Indagis Agent: {resolved_via} ({legacy_path}) is used as a "
+        f"fallback. The deprecation alias will be removed in a future "
+        f"Indagis Agent release. Migrate by running:\n"
+        f"    {migrate_cmd}\n"
+        f"  Then re-source your shell or restart the desktop app.\n"
+    )
+    try:
+        sys.stderr.write(msg)
+        sys.stderr.flush()
+    except Exception:
+        pass
 
 
 def _warn_profile_fallback_once() -> None:
@@ -129,14 +183,63 @@ def get_indagis_home() -> Path:
     template in ``hermes_cli/gateway.py`` and the kanban dispatcher in
     ``hermes_cli/kanban_db.py``).  See https://github.com/NousResearch/hermes-agent/issues/18594.
     """
+    cached = _INDAGIS_HOME_CACHE.get()
     override = get_indagis_home_override()
     if override:
-        return Path(override)
+        # Override is explicitly invalidated by set/reset_indagis_home_override,
+        # so caching it is safe across the lifetime of a scope.
+        if cached is not _UNSET:
+            return cached  # type: ignore[return-value]
+        resolved = Path(override)
+        _INDAGIS_HOME_CACHE.set(resolved)
+        return resolved
 
-    if not os.environ.get("INDAGIS_HOME", "").strip():
+    # No override — do NOT cache env-based resolution. The cache is keyed
+    # only on the override ContextVar, but tests / external code mutate
+    # ``INDAGIS_HOME`` / ``HERMES_HOME`` via ``monkeypatch.setenv`` and
+    # expect the next call to reflect the change. Caching here would
+    # freeze the first resolved value for the rest of the process.
+    resolved = _resolve_indagis_home_full_ladder()
+    return resolved
+
+
+def _resolve_indagis_home_full_ladder() -> Path:
+    """Apply the 5-priority Indagis home resolution ladder.
+
+    Order: P1 (INDAGIS_HOME env) → P2 (~/.indagis exists) → P3 (HERMES_HOME
+    env, legacy alias, WARNING) → P4 (~/.hermes exists, legacy alias,
+    WARNING) → P5 (~/.indagis default, no warning).
+
+    The two legacy-alias priorities (P3, P4) emit a one-shot deprecation
+    warning the first time they are taken per process.
+    """
+    # P1: explicit INDAGIS_HOME env var (authoritative, no warning).
+    val = os.environ.get("INDAGIS_HOME", "").strip()
+    if val:
+        return Path(val)
+
+    # P2: ~/.indagis exists on disk (priority default, no warning).
+    default = _get_platform_default_indagis_home()
+    if default.exists():
+        return default
+
+    # P3: HERMES_HOME env var (legacy alias, WARNING).
+    legacy_env = os.environ.get("HERMES_HOME", "").strip()
+    if legacy_env:
+        legacy_path = Path(legacy_env)
+        _warn_legacy_alias_in_use_once("HERMES_HOME", legacy_path)
+        return legacy_path
+
+    # P4: ~/.hermes exists (legacy alias, WARNING).
+    legacy_default = _legacy_indagis_home_alias_path()
+    if legacy_default is not None:
+        _warn_legacy_alias_in_use_once("~/.hermes", legacy_default)
+        return legacy_default
+
+    # P5: fall back to the default path (will be created on first use).
+    if not val:  # Always true here (P1 missed), but kept for symmetry.
         _warn_profile_fallback_once()
-
-    return _indagis_home_from_env()
+    return default
 
 
 def get_process_indagis_home() -> Path:
