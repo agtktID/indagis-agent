@@ -45,7 +45,14 @@ BOLD='\033[1m'
 # Configuration
 REPO_URL_SSH="git@github.com:NousResearch/hermes-agent.git"
 REPO_URL_HTTPS="https://github.com/NousResearch/hermes-agent.git"
-HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
+# Indagis home resolution: P1 INDAGIS_HOME → P2 ~/.indagis → P3 HERMES_HOME
+# (legacy, warning) → P4 ~/.hermes (legacy, warning) → P5 ~/.indagis default.
+# See scripts/install_helpers.sh and reports/plan-get-indagis-home-resolution.md
+# (Draft 2). The helper writes the path to stdout (captured here) and any
+# legacy-alias deprecation warning to stderr — keeping these channels
+# separate prevents the warning from corrupting the captured value.
+HERMES_HOME="$(SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"; source "$SCRIPT_DIR/install_helpers.sh"; resolve_indagis_home)"
+export HERMES_HOME
 # INSTALL_DIR is resolved AFTER arg parsing and OS detection so we can pick an
 # FHS-style layout for root installs.  Track whether the user gave us an
 # explicit directory — if so we never override it.
