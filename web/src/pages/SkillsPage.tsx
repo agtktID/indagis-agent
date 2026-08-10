@@ -1189,7 +1189,7 @@ function ConnectedHubs({
       </span>
       {sources.map((s) => {
         const down =
-          (s.id === "hermes-index" && s.available === false) ||
+          (s.id === "indagis-index" && s.available === false) ||
           (s.id === "github" && s.rate_limited === true);
         return (
           <Badge
@@ -1199,7 +1199,7 @@ function ConnectedHubs({
             title={
               s.id === "github" && s.rate_limited
                 ? "GitHub API rate-limited — set GITHUB_TOKEN to raise the limit"
-                : s.id === "hermes-index" && s.available === false
+                : s.id === "indagis-index" && s.available === false
                   ? "Centralized index unavailable — falling back to live sources"
                   : undefined
             }

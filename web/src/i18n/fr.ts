@@ -120,8 +120,8 @@ export const fr: Translations = {
     starting: "Démarrage",
     startedInBackground: "Démarré en arrière-plan — consultez les journaux pour la progression",
     stopped: "Arrêté",
-    updateHermes: "Mettre à jour Hermes",
-    updatingHermes: "Mise à jour de Hermes…",
+    updateHermes: "Mettre à jour Indagis",
+    updatingHermes: "Mise à jour de Indagis…",
     waitingForOutput: "En attente de la sortie…",
   },
 

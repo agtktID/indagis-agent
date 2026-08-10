@@ -120,8 +120,8 @@ export const hu: Translations = {
     starting: "Indul",
     startedInBackground: "Háttérben elindítva — kövesse a naplókat a folyamathoz",
     stopped: "Leállítva",
-    updateHermes: "Hermes frissítése",
-    updatingHermes: "Hermes frissítése…",
+    updateHermes: "Indagis frissítése",
+    updatingHermes: "Indagis frissítése…",
     waitingForOutput: "Várakozás a kimenetre…",
   },
 
