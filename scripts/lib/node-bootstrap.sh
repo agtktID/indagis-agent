@@ -20,13 +20,33 @@
 # Env inputs (set before sourcing to override defaults):
 #   HERMES_NODE_MIN_VERSION   (default: 20)   — accepted on PATH
 #   HERMES_NODE_TARGET_MAJOR  (default: 22)   — installed when we install
-#   HERMES_HOME               (default: $HOME/.hermes)
+#   INDAGIS_HOME              (default: resolved via scripts/install_helpers.sh)
 # ============================================================================
 
 HERMES_NODE_MIN_VERSION="${HERMES_NODE_MIN_VERSION:-20}"
 HERMES_NODE_TARGET_MAJOR="${HERMES_NODE_TARGET_MAJOR:-22}"
-HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 HERMES_NODE_AVAILABLE=false
+
+# ---------------------------------------------------------------------------
+# Indagis home resolution (Draft 4 — Tranche 1 installeur)
+#
+# Source install_helpers.sh to reuse resolve_indagis_home() rather than
+# reimplement the 5-priority ladder. The P3/P4 deprecation warning is
+# fired HERE (orchestrator), not inside the helper — each $(...) capture
+# spawns a fresh subshell whose internal guard resets on every call, so a
+# warning emitted by the function would repeat on every capture. Same
+# pattern as scripts/install.sh L48-71.
+# ---------------------------------------------------------------------------
+_NB_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+# shellcheck source=/dev/null
+source "$_NB_SCRIPT_DIR/../install_helpers.sh"
+if [ -n "${HERMES_HOME:-}" ]; then
+    _indagis_warn_legacy_alias_in_use_once "HERMES_HOME" "$HERMES_HOME"
+elif [ -d "${HOME:-}/.hermes" ]; then
+    _indagis_warn_legacy_alias_in_use_once "~/.hermes" "${HOME}/.hermes"
+fi
+HERMES_HOME="$(resolve_indagis_home)"
+export HERMES_HOME
 
 # ---------------------------------------------------------------------------
 # Logging — prefer the host script's log_* helpers when present
