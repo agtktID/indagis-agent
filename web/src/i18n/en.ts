@@ -131,12 +131,12 @@ export const en: Translations = {
     starting: "Starting",
     startedInBackground: "Started in background — check logs for progress",
     stopped: "Stopped",
-    updateHermes: "Update Hermes",
+    updateHermes: "Update Indagis",
     updateHermesConfirmMessage:
-      "This runs hermes update and restarts the gateway when it finishes. Active sessions keep their prompt cache until then.",
+      "This runs indagis update and restarts the gateway when it finishes. Active sessions keep their prompt cache until then.",
     updateHermesConfirmNow: "Update now",
-    updateHermesConfirmTitle: "Update Hermes?",
-    updatingHermes: "Updating Hermes…",
+    updateHermesConfirmTitle: "Update Indagis?",
+    updatingHermes: "Updating Indagis…",
     waitingForOutput: "Waiting for output…",
   },
 
