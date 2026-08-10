@@ -46,7 +46,7 @@ def build_security_parser(subparsers, *, cmd_security: Callable) -> None:
     audit_parser.add_argument(
         "--skip-venv",
         action="store_true",
-        help="Skip scanning the Hermes Python venv",
+        help="Skip scanning the Indagis Python venv",
     )
     audit_parser.add_argument(
         "--skip-plugins",
