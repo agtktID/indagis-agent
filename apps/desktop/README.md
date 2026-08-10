@@ -249,6 +249,16 @@ When the runtime boots using a **legacy alias (priority 3 or 4)**, the user sees
 
 This warning is **advisory**, not an error: the install-on-existing-machine contract is preserved through the deprecation window. New machines never see the warning (they go straight to priority 1-2 and never touch the legacy paths).
 
+### Priority 2 trust model
+
+Priority 2 (`~/.indagis` exists → use it) is **silent** — no warning is emitted when the resolver picks up an existing `~/.indagis` directory. This is intentional, but it carries an invariant that contributors must respect:
+
+> **P2 supposes an `~/.indagis` created by a trusted install.** If a script or test creates `~/.indagis` without isolation (`mktemp -d`, `tmp_path` pytest fixture, etc.), that is a **bug in the script**, not a defect in the resolver. The resolver cannot distinguish between a profile created by a real install and a profile created by a test that forgot to isolate its filesystem.
+
+The dedicated guard against accidental pollution of the real `~` lives in `tests/conftest.py` (snapshot of `Path.home()` at session start, final assertion that no `~/.indagis` / `~/.hermes` was created during the test session). Tests that legitimately need to create Indagis-shaped fixtures must use `tmp_path` or `mktemp -d`, never `Path.home() / ".indagis"` directly.
+
+This invariant was validated 2026-08-10 in the Indagis Agent development context: the operator's machine carries both `~/.indagis` (~2.7 GB, created 2026-07-01 by the initial install of the fork, now a secondary profile with sporadic use) and `~/.hermes` (~10 GB, the **active working profile** — `which hermes` points at it, `config.yaml` declares `model: MiniMax-M3, provider: minimax-oauth`, and the operator uses it daily). `~/.hermes` also contains `profiles/pentest/sandboxes/docker/default/home/` with real security tooling (`nuclei-templates`, `naabu`, `ffuf`, `katana`, `dnsx`, `subfinder`, `httpx`, `john`) — a live pentest profile, not an abandoned one. Both profiles are legitimate; the operator has not run the migration because the deprecation window has not closed, and the secondary `~/.indagis` profile is allowed to coexist on the machine. P4 would fire its warning if the resolver ever reached it, but in practice the operator's typical workflow stays inside `~/.hermes`, so the warning is rarely triggered. No heuristic comparing volumes or mtimes would add value: the active profile is identified by usage (PATH binding, config, history), not by disk size.
+
 ### Removal version (target not yet committed)
 
 The deprecation alias (`HERMES_HOME` / `~/.hermes` read as fallback) is scheduled for removal, but **the target version has not been committed yet**. The Indagis Agent fork's SemVer counter and tag schema are still being decided in a separate workstream; this README will be updated with a concrete target version when that workstream lands. After the target version ships:
