@@ -10,7 +10,7 @@ def build_skin_parser(subparsers, *, cmd_skin: Callable) -> None:
     skin_parser = subparsers.add_parser(
         "skin",
         help="List, switch, and tweak skins",
-        description="Manage Hermes skins. `set` tweaks one color of the active skin in place.",
+        description="Manage Indagis skins. `set` tweaks one color of the active skin in place.",
     )
     skin_subparsers = skin_parser.add_subparsers(dest="skin_command")
 
