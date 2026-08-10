@@ -63,6 +63,25 @@ if not os.environ.get("INDAGIS_HOME"):
     os.environ["INDAGIS_HOME"] = _SESSION_HERMES_HOME
     atexit.register(shutil.rmtree, _SESSION_HERMES_HOME, True)
 
+
+# ── Snapshot of real `~/.indagis` / `~/.hermes` existence at conftest import ──
+#
+# The hermetic-environment fixture below sandboxes INDAGIS_HOME to a tempdir,
+# so by the time any test runs, code reading `get_indagis_home()` returns the
+# sandbox — never the real profile. But fixtures do NOT redirect `Path.home()`:
+# code that does `Path.home() / ".indagis"` directly (bypassing the resolver)
+# still hits the operator's real `~`. A test that creates such a directory
+# without isolation pollutes the developer's actual filesystem.
+#
+# Snapshot existence of both legacy names at import time. The
+# `pytest_sessionfinish` hook at the bottom of this file asserts the snapshot
+# still matches at session end — any test that creates or deletes one of
+# these directories has escaped isolation and gets flagged. Marker
+# `allow_home_pollution` opts out a specific test (rare; e.g. installer
+# integration tests that deliberately write to `~/.indagis`).
+_PRE_SANDBOX_HOME_INDAGIS_EXISTS = (Path.home() / ".indagis").exists()
+_PRE_SANDBOX_HOME_HERMES_EXISTS = (Path.home() / ".hermes").exists()
+
 #: INDAGIS_HOME as it stood when conftest was imported - i.e. before any test
 #: module could import code that configures logging. Recorded so the guard in
 #: tests/test_log_isolation.py can assert the sandbox existed AT THAT MOMENT.
@@ -1468,3 +1487,70 @@ def _moa_caches_isolated():
     yield
     moa._preset_cache.clear()
     moa._runtime_cache.clear()
+
+
+# ── Real-`~` anti-pollution guard ──────────────────────────────────────────
+#
+# Snapshot of `~/.indagis` / `~/.hermes` existence is taken at conftest import
+# (see _PRE_SANDBOX_HOME_INDAGIS_EXISTS / _PRE_SANDBOX_HOME_HERMES_EXISTS at
+# the top of this file). At session finish we re-check: any test that escaped
+# isolation by creating one of those directories in the operator's real home
+# has polluted `~` and the session is failed.
+#
+# Marker `allow_home_pollution` opts a test out (rare; legitimate use cases
+# include installer integration tests that deliberately exercise the
+# first-run path, or tests that verify migration tooling).
+#
+# Implementation note: pytest_sessionfinish cannot modify exitstatus, so we
+# raise from a session-scoped finalizer instead. pytest reports the raised
+# exception as a session-level error, which surfaces in the terminal summary
+# and bumps the exit code.
+@pytest.fixture(scope="session", autouse=True)
+def _home_pollution_guard():
+    """Session-scoped finalizer that fails the suite if `~` was polluted."""
+    yield
+    home = Path.home()
+    ind_now = (home / ".indagis").exists()
+    herm_now = (home / ".hermes").exists()
+    polluted = []
+    if ind_now != _PRE_SANDBOX_HOME_INDAGIS_EXISTS:
+        direction = "created" if ind_now else "deleted"
+        polluted.append(f"~/.indagis ({direction})")
+    if herm_now != _PRE_SANDBOX_HOME_HERMES_EXISTS:
+        direction = "created" if herm_now else "deleted"
+        polluted.append(f"~/.hermes ({direction})")
+    if polluted:
+        report = (
+            "\n"
+            + "=" * 70 + "\n"
+            + "REAL-HOME POLLUTION DETECTED\n"
+            + "=" * 70 + "\n"
+            + "\n"
+            + "The test session modified the operator's real `~`:\n"
+            + "\n"
+            + "".join(f"  - {p}\n" for p in polluted)
+            + "\n"
+            + "Snapshots at conftest import:\n"
+            + f"  - ~/.indagis existed: {_PRE_SANDBOX_HOME_INDAGIS_EXISTS}\n"
+            + f"  - ~/.hermes existed:  {_PRE_SANDBOX_HOME_HERMES_EXISTS}\n"
+            + "\n"
+            + "Possible causes:\n"
+            + "  - A test created `Path.home() / '.indagis'` or '~/.hermes'\n"
+            + "    directly, bypassing INDAGIS_HOME sandboxing.\n"
+            + "  - A test invoked an installer / bootstrap script that writes\n"
+            + "    to the real home.\n"
+            + "\n"
+            + "Fix: tests that need an Indagis-shaped fixture must use\n"
+            + "`tmp_path` (pytest fixture) or `tempfile.mkdtemp()`. Code that\n"
+            + "needs the operator's home must use `get_indagis_home()` (which\n"
+            + "respects the INDAGIS_HOME sandbox), not `Path.home() / '.indagis'`.\n"
+            + "\n"
+            + "To opt out a specific test (rare), mark it:\n"
+            + "  @pytest.mark.allow_home_pollution\n"
+            + "=" * 70 + "\n"
+        )
+        sys.stderr.write(report)
+        raise RuntimeError(
+            f"Real-home pollution detected: {', '.join(polluted)}. "
+            "See stderr above for diagnostic details."
+        )
