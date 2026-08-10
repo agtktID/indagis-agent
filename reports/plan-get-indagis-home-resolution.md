@@ -585,6 +585,29 @@ Pour les 3 versions, ajouter 5 tests minimum (un par priorité). Les tests doive
 - `P4` : le path est résolu via `legacy_default.exists()` (où `legacy_default = _legacy_home_from_platform_default(platform_default)`) → le mock doit retourner `True` pour `~/.hermes`
 - `P5` : tous les `.exists()` retournent `False` → le path retourné est `platform_default` (qui n'existe pas en mémoire)
 
+## Décision actée — Tranche 1 P2 trust model (2026-08-10)
+
+**Contexte** : sur la machine de développement de l'opérateur, **`~/.hermes`** est le **profil de travail réel et actif** (~10 GB, `which hermes` → `/home/tyg/.local/bin/hermes`, `config.yaml` déclare `model: MiniMax-M3, provider: minimax-oauth` actif, contient `profiles/pentest/sandboxes/docker/default/home/` avec de vrais outils de sécurité — `nuclei-templates`, `naabu`, `ffuf`, `katana`, `dnsx`, `subfinder`, `httpx`, `john`). `~/.indagis` (~2,7 GB, créé le 1er juillet 2026 par une install initiale du fork) coexiste en profil secondaire, peu utilisé au quotidien. L'opérateur n'a pas migré parce que la fenêtre de déprécation n'est pas fermée — la coexistence est le cas prévu par P2 + P4 du ladder.
+
+**Leçon méthodologique** : une première itération de cette observation avait extrapolé depuis les mtimes de fichiers et **inversé** les rôles (en faisant de `~/.indagis` le profil de travail et de `~/.hermes` l'ancien profil abandonné). La correction a été confirmée par preuve directe (`du -sh`, `which`, `cat config.yaml`, listing du profil pentest). Une investigation qui ne vérifie pas l'usage actif risque d'inverser la cause et la conséquence.
+
+**Question tranchée** (Option B validée par le mainteneur 2026-08-10) : faut-il ajouter une heuristique défensive dans le résolveur (ex. comparer volumes/mtimes entre `~/.indagis` et `~/.hermes` quand les deux existent, pour détecter un éventuel profil fantôme) ?
+
+**Réponse : non.** Le résolveur n'est pas le bon endroit pour cette heuristique :
+
+1. Sa mission est claire (résoudre le path selon les 5 priorités) ; ajouter une logique de comparaison brouille son rôle et son contrat de pureté (Draft 2.1).
+2. Le cas de figure "profil actif coexistait avec un profil secondaire non migré" est exactement le cas d'usage prévu par la coexistence P2 + P4 — il n'est pas un défaut à détecter. Identifier le profil actif est l'affaire de l'opérateur (PATH, config, historique), pas du résolveur.
+3. Une heuristique P2+P4 créerait des faux positifs pour tous les opérateurs qui ont délibérément gardé `~/.indagis` après avoir installé un profil de travail principal ailleurs, sans valeur ajoutée pour le cas commun (install propre, profil unique).
+4. L'action concrète qui protège contre les **vrais** abus (test non isolé qui pollue `~`) est la **garde anti-pollution `~`** dans `tests/conftest.py` (snapshot avant session, assertion qu'aucun `~/.indagis`/`~/.hermes` n'a été créé par les tests) — distincte du cas "deux profils coexistants légitimes".
+
+**Conséquence — trust model P2** :
+
+> P2 suppose un `~/.indagis` créé par un install de confiance. Si un script ou test crée un `~/.indagis` sans isolation (`mktemp -d`, fixture pytest avec `tmp_path`, etc.), c'est un **bug du script**, pas un défaut du résolveur.
+
+Cette phrase est reproduite verbatim dans `apps/desktop/README.md` "Compat-contract notes" (section "Path resolution"), parce qu'elle est la formulation canonique que les contributeurs forked doivent voir au même endroit que l'ordre de priorité P1-P5.
+
+**Action annexe** : la garde anti-pollution vit dans `tests/conftest.py` (snapshot `listdir(~)` au démarrage de session pytest, assertion finale qu'aucun `~/.indagis` / `~/.hermes` n'a été créé par les tests). Choix de localisation : un fixture pytest s'applique à toute exécution (test isolé ou runner complet), alors qu'un garde-fou dans `scripts/run_tests.sh` ne protégerait que les runs passant par ce script.
+
 Exemple de mock Python pour P2 :
 
 ```python
