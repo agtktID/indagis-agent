@@ -75,12 +75,12 @@ def _add_server_runtime_args(parser) -> None:
     parser.add_argument(
         "--stop",
         action="store_true",
-        help="Stop all running Hermes web server processes and exit",
+        help="Stop all running Indagis web server processes and exit",
     )
     parser.add_argument(
         "--status",
         action="store_true",
-        help="List running Hermes web server processes and exit",
+        help="List running Indagis web server processes and exit",
     )
 
 
@@ -135,9 +135,9 @@ def build_dashboard_parser(
     # =========================================================================
     serve_parser = subparsers.add_parser(
         "serve",
-        help="Start the Hermes backend server (headless; powers the desktop app and remote backends)",
+        help="Start the Indagis backend server (headless; powers the desktop app and remote backends)",
         description=(
-            "Run the Hermes backend server — the JSON-RPC/WebSocket gateway the "
+            "Run the Indagis backend server — the JSON-RPC/WebSocket gateway the "
             "desktop app and remote clients connect to. Headless: it never opens "
             "a browser UI."
         ),
