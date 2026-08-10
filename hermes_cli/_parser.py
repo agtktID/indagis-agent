@@ -39,46 +39,46 @@ def _inherited_flag(parser, *args, **kwargs):
 
 _EPILOGUE = """
 Examples:
-    hermes                        Start interactive chat
-    hermes chat -q "Hello"        Single query mode
-    hermes --tui                  Launch the modern TUI (or set display.interface: tui)
-    hermes --cli                  Force the classic REPL (overrides display.interface: tui)
-    hermes -c                     Resume the most recent session
-    hermes -c "my project"        Resume a session by name (latest in lineage)
-    hermes --resume <session_id>  Resume a specific session by ID
-    hermes setup                  Run setup wizard
-    hermes logout                 Clear stored authentication
-    hermes auth add <provider>    Add a pooled credential
-    hermes auth list              List pooled credentials
-    hermes auth remove <p> <t>    Remove pooled credential by index, id, or label
-    hermes auth reset <provider>  Clear exhaustion status for a provider
-    hermes model                  Select default model
-    hermes fallback [list]        Show fallback provider chain
-    hermes fallback add           Add a fallback provider (same picker as `hermes model`)
-    hermes fallback remove        Remove a fallback provider from the chain
-    hermes config                 View configuration
-    hermes config edit            Edit config in $EDITOR
-    hermes config set model gpt-4 Set a config value
-    hermes gateway                Run messaging gateway
-    hermes -s hermes-agent-dev,github-auth
-    hermes -w                     Start in isolated git worktree
-    hermes gateway install        Install gateway background service
-    hermes sessions list          List past sessions
-    hermes sessions browse        Interactive session picker
-    hermes sessions rename ID T   Rename/title a session
-    hermes logs                   View agent.log (last 50 lines)
-    hermes logs -f                Follow agent.log in real time
-    hermes logs errors            View errors.log
-    hermes logs --since 1h        Lines from the last hour
-    hermes debug share             Upload debug report for support
-    hermes console                Open the safe Hermes command console
-    hermes update                 Update to latest version
-    hermes dashboard              Start web UI dashboard (port 9119)
-    hermes dashboard --stop       Stop running dashboard processes
-    hermes dashboard --status     List running dashboard processes
+    indagis                       Start interactive chat
+    indagis chat -q "Hello"       Single query mode
+    indagis --tui                 Launch the modern TUI (or set display.interface: tui)
+    indagis --cli                 Force the classic REPL (overrides display.interface: tui)
+    indagis -c                    Resume the most recent session
+    indagis -c "my project"       Resume a session by name (latest in lineage)
+    indagis --resume <session_id> Resume a specific session by ID
+    indagis setup                 Run setup wizard
+    indagis logout                Clear stored authentication
+    indagis auth add <provider>   Add a pooled credential
+    indagis auth list             List pooled credentials
+    indagis auth remove <p> <t>   Remove pooled credential by index, id, or label
+    indagis auth reset <provider> Clear exhaustion status for a provider
+    indagis model                 Select default model
+    indagis fallback [list]       Show fallback provider chain
+    indagis fallback add          Add a fallback provider (same picker as `indagis model`)
+    indagis fallback remove       Remove a fallback provider from the chain
+    indagis config                View configuration
+    indagis config edit           Edit config in $EDITOR
+    indagis config set model gpt-4 Set a config value
+    indagis gateway               Run messaging gateway
+    indagis -s indagis-agent-dev,github-auth
+    indagis -w                    Start in isolated git worktree
+    indagis gateway install       Install gateway background service
+    indagis sessions list         List past sessions
+    indagis sessions browse       Interactive session picker
+    indagis sessions rename ID T  Rename/title a session
+    indagis logs                  View agent.log (last 50 lines)
+    indagis logs -f               Follow agent.log in real time
+    indagis logs errors           View errors.log
+    indagis logs --since 1h       Lines from the last hour
+    indagis debug share           Upload debug report for support
+    indagis console               Open the safe Indagis command console
+    indagis update                Update to latest version
+    indagis dashboard             Start web UI dashboard (port 9119)
+    indagis dashboard --stop      Stop running dashboard processes
+    indagis dashboard --status    List running dashboard processes
 
 For more help on a command:
-    hermes <command> --help
+    indagis <command> --help
 """
 
 
@@ -90,7 +90,7 @@ def build_top_level_parser():
     other subparsers via ``subparsers.add_parser(...)``.
     """
     parser = argparse.ArgumentParser(
-        prog="hermes",
+        prog="indagis",
         description="Indagis Agent - AI assistant with tool-calling capabilities",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=_EPILOGUE,
@@ -440,7 +440,7 @@ def build_top_level_parser():
         "--safe-mode",
         action="store_true",
         default=argparse.SUPPRESS,
-        help="Troubleshooting mode: disable ALL customizations — user config, AGENTS.md/memory injection, plugins, and MCP servers (implies --ignore-user-config and --ignore-rules). Use to isolate whether a problem comes from your setup or from Hermes itself.",
+        help="Troubleshooting mode: disable ALL customizations — user config, AGENTS.md/memory injection, plugins, and MCP servers (implies --ignore-user-config and --ignore-rules). Use to isolate whether a problem comes from your setup or from Indagis itself.",
     )
     chat_parser.add_argument(
         "--source",
