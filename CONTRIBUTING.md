@@ -1,4 +1,35 @@
-# Contributing to Hermes Agent
+# Contributing to Indagis Agent
+
+> **Status: external contributions are currently closed for this fork.**
+> Indagis Agent is a focused rebrand of Nous Research's [Hermes Agent](https://github.com/NousResearch/hermes-agent),
+> with active solo development on the presentation layer (CLI, web
+> dashboard, Electron desktop, install scripts, fork-specific docs).
+> We are not accepting external PRs at this time. The guide below is
+> the upstream Hermes Agent contribution guide, preserved verbatim so
+> contributors and operators have a single reference document — but it
+> describes the upstream contribution workflow, not the Indagis
+> workflow.
+>
+> **Where to send fixes instead:**
+>
+> - **Presentation-layer bugs** (anything under `web/`, `apps/desktop/`,
+>   `scripts/install.{sh,ps1}`, `reports/`, or the fork-specific parts
+>   of `docs/`) — file an issue on
+>   [Labscreatis/indagis-agent](https://github.com/Labscreatis/indagis-agent/issues).
+>   These are the parts we maintain.
+> - **Engine-layer bugs** (the Python agent runtime, gateway, provider
+>   stack, skill engine — everything inherited byte-for-byte from
+>   upstream) — please report them
+>   [upstream to NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent/issues).
+>   This fork is pinned at the v0.20 snapshot and we do not maintain
+>   the engine here, so engine fixes belong upstream first.
+> - **Security issues** — see `SECURITY.md` §1.1 (presentation) and
+>   §1.2 (engine) for the two reporting channels.
+>
+> This policy is reassessable: if Indagis opens up to external
+> contributions later, the upstream workflow described below will
+> become the baseline and the fork-specific guidance above will move
+> into a small addendum at the top.
 
 Thank you for contributing to Hermes Agent! This guide covers everything you need: setting up your dev environment, understanding the architecture, deciding what to build, and getting your PR merged.
 
