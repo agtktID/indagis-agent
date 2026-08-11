@@ -84,7 +84,7 @@ dependencies = [
   "urllib3>=2.7.0,<3",
   # cryptography is pulled in transitively by PyJWT[crypto]; pin it explicitly
   # so the WeCom/Weixin crypto paths can't drift below the CVE-fixed floor.
-  "cryptography>=50.0.0",  # CVE-2026-69247 (GHSA-g6cj-pr64-35w5) Bleichenbacher oracle in PKCS#7 decryption; 50.0.0 is the first fixed release, <50 is vulnerable.
+  "cryptography==50.0.0",  # CVE-2026-69247 (GHSA-g6cj-pr64-35w5) Bleichenbacher oracle in PKCS#7 decryption; 50.0.0 is the first fixed release. Pinned exact to match the rest of the security pins in this file (==N.M.K convention).
   # Windows has no IANA tzdata shipped with the OS, so Python's ``zoneinfo``
   # (PEP 615) raises ``ZoneInfoNotFoundError`` for every non-UTC timezone
   # out of the box.  ``tzdata`` ships the Olson database as a data package
