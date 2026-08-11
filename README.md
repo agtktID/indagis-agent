@@ -7,9 +7,9 @@
   <a href="https://hermes-agent.nousresearch.com/">Indagis Agent</a> | <a href="https://hermes-agent.nousresearch.com/">Indagis Desktop</a>
 </p>
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>
+  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-Indagis%20Docs-FFD700?style=for-the-badge" alt="Documentation"></a>
   <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
   <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="Built by Nous Research"></a>
   <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/Lang-中文-red?style=for-the-badge" alt="中文"></a>
   <a href="README.ur-pk.md"><img src="https://img.shields.io/badge/Lang-اردو-green?style=for-the-badge" alt="اردو"></a>
@@ -48,6 +48,13 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 > release.
 
 ### Windows (native, PowerShell)
+
+> **Upstream installer note:** the script below is served by Nous Research's
+> Hermes Agent project (reference installation, attribution upstream). For
+> a self-hosted installation of the Indagis fork, see the **Fondations**
+> section at the bottom of this file — the local installer path is wired
+> through `scripts/install.sh` in this repository once the fork ships a
+> release.
 
 > **Heads up:** Native Windows runs Indagis Agent without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/Labscreatis/indagis-agent/issues) for the fork, or [upstream issues](https://github.com/NousResearch/hermes-agent/issues) for the parent project.
 
@@ -129,6 +136,13 @@ indagis doctor       # Diagnose any issues
 ---
 
 ## Skip the API-key collection — Nous Portal
+
+> **Upstream service note:** Nous Portal is a Nous Research product (not
+> maintained by the Indagis fork). The Indagis fork plugs into the same
+> OAuth and Tool Gateway endpoints the upstream Hermes Agent uses, so this
+> is a convenient option for Indagis users that comes from the upstream
+> project. If you'd rather not use it, the rest of the install works with
+> any provider — see `indagis model` after install.
 
 Indagis Agent works with whatever provider you want — that's not changing. But if you'd rather not collect five separate API keys for the model, web search, image generation, TTS, and a cloud browser, **[Nous Portal](https://portal.nousresearch.com)** covers all of them under one subscription:
 
