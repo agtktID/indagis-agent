@@ -290,6 +290,27 @@ Built by [Nous Research](https://nousresearch.com).
 
 **Indagis is an independent, community-maintained project. It is not an official Nous Research product.** It is built on a **modified Hermes Agent core** (the `agent/`, `providers/`, `tools/`, `gateway/`, `skills/` modules in this repository are derived from [Hermes Agent](https://github.com/NousResearch/hermes-agent), which is published by Nous Research under the MIT License). The presentation layer — shell, themes, palette, dashboard login, and a small set of user-facing strings — has been re-skinned for the [Indagis](https://github.com/Labscreatis/indagis-agent) identity, intended for cybersecurity investigation workflows (SOC, DFIR, threat hunting, evidence collection).
 
+### Roadmap — Skills spécialisés cybersécurité
+
+The fork's differentiation from upstream Hermes Agent lives in the **skill library** under `skills/`. This roadmap lists the cybersecurity-specialised skills planned for the Indagis skill catalog. Each entry is a self-contained skill that wraps an existing CLI or API and an LLM-facing prompt — the agent invokes the skill, the skill wraps the tool, no custom Python integration is required. The upstream Hermes Agent skill engine handles all of these without modification.
+
+| Skill | Domain | Wraps | Status |
+|---|---|---|---|
+| `misp-query` | Threat intel | MISP REST API (`pymisp` or `curl`) | Planned (Phase 5) |
+| `virustotal-lookup` | Threat intel | VirusTotal v3 API | Planned (Phase 5) |
+| `shodan-search` | Recon | Shodan REST API | Planned (Phase 5) |
+| `mvt-android-triage` | Mobile DFIR | MVT (Mobile Verification Toolkit) CLI | Planned (Phase 5) |
+| `velociraptor-hunt` | DFIR / endpoint | Velociraptor `velociraptor` CLI | Planned (Phase 5) |
+| `osquery-investigate` | Endpoint live forensics | `osqueryi` shell | Planned (Phase 5) |
+| `wireshark-tshark` | Network forensics | `tshark` / `editcap` | Planned (Phase 5) |
+| `chainsaw-evtx` | Log forensics (Windows EVTX) | Chainsaw CLI | Planned (Phase 5) |
+| `sigma-rule-search` | Detection engineering | `sigma-cli` or PyPI `sigma` | Planned (Phase 5) |
+| `yara-scan` | File / memory scanning | `yara` CLI | Planned (Phase 5) |
+
+These are **planned, not shipped**. They will land under `skills/` as standalone `SKILL.md` + scripts (the upstream convention), each reviewed against the Skill-vs-Tool decision criteria in `CONTRIBUTING.md`. The Phase 5 timeline depends on the installer fork (see **Phase 5 todo** below) since the skill engine still uses the upstream installer to place skills at runtime. Skill implementations live in this repo's `skills/` directory; the engine that executes them is upstream.
+
+**Status of shipped skills today:** none. Indagis ships with the upstream Hermes Agent skill catalog unchanged; the entries above are the planned fork-specific additions. Operators who want to test a specific skill early should file an issue with the workflow they want to automate.
+
 ### What Indagis owns
 
 - The presentation layer: CLI banner, completion scripts (bash/zsh/fish), the user-facing shell, the web dashboard login page and theme tokens, the Desktop Electron bundle, the i18n strings (`web/src/i18n/*.ts`), and the `Indagis` palette (`#0B0F14` Obsidian Black, `#37D5D6` Cyber Cyan, `#7CEFF0` Light Cyan, plus Spacing Grotesk and Inter typography).
