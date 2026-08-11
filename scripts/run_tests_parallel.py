@@ -1025,20 +1025,22 @@ def main() -> int:
             # relative to repo_root. Files not listed use args.file_timeout.
             # The dict is local + const — no per-iteration cost.
             #
-            # test_hermes_state.py: 600s (vs default 300s) — this file has
-            # 168+ tests covering SQLite CRUD, FTS5 search, compression
+            # test_hermes_state.py: 900s (vs default 300s) — this file has
+            # 168 tests covering SQLite CRUD, FTS5 search, compression
             # chain, pragmas, performance benchmarks. Even after the FTS5
-            # split (test_hermes_state_fts5.py, 19 tests, ~150s wall),
-            # the main file still takes ~500-550s wall-clock on the
+            # split (test_hermes_state_fts5.py, 19 tests, ~100s wall),
+            # the main file still measures 598.8s wall-clock on the
             # developer's reference machine (single-threaded pytest
-            # invocation, in-process SQLite). 600s leaves a ~50-100s
-            # margin over the measured baseline. Future ticket: continue
+            # invocation, in-process SQLite) — measured in
+            # 081cc6fdd followup branch. 900s leaves a 300s margin
+            # (+50%) over the measured baseline, absorbing disk/CPU
+            # variance on other CI runners. Future ticket: continue
             # splitting the heaviest classes (TestCompressionChainProjection,
             # TestFtsRebuildFinishWithoutTrigram, TestApplyDatabasePragmas,
             # TestPerformancePragmasEndToEnd) so this override can shrink
             # back toward the 300s default.
             _PER_FILE_TIMEOUT_OVERRIDES = {
-                "tests/test_hermes_state.py": 600.0,
+                "tests/test_hermes_state.py": 900.0,
             }
             rel_path = str(file.relative_to(repo_root))
             if rel_path in _PER_FILE_TIMEOUT_OVERRIDES:
