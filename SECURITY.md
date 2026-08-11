@@ -1,4 +1,16 @@
-# Hermes Agent Security Policy
+# Indagis Agent Security Policy
+
+> **Note on the rebrand.** Indagis Agent is a fork of Nous Research's
+> [Hermes Agent](https://github.com/NousResearch/hermes-agent), packaged
+> under a new name with a presentation-layer rebrand. The presentation
+> layer (CLI, web dashboard, Electron desktop app) is owned and
+> maintained here; the agent runtime, gateway, providers, and skill
+> engine are inherited from upstream Hermes Agent and pinned at the
+> v0.20 snapshot. The trust model, scope rules, and disclosure policy
+> below are the upstream ones, because the inherited engine is
+> byte-for-byte the code they describe. Only the reporting channel in
+> §1 is forked: presentation bugs go to this repo, engine bugs go
+> upstream.
 
 This document describes Hermes Agent's trust model, names the one
 security boundary the project treats as load-bearing, and defines the
@@ -6,20 +18,52 @@ scope for vulnerability reports.
 
 ## 1. Reporting a Vulnerability
 
-Report privately via [GitHub Security Advisories](https://github.com/NousResearch/hermes-agent/security/advisories/new)
-or **security@nousresearch.com**. Do not open public issues for
-security vulnerabilities. **Hermes Agent does not operate a bug
-bounty program.**
+This fork maintains **two reporting channels** that route the same
+upstream policy (§2 through §5 below) to the right maintainers.
+Before sending a report, identify which layer the bug is in.
 
-A useful report includes:
+### 1.1 Presentation-layer bugs (report here)
+
+The presentation layer is everything listed in the Indagis Agent
+README under the rebrand (CLI, web dashboard at `web/`, Electron
+desktop app at `apps/desktop/`, install scripts at `scripts/install.{sh,ps1}`,
+and the fork-specific docs under `reports/` and `docs/`). Report these
+privately via [GitHub Security Advisories on this repository](https://github.com/Labscreatis/indagis-agent/security/advisories/new)
+— they are the bugs we can fix.
+
+### 1.2 Engine-layer bugs (report upstream)
+
+The engine layer is everything Indagis inherits unchanged from Hermes
+Agent: the Python agent runtime, the gateway, the provider/MCP stack,
+the skill engine, and the underlying tool contracts. The fork
+upstream is pinned at v0.20 and we do not maintain it here — bugs in
+this layer are upstream bugs. Report them via one of the upstream
+channels:
+
+- [GitHub Security Advisories on NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent/security/advisories/new)
+- **security@nousresearch.com**
+
+Reporting engine bugs here is closed as out-of-scope for this repo
+(no fix in this fork) and forwarded upstream.
+
+### 1.3 What to include in a report
+
+The rest of the policy — format, trust model, in-scope and out-of-scope
+categories, disclosure window, credit — is the upstream Hermes Agent
+policy in §2 through §5, applied identically. A useful report
+includes:
 
 - A concise description and severity assessment.
 - The affected component, identified by file path and line range
   (e.g. `path/to/file.py:120-145`).
-- Environment details (`hermes version`, commit SHA, OS, Python
+- Environment details (`indagis version` or the upstream version
+  pinned in `pyproject.toml` for engine bugs, commit SHA, OS, Python
   version).
 - A reproduction against `main` or the latest release.
 - A statement of which trust boundary in §2 is crossed.
+- For this fork: whether the bug is in the presentation layer (§1.1) or
+  the engine layer (§1.2), and the exact upstream commit SHA if the
+  engine is in question.
 
 Please read §2 and §3 before submitting. Reports that demonstrate
 limits of an in-process heuristic this policy does not treat as a
