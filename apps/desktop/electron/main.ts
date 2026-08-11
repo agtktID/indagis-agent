@@ -8709,6 +8709,19 @@ function wireCommonWindowHandlers(win, { zoom = true }: { zoom?: boolean } = {})
   }
 
   installContextMenu(win)
+  // GHSA-9f4c-93c8-jc8g mitigation: return {action: 'deny'} for ALL window-open
+  // requests, so the OpenURL path in sandboxed iframes (preview-pane,
+  // preview-artifact) cannot bypass the absent allow-popups permission.
+  // The 4 unsandboxed embeds (YouTube, Spotify, frame-embed) are unaffected
+  // by the CVE (the attack vector is specific to sandboxed iframes), and
+  // their origins are either trusted (youtube.com, spotify.com) or null
+  // (srcDoc), so origin-level privilege escalation is not reachable from
+  // a compromised origin. We accept staying on Electron 40.x for the
+  // 41.10.3 fix because (a) the fix is a breaking major-version bump
+  // and (b) the real-world exploitability in this app is low: no iframe
+  // is rendered with allow-popups, and this handler already denies every
+  // pop-up. Revisit if a future feature starts loading user-supplied HTML
+  // in a sandboxed iframe with allow-popups enabled.
   win.webContents.setWindowOpenHandler(details => {
     openExternalUrl(details.url)
 
