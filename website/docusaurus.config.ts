@@ -10,7 +10,7 @@ const config: Config = {
   url: 'https://indagis-agent.example.com',
   baseUrl: '/docs/',
 
-  organizationName: 'Labscreatis',
+  organizationName: 'agtktID',
   projectName: 'indagis-agent',
 
   onBrokenLinks: 'warn',
@@ -114,7 +114,7 @@ const config: Config = {
         docs: {
           routeBasePath: '/',  // Docs at the root of /docs/
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/Labscreatis/indagis-agent/edit/main/website/',
+          editUrl: 'https://github.com/agtktID/indagis-agent/edit/main/website/',
         },
         blog: false,
         theme: {
@@ -169,7 +169,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://github.com/Labscreatis/indagis-agent',
+          href: 'https://github.com/agtktID/indagis-agent',
           label: 'GitHub',
           position: 'right',
         },
@@ -196,7 +196,7 @@ const config: Config = {
           title: 'Community',
           items: [
             { label: 'Discord', href: 'https://discord.gg/NousResearch' },
-            { label: 'GitHub Issues', href: 'https://github.com/Labscreatis/indagis-agent/issues' },
+            { label: 'GitHub Issues', href: 'https://github.com/agtktID/indagis-agent/issues' },
             { label: 'Skills Hub', href: 'https://agentskills.io' },
           ],
         },
@@ -204,7 +204,7 @@ const config: Config = {
           title: 'More',
           items: [
             { label: 'Desktop Download', href: 'https://indagis-agent.example.com/' },
-            { label: 'GitHub', href: 'https://github.com/Labscreatis/indagis-agent' },
+            { label: 'GitHub', href: 'https://github.com/agtktID/indagis-agent' },
             { label: 'Nous Research', href: 'https://nousresearch.com' },
           ],
         },

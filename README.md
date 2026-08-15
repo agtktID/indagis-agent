@@ -56,7 +56,7 @@ curl -fsSL https://indagis-agent.example.com/install.sh | bash
 > through `scripts/install.sh` in this repository once the fork ships a
 > release.
 
-> **Heads up:** Native Windows runs Indagis Agent without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/Labscreatis/indagis-agent/issues) for the fork, or [upstream issues](https://github.com/NousResearch/hermes-agent/issues) for the parent project.
+> **Heads up:** Native Windows runs Indagis Agent without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/agtktID/indagis-agent/issues) for the fork, or [upstream issues](https://github.com/NousResearch/hermes-agent/issues) for the parent project.
 
 Run this in PowerShell:
 
@@ -272,7 +272,7 @@ scripts/run_tests.sh
 
 - 💬 [Discord](https://discord.gg/NousResearch) (NousResearch — the upstream project's community)
 - 📚 [Skills Hub](https://agentskills.io)
-- 🐛 [Indagis Agent issues](https://github.com/Labscreatis/indagis-agent/issues) · [Hermes Agent upstream issues](https://github.com/NousResearch/hermes-agent/issues)
+- 🐛 [Indagis Agent issues](https://github.com/agtktID/indagis-agent/issues) · [Hermes Agent upstream issues](https://github.com/NousResearch/hermes-agent/issues)
 - 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Linux desktop-control MCP server for Indagis Agent (and other MCP hosts), with AT-SPI accessibility trees, Wayland/X11 input, screenshots, and compositor window targeting.
 - 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — Community WeChat bridge upstream of the Hermes Agent project, can be integrated into Indagis Agent installations that also run OpenClaw.
 
@@ -288,7 +288,7 @@ Built by [Nous Research](https://nousresearch.com).
 
 ## Fondations
 
-**Indagis is an independent, community-maintained project. It is not an official Nous Research product.** It is built on a **modified Hermes Agent core** (the `agent/`, `providers/`, `tools/`, `gateway/`, `skills/` modules in this repository are derived from [Hermes Agent](https://github.com/NousResearch/hermes-agent), which is published by Nous Research under the MIT License). The presentation layer — shell, themes, palette, dashboard login, and a small set of user-facing strings — has been re-skinned for the [Indagis](https://github.com/Labscreatis/indagis-agent) identity, intended for cybersecurity investigation workflows (SOC, DFIR, threat hunting, evidence collection).
+**Indagis is an independent, community-maintained project. It is not an official Nous Research product.** It is built on a **modified Hermes Agent core** (the `agent/`, `providers/`, `tools/`, `gateway/`, `skills/` modules in this repository are derived from [Hermes Agent](https://github.com/NousResearch/hermes-agent), which is published by Nous Research under the MIT License). The presentation layer — shell, themes, palette, dashboard login, and a small set of user-facing strings — has been re-skinned for the [Indagis](https://github.com/agtktID/indagis-agent) identity, intended for cybersecurity investigation workflows (SOC, DFIR, threat hunting, evidence collection).
 
 ### Roadmap — Skills spécialisés cybersécurité
 
