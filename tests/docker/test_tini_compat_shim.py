@@ -68,8 +68,8 @@ def test_entrypoint_is_dispatcher_not_tini(built_image: str) -> None:
     # the image, preserving the supervision tree.
     r2 = subprocess.run(
         ["docker", "run", "--rm", "--entrypoint", "sh", built_image, "-c",
-         "grep -q 'exec /init /opt/hermes/docker/main-wrapper.sh' "
-         "/opt/hermes/docker/entrypoint-dispatch.sh"],
+         "grep -q 'exec /init /opt/indagis/docker/main-wrapper.sh' "
+         "/opt/indagis/docker/entrypoint-dispatch.sh"],
         capture_output=True, text=True, timeout=60,
     )
     assert r2.returncode == 0, (
