@@ -143,7 +143,7 @@ def test_dockerfile_entrypoint_routes_through_the_init(dockerfile_text):
     )
     dispatcher = ENTRYPOINT_DISPATCH.read_text(encoding="utf-8")
     assert 'if [ "$$" -eq 1 ]; then' in dispatcher
-    assert "exec /init /opt/hermes/docker/main-wrapper.sh" in dispatcher, (
+    assert "exec /init /opt/indagis/docker/main-wrapper.sh" in dispatcher, (
         "The entrypoint dispatcher must hand PID-1 execution off to /init; "
         "otherwise the shell becomes PID 1 and zombies will accumulate."
     )
