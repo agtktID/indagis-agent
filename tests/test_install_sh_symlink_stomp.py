@@ -8,6 +8,16 @@ the existing symlink and overwrote the pip entry point with the shim. The
 shim's ``exec "$HERMES_BIN" "$@"`` then self-recursed and ``hermes`` hung on
 every invocation.
 
+Since the Hermes -> Indagis rebrand, ``indagis``/``indagis-agent``/``indagis-acp``
+are the primary shims (written the same rm-before-cat way, so they inherit
+the same protection) and ``hermes``/``hermes-agent``/``hermes-acp`` are kept
+as thin deprecated aliases that warn and delegate to the ``indagis*`` shim
+rather than execing ``$HERMES_BIN`` directly. The symlink-stomp hazard is
+still live for ``hermes`` specifically, because it is the only name any
+pre-rebrand install could ever have left behind as a stale symlink to the
+pip entry point — ``indagis`` never existed before this shim rewrite, so it
+can never inherit that particular stale state.
+
 These tests pin the fix: ``setup_path()`` must remove ``$command_link_dir/hermes``
 before writing through the redirect, so the shim is created as a regular file
 in ``command_link_dir`` and the venv entry point is left intact.
@@ -26,23 +36,29 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 INSTALL_SH = REPO_ROOT / "scripts" / "install.sh"
 
 
-def _extract_setup_path_shim_block() -> str:
-    """Return the install.sh shim-write block used by setup_path()."""
+def _extract_hermes_alias_block() -> str:
+    """Return the install.sh block that (re)writes the deprecated `hermes` alias.
+
+    Deliberately scoped to just this self-contained sub-block (not the whole
+    setup_path() shim section, which also creates `indagis` and calls
+    `log_success` — a function this test does not stub) so it can be driven
+    standalone in a subprocess.
+    """
     text = INSTALL_SH.read_text()
     match = re.search(
-        r"(?P<block>mkdir -p \"\$command_link_dir\".*?chmod \+x \"\$command_link_dir/hermes\")",
+        r'(?P<block>rm -f "\$command_link_dir/hermes".*?chmod \+x "\$command_link_dir/hermes")',
         text,
         re.DOTALL,
     )
     assert match is not None, (
-        "Could not locate the setup_path shim-write block in scripts/install.sh"
+        "Could not locate the deprecated-hermes-alias block in scripts/install.sh"
     )
     return match["block"]
 
 
-def test_setup_path_shim_block_removes_old_link_before_writing() -> None:
+def test_hermes_alias_block_removes_old_link_before_writing() -> None:
     """Static guard: the rm must precede the cat heredoc, not follow it."""
-    block = _extract_setup_path_shim_block()
+    block = _extract_hermes_alias_block()
     rm_idx = block.find('rm -f "$command_link_dir/hermes"')
     cat_idx = block.find('cat > "$command_link_dir/hermes" <<EOF')
     assert rm_idx != -1, (
@@ -57,21 +73,22 @@ def test_setup_path_shim_block_removes_old_link_before_writing() -> None:
     )
 
 
-def test_re_running_setup_path_block_preserves_pip_entry_point(tmp_path: Path) -> None:
+def test_re_running_hermes_alias_block_preserves_pip_entry_point(tmp_path: Path) -> None:
     """Behavioral repro: simulate prior-install symlink + new-install heredoc.
 
-    Layout mirrors a real install:
+    Layout mirrors a real upgrade from a pre-rebrand install:
 
         tmp/
-          venv/bin/hermes        <- pip entry point (the one we must preserve)
+          venv/bin/hermes        <- old pip entry point (the one we must preserve)
           local_bin/hermes       <- symlink → ../venv/bin/hermes  (old install)
 
-    Then we run the exact shim-write block from setup_path() with
-    ``HERMES_BIN`` and ``command_link_dir`` pointed at this fixture. The fix
-    requires that, after the run:
+    Then we run the exact `hermes` alias-write block from setup_path()
+    against this fixture. The fix requires that, after the run:
 
       * ``venv/bin/hermes`` still contains its original pip-script body
-      * ``local_bin/hermes`` is a regular file (not a symlink) holding the shim
+      * ``local_bin/hermes`` is a regular file (not a symlink) that now
+        delegates to the `indagis` shim, rather than the old symlink or a
+        self-recursing exec of $HERMES_BIN
     """
     venv_bin = tmp_path / "venv" / "bin"
     venv_bin.mkdir(parents=True)
@@ -88,9 +105,11 @@ def test_re_running_setup_path_block_preserves_pip_entry_point(tmp_path: Path) -
     shim_path.symlink_to(pip_entry)
     assert shim_path.is_symlink()
 
-    block = _extract_setup_path_shim_block()
-    # Drive the block with the real env vars setup_path() sets.
-    script = f'set -e\nHERMES_BIN={pip_entry!s}\ncommand_link_dir={command_link_dir!s}\n{block}\n'
+    block = _extract_hermes_alias_block()
+    # Drive the block with the real env var setup_path() sets. The block no
+    # longer references $HERMES_BIN — it delegates to the indagis shim by
+    # path — but the fixture still stands in for a real pre-rebrand install.
+    script = f'set -e\ncommand_link_dir={command_link_dir!s}\n{block}\n'
     result = subprocess.run(
         ["bash", "-c", script],
         capture_output=True,
@@ -101,11 +120,11 @@ def test_re_running_setup_path_block_preserves_pip_entry_point(tmp_path: Path) -
         f"shim-write block failed:\nstdout={result.stdout}\nstderr={result.stderr}"
     )
 
-    # The pip entry point must still be the original pip script — not a
+    # The old pip entry point must still be the original pip script — not a
     # re-written self-recursing bash shim.
     assert pip_entry.read_text() == pip_marker, (
-        "venv/bin/hermes was overwritten by setup_path() — symlink-stomp "
-        "regression (#21454)."
+        "venv/bin/hermes was overwritten by the hermes-alias block — "
+        "symlink-stomp regression (#21454)."
     )
 
     # The shim path itself must now be a regular file holding the launcher.
@@ -115,8 +134,7 @@ def test_re_running_setup_path_block_preserves_pip_entry_point(tmp_path: Path) -
         "left as a symlink — otherwise the next install will stomp again."
     )
     shim_text = shim_path.read_text()
-    assert "unset PYTHONPATH" in shim_text
-    assert "unset PYTHONHOME" in shim_text
-    assert f'exec "{pip_entry}"' in shim_text
+    assert "deprecated name, use 'indagis' instead" in shim_text
+    assert f'exec "{command_link_dir}/indagis"' in shim_text
     shim_mode = shim_path.stat().st_mode
     assert shim_mode & stat.S_IXUSR, "shim must be user-executable"
