@@ -1,12 +1,12 @@
 #!/bin/bash
 # ============================================================================
-# Hermes Agent Installer
+# Indagis Agent Installer
 # ============================================================================
 # Installation script for Linux, macOS, and Android/Termux.
 # Uses uv for desktop/server installs and Python's stdlib venv + pip on Termux.
 #
 # Usage:
-#   curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+#   curl -fsSL https://github.com/Labscreatis/indagis-agent/raw/main/scripts/install.sh | bash
 #
 # Or with options:
 #   curl -fsSL ... | bash -s -- --no-venv --skip-setup
@@ -180,7 +180,7 @@ while [[ $# -gt 0 ]]; do
             ;;
 
         -h|--help)
-            echo "Hermes Agent Installer"
+            echo "Indagis Agent Installer"
             echo ""
             echo "Usage: install.sh [OPTIONS]"
             echo ""
@@ -235,7 +235,7 @@ print_banner() {
     echo ""
     echo -e "${MAGENTA}${BOLD}"
     echo "┌─────────────────────────────────────────────────────────┐"
-    echo "│             ⚕ Hermes Agent Installer                    │"
+    echo "│             ⚕ Indagis Agent Installer                    │"
     echo "├─────────────────────────────────────────────────────────┤"
     echo "│  An open source AI agent by Nous Research.              │"
     echo "└─────────────────────────────────────────────────────────┘"
@@ -552,7 +552,7 @@ detect_os() {
             OS="windows"
             DISTRO="windows"
             log_error "Windows detected. Please use the PowerShell installer:"
-            log_info "  iex (irm https://hermes-agent.nousresearch.com/install.ps1)"
+            log_info "  iex (irm https://github.com/Labscreatis/indagis-agent/raw/main/scripts/install.ps1)"
             exit 1
             ;;
         *)
@@ -1718,22 +1718,22 @@ PY
 }
 
 setup_path() {
-    log_info "Setting up hermes command..."
+    log_info "Setting up indagis command..."
 
     if [ "$USE_VENV" = true ]; then
         HERMES_BIN="$INSTALL_DIR/venv/bin/python"
         HERMES_ENTRYPOINT="$INSTALL_DIR/hermes"
     else
-        HERMES_BIN="$(which hermes 2>/dev/null || echo "")"
+        HERMES_BIN="$(which indagis 2>/dev/null || which hermes 2>/dev/null || echo "")"
         if [ -z "$HERMES_BIN" ]; then
-            log_warn "hermes not found on PATH after install"
+            log_warn "indagis not found on PATH after install"
             return 0
         fi
     fi
 
     # Verify the interpreter and the checked-in entrypoint needed by the launcher.
     if [ ! -x "$HERMES_BIN" ] || { [ "$USE_VENV" = true ] && [ ! -f "$HERMES_ENTRYPOINT" ]; }; then
-        log_warn "Hermes launcher prerequisites not found"
+        log_warn "Indagis launcher prerequisites not found"
         log_info "This usually means the Python package install didn't complete successfully."
         if [ "$DISTRO" = "termux" ]; then
             log_info "Try: cd $INSTALL_DIR && python -m pip install -e '.[termux-all]' -c constraints-termux.txt"
@@ -1748,88 +1748,120 @@ setup_path() {
     command_link_dir="$(get_command_link_dir)"
     command_link_display_dir="$(get_command_link_display_dir)"
 
-    # Create a user-facing shim for the hermes command.
+    # Create the user-facing shim for the indagis command (primary).
     # We intentionally clear PYTHONPATH/PYTHONHOME here so inherited env vars
     # can't make this launcher import modules from another checkout.
     mkdir -p "$command_link_dir"
     # Older installs created this path as a symlink to $HERMES_BIN. Without
     # the rm, `cat >` follows the symlink and overwrites the venv pip entry
     # point with this shim — making `exec "$HERMES_BIN"` self-recurse. (#21454)
-    rm -f "$command_link_dir/hermes"
+    rm -f "$command_link_dir/indagis"
     if [ "$USE_VENV" = true ]; then
         # uv-generated console scripts resolve themselves through `realpath`,
         # which stock macOS does not provide. Run the checked-in entrypoint
         # with the venv interpreter instead, so the public launcher remains
         # independent of non-standard shell utilities.
-        cat > "$command_link_dir/hermes" <<EOF
+        cat > "$command_link_dir/indagis" <<EOF
 #!/usr/bin/env bash
 unset PYTHONPATH
 unset PYTHONHOME
 exec "$HERMES_BIN" "$HERMES_ENTRYPOINT" "\$@"
 EOF
     else
-        cat > "$command_link_dir/hermes" <<EOF
+        cat > "$command_link_dir/indagis" <<EOF
 #!/usr/bin/env bash
 unset PYTHONPATH
 unset PYTHONHOME
 exec "$HERMES_BIN" "\$@"
 EOF
     fi
-    chmod +x "$command_link_dir/hermes"
-    log_success "Installed hermes launcher → $command_link_display_dir/hermes"
+    chmod +x "$command_link_dir/indagis"
+    log_success "Installed indagis launcher → $command_link_display_dir/indagis"
 
-    # Also expose `hermes-agent`. The `hermes-agent` console script declared in
+    # Deprecated alias: `hermes` keeps working during the transition, but
+    # warns and delegates to the `indagis` shim above rather than shipping
+    # its own copy of the launch logic.
+    rm -f "$command_link_dir/hermes"
+    cat > "$command_link_dir/hermes" <<EOF
+#!/usr/bin/env bash
+echo "hermes: deprecated name, use 'indagis' instead (will be removed in a future release)." >&2
+exec "$command_link_dir/indagis" "\$@"
+EOF
+    chmod +x "$command_link_dir/hermes"
+    log_success "Installed hermes launcher (deprecated alias) → $command_link_display_dir/hermes"
+
+    # Also expose `indagis-agent`. The `indagis-agent` console script declared in
     # pyproject.toml's [project.scripts] lives inside the venv, which is not on
     # the login-shell PATH. Without this launcher users can't invoke the agent
     # entrypoint directly from outside the venv. (#74819)
-    rm -f "$command_link_dir/hermes-agent"
+    rm -f "$command_link_dir/indagis-agent"
     if [ "$USE_VENV" = true ]; then
-        cat > "$command_link_dir/hermes-agent" <<EOF
+        cat > "$command_link_dir/indagis-agent" <<EOF
 #!/usr/bin/env bash
 unset PYTHONPATH
 unset PYTHONHOME
 exec "$HERMES_BIN" "$INSTALL_DIR/run_agent.py" "\$@"
 EOF
     else
-        cat > "$command_link_dir/hermes-agent" <<EOF
+        cat > "$command_link_dir/indagis-agent" <<EOF
 #!/usr/bin/env bash
 unset PYTHONPATH
 unset PYTHONHOME
 exec "$HERMES_BIN" run_agent.py "\$@"
 EOF
     fi
-    chmod +x "$command_link_dir/hermes-agent"
-    log_success "Installed hermes-agent launcher → $command_link_display_dir/hermes-agent"
+    chmod +x "$command_link_dir/indagis-agent"
+    log_success "Installed indagis-agent launcher → $command_link_display_dir/indagis-agent"
 
-    # Also expose `hermes-acp`. ACP hosts (Zed, JetBrains, Buzz) resolve the
-    # agent by command name on the login-shell PATH, and the `hermes-acp`
+    # Deprecated alias for `hermes-agent`.
+    rm -f "$command_link_dir/hermes-agent"
+    cat > "$command_link_dir/hermes-agent" <<EOF
+#!/usr/bin/env bash
+echo "hermes-agent: deprecated name, use 'indagis-agent' instead (will be removed in a future release)." >&2
+exec "$command_link_dir/indagis-agent" "\$@"
+EOF
+    chmod +x "$command_link_dir/hermes-agent"
+    log_success "Installed hermes-agent launcher (deprecated alias) → $command_link_display_dir/hermes-agent"
+
+    # Also expose `indagis-acp`. ACP hosts (Zed, JetBrains, Buzz) resolve the
+    # agent by command name on the login-shell PATH, and the `indagis-acp`
     # console script lives inside the venv, which is not on that PATH. Without
-    # this launcher those hosts report Hermes as not installed. (#21454 applies
+    # this launcher those hosts report Indagis as not installed. (#21454 applies
     # here too: clear the path first so `cat >` cannot follow an old symlink
     # into the venv and overwrite the console script.)
-    rm -f "$command_link_dir/hermes-acp"
+    rm -f "$command_link_dir/indagis-acp"
     if [ "$USE_VENV" = true ]; then
-        cat > "$command_link_dir/hermes-acp" <<EOF
+        cat > "$command_link_dir/indagis-acp" <<EOF
 #!/usr/bin/env bash
 unset PYTHONPATH
 unset PYTHONHOME
 exec "$HERMES_BIN" "$HERMES_ENTRYPOINT" acp "\$@"
 EOF
     else
-        cat > "$command_link_dir/hermes-acp" <<EOF
+        cat > "$command_link_dir/indagis-acp" <<EOF
 #!/usr/bin/env bash
 unset PYTHONPATH
 unset PYTHONHOME
 exec "$HERMES_BIN" acp "\$@"
 EOF
     fi
+    chmod +x "$command_link_dir/indagis-acp"
+    log_success "Installed indagis-acp launcher → $command_link_display_dir/indagis-acp"
+
+    # Deprecated alias for `hermes-acp`.
+    rm -f "$command_link_dir/hermes-acp"
+    cat > "$command_link_dir/hermes-acp" <<EOF
+#!/usr/bin/env bash
+echo "hermes-acp: deprecated name, use 'indagis-acp' instead (will be removed in a future release)." >&2
+exec "$command_link_dir/indagis-acp" "\$@"
+EOF
     chmod +x "$command_link_dir/hermes-acp"
-    log_success "Installed hermes-acp launcher → $command_link_display_dir/hermes-acp"
+    log_success "Installed hermes-acp launcher (deprecated alias) → $command_link_display_dir/hermes-acp"
 
     if [ "$DISTRO" = "termux" ]; then
         export PATH="$command_link_dir:$PATH"
         log_info "$command_link_display_dir is the native Termux command path"
-        log_success "hermes command ready"
+        log_success "indagis command ready"
         return 0
     fi
 
@@ -1844,16 +1876,16 @@ EOF
         # Probe a fresh non-login interactive bash the way the user will use it.
         # `bash -i -c` sources ~/.bashrc but NOT ~/.bash_profile or /etc/profile,
         # which is the exact scenario where RHEL root loses /usr/local/bin.
-        if env -i HOME="$HOME" TERM="${TERM:-dumb}" bash -i -c 'command -v hermes' \
+        if env -i HOME="$HOME" TERM="${TERM:-dumb}" bash -i -c 'command -v indagis' \
                 >/dev/null 2>&1; then
             log_info "/usr/local/bin is already on PATH for all shells"
-            log_success "hermes command ready"
+            log_success "indagis command ready"
             return 0
         fi
 
-        log_info "hermes not on PATH in non-login shells (common on RHEL-family)"
+        log_info "indagis not on PATH in non-login shells (common on RHEL-family)"
         PATH_LINE='export PATH="/usr/local/bin:$PATH"'
-        PATH_COMMENT='# Hermes Agent — ensure /usr/local/bin is on PATH (RHEL non-login shells)'
+        PATH_COMMENT='# Indagis Agent — ensure /usr/local/bin is on PATH (RHEL non-login shells)'
         for SHELL_CONFIG in "$HOME/.bashrc" "$HOME/.bash_profile"; do
             [ -f "$SHELL_CONFIG" ] || continue
             if ! grep -v '^[[:space:]]*#' "$SHELL_CONFIG" 2>/dev/null \
@@ -1864,7 +1896,7 @@ EOF
                 log_success "Added /usr/local/bin to PATH in $SHELL_CONFIG"
             fi
         done
-        log_success "hermes command ready"
+        log_success "indagis command ready"
         return 0
     fi
 
@@ -1910,7 +1942,7 @@ EOF
         for SHELL_CONFIG in "${SHELL_CONFIGS[@]}"; do
             if ! grep -v '^[[:space:]]*#' "$SHELL_CONFIG" 2>/dev/null | grep -qE 'PATH=.*\.local/bin'; then
                 echo "" >> "$SHELL_CONFIG"
-                echo "# Hermes Agent — ensure ~/.local/bin is on PATH" >> "$SHELL_CONFIG"
+                echo "# Indagis Agent — ensure ~/.local/bin is on PATH" >> "$SHELL_CONFIG"
                 echo "$PATH_LINE" >> "$SHELL_CONFIG"
                 log_success "Added ~/.local/bin to PATH in $SHELL_CONFIG"
             fi
@@ -1920,7 +1952,7 @@ EOF
         if [ "$IS_FISH" = "true" ]; then
             if ! grep -q 'fish_add_path.*\.local/bin' "$FISH_CONFIG" 2>/dev/null; then
                 echo "" >> "$FISH_CONFIG"
-                echo "# Hermes Agent — ensure ~/.local/bin is on PATH" >> "$FISH_CONFIG"
+                echo "# Indagis Agent — ensure ~/.local/bin is on PATH" >> "$FISH_CONFIG"
                 echo 'fish_add_path "$HOME/.local/bin"' >> "$FISH_CONFIG"
                 log_success "Added ~/.local/bin to PATH in $FISH_CONFIG"
             fi
@@ -1934,10 +1966,10 @@ EOF
         log_info "~/.local/bin already on PATH"
     fi
 
-    # Export for current session so hermes works immediately
+    # Export for current session so indagis works immediately
     export PATH="$command_link_dir:$PATH"
 
-    log_success "hermes command ready"
+    log_success "indagis command ready"
 }
 
 copy_config_templates() {
