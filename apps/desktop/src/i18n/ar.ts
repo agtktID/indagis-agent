@@ -62,7 +62,7 @@ export const ar = defineLocale({
       loadingSettings: 'جار تحميل إعدادات Indagis',
       loadingSessions: 'جار تحميل الجلسات الأخيرة',
       startingDesktopConnection: 'جار بدء اتصال سطح المكتب',
-      startingHermesDesktop: 'جار تشغيل Indagis Desktop...'
+      startingIndagisDesktop: 'جار تشغيل Indagis Desktop...'
     },
     errors: {
       backgroundExited: 'خرجت عملية Indagis الخلفية.',

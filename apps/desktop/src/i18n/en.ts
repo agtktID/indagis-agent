@@ -69,7 +69,7 @@ export const en: Translations = {
       loadingSettings: 'Loading Indagis settings',
       loadingSessions: 'Loading recent sessions',
       startingDesktopConnection: 'Starting desktop connection',
-      startingHermesDesktop: 'Starting Indagis Desktop…'
+      startingIndagisDesktop: 'Starting Indagis Desktop…'
     },
     errors: {
       backgroundExited: 'Indagis background process exited.',
@@ -736,7 +736,7 @@ export const en: Translations = {
       sshErrHostKey:
         'The host key has CHANGED since you last connected. Verify this is expected, then run ssh-keygen -R <host> and reconnect.',
       sshErrNotInstalled:
-        'Indagis is not installed on the remote host. Install it there (curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh) or set the Indagis path.',
+        'Indagis is not installed on the remote host. Install it there (curl -fsSL https://indagis-agent.example.com/install.sh | sh) or set the Indagis path.',
       sshErrPlatform:
         'Unsupported remote platform. Indagis Desktop SSH mode supports Linux, macOS, and Windows remote hosts.',
       sshErrTimeout: 'SSH connection timed out. The host may be unreachable or asleep.',
@@ -2249,7 +2249,7 @@ export const en: Translations = {
     retryAfterRun: 'I’ve run it -- retry',
     setupChoiceTitle: 'Set up Indagis Desktop',
     setupChoiceDesc:
-      'Connect this app to a Indagis gateway you already run, or install Indagis locally on this computer.',
+      'Connect this app to an Indagis gateway you already run, or install Indagis locally on this computer.',
     connectExistingTitle: 'Connect to existing Indagis',
     connectExistingShort: 'Connect existing',
     connectExistingDesc: 'Use a remote backend with a session token or browser sign-in. No local install will start.',
