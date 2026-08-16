@@ -380,7 +380,7 @@ def is_managed() -> bool:
 
 
 _NIX_UPDATE_MSG = (
-    "Update Hermes through the Nix source that installed it "
+    "Update Indagis through the Nix source that installed it "
     "(e.g. nix profile upgrade, or update your flake input and rebuild with nixos-rebuild or home-manager switch)"
 )
 
@@ -610,7 +610,7 @@ def format_docker_update_message() -> str:
     return _DOCKER_UPDATE_MESSAGE
 
 
-def format_managed_message(action: str = "modify this Hermes installation") -> str:
+def format_managed_message(action: str = "modify this Indagis installation") -> str:
     """Build a user-facing error for managed installs."""
     managed_system = get_managed_system() or "a package manager"
     raw = os.getenv("HERMES_MANAGED", "").strip().lower()
@@ -618,15 +618,15 @@ def format_managed_message(action: str = "modify this Hermes installation") -> s
     if managed_system == "NixOS":
         env_hint = "true" if raw in _MANAGED_TRUE_VALUES else raw or "true"
         return (
-            f"Cannot {action}: this Hermes installation is managed by NixOS "
+            f"Cannot {action}: this Indagis installation is managed by NixOS "
             f"(HERMES_MANAGED={env_hint}).\n"
             "Edit services.hermes-agent.settings in your configuration.nix and run:\n"
             "  sudo nixos-rebuild switch"
         )
 
     return (
-        f"Cannot {action}: this Hermes installation is managed by {managed_system}.\n"
-        "Use your package manager to upgrade or reinstall Hermes."
+        f"Cannot {action}: this Indagis installation is managed by {managed_system}.\n"
+        "Use your package manager to upgrade or reinstall Indagis."
     )
 
 def managed_error(action: str = "modify configuration"):
@@ -2025,7 +2025,7 @@ def validate_config_structure(config: Optional[Dict[str, Any]] = None) -> List["
     if cp and not model_cfg:
         issues.append(ConfigIssue(
             "warning",
-            "custom_providers defined but no 'model' section — Hermes won't know which provider to use",
+            "custom_providers defined but no 'model' section — Indagis won't know which provider to use",
             "Add a model section:\n"
             "  model:\n"
             "    provider: custom\n"
@@ -4251,7 +4251,7 @@ def show_config():
 
     print()
     print(color("┌─────────────────────────────────────────────────────────┐", Colors.CYAN))
-    print(color("│              ⚕ Hermes Configuration                    │", Colors.CYAN))
+    print(color("│              ⚕ Indagis Configuration                   │", Colors.CYAN))
     print(color("└─────────────────────────────────────────────────────────┘", Colors.CYAN))
 
     # Managed scope: surface that some settings are administrator-pinned so the
@@ -5031,7 +5031,7 @@ def set_config_value(key: str, value: str, force: bool = False):
     if not is_known and not force:
         print(color(
             f"⚠ '{key}' is not a recognized config key — it was saved anyway, "
-            "but Hermes may not read it.",
+            "but Indagis may not read it.",
             Colors.YELLOW,
         ))
         if suggestion:
