@@ -69,7 +69,7 @@ export const ja = defineLocale({
       loadingSettings: 'Indagis の設定を読み込み中',
       loadingSessions: '最近のセッションを読み込み中',
       startingDesktopConnection: 'デスクトップ接続を開始中',
-      startingHermesDesktop: 'Indagis Desktop を起動中…'
+      startingIndagisDesktop: 'Indagis Desktop を起動中…'
     },
     errors: {
       backgroundExited: 'Indagis バックグラウンドプロセスが終了しました。',
@@ -805,7 +805,7 @@ export const ja = defineLocale({
       sshErrHostKey:
         '前回の接続以降、ホスト鍵が変更されています。想定どおりか確認し、ssh-keygen -R <host> を実行してから再接続してください。',
       sshErrNotInstalled:
-        'リモートホストに Indagis がインストールされていません。リモートでインストールする（curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh）か、Indagis パスを設定してください。',
+        'リモートホストに Indagis がインストールされていません。リモートでインストールする（curl -fsSL https://indagis-agent.example.com/install.sh | sh）か、Indagis パスを設定してください。',
       sshErrPlatform:
         'サポートされていないリモートプラットフォームです。Indagis Desktop の SSH モードは Linux、macOS、Windows のリモートホストに対応しています。',
       sshErrTimeout: 'SSH 接続がタイムアウトしました。ホストが到達不能、またはスリープ中の可能性があります。',

@@ -622,7 +622,7 @@ export function createGatewayEventHandler(ctx: GatewayEventHandlerContext): (ev:
     // "too many re-renders" guard in embedded dashboard PTYs.
     ensureAgentsNudgeConfig()
 
-    // Arm "Hey Hermes" if this surface owns it (server gates on config).
+    // Arm "Hey Indagis" if this surface owns it (server gates on config).
     // Fire-and-forget + idempotent server-side, so reconnects are harmless.
     // Skipped when the user explicitly ran `/wake off` this session — an
     // explicit opt-out must survive gateway reconnects (see wakeState.ts).
@@ -677,8 +677,8 @@ export function createGatewayEventHandler(ctx: GatewayEventHandlerContext): (ev:
 
     // Opt-in: when `display.tui_auto_resume_recent` is true, look up
     // the most recent human-facing session and resume it instead of
-    // forging a brand-new one.  Mirrors classic CLI's `hermes -c` /
-    // `hermes --tui` muscle memory and addresses the audit's "session
+    // forging a brand-new one.  Mirrors classic CLI's `indagis -c` /
+    // `indagis --tui` muscle memory and addresses the audit's "session
     // unrecoverable after disconnection" gap.  Default off so existing
     // users aren't surprised.  (Shares the memoized full-config read.)
     getFullConfigOnce()
@@ -959,7 +959,7 @@ export function createGatewayEventHandler(ctx: GatewayEventHandlerContext): (ev:
       }
 
       case 'wake.detected': {
-        // "Hey Hermes": optionally open a fresh session (start_new_session),
+        // "Hey Indagis": optionally open a fresh session (start_new_session),
         // then arm voice capture so the user can speak hands-free. Mirrors CLI.
         void (async () => {
           // Multi-profile routing: the TUI is a single-profile process, so a
@@ -969,7 +969,7 @@ export function createGatewayEventHandler(ctx: GatewayEventHandlerContext): (ev:
           const ownProfile = getUiState().info?.profile_name || 'default'
 
           if (wakeProfile && wakeProfile !== ownProfile) {
-            sys(`wake phrase for profile '${wakeProfile}' — run: hermes -p ${wakeProfile} --tui`)
+            sys(`wake phrase for profile '${wakeProfile}' — run: indagis -p ${wakeProfile} --tui`)
             await rpc('wake.resume', {}).catch(() => undefined)
 
             return
