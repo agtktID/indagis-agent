@@ -16,7 +16,7 @@ def build_security_parser(subparsers, *, cmd_security: Callable) -> None:
         "security",
         help="Supply-chain audit (OSV.dev) for venv, plugins, and MCP servers",
         description=(
-            "On-demand vulnerability scan against OSV.dev. Covers the Hermes "
+            "On-demand vulnerability scan against OSV.dev. Covers the Indagis "
             "venv (installed PyPI dists), Python deps declared by plugins under "
             "~/.hermes/plugins/, and pinned npx/uvx MCP servers in config.yaml. "
             "Does NOT scan globally-installed packages or editor/browser extensions."
