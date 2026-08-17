@@ -6,7 +6,7 @@
 # Uses uv for desktop/server installs and Python's stdlib venv + pip on Termux.
 #
 # Usage:
-#   curl -fsSL https://github.com/Labscreatis/indagis-agent/raw/main/scripts/install.sh | bash
+#   curl -fsSL https://github.com/agtktID/indagis-agent/raw/main/scripts/install.sh | bash
 #
 # Or with options:
 #   curl -fsSL ... | bash -s -- --no-venv --skip-setup
@@ -552,7 +552,7 @@ detect_os() {
             OS="windows"
             DISTRO="windows"
             log_error "Windows detected. Please use the PowerShell installer:"
-            log_info "  iex (irm https://github.com/Labscreatis/indagis-agent/raw/main/scripts/install.ps1)"
+            log_info "  iex (irm https://github.com/agtktID/indagis-agent/raw/main/scripts/install.ps1)"
             exit 1
             ;;
         *)
