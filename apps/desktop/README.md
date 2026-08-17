@@ -34,7 +34,7 @@ It builds and launches the GUI against your existing install — same config, ke
 
 ### Prebuilt installers
 
-Prebuilt installers are built and distributed via [the upstream Indagis Agent releases page.](https://github.com/Labscreatis/indagis-agent/releases) (placeholder — the fork's release pipeline will publish here once the Indagis-branded Electron build is green; the URL `https://hermes-agent.nousresearch.com/` is the upstream reference while we wait.)
+Prebuilt installers are built and distributed via [the upstream Indagis Agent releases page.](https://github.com/agtktID/indagis-agent/releases) (placeholder — the fork's release pipeline will publish here once the Indagis-branded Electron build is green; the URL `https://hermes-agent.nousresearch.com/` is the upstream reference while we wait.)
 
 ---
 
@@ -211,7 +211,7 @@ Remove-Item -Recurse -Force "$env:LOCALAPPDATA\hermes\hermes-agent\venv"
 
 - 💬 [Discord](https://discord.gg/NousResearch) — NousResearch (upstream project's community)
 - 📖 [Documentation](https://hermes-agent.nousresearch.com/docs/) (upstream — required reading for the shared agent runtime)
-- 🐛 [Indagis Desktop issues](https://github.com/Labscreatis/indagis-agent/issues) · [Hermes Agent upstream issues](https://github.com/NousResearch/hermes-agent/issues)
+- 🐛 [Indagis Desktop issues](https://github.com/agtktID/indagis-agent/issues) · [Hermes Agent upstream issues](https://github.com/NousResearch/hermes-agent/issues)
 
 ---
 

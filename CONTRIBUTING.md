@@ -15,7 +15,7 @@
 > - **Presentation-layer bugs** (anything under `web/`, `apps/desktop/`,
 >   `scripts/install.{sh,ps1}`, `reports/`, or the fork-specific parts
 >   of `docs/`) — file an issue on
->   [Labscreatis/indagis-agent](https://github.com/Labscreatis/indagis-agent/issues).
+>   [agtktID/indagis-agent](https://github.com/agtktID/indagis-agent/issues).
 >   These are the parts we maintain.
 > - **Engine-layer bugs** (the Python agent runtime, gateway, provider
 >   stack, skill engine — everything inherited byte-for-byte from

@@ -28,7 +28,7 @@ The presentation layer is everything listed in the Indagis Agent
 README under the rebrand (CLI, web dashboard at `web/`, Electron
 desktop app at `apps/desktop/`, install scripts at `scripts/install.{sh,ps1}`,
 and the fork-specific docs under `reports/` and `docs/`). Report these
-privately via [GitHub Security Advisories on this repository](https://github.com/Labscreatis/indagis-agent/security/advisories/new)
+privately via [GitHub Security Advisories on this repository](https://github.com/agtktID/indagis-agent/security/advisories/new)
 — they are the bugs we can fix.
 
 ### 1.2 Engine-layer bugs (report upstream)
