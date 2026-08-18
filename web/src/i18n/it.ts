@@ -502,7 +502,7 @@ export const it: Translations = {
   achievements: {
     hero: {
       kicker: "Agentic Gamerscore",
-      title: "Hermes Achievements",
+      title: "Indagis Achievements",
       subtitle:
         "Badge Hermes da collezione, ottenuti dalla cronologia reale delle sessioni. Gli achievement noti non completati vengono mostrati come Scoperti; gli achievement segreti restano nascosti finché non compare il primo comportamento corrispondente.",
       scan_subtitle:

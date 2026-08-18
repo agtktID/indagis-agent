@@ -511,7 +511,7 @@ export const ga: Translations = {
   achievements: {
     hero: {
       kicker: "Agentic Gamerscore",
-      title: "Hermes Achievements",
+      title: "Indagis Achievements",
       subtitle:
         "Suaitheantais Hermes inbhailithe a thuilltear ó stair fíor-session. Léirítear gnóthachtálacha aitheanta neamhchríochnaithe mar Discovered; fanann gnóthachtálacha Secret i bhfolach go dtí go bhfeictear an chéad iompar comhoiriúnach.",
       scan_subtitle:

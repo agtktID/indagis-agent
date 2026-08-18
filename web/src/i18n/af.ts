@@ -503,7 +503,7 @@ export const af: Translations = {
   achievements: {
     hero: {
       kicker: "Agentic Gamerscore",
-      title: "Hermes Achievements",
+      title: "Indagis Achievements",
       subtitle:
         "Versamelbare Hermes-kentekens wat verdien word uit werklike sessiegeskiedenis. Bekende, onvoltooide prestasies word as Ontdek vertoon; Geheime prestasies bly verborge totdat die eerste ooreenstemmende gedrag verskyn.",
       scan_subtitle:

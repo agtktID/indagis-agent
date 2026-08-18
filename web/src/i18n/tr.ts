@@ -503,7 +503,7 @@ export const tr: Translations = {
   achievements: {
     hero: {
       kicker: "Agentic Gamerscore",
-      title: "Hermes Achievements",
+      title: "Indagis Achievements",
       subtitle:
         "Gerçek oturum geçmişinden kazanılan, koleksiyonluk Hermes rozetleri. Bilinen ama henüz tamamlanmamış başarılar Keşfedildi olarak gösterilir; Gizli başarılar ilk eşleşen davranış görünene kadar saklı kalır.",
       scan_subtitle:

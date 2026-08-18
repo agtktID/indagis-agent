@@ -497,7 +497,7 @@ export const zh: Translations = {
   achievements: {
     hero: {
       kicker: "Agentic Gamerscore",
-      title: "Hermes Achievements",
+      title: "Indagis Achievements",
       subtitle:
         "从真实会话历史中获得的 Hermes 可收集徽章。已知尚未达成的成就显示为「已发现」；秘密成就在首次出现匹配行为之前保持隐藏。",
       scan_subtitle:
