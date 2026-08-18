@@ -333,7 +333,7 @@ if (IS_WSL && !REMOTE_DISPLAY_REASON && fs.existsSync('/dev/dxg')) {
 // 0x80000003. After enough GPU deaths the browser process FATAL-exits before the
 // UI is usable. Must run before app `ready` so `--no-sandbox` applies to child
 // processes. The sticky marker recovers Start Menu / shortcut launches that
-// never go through `hermes desktop`; it is version-scoped so an app update
+// never go through `indagis desktop`; it is version-scoped so an app update
 // re-probes the sandbox instead of degrading forever.
 //
 // `windowsSandboxFallbackActive` = this process runs without the Chromium
@@ -664,7 +664,7 @@ const BOOT_FAKE_STEP_MS = (() => {
   return Math.max(120, raw)
 })()
 
-const APP_NAME = process.env.HERMES_DESKTOP_APP_NAME || 'Hermes'
+const APP_NAME = process.env.HERMES_DESKTOP_APP_NAME || 'Indagis'
 const TITLEBAR_HEIGHT = 34
 const MACOS_TRAFFIC_LIGHTS_HEIGHT = 14
 
@@ -2835,8 +2835,8 @@ async function releaseBackendLock(updateRoot, tag) {
 //
 // The desktop is a pure consumer: it does NOT git pull / pip install / rebuild
 // itself (the old open-coded git dance lived here and drifted from
-// `hermes update`). Instead we spawn the staged Hermes-Setup binary with
-// --update and quit, so it can run `hermes update` (which refuses while we
+// `indagis update`). Instead we spawn the staged Indagis-Setup binary with
+// --update and quit, so it can run `indagis update` (which refuses while we
 // hold the venv shim) and rebuild the desktop with our exe already gone.
 //
 // Detection (checkUpdates / commit changelog / "N behind") stays in the UI;
@@ -2856,7 +2856,7 @@ async function applyUpdates(opts = {}) {
       // returns null there by policy. Unlike Windows (where a venv-shim file
       // lock forces the quit→hand-off→rebuild dance), there's no mandatory file
       // locking here, so the desktop can drive the whole update itself:
-      // `hermes update` (backend) + `hermes desktop --build-only` (OS-aware GUI
+      // `indagis update` (backend) + `indagis desktop --build-only` (OS-aware GUI
       // rebuild), then swap the running .app bundle with the freshly built one
       // and relaunch.
       return await applyUpdatesPosixInApp(opts)
@@ -2864,11 +2864,11 @@ async function applyUpdates(opts = {}) {
 
     if (!updater) {
       // No staged updater binary — this is a CLI-installed user (they ran
-      // `hermes desktop`, never the Tauri installer that self-copies
-      // hermes-setup.exe into HERMES_HOME). They DO have a working `hermes`
+      // `indagis desktop`, never the Tauri installer that self-copies
+      // Indagis-Setup.exe into HERMES_HOME). They DO have a working `indagis`
       // on PATH / in the venv, so the correct path is the one-liner in their
       // native medium. We show the EXACT command, branch-pinned to the
-      // checkout they're on — bare `hermes update` defaults to main and would
+      // checkout they're on — bare `indagis update` defaults to main and would
       // silently switch a bb/gui (or any non-main) install off-branch. Mirror
       // the GUI button's contract: append --branch <current> for non-main
       // checkouts, keep it bare for main so the card stays clean.
@@ -2883,11 +2883,11 @@ async function applyUpdates(opts = {}) {
           const branch = await resolveHealedBranch(updateRoot, current)
 
           if (branch !== 'main') {
-            command = `hermes update --branch ${branch}`
+            command = `indagis update --branch ${branch}`
           }
         }
       } catch {
-        // Best-effort: fall back to bare `hermes update` if branch detection fails.
+        // Best-effort: fall back to bare `indagis update` if branch detection fails.
       }
 
       rememberLog(`[updates] no staged updater; surfacing manual \`${command}\` for CLI install at ${updateRoot}`)
@@ -3291,7 +3291,7 @@ function shellQuote(value) {
 }
 
 // macOS/Linux in-app update: backend (`hermes update`) + OS-aware GUI rebuild
-// (`hermes desktop --build-only`), then atomically swap the running .app bundle
+// (`indagis desktop --build-only`), then atomically swap the running .app bundle
 // with the freshly built one and relaunch. Degrades to "backend updated,
 // restart to load the new GUI" if the swap can't be performed.
 async function applyUpdatesPosixInApp(opts: any) {
@@ -3307,7 +3307,7 @@ async function applyUpdatesPosixInApp(opts: any) {
   // ── Pre-flight state.db integrity guard (#68474) ──
   preflightStateDb(HERMES_HOME, rememberLog)
 
-  // Put the Hermes-managed Node and the venv on PATH so `hermes desktop`'s
+  // Put the Indagis-managed Node and the venv on PATH so `indagis desktop`'s
   // npm build can find them on a machine with no system Node. Windows portable
   // Node lives directly under %LOCALAPPDATA%\\hermes\\node, not node\\bin.
   // PYTHONUNBUFFERED: `hermes update` writes to a pipe here, so CPython
@@ -3400,7 +3400,7 @@ async function applyUpdatesPosixInApp(opts: any) {
     return { ok: false, backendUpdated: true, error: 'desktop rebuild failed' }
   }
 
-  // Linux in-app update terminal state (#45205). `hermes desktop --build-only`
+  // Linux in-app update terminal state (#45205). `indagis desktop --build-only`
   // rebuilds the unpacked app in place under apps/desktop/release/<plat>-unpacked.
   // We can only HONESTLY relaunch into the new GUI when the *running* binary IS
   // that rebuilt one — i.e. execPath lives under release/<plat>-unpacked. The
@@ -3488,7 +3488,7 @@ async function applyUpdatesPosixInApp(opts: any) {
         stage: 'guiSkew',
         message:
           'Backend updated, but the desktop app package was not changed. ' +
-          'Update or reinstall the Hermes desktop app to match.',
+          'Update or reinstall the Indagis desktop app to match.',
         percent: 100
       })
       rememberLog(
@@ -3703,7 +3703,7 @@ function resolveRendererIndex() {
   rememberLog(
     `[renderer] index.html not found — the desktop app was packaged without a ` +
       `renderer bundle. Tried: ${candidates.join(', ')}. ` +
-      `Rebuild with: hermes desktop --force-build`
+      `Rebuild with: indagis desktop --force-build`
   )
 
   return candidates[0]
@@ -3979,7 +3979,7 @@ function resolveHermesBackend(backendArgs) {
         // same un-memoized import probe, costing up to another full probe
         // timeout on the boot path for an answer we already have.
         return {
-          label: `existing Hermes CLI at ${hermesCommand}`,
+          label: `existing Indagis CLI at ${hermesCommand}`,
           command: hermesCommand,
           args: backendArgs,
           bootstrap: false,
@@ -3990,7 +3990,7 @@ function resolveHermesBackend(backendArgs) {
       }
 
       rememberLog(
-        `Ignoring existing Hermes CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
+        `Ignoring existing Indagis CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
       )
     }
   }
@@ -4036,7 +4036,7 @@ function resolveHermesBackend(backendArgs) {
   //    is a recoverable state the GUI can drive through.
   return {
     kind: 'bootstrap-needed',
-    label: 'Hermes Agent not installed yet; bootstrap required',
+    label: 'Indagis Agent not installed yet; bootstrap required',
     command: null,
     args: backendArgs,
     bootstrap: true,
@@ -11599,7 +11599,7 @@ async function runDesktopUninstall(mode) {
     return {
       ok: false,
       error: 'agent-missing',
-      message: `Can't run the uninstaller: no Hermes agent venv at ${VENV_ROOT}.`
+      message: `Can't run the uninstaller: no Indagis agent venv at ${VENV_ROOT}.`
     }
   }
 

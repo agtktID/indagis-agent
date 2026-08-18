@@ -275,7 +275,7 @@ export function resolveVenvHermesCommand(
   }
 
   return {
-    label: `existing Hermes Python at ${python}`,
+    label: `existing Indagis Python at ${python}`,
     command: python,
     args: ['-m', 'hermes_cli.main', ...backendArgs],
     bootstrap: false,
