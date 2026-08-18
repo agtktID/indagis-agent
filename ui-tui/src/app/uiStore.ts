@@ -29,7 +29,7 @@ const buildUiState = (): UiState => ({
   sessionTitle: '',
   showReasoning: false,
   sid: null,
-  status: 'summoning hermes…',
+  status: 'summoning Indagis…',
   statusBar: 'top',
   streaming: true,
   // Last session's resolved theme paints frame one (flash-free boot, like

@@ -193,7 +193,7 @@ export function AboutSettings() {
             rel="noreferrer"
             target="_blank"
           >
-            Built on Hermes Agent · NousResearch · MIT License
+            Built on Indagis Agent · NousResearch · MIT License
           </a>
         </div>
 

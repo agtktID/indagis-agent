@@ -9,7 +9,7 @@ import {
 import { expectVisualSnapshot } from './visual-snapshot'
 
 /**
- * E2E smoke tests for the packaged Hermes desktop app.
+ * E2E smoke tests for the packaged Indagis desktop app.
  *
  * Launches the real packaged Electron binary (produced by `npm run pack` →
  * `electron-builder --dir`) with BOOT_FAKE=1 and full sandbox isolation

@@ -5,9 +5,9 @@ export interface LaunchResult {
   error?: string
 }
 
-const resolveHermesBin = () => process.env.HERMES_BIN?.trim() || 'hermes'
+const resolveHermesBin = () => process.env.HERMES_BIN?.trim() || 'indagis'
 
-export const launchHermesCommand = (args: string[]): Promise<LaunchResult> =>
+export const launchIndagisCommand = (args: string[]): Promise<LaunchResult> =>
   new Promise(resolve => {
     const child = spawn(resolveHermesBin(), args, { stdio: 'inherit' })
 

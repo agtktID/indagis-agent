@@ -1,5 +1,5 @@
 /**
- * Shared E2E fixtures for the Hermes desktop Playwright suite.
+ * Shared E2E fixtures for the Indagis desktop Playwright suite.
  *
  * Two fixture modes:
  *
@@ -14,7 +14,7 @@
  *
  * Both modes launch the *dev* Electron app (`electron .` against the built
  * `dist/`), not the packaged binary. This avoids the multi-minute
- * `electron-builder --dir` step and matches `hermes desktop --source`. The
+ * `electron-builder --dir` step and matches `indagis desktop --source`. The
  * packaged-binary path is already covered by `launch.spec.ts`.
  *
  * Prerequisite: `npm run build` must have been run so that `dist/` exists.

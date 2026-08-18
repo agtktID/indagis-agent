@@ -165,9 +165,9 @@ async function locateHermes(ssh, remoteHermesPath) {
     }
 
     const err: any = new Error(
-      `The Hermes path you set is not an executable on the remote host: "${remoteHermesPath}". ` +
-        'Check the path (it must be the full path to the `hermes` binary on the remote, e.g. ' +
-        '~/hermes-agent/.venv/bin/hermes), or clear it to auto-detect.'
+      `The Indagis path you set is not an executable on the remote host: "${remoteHermesPath}". ` +
+      'Check the path (it must be the full path to the `indagis` binary on the remote, e.g. ' +
+      '~/indagis-agent/.venv/bin/indagis), or clear it to auto-detect.'
     )
 
     err.kind = 'hermes-not-found'
@@ -203,17 +203,17 @@ async function locateHermes(ssh, remoteHermesPath) {
   }
 
   const err: any = new Error(
-    'Hermes is not installed on the remote host (could not find a `hermes` executable). ' +
-      'Install it on the remote with:  curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh  ' +
-      '— or set the Hermes path explicitly in the SSH connection settings.'
+    'Indagis is not installed on the remote host (could not find an `indagis` executable). ' +
+      'Install it on the remote with:  curl -fsSL https://context7.com/install/indagis | sh  ' +
+      '— or set the Indagis path explicitly in the SSH connection settings.'
   )
 
   err.kind = 'hermes-not-found'
   throw err
 }
 
-// Probe the resolved binary's version string (first line of `<hermes> --version`,
-// e.g. "Hermes Agent v0.18.2 ..."), or '' on failure. Surfaces WHICH hermes a
+// Probe the resolved binary's version string (first line of `<indagis> --version`,
+// e.g. "Indagis Agent v0.18.2 ..."), or '' on failure. Surfaces WHICH Indagis a
 // connection uses, so a stale/unexpected install is visible.
 async function probeHermesVersion(ssh, hermesPath) {
   try {
@@ -232,7 +232,7 @@ async function probeRemotePlatform(ssh) {
 
   if (!SUPPORTED_REMOTE_OS.has(osName)) {
     const err: any = new Error(
-      `Unsupported remote platform "${osName || 'unknown'}". Hermes Desktop SSH mode supports Linux, macOS, and Windows remote hosts.`
+      `Unsupported remote platform "${osName || 'unknown'}". Indagis Desktop SSH mode supports Linux, macOS, and Windows remote hosts.`
     )
 
     err.kind = 'unsupported-platform'
