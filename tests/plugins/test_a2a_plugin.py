@@ -1585,10 +1585,10 @@ class TestV1SpecRegressionFixes:
         fakebin = tmp_path / "bin"
         fakebin.mkdir()
         calls = tmp_path / "calls.jsonl"
-        hermes = fakebin / "hermes"
-        hermes.write_text("""#!/usr/bin/env python3
+        indagis = fakebin / "indagis"
+        indagis.write_text("""#!/usr/bin/env python3
 import json, os, sqlite3, sys, time
-calls = os.environ['FAKE_HERMES_CALLS']
+calls = os.environ['FAKE_INDAGIS_CALLS']
 with open(calls, 'a') as f:
     f.write(json.dumps(sys.argv[1:]) + '\\n')
 home = os.environ['INDAGIS_HOME']
@@ -1598,9 +1598,9 @@ if '--resume' not in sys.argv:
     con.commit()
 print('fake reply')
 """)
-        hermes.chmod(0o755)
+        indagis.chmod(0o755)
         monkeypatch.setenv("PATH", str(fakebin) + os.pathsep + os.environ.get("PATH", ""))
-        monkeypatch.setenv("FAKE_HERMES_CALLS", str(calls))
+        monkeypatch.setenv("FAKE_INDAGIS_CALLS", str(calls))
         monkeypatch.setattr("plugins.platforms.a2a.adapter._profile_home", lambda profile: str(profile_home))
 
         adapter = A2AAdapter(PlatformConfig(enabled=True, extra={
