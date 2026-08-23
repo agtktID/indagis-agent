@@ -266,23 +266,25 @@ MIT — see [LICENSE](LICENSE).
 
 ### Roadmap — cybersecurity-specialised skills
 
-The fork's differentiation lives in the **skill library** under `skills/`. This roadmap lists the cybersecurity-specialised skills planned for the Indagis skill catalog. Each entry is a self-contained skill that wraps an existing CLI or API and an LLM-facing prompt — the agent invokes the skill, the skill wraps the tool, no custom Python integration is required. The inherited skill engine handles all of these without modification.
+The fork's differentiation lives in the **skill library** under `optional-skills/`. This roadmap lists the cybersecurity-specialised skills built for the Indagis skill catalog. Each entry is a self-contained skill that wraps an existing CLI or API and an LLM-facing prompt — the agent invokes the skill, the skill wraps the tool, no custom Python integration is required. The inherited skill engine handles all of these without modification.
 
 | Skill | Domain | Wraps | Status |
 |---|---|---|---|
-| `misp-query` | Threat intel | MISP REST API (`pymisp` or `curl`) | Planned (Phase 5) |
-| `virustotal-lookup` | Threat intel | VirusTotal v3 API | Planned (Phase 5) |
-| `shodan-search` | Recon | Shodan REST API | Planned (Phase 5) |
+| `shodan-search` | Recon | Shodan REST API | Shipped |
+| `misp-query` | Threat intel | MISP REST API (`pymisp` or `curl`) | Shipped |
+| `virustotal-lookup` | Threat intel | VirusTotal v3 API | Shipped |
+| `sigma-rule-search` | Detection engineering | `sigma-cli` or PyPI `sigma` | Shipped |
+| `yara-scan` | File / memory scanning | `yara` CLI | Shipped |
+| `mitm-traffic-capture` | Recon / API traffic capture | `mitmproxy` CLI | Shipped |
+| `mitm-traffic-audit` | API security / bug-bounty methodology | `mitmproxy` capture + `curl` | Shipped |
 | `mvt-android-triage` | Mobile DFIR | MVT (Mobile Verification Toolkit) CLI | Planned (Phase 5) |
 | `velociraptor-hunt` | DFIR / endpoint | Velociraptor `velociraptor` CLI | Planned (Phase 5) |
 | `osquery-investigate` | Endpoint live forensics | `osqueryi` shell | Planned (Phase 5) |
 | `wireshark-tshark` | Network forensics | `tshark` / `editcap` | Planned (Phase 5) |
 | `chainsaw-evtx` | Log forensics (Windows EVTX) | Chainsaw CLI | Planned (Phase 5) |
-| `sigma-rule-search` | Detection engineering | `sigma-cli` or PyPI `sigma` | Planned (Phase 5) |
-| `yara-scan` | File / memory scanning | `yara` CLI | Planned (Phase 5) |
 
-These are **planned, not shipped**. They will land under `skills/` as standalone `SKILL.md` + scripts (the upstream convention), each reviewed against the Skill-vs-Tool decision criteria in `CONTRIBUTING.md`. Skill implementations live in this repo's `skills/` directory; the engine that executes them is inherited.
+Shipped skills land under `optional-skills/security/` as standalone `SKILL.md` + `references/` files (the format documented in `CONTRIBUTING.md`, reviewed against its Skill-vs-Tool decision criteria); they ship with the repo but aren't activated by default. The remaining entries are still planned.
 
-**Status of shipped skills today:** none. The entries above are the planned fork-specific additions; the inherited skill catalog ships unchanged today. Operators who want to test a specific skill early should file an issue with the workflow they want to automate.
+**Status of shipped skills today:** 7 of the 12 roadmap entries above — `shodan-search`, `misp-query`, `virustotal-lookup`, `sigma-rule-search`, `yara-scan`, `mitm-traffic-capture`, and `mitm-traffic-audit` — are shipped under `optional-skills/security/`. The remaining 5 are still planned; operators who want to test one early should file an issue with the workflow they want to automate.
 
 The engine (agent runtime, provider abstraction, gateway, skills scheduler, session persistence) is inherited code, kept as-is so upstream security and bug fixes can still be reviewed and merged in — the fork's own work is the presentation layer (CLI banner, dashboard, desktop app, TUI, palette) and the cybersecurity skill library above. A handful of internal-only technical identifiers (an installer env var, an Electron bundle id, a couple of module directory names) are intentionally not yet renamed for install-compatibility reasons — see `CHANGELOG.md` for the full technical rebrand log if you're touching that code.
