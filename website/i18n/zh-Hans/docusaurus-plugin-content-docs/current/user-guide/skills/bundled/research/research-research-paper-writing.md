@@ -27,7 +27,7 @@ description: "为 NeurIPS/ICML/ICLR 撰写 ML 论文：设计→投稿"
 ## 参考：完整 SKILL.md
 
 :::info
-以下是 Hermes 在触发该 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
+以下是 Indagis 在触发该 skill 时加载的完整 skill 定义。这是 agent 在 skill 激活时所看到的指令内容。
 :::
 
 # 研究论文写作流水线
@@ -2132,13 +2132,13 @@ ACL 系列会议有不同的投稿类型：
 
 ---
 
-## Hermes Agent 集成
+## Indagis Agent 集成
 
-本 skill 专为 Hermes agent 设计。它使用 Hermes 工具、委派、调度和记忆来支撑完整的研究生命周期。
+本 skill 专为 Indagis agent 设计。它使用 Indagis 工具、委派、调度和记忆来支撑完整的研究生命周期。
 
 ### 相关 Skill
 
-将本 skill 与其他 Hermes skill 组合用于特定阶段：
+将本 skill 与其他 Indagis skill 组合用于特定阶段：
 
 | Skill | 使用时机 | 加载方式 |
 |-------|----------|----------|
@@ -2151,7 +2151,7 @@ ACL 系列会议有不同的投稿类型：
 
 **本 skill 取代 `ml-paper-writing`**——它包含 ml-paper-writing 的所有内容，加上完整的实验/分析流水线和 autoreason 方法论。
 
-### Hermes 工具参考
+### Indagis 工具参考
 
 | 工具 | 在本流水线中的用途 |
 |------|------------------|

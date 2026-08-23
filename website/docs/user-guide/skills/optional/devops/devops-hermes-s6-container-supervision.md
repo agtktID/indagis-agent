@@ -1,12 +1,12 @@
 ---
-title: "Hermes S6 Container Supervision — Modify or debug s6 services in the Indagis Docker image"
-sidebar_label: "Hermes S6 Container Supervision"
+title: "Indagis S6 Container Supervision — Modify or debug s6 services in the Indagis Docker image"
+sidebar_label: "Indagis S6 Container Supervision"
 description: "Modify or debug s6 services in the Indagis Docker image"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
-# Hermes S6 Container Supervision
+# Indagis S6 Container Supervision
 
 Modify or debug s6 services in the Indagis Docker image.
 
