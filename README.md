@@ -8,17 +8,15 @@
 </p>
 <p align="center">
   <a href="https://indagis-agent.example.com/docs/"><img src="https://img.shields.io/badge/Docs-Indagis%20Docs-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="Built by Nous Research"></a>
   <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/Lang-中文-red?style=for-the-badge" alt="中文"></a>
   <a href="README.ur-pk.md"><img src="https://img.shields.io/badge/Lang-اردو-green?style=for-the-badge" alt="اردو"></a>
   <a href="README.es.md"><img src="https://img.shields.io/badge/Lang-Español-orange?style=for-the-badge" alt="Español"></a>
 </p>
 
-**Indagis Agent — a rebrand of [Nous Research](https://nousresearch.com)'s [Hermes Agent](https://github.com/NousResearch/hermes-agent), tailored for cybersecurity investigation workflows.** It carries over the same learning loop — it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
+**Indagis Agent is an AI workspace for cybersecurity investigation** — OSINT, threat intel, and DFIR. It has a closed learning loop: it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
 
-Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenRouter, OpenAI, your own endpoint, and [many others](https://indagis-agent.example.com/docs/integrations/providers). Switch with `indagis model` — no code changes, no lock-in.
+Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many others](https://indagis-agent.example.com/docs/integrations/providers). Switch with `indagis model` — no code changes, no lock-in.
 
 <table>
 <tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
@@ -40,23 +38,9 @@ Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenR
 curl -fsSL https://indagis-agent.example.com/install.sh | bash
 ```
 
-> **Upstream installer note:** the script above is served by Nous Research's
-> Hermes Agent project (reference installation, attribution upstream). For
-> a self-hosted installation of the Indagis fork, see the **Fondations**
-> section at the bottom of this file — the local installer path is wired
-> through `scripts/install.sh` in this repository once the fork ships a
-> release.
-
 ### Windows (native, PowerShell)
 
-> **Upstream installer note:** the script below is served by Nous Research's
-> Hermes Agent project (reference installation, attribution upstream). For
-> a self-hosted installation of the Indagis fork, see the **Fondations**
-> section at the bottom of this file — the local installer path is wired
-> through `scripts/install.sh` in this repository once the fork ships a
-> release.
-
-> **Heads up:** Native Windows runs Indagis Agent without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/agtktID/indagis-agent/issues) for the fork, or [upstream issues](https://github.com/NousResearch/hermes-agent/issues) for the parent project.
+> **Heads up:** Native Windows runs Indagis Agent without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/agtktID/indagis-agent/issues).
 
 Run this in PowerShell:
 
@@ -68,9 +52,9 @@ The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, **a
 
 If you already have Git installed, the installer detects it and uses that instead. Otherwise a ~45MB MinGit download is all you need — it won't touch or interfere with any system Git.
 
-> **Android / Termux:** The tested manual path is documented in the [Termux guide](https://indagis-agent.example.com/docs/getting-started/termux) (upstream reference). On Termux, Indagis Agent installs a curated `.[termux]` extra because the full `.[all]` extra currently pulls Android-incompatible voice dependencies.
+> **Android / Termux:** The tested manual path is documented in the [Termux guide](https://indagis-agent.example.com/docs/getting-started/termux). On Termux, Indagis Agent installs a curated `.[termux]` extra because the full `.[all]` extra currently pulls Android-incompatible voice dependencies.
 
-> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. Native Windows install lives under `%LOCALAPPDATA%\hermes`; WSL2 installs under `~/.hermes` as on Linux. **These directory names reflect the current installer contract** — they remain `hermes` because the upstream installer writes them, and the fork currently reuses the same paths. Migration to `indagis`-named paths is tracked in the Phase 5 todo list (see **Fondations** below).
+> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. Native Windows install lives under `%LOCALAPPDATA%\hermes`; WSL2 installs under `~/.hermes` as on Linux. These directory names reflect the current installer path and remain unchanged for now for install compatibility.
 
 After installation:
 
@@ -83,7 +67,7 @@ indagis            # start chatting!
 
 #### Windows Defender or antivirus flags `uv.exe` as malware
 
-If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Indagis Agent install's `bin` folder (`%LOCALAPPDATA%\hermes\bin\uv.exe` — note: the `hermes` subdirectory is the current upstream-installer contract, see **Fondations**), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Indagis Agent bundles (inherited from the Hermes Agent upstream) to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
+If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Indagis Agent install's `bin` folder (`%LOCALAPPDATA%\hermes\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Indagis Agent bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
 
 **To verify your copy is authentic:**
 
@@ -108,7 +92,7 @@ Expand-Archive $zip "$env:TEMP\uv_x" -Force
 If attestation says "Verification succeeded" and the last line prints `True`, you're good.
 
 **To whitelist the Indagis install:**
-- **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\hermes\bin"` (path is the upstream installer contract — unchanged for now)
+- **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\hermes\bin"`
 - **Bitdefender:** Add an exception in the Bitdefender console (Protection > Antivirus > Settings > Manage Exceptions)
 - Whitelist the **folder**, not the file hash — Indagis Agent inherits `uv` updates from the upstream release and the hash changes every version
 
@@ -131,33 +115,7 @@ indagis update       # Update to the latest version
 indagis doctor       # Diagnose any issues
 ```
 
-📖 **[Full documentation →](https://indagis-agent.example.com/docs/)** (upstream reference; Indagis-specific docs will be added under `website/docs/` once the fork ships)
-
----
-
-## Skip the API-key collection — Nous Portal
-
-> **Upstream service note:** Nous Portal is a Nous Research product (not
-> maintained by the Indagis fork). The Indagis fork plugs into the same
-> OAuth and Tool Gateway endpoints the upstream Hermes Agent uses, so this
-> is a convenient option for Indagis users that comes from the upstream
-> project. If you'd rather not use it, the rest of the install works with
-> any provider — see `indagis model` after install.
-
-Indagis Agent works with whatever provider you want — that's not changing. But if you'd rather not collect five separate API keys for the model, web search, image generation, TTS, and a cloud browser, **[Nous Portal](https://portal.nousresearch.com)** covers all of them under one subscription:
-
-- **300+ models** — pick any of them with `/model <name>`
-- **Tool Gateway** — web search (Firecrawl), image generation (FAL), text-to-speech (OpenAI), cloud browser (Browser Use), all routed through your sub. No extra accounts.
-
-One command from a fresh install:
-
-```bash
-indagis setup --portal
-```
-
-That logs you in via OAuth, sets Nous as your provider, and turns on the Tool Gateway. Check what's wired up any time with `indagis portal info`. Full details on the [Tool Gateway docs page](https://indagis-agent.example.com/docs/user-guide/features/tool-gateway) (upstream reference).
-
-You can still bring your own keys per-tool whenever you want — the gateway is per-backend, not all-or-nothing.
+📖 **[Full documentation →](https://indagis-agent.example.com/docs/)**
 
 ---
 
@@ -177,13 +135,13 @@ Indagis Agent has two entry points: start the terminal UI with `indagis`, or run
 | Interrupt current work         | `Ctrl+C` or send a new message                | `/stop` or send a new message                                                    |
 | Platform-specific status       | `/platforms`                                  | `/status`, `/sethome`                                                            |
 
-For the full command lists, see the [CLI guide](https://indagis-agent.example.com/docs/user-guide/cli) and the [Messaging Gateway guide](https://indagis-agent.example.com/docs/user-guide/messaging) (upstream references).
+For the full command lists, see the [CLI guide](https://indagis-agent.example.com/docs/user-guide/cli) and the [Messaging Gateway guide](https://indagis-agent.example.com/docs/user-guide/messaging).
 
 ---
 
 ## Documentation
 
-All upstream documentation lives at **[indagis-agent.example.com/docs](https://indagis-agent.example.com/docs/)** (Hermes Agent reference; required reading for the Indagis Agent core). The Indagis Agent specific docs (rebrand notes, palette, the cybersecurity-investigation adaptations) will live at `website/docs/` in this repository once authored — see the **Fondations** section at the bottom for the plan.
+Documentation lives at **[indagis-agent.example.com/docs](https://indagis-agent.example.com/docs/)**. Indagis-specific docs (palette, the cybersecurity-investigation adaptations) will live at `website/docs/` in this repository once authored.
 
 | Section                                                                                             | What's Covered                                             |
 | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
@@ -237,7 +195,7 @@ See `indagis claw migrate --help` for all options, or use the `openclaw-migratio
 
 ## Contributing
 
-We welcome contributions! See the [Contributing Guide](https://indagis-agent.example.com/docs/developer-guide/contributing) (upstream reference) for development setup, code style, and PR process.
+We welcome contributions! See the [Contributing Guide](https://indagis-agent.example.com/docs/developer-guide/contributing) for development setup, code style, and PR process.
 
 Quick start for contributors — use the standard installer, then work from the
 full git checkout it creates at `$INDAGIS_HOME/hermes-agent` (usually
@@ -260,8 +218,8 @@ against its own checkout, destroying the running runtime mid-session.
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
-uv venv ~/.indagis/venvs/hermes-dev --python 3.11
-source ~/.indagis/venvs/hermes-dev/bin/activate
+uv venv ~/.indagis/venvs/indagis-dev --python 3.11
+source ~/.indagis/venvs/indagis-dev/bin/activate
 uv pip install -e ".[all,dev]"
 scripts/run_tests.sh
 ```
@@ -270,11 +228,9 @@ scripts/run_tests.sh
 
 ## Community
 
-- 💬 [Discord](https://discord.gg/NousResearch) (NousResearch — the upstream project's community)
 - 📚 [Skills Hub](https://agentskills.io)
-- 🐛 [Indagis Agent issues](https://github.com/agtktID/indagis-agent/issues) · [Hermes Agent upstream issues](https://github.com/NousResearch/hermes-agent/issues)
+- 🐛 [Indagis Agent issues](https://github.com/agtktID/indagis-agent/issues)
 - 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Linux desktop-control MCP server for Indagis Agent (and other MCP hosts), with AT-SPI accessibility trees, Wayland/X11 input, screenshots, and compositor window targeting.
-- 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — Community WeChat bridge upstream of the Hermes Agent project, can be integrated into Indagis Agent installations that also run OpenClaw.
 
 ---
 
@@ -282,17 +238,15 @@ scripts/run_tests.sh
 
 MIT — see [LICENSE](LICENSE).
 
-Built by [Nous Research](https://nousresearch.com).
-
 ---
 
 ## Fondations
 
-**Indagis is an independent, community-maintained project. It is not an official Nous Research product.** It is built on a **modified Hermes Agent core** (the `agent/`, `providers/`, `tools/`, `gateway/`, `skills/` modules in this repository are derived from [Hermes Agent](https://github.com/NousResearch/hermes-agent), which is published by Nous Research under the MIT License). The presentation layer — shell, themes, palette, dashboard login, and a small set of user-facing strings — has been re-skinned for the [Indagis](https://github.com/agtktID/indagis-agent) identity, intended for cybersecurity investigation workflows (SOC, DFIR, threat hunting, evidence collection).
+**Indagis is an independent, community-maintained project.** It is built on a modified agent core (the `agent/`, `providers/`, `tools/`, `gateway/`, `skills/` modules in this repository), licensed under MIT — see [LICENSE](LICENSE). The presentation layer — shell, themes, palette, dashboard login, and a small set of user-facing strings — has been custom-built for the [Indagis](https://github.com/agtktID/indagis-agent) identity, designed for cybersecurity investigation workflows (SOC, DFIR, threat hunting, evidence collection).
 
 ### Roadmap — cybersecurity-specialised skills
 
-The fork's differentiation from upstream Hermes Agent lives in the **skill library** under `optional-skills/`. This roadmap lists the cybersecurity-specialised skills built for the Indagis skill catalog. Each entry is a self-contained skill that wraps an existing CLI or API and an LLM-facing prompt — the agent invokes the skill, the skill wraps the tool, no custom Python integration is required. The upstream Hermes Agent skill engine handles all of these without modification.
+This differentiation lives in the **skill library** under `optional-skills/`. This roadmap lists the cybersecurity-specialised skills built for the Indagis skill catalog. Each entry is a self-contained skill that wraps an existing CLI or API and an LLM-facing prompt — the agent invokes the skill, the skill wraps the tool, no custom Python integration is required. The skill engine handles all of these without modification.
 
 | Skill | Domain | Wraps | Status |
 |---|---|---|---|
@@ -313,4 +267,4 @@ Shipped skills land under `optional-skills/security/` as standalone `SKILL.md` +
 
 **Status of shipped skills today:** 7 of the 12 roadmap entries above — `shodan-search`, `misp-query`, `virustotal-lookup`, `sigma-rule-search`, `yara-scan`, `mitm-traffic-capture`, and `mitm-traffic-audit` — are shipped under `optional-skills/security/`. The remaining 5 are still planned; operators who want to test one early should file an issue with the workflow they want to automate.
 
-The engine (agent runtime, provider abstraction, gateway, skills scheduler, session persistence) remains the upstream Hermes Agent code, kept as-is so upstream security and bug fixes can still be reviewed and merged in — the fork's own work is the presentation layer (CLI banner, dashboard, desktop app, TUI, palette) and the cybersecurity skill library above. A handful of internal-only technical identifiers (an installer env var, an Electron bundle id, a couple of module directory names) are intentionally not yet renamed for install-compatibility reasons — see `CHANGELOG.md` for the full technical rebrand log if you're touching that code.
+The engine (agent runtime, provider abstraction, gateway, skills scheduler, session persistence) is kept as-is at the fork point so security and bug fixes can still be reviewed and merged in — the fork's own work is the presentation layer (CLI banner, dashboard, desktop app, TUI, palette) and the cybersecurity skill library above. A handful of internal-only technical identifiers (an installer env var, an Electron bundle id, a couple of module directory names) are intentionally not yet renamed for install-compatibility reasons — see `CHANGELOG.md` for the full technical log if you're touching that code.
