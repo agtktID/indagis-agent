@@ -198,11 +198,11 @@ export const roseTheme: DashboardTheme = {
   },
 };
 
-/** Light mode — vivid Nous-blue accents on a cream canvas. */
+/** Light mode — vivid azure accents on a cream canvas. */
 export const nousBlueTheme: DashboardTheme = {
   name: "nous-blue",
-  label: "Nous Blue",
-  description: "Light mode — vivid Nous-blue accents on cream canvas",
+  label: "Azure",
+  description: "Light mode — vivid azure accents on cream canvas",
   palette: {
     background: { hex: "#E8F2FD", alpha: 1 },
     midground: { hex: "#0053FD", alpha: 1 },
