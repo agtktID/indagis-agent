@@ -4,9 +4,6 @@
 
 # Indagis Agent
 <p align="center">
-  <a href="https://indagis-agent.example.com/">Indagis Agent</a> | <a href="https://indagis-agent.example.com/">Indagis Desktop</a>
-</p>
-<p align="center">
   <a href="https://indagis-agent.example.com/docs/"><img src="https://img.shields.io/badge/Docs-Indagis%20Docs-FFD700?style=for-the-badge" alt="Documentation"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
   <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/Lang-中文-red?style=for-the-badge" alt="中文"></a>
@@ -25,7 +22,6 @@ Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenR
 <tr><td><b>Scheduled automations</b></td><td>Built-in cron scheduler with delivery to any platform. Daily reports, nightly backups, weekly audits — all in natural language, running unattended.</td></tr>
 <tr><td><b>Delegates and parallelizes</b></td><td>Spawn isolated subagents for parallel workstreams. Write Python scripts that call tools via RPC, collapsing multi-step pipelines into zero-context-cost turns.</td></tr>
 <tr><td><b>Runs anywhere, not just your laptop</b></td><td>Seven terminal backends — local, Docker, SSH, Singularity, Modal, Daytona, and Vercel Sandbox. Daytona and Modal offer serverless persistence — your agent's environment hibernates when idle and wakes on demand, costing nearly nothing between sessions. Run it on a $5 VPS or a GPU cluster.</td></tr>
-<tr><td><b>Research-ready</b></td><td>Batch trajectory generation, trajectory compression for training the next generation of tool-calling models.</td></tr>
 </table>
 
 ---
@@ -285,30 +281,8 @@ The fork's differentiation lives in the **skill library** under `skills/`. This 
 | `sigma-rule-search` | Detection engineering | `sigma-cli` or PyPI `sigma` | Planned (Phase 5) |
 | `yara-scan` | File / memory scanning | `yara` CLI | Planned (Phase 5) |
 
-These are **planned, not shipped**. They will land under `skills/` as standalone `SKILL.md` + scripts (the upstream convention), each reviewed against the Skill-vs-Tool decision criteria in `CONTRIBUTING.md`. The Phase 5 timeline depends on the installer fork (see **Phase 5 todo** below) since the skill engine still uses the upstream installer to place skills at runtime. Skill implementations live in this repo's `skills/` directory; the engine that executes them is upstream.
+These are **planned, not shipped**. They will land under `skills/` as standalone `SKILL.md` + scripts (the upstream convention), each reviewed against the Skill-vs-Tool decision criteria in `CONTRIBUTING.md`. Skill implementations live in this repo's `skills/` directory; the engine that executes them is inherited.
 
 **Status of shipped skills today:** none. The entries above are the planned fork-specific additions; the inherited skill catalog ships unchanged today. Operators who want to test a specific skill early should file an issue with the workflow they want to automate.
 
-### What Indagis owns
-
-- The presentation layer: CLI banner, completion scripts (bash/zsh/fish), the user-facing shell, the web dashboard login page and theme tokens, the Desktop Electron bundle, the i18n strings (`web/src/i18n/*.ts`), and the `Indagis` palette (`#0B0F14` Obsidian Black, `#37D5D6` Cyber Cyan, `#7CEFF0` Light Cyan, plus Space Grotesk and Inter typography).
-- The TUI theme (`ui-tui/src/theme.ts` BRAND) and the ASCII banner (`ui-tui/src/banner.ts`).
-- The user-facing command name on the shell: `indagis`. Internal Python and Electron modules retain their historical `hermes_*` / `HERMES_*` identifiers to preserve the runtime contract; see **Compat-contract notes** below.
-
-### What's inherited, not (yet) renamed
-
-- The agent runtime, LLM provider abstraction, gateway, skills scheduler, session persistence, and the bulk of `hermes_cli/` Python modules — these are inherited code, kept as-is at the fork point so security and bug fixes from the upstream project can still be reviewed and merged in.
-- The bundled Nous Portal integration (OAuth, Tool Gateway) — a genuinely separate third-party service, not part of this fork, used as-is.
-
-### Compat-contract notes (read this before renaming)
-
-A few inherited technical identifiers remain under their pre-rebrand names because the installer or the Electron build still writes or reads them — renaming them now would break the install-on-existing-machine contract for anyone already running this fork:
-
-- `HERMES_HOME` (installer contract): the directory where `install.sh` and `install.ps1` place the runtime, venv, logs, and `bin/uv.exe`. Default is `~/.hermes` on Linux/macOS/WSL2 and `%LOCALAPPDATA%\hermes` on Windows. Migrating to `INDAGIS_HOME` / `~/.indagis/` is tracked as a future installer-fork task.
-- `HERMES_DESKTOP_*` (Electron technical identifiers): read by the bundled Electron process to locate the runtime and bind single-instance locks. Internal to the desktop bundle, not user-visible brand.
-- macOS bundle identifier `com.nousresearch.hermes` (set in `apps/desktop/electron/main.ts`): same category as `HERMES_DESKTOP_*`.
-- Filesystem/module paths `~/.hermes/`, `%LOCALAPPDATA%\hermes\`, `ui-tui/packages/hermes-ink/`, `hermes_cli/` (Python module dir): kept stable on purpose — see the note above on inherited code.
-
-### Future work
-
-Migrating `~/.hermes/` / `%LOCALAPPDATA%\hermes\` to `~/.indagis/`, redefining the Electron bundle identifier and `HERMES_DESKTOP_*` / `HERMES_HOME`, and renaming the inherited `hermes_cli`/`hermes_constants`/`hermes_state*` Python modules are all real remaining items — deliberately deferred because each requires forking the installer and/or touches 100s of importers across the codebase. Worth a dedicated pass with its own testing budget rather than folding into a content rebrand.
+The engine (agent runtime, provider abstraction, gateway, skills scheduler, session persistence) is inherited code, kept as-is so upstream security and bug fixes can still be reviewed and merged in — the fork's own work is the presentation layer (CLI banner, dashboard, desktop app, TUI, palette) and the cybersecurity skill library above. A handful of internal-only technical identifiers (an installer env var, an Electron bundle id, a couple of module directory names) are intentionally not yet renamed for install-compatibility reasons — see `CHANGELOG.md` for the full technical rebrand log if you're touching that code.
