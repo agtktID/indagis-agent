@@ -5024,7 +5024,7 @@ class TestSystemPromptStability:
         # Should have built fresh, not queried the DB
         mock_db.get_session.assert_not_called()
         assert agent._cached_system_prompt is not None
-        assert "Hermes Agent" in agent._cached_system_prompt
+        assert "Indagis Agent" in agent._cached_system_prompt
 
 
 class TestBudgetPressure:
