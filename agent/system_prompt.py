@@ -39,6 +39,7 @@ from agent.prompt_builder import (
     OPENAI_MODEL_EXECUTION_GUIDANCE,
     OSINT_REFERENCE_SOURCES_GUIDANCE,
     PARALLEL_TOOL_CALL_GUIDANCE,
+    PENTEST_REFERENCE_SOURCES_GUIDANCE,
     PLATFORM_HINTS,
     SESSION_SEARCH_GUIDANCE,
     SKILLS_GUIDANCE,
@@ -207,6 +208,7 @@ def build_system_prompt_parts(agent: Any, system_message: Optional[str] = None) 
     # Known-good OSINT/threat-intel reference sources — part of the core
     # identity (domain knowledge), not gated by any tool being loaded.
     stable_parts.append(OSINT_REFERENCE_SOURCES_GUIDANCE)
+    stable_parts.append(PENTEST_REFERENCE_SOURCES_GUIDANCE)
 
     # Universal task-completion / no-fabrication guidance.  Applied to ALL
     # models regardless of tool_use_enforcement gating — the failure modes
