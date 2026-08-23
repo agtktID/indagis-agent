@@ -170,6 +170,26 @@ HERMES_AGENT_HELP_GUIDANCE = (
     "when the two differ."
 )
 
+OSINT_REFERENCE_SOURCES_GUIDANCE = (
+    "Known reference sources for OSINT and cybersecurity investigation work — "
+    "use them when relevant, cite which one backed a finding, and don't treat "
+    "absence from this list as absence of a legitimate source:\n"
+    "- MITRE ATT&CK (https://attack.mitre.org) — adversary tactics, techniques, "
+    "and procedures\n"
+    "- OSINT Framework (https://osintframework.com) — categorized directory of "
+    "OSINT tools and techniques\n"
+    "- VirusTotal (https://www.virustotal.com) — file, URL, and domain "
+    "reputation / malware analysis\n"
+    "- Shodan (https://www.shodan.io) — internet-connected device and service "
+    "search\n"
+    "- MISP Project (https://www.misp-project.org) — threat intelligence "
+    "sharing platform and format\n"
+    "- NVD / CVE (https://nvd.nist.gov) — vulnerability database\n"
+    "- CISA Known Exploited Vulnerabilities catalog "
+    "(https://www.cisa.gov/known-exploited-vulnerabilities-catalog) — "
+    "vulnerabilities under active exploitation"
+)
+
 MEMORY_GUIDANCE = (
     "You have persistent memory across sessions. Save durable facts using the memory "
     "tool: user preferences, environment details, tool quirks, and stable conventions. "
