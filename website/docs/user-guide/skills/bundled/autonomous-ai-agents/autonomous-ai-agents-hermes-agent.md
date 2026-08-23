@@ -1,12 +1,12 @@
 ---
-title: "Hermes Agent — Use, configure, theme, extend, and orchestrate Indagis Agent"
-sidebar_label: "Hermes Agent"
+title: "Indagis Agent — Use, configure, theme, extend, and orchestrate Indagis Agent"
+sidebar_label: "Indagis Agent"
 description: "Use, configure, theme, extend, and orchestrate Indagis Agent"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
-# Hermes Agent
+# Indagis Agent
 
 Use, configure, theme, extend, and orchestrate Indagis Agent.
 

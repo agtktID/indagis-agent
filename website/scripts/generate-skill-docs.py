@@ -340,6 +340,11 @@ def render_skill_page(
     title = f"{name}"
     # Heuristic nicer title from name
     display_name = name.replace("-", " ").replace("_", " ").title()
+    # A handful of skill slugs contain "hermes" (kept stable on purpose —
+    # renaming the slug would break cross-references). Title-casing those
+    # slugs would otherwise re-print "Hermes" in the page heading even
+    # though the skill's own body content is fully rebranded.
+    display_name = re.sub(r"\bHermes\b", "Indagis", display_name)
 
     hermes_meta = (fm.get("metadata") or {}).get("hermes") or {}
     tags = hermes_meta.get("tags") or []
