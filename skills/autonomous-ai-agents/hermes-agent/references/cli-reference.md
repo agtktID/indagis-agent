@@ -1,12 +1,12 @@
-# Hermes CLI Reference
+# Indagis CLI Reference
 
-Live sources when anything looks stale: `hermes --help`, `hermes <command> --help`,
+Live sources when anything looks stale: `indagis --help`, `indagis <command> --help`,
 https://hermes-agent.nousresearch.com/docs/reference/cli-commands
 
 ### Global Flags
 
 ```
-hermes [flags] [command]        (no subcommand = interactive chat)
+indagis [flags] [command]        (no subcommand = interactive chat)
 
   --version, -V             Show version
   -z, --oneshot PROMPT      One-shot: print ONLY the final response (for scripts/pipes)
@@ -27,7 +27,7 @@ hermes [flags] [command]        (no subcommand = interactive chat)
 ### Chat
 
 ```
-hermes chat [flags]
+indagis chat [flags]
   -q, --query TEXT          Single query, non-interactive
   --image PATH              Attach a local image to a single query
   -Q, --quiet               Suppress banner, spinner, tool previews
@@ -40,111 +40,111 @@ hermes chat [flags]
 ### Configuration
 
 ```
-hermes setup [section]      Wizard (model|tts|terminal|gateway|tools|agent)
-hermes model                Interactive model/provider picker
-hermes fallback [add|remove|list]  Fallback provider chain
-hermes config [show|edit|get|set|unset|path|env-path|check|migrate]
-hermes login / logout       OAuth sign-in / clear stored auth
-hermes doctor [--fix]       Check dependencies and config
-hermes status [--all]       Component status
+indagis setup [section]      Wizard (model|tts|terminal|gateway|tools|agent)
+indagis model                Interactive model/provider picker
+indagis fallback [add|remove|list]  Fallback provider chain
+indagis config [show|edit|get|set|unset|path|env-path|check|migrate]
+indagis login / logout       OAuth sign-in / clear stored auth
+indagis doctor [--fix]       Check dependencies and config
+indagis status [--all]       Component status
 ```
 
 ### Tools & Skills
 
 ```
-hermes tools [list|enable NAME|disable NAME]   Per-platform toolsets (curses UI with no args)
+indagis tools [list|enable NAME|disable NAME]   Per-platform toolsets (curses UI with no args)
 
-hermes skills list|browse|search QUERY|inspect ID
-hermes skills install ID    Hub identifier OR a direct https://…/SKILL.md URL
-hermes skills config        Enable/disable skills per platform
-hermes skills check|update|uninstall|publish PATH
-hermes skills tap add REPO  Add a GitHub repo as a skill source
-hermes bundles              Skill bundles (one /<name> alias loads several skills)
+indagis skills list|browse|search QUERY|inspect ID
+indagis skills install ID    Hub identifier OR a direct https://…/SKILL.md URL
+indagis skills config        Enable/disable skills per platform
+indagis skills check|update|uninstall|publish PATH
+indagis skills tap add REPO  Add a GitHub repo as a skill source
+indagis bundles              Skill bundles (one /<name> alias loads several skills)
 ```
 
 ### MCP Servers
 
 ```
-hermes mcp add NAME (--url or --command) | remove | list | test NAME
-hermes mcp catalog | install NAME     Curated catalog install
-hermes mcp configure NAME             Toggle tool selection
-hermes mcp serve                      Run Hermes as an MCP server
+indagis mcp add NAME (--url or --command) | remove | list | test NAME
+indagis mcp catalog | install NAME     Curated catalog install
+indagis mcp configure NAME             Toggle tool selection
+indagis mcp serve                      Run Indagis as an MCP server
 ```
 Details (transport, tool discovery, catalog): `references/native-mcp.md`.
 
 ### Gateway (Messaging Platforms)
 
 ```
-hermes gateway run|install|start|stop|restart|status|setup
+indagis gateway run|install|start|stop|restart|status|setup
 ```
 
-20+ platforms: Telegram, Discord, Slack, WhatsApp (Baileys + Business Cloud API), iMessage (Photon — `hermes photon setup`), Signal, Email, SMS, Matrix, Mattermost, Teams, LINE, SimpleX, ntfy, Google Chat, Home Assistant, DingTalk, Feishu, WeCom, Weixin, API Server, Webhooks. Open WebUI connects via the API Server adapter. Most adapters ship under `plugins/platforms/`.
+20+ platforms: Telegram, Discord, Slack, WhatsApp (Baileys + Business Cloud API), iMessage (Photon — `indagis photon setup`), Signal, Email, SMS, Matrix, Mattermost, Teams, LINE, SimpleX, ntfy, Google Chat, Home Assistant, DingTalk, Feishu, WeCom, Weixin, API Server, Webhooks. Open WebUI connects via the API Server adapter. Most adapters ship under `plugins/platforms/`.
 Docs: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/
 
 ### Sessions
 
 ```
-hermes sessions list|browse|rename ID TITLE|delete ID|export OUT|prune|stats
+indagis sessions list|browse|rename ID TITLE|delete ID|export OUT|prune|stats
 ```
 
 ### Cron / Webhooks
 
 ```
-hermes cron list|create SCHED|edit ID|pause|resume|run ID|remove|status
+indagis cron list|create SCHED|edit ID|pause|resume|run ID|remove|status
     Schedules: '30m', 'every 2h', '0 9 * * *', ISO timestamp
-hermes webhook subscribe NAME|list|remove NAME|test NAME
+indagis webhook subscribe NAME|list|remove NAME|test NAME
 ```
 Webhook payloads/routes: `references/webhooks.md`.
 
 ### Profiles
 
 ```
-hermes profile list|create NAME (--clone|--clone-all|--clone-from)|use|show|delete
-hermes profile rename A B | alias NAME | export NAME | import FILE
+indagis profile list|create NAME (--clone|--clone-all|--clone-from)|use|show|delete
+indagis profile rename A B | alias NAME | export NAME | import FILE
 ```
 
 ### Credentials & Pools
 
 ```
-hermes auth                 Interactive credential manager
-hermes auth add [PROVIDER]  Add OAuth or API-key credential (nous, openai-codex, qwen-oauth, …)
-hermes auth list|remove P IDX|reset PROVIDER|status
+indagis auth                 Interactive credential manager
+indagis auth add [PROVIDER]  Add OAuth or API-key credential (nous, openai-codex, qwen-oauth, …)
+indagis auth list|remove P IDX|reset PROVIDER|status
 ```
 Multiple credentials per provider form a pool that rotates automatically and skips exhausted keys.
 
 ### Other
 
 ```
-hermes desktop / gui        Native desktop app
-hermes dashboard            Web admin panel + embedded chat (--stop / --status)
-hermes proxy                OpenAI-compatible local proxy backed by an OAuth provider
-hermes portal               Quick setup / sign in via Nous Portal
-hermes kanban <verb>        Multi-agent work-queue board
-hermes project              Named multi-folder workspaces
-hermes skin list|use|set    Switch/tweak skins (see references/themes.md)
-hermes pets <verb>          Pet mascots (see references/petdex.md)
-hermes memory setup|status|off|reset   Memory provider
-hermes secrets bitwarden|onepassword   External secret stores
-hermes moa                  Mixture-of-Agents slots
-hermes hooks / security / backup / import / checkpoints / console
-hermes logs [-f] [errors]   View agent/error logs
-hermes send                 One-off message through a gateway platform
-hermes pairing / plugins / insights / journey / computer-use
-hermes acp                  ACP server (IDE integration)
-hermes completion bash|zsh|fish
-hermes update / uninstall / claw migrate
+indagis desktop / gui        Native desktop app
+indagis dashboard            Web admin panel + embedded chat (--stop / --status)
+indagis proxy                OpenAI-compatible local proxy backed by an OAuth provider
+indagis portal               Quick setup / sign in via Nous Portal
+indagis kanban <verb>        Multi-agent work-queue board
+indagis project              Named multi-folder workspaces
+indagis skin list|use|set    Switch/tweak skins (see references/themes.md)
+indagis pets <verb>          Pet mascots (see references/petdex.md)
+indagis memory setup|status|off|reset   Memory provider
+indagis secrets bitwarden|onepassword   External secret stores
+indagis moa                  Mixture-of-Agents slots
+indagis hooks / security / backup / import / checkpoints / console
+indagis logs [-f] [errors]   View agent/error logs
+indagis send                 One-off message through a gateway platform
+indagis pairing / plugins / insights / journey / computer-use
+indagis acp                  ACP server (IDE integration)
+indagis completion bash|zsh|fish
+indagis update / uninstall / claw migrate
 ```
 
-Plugin- and provider-supplied subcommands (e.g. `hermes photon setup`) only appear once their plugin is installed/active.
+Plugin- and provider-supplied subcommands (e.g. `indagis photon setup`) only appear once their plugin is installed/active.
 
 ### Where to Find Things
 
 | Looking for... | Location |
 |---|---|
-| Config options | `hermes config edit` · [Configuration docs](https://hermes-agent.nousresearch.com/docs/user-guide/configuration) |
-| Tools / toolsets | `hermes tools list` · [Tools reference](https://hermes-agent.nousresearch.com/docs/reference/tools-reference) |
-| Skills catalog | `hermes skills browse` · [Skills catalog](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog) |
-| Provider setup | `hermes model` · [Providers guide](https://hermes-agent.nousresearch.com/docs/integrations/providers) |
-| Env variables | `hermes config env-path` · [Env vars reference](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) |
-| Gateway logs | `~/.hermes/logs/gateway.log` (or `hermes logs`) |
-| Sessions | `hermes sessions browse` (reads state.db) |
+| Config options | `indagis config edit` · [Configuration docs](https://hermes-agent.nousresearch.com/docs/user-guide/configuration) |
+| Tools / toolsets | `indagis tools list` · [Tools reference](https://hermes-agent.nousresearch.com/docs/reference/tools-reference) |
+| Skills catalog | `indagis skills browse` · [Skills catalog](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog) |
+| Provider setup | `indagis model` · [Providers guide](https://hermes-agent.nousresearch.com/docs/integrations/providers) |
+| Env variables | `indagis config env-path` · [Env vars reference](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) |
+| Gateway logs | `~/.indagis/logs/gateway.log` (or `indagis logs`) |
+| Sessions | `indagis sessions browse` (reads state.db) |

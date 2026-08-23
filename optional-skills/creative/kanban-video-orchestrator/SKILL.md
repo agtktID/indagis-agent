@@ -20,14 +20,14 @@ metadata:
 # Kanban Video Orchestrator
 
 Wrap any video request — from a 15-second product teaser to a 5-minute narrative
-short to a music video to an ASCII loop — in a Hermes Kanban pipeline that
+short to a music video to an ASCII loop — in a Indagis Kanban pipeline that
 decomposes the work to specialized agent profiles.
 
 This skill does **not** render anything itself. It is a meta-pipeline that:
 
 1. **Scopes** the request through targeted discovery
 2. **Designs** an appropriate team (which roles, which tools per role) based on the style
-3. **Generates** a setup script that creates Hermes profiles, project workspace, and the initial kanban task
+3. **Generates** a setup script that creates Indagis profiles, project workspace, and the initial kanban task
 4. **Hands off** to the director profile, which decomposes via the kanban
 5. **Monitors** execution, helps intervene when tasks stall or fail
 
@@ -90,7 +90,7 @@ rest are picked by what the brief actually requires.
 For the role library and per-style team compositions, see
 **[references/role-archetypes.md](references/role-archetypes.md)**.
 
-For mapping role → which Hermes skills + toolsets it loads, see
+For mapping role → which Indagis skills + toolsets it loads, see
 **[references/tool-matrix.md](references/tool-matrix.md)**.
 
 ### Step 4 — Setup
@@ -99,11 +99,11 @@ Generate a setup script (`setup.sh`) and run it. The script:
 
 1. Creates the project workspace (`~/projects/video-pipeline/<slug>/`)
 2. Copies any provided assets into `taste/`, `audio/`, `assets/`
-3. Creates each Hermes profile via `hermes profile create --clone`
+3. Creates each Indagis profile via `indagis profile create --clone`
 4. Writes per-profile `SOUL.md` (personality + role definition)
 5. Configures profile YAML (toolsets, always_load skills, cwd)
 6. Writes `brief.md`, `TEAM.md`, and `taste/` content
-7. Fires the initial `hermes kanban create` task assigned to the director
+7. Fires the initial `indagis kanban create` task assigned to the director
 
 Use `scripts/bootstrap_pipeline.py` to generate setup.sh from a brief +
 team-design JSON. See **[references/kanban-setup.md](references/kanban-setup.md)**
@@ -115,9 +115,9 @@ for the setup script structure, profile config patterns, and the critical
 Run `setup.sh`. Then provide the user with monitoring commands:
 
 ```bash
-hermes kanban watch --tenant <project-tenant>     # live events
-hermes kanban list  --tenant <project-tenant>     # board snapshot
-hermes dashboard                                   # visual board UI
+indagis kanban watch --tenant <project-tenant>     # live events
+indagis kanban list  --tenant <project-tenant>     # board snapshot
+indagis dashboard                                   # visual board UI
 ```
 
 The director profile takes over from here, decomposing the work and routing
@@ -174,7 +174,7 @@ task graphs. See **[references/examples.md](references/examples.md)**.
 6. **The director never executes.** Even with the full `kanban + terminal +
    file` toolset, the director's `SOUL.md` rules forbid it from executing
    work itself. It decomposes and routes only — every concrete task becomes
-   a `hermes kanban create` call to a specialist profile. The kanban
+   a `indagis kanban create` call to a specialist profile. The kanban
    orchestration guidance auto-injected into every kanban worker's system
    prompt spells this out further.
 
@@ -183,7 +183,7 @@ task graphs. See **[references/examples.md](references/examples.md)**.
    right human-review gates.
 
 8. **Verify API keys BEFORE firing.** External APIs (TTS, image-gen,
-   image-to-video) need keys in `${HERMES_HOME:-~/.hermes}/.env` or the user's secret store.
+   image-to-video) need keys in `${INDAGIS_HOME:-~/.indagis}/.env` or the user's secret store.
    A worker that hits a missing-key error wastes a task slot. The setup
    script's `check_key` helper aborts cleanly if a required key is missing.
 

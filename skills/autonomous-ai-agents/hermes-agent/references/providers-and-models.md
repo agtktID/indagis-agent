@@ -1,6 +1,6 @@
 # Providers & Model Aliases
 
-Set via `hermes model` (picker) or `hermes setup`. 35+ provider profiles ship as
+Set via `indagis model` (picker) or `indagis setup`. 35+ provider profiles ship as
 plugins under `plugins/model-providers/`; user plugins of the same name override.
 Full docs: https://hermes-agent.nousresearch.com/docs/integrations/providers
 
@@ -10,10 +10,10 @@ Full docs: https://hermes-agent.nousresearch.com/docs/integrations/providers
 |----------|------|----------------|
 | openrouter | API key | `OPENROUTER_API_KEY` |
 | anthropic | API key | `ANTHROPIC_API_KEY` (also `CLAUDE_CODE_OAUTH_TOKEN`) |
-| nous | OAuth device code | `hermes auth add nous` (or `NOUS_API_KEY`) |
-| openai-codex | OAuth | `hermes auth add openai-codex` |
-| qwen-oauth | OAuth | `hermes auth add qwen-oauth` |
-| minimax-oauth | OAuth | `hermes auth add minimax-oauth` |
+| nous | OAuth device code | `indagis auth add nous` (or `NOUS_API_KEY`) |
+| openai-codex | OAuth | `indagis auth add openai-codex` |
+| qwen-oauth | OAuth | `indagis auth add qwen-oauth` |
+| minimax-oauth | OAuth | `indagis auth add minimax-oauth` |
 | copilot | Token | `COPILOT_GITHUB_TOKEN` / `GH_TOKEN` (Copilot device flow — `gh auth login` tokens do NOT work) |
 | copilot-acp | External CLI | Copilot CLI on PATH or `COPILOT_CLI_PATH` |
 | gemini | API key | `GOOGLE_API_KEY` or `GEMINI_API_KEY` |
@@ -29,8 +29,8 @@ Full docs: https://hermes-agent.nousresearch.com/docs/integrations/providers
 | bedrock / vertex / azure-foundry | Cloud SDK / key | AWS SDK creds / Vertex ADC / `AZURE_FOUNDRY_API_KEY` |
 | custom | Config | `model.base_url` + `model.api_key` in config.yaml |
 
-Multiple credentials per provider pool and rotate automatically (`hermes auth`).
-Fallback chain when the primary fails: `hermes fallback add|remove|list`.
+Multiple credentials per provider pool and rotate automatically (`indagis auth`).
+Fallback chain when the primary fails: `indagis fallback add|remove|list`.
 
 ### User-defined model aliases
 
@@ -50,7 +50,7 @@ model_aliases:
     base_url: "https://ollama.com/v1"
 
 # Short form ("provider/model"), also via CLI:
-#   hermes config set model.aliases.fav openrouter/anthropic/claude-sonnet-4.6
+#   indagis config set model.aliases.fav openrouter/anthropic/claude-sonnet-4.6
 model:
   aliases:
     fav: openrouter/anthropic/claude-sonnet-4.6

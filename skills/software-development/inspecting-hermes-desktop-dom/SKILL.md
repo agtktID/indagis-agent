@@ -1,8 +1,8 @@
 ---
 name: inspecting-hermes-desktop-dom
-description: "Read the live Hermes desktop DOM/CSS over CDP."
+description: "Read the live Indagis desktop DOM/CSS over CDP."
 version: 1.0.0
-author: Hermes Agent
+author: Indagis Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -11,7 +11,7 @@ metadata:
     related_skills: [node-inspect-debugger, systematic-debugging, dogfood]
 ---
 
-# Inspecting the live Hermes desktop DOM
+# Inspecting the live Indagis desktop DOM
 
 ## Overview
 
@@ -122,18 +122,18 @@ When there is no port, or you must not disturb the user's window:
 
 ```bash
 cd apps/desktop
-HERMES_HOME=/tmp/cdp-probe-home \
+INDAGIS_HOME=/tmp/cdp-probe-home \
 HERMES_DESKTOP_DEV_SERVER=http://127.0.0.1:5174 \
 HERMES_DESKTOP_CDP_PORT=9333 \
   npx electron . --user-data-dir=/tmp/cdp-probe-userdata
 ```
 
 The separate `--user-data-dir` dodges Electron's single-instance lock, so it
-cannot collide with a running `hgui`; the separate `HERMES_HOME` keeps it away
+cannot collide with a running `hgui`; the separate `INDAGIS_HOME` keeps it away
 from real sessions. Pick a port other than 9222 for the same reason. Run it in
 the background and kill it when done.
 
-`npm run perf:serve` does the same with a temp `HERMES_HOME` baked in, if you
+`npm run perf:serve` does the same with a temp `INDAGIS_HOME` baked in, if you
 also want the perf harness.
 
 ## Pitfalls
@@ -141,8 +141,8 @@ also want the perf harness.
 - **Never kill the user's dev server or app to "free" anything.** A mid-serve
   kill nukes Chromium's socket pool, and the resulting `ERR_NETWORK_CHANGED`
   gets blamed on whatever you just changed.
-- **A throwaway `HERMES_HOME` has no backend.** The app logs `ECONNREFUSED` for
-  `hermes:api` and may exit on its own. The renderer still mounts and the DOM is
+- **A throwaway `INDAGIS_HOME` has no backend.** The app logs `ECONNREFUSED` for
+  `indagis:api` and may exit on its own. The renderer still mounts and the DOM is
   readable — read promptly, and don't mistake a self-exited probe for a broken
   port. Chromium logs `DevTools listening on ws://127.0.0.1:<port>/…` when it
   binds; that line is the proof the port opened.
