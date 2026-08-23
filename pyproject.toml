@@ -3,7 +3,7 @@
 [project]
 name = "indagis-agent"
 version = "0.20.0"
-description = "AI workspace for cybersecurity investigation (OSINT, Threat Intel, DFIR) — built on Hermes Agent"
+description = "AI workspace for cybersecurity investigation (OSINT, Threat Intel, DFIR)"
 readme = "README.md"
 # Upper bound is load-bearing, not cosmetic. uv resolves the project's
 # Python from `requires-python`, and an inherited `UV_PYTHON` env var (or a

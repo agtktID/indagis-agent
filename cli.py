@@ -3944,10 +3944,10 @@ def _build_compact_banner() -> str:
     dim_color = _skin.get_color("banner_dim", "#B8860B") if _skin else "#B8860B"
 
     if skin_name == "default":
-        line1 = "⚕ NOUS HERMES - AI Agent Framework"
-        tiny_line = "⚕ NOUS HERMES"
+        line1 = "⚕ INDAGIS AGENT - AI Agent Framework"
+        tiny_line = "⚕ INDAGIS AGENT"
     else:
-        agent_name = _skin.get_branding("agent_name", "Hermes Agent") if _skin else "Hermes Agent"
+        agent_name = _skin.get_branding("agent_name", "Indagis Agent") if _skin else "Indagis Agent"
         line1 = f"{agent_name} - AI Agent Framework"
         tiny_line = agent_name
 
@@ -3955,16 +3955,13 @@ def _build_compact_banner() -> str:
         from hermes_cli import __release_date__ as _release_date
         from hermes_cli import __version__ as _version
 
-        # Indagis Phase 2: keep the Hermes credit visible on the version line,
-        # per the design-system spec ("indagis --version" must end with the
-        # "(Hermes Agent core, MIT)" attribution).
-        version_line = f"Indagis Agent v{_version} ({_release_date}) (Hermes Agent core, MIT)"
+        version_line = f"Indagis Agent v{_version} ({_release_date})"
     else:
         version_line = format_banner_version_label()
 
     w = min(shutil.get_terminal_size().columns - 2, 88)
     if w < 30:
-        return f"\n[{title_color}]{tiny_line}[/] [dim {dim_color}]- Nous Research[/]\n"
+        return f"\n[{title_color}]{tiny_line}[/]\n"
 
     inner = w - 2  # inside the box border
     bar = "═" * w
