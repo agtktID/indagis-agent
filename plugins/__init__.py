@@ -1,1 +1,1 @@
-# Hermes plugins package
+# Indagis plugins package

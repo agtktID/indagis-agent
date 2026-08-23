@@ -1,4 +1,4 @@
-"""nemo_relay — optional Hermes plugin for NeMo Relay observability."""
+"""nemo_relay — optional Indagis plugin for NeMo Relay observability."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 _INIT_FAILED = object()
 _LOCK = threading.RLock()
 _RUNTIMES: dict[str, "_Runtime | object"] = {}
-_SESSION_INITIALIZER_NAME = "hermes.nemo_relay.rich_observability"
+_SESSION_INITIALIZER_NAME = "indagis.nemo_relay.rich_observability"
 
 
 @dataclass
@@ -55,7 +55,7 @@ class _Settings:
     atif_output_directory: str = ""
     atif_filename_template: str = "hermes-atif-{session_id}.json"
     atif_subagent_export_mode: str = "embedded"
-    atif_agent_name: str = "Hermes Agent"
+    atif_agent_name: str = "Indagis Agent"
     atif_agent_version: str = "unknown"
     atif_model_name: str = "unknown"
 
@@ -88,7 +88,7 @@ class _ProcessPluginConfiguration:
                     return True, self._activation
                 logger.warning(
                     "NeMo Relay plugin configuration is already active for another "
-                    "Hermes profile; keeping the existing process-global configuration "
+                    "Indagis profile; keeping the existing process-global configuration "
                     "and using direct observability for this profile."
                 )
                 return False, None
@@ -208,9 +208,9 @@ class _Runtime:
         self.sessions: dict[str, _SessionState] = {}
         self.subagent_contexts: dict[str, _SubagentContext] = {}
         self.atof_exporter: Any = None
-        self._atof_subscriber_name = f"hermes.nemo_relay.atof.{self.host.runtime_id}"
+        self._atof_subscriber_name = f"indagis.nemo_relay.atof.{self.host.runtime_id}"
         self._execution_consumer_name = (
-            f"hermes.nemo_relay.rich_observability.{self.host.runtime_id}"
+            f"indagis.nemo_relay.rich_observability.{self.host.runtime_id}"
         )
         self._execution_consumer_retained = False
         self._plugin_activation: Any = None
@@ -359,7 +359,7 @@ class _Runtime:
                     },
                 )
                 state.atif_subscriber_name = (
-                    f"hermes.nemo_relay.atif.{self.host.runtime_id}.{session_id}"
+                    f"indagis.nemo_relay.atif.{self.host.runtime_id}.{session_id}"
                 )
                 state.atif_exporter.register(state.atif_subscriber_name)
             self.sessions[session_id] = state
@@ -381,7 +381,7 @@ class _Runtime:
             metadata=rich_metadata,
         )
         if relay_session is None:
-            raise RuntimeError("Hermes core Relay session is unavailable")
+            raise RuntimeError("Indagis core Relay session is unavailable")
         state.relay_session = relay_session
         state.handle = relay_session.handle
         if subagent_context is not None:
@@ -397,7 +397,7 @@ class _Runtime:
         **kwargs: Any,
     ) -> Any:
         if state.relay_session is None:
-            raise RuntimeError("Hermes core Relay session is unavailable")
+            raise RuntimeError("Indagis core Relay session is unavailable")
         return self.host.run_in_session(
             state.relay_session,
             callback,
@@ -519,7 +519,7 @@ class _Runtime:
         self.run_in_session(
             parent_state,
             self.nemo_relay.scope.event,
-            "hermes.subagent.start",
+            "indagis.subagent.start",
             handle=parent_state.handle,
             data=_jsonable(kwargs),
             metadata=metadata,
@@ -534,14 +534,14 @@ class _Runtime:
             )
             with self._sessions_lock:
                 self.subagent_contexts.pop(child_session_id, None)
-        self.mark("hermes.subagent.stop", kwargs)
+        self.mark("indagis.subagent.stop", kwargs)
 
 def register(ctx) -> None:
     relay_runtime.SESSION_COORDINATOR.register_session_initializer(
         _SESSION_INITIALIZER_NAME,
         _prepare_core_session,
     )
-    # Activate dynamic plugins before Hermes installs the managed execution
+    # Activate dynamic plugins before Indagis installs the managed execution
     # boundaries that invoke their interceptors.
     if _load_settings().dynamic_plugins:
         _get_runtime()
@@ -566,7 +566,7 @@ def on_session_start(**kwargs: Any) -> None:
 def on_session_end(**kwargs: Any) -> None:
     runtime = _get_runtime()
     if runtime is not None:
-        _safe(lambda: (runtime.mark("hermes.session.end", kwargs), runtime.export_atif(runtime.ensure_session(kwargs))))
+        _safe(lambda: (runtime.mark("indagis.session.end", kwargs), runtime.export_atif(runtime.ensure_session(kwargs))))
 
 
 def on_session_finalize(**kwargs: Any) -> None:
@@ -584,25 +584,25 @@ def on_session_reset(**kwargs: Any) -> None:
 def on_pre_llm_call(**kwargs: Any) -> None:
     runtime = _get_runtime()
     if runtime is not None:
-        _safe(lambda: runtime.mark("hermes.turn.start", kwargs))
+        _safe(lambda: runtime.mark("indagis.turn.start", kwargs))
 
 
 def on_post_llm_call(**kwargs: Any) -> None:
     runtime = _get_runtime()
     if runtime is not None:
-        _safe(lambda: runtime.mark("hermes.turn.end", kwargs))
+        _safe(lambda: runtime.mark("indagis.turn.end", kwargs))
 
 
 def on_pre_approval_request(**kwargs: Any) -> None:
     runtime = _get_runtime()
     if runtime is not None:
-        _safe(lambda: runtime.mark("hermes.approval.request", kwargs))
+        _safe(lambda: runtime.mark("indagis.approval.request", kwargs))
 
 
 def on_post_approval_response(**kwargs: Any) -> None:
     runtime = _get_runtime()
     if runtime is not None:
-        _safe(lambda: runtime.mark("hermes.approval.response", kwargs))
+        _safe(lambda: runtime.mark("indagis.approval.response", kwargs))
 
 
 def on_subagent_start(**kwargs: Any) -> None:
@@ -648,7 +648,7 @@ def _get_runtime(
         try:
             resolved_host = host or relay_runtime.get_runtime(profile_key=profile_key)
             if resolved_host is None:
-                raise RuntimeError("Hermes core Relay runtime is unavailable")
+                raise RuntimeError("Indagis core Relay runtime is unavailable")
             runtime = _Runtime(
                 nemo_relay=resolved_host.relay,
                 settings=_load_settings(),
@@ -677,7 +677,7 @@ def _load_settings() -> _Settings:
         atif_output_directory=_env("HERMES_NEMO_RELAY_ATIF_OUTPUT_DIRECTORY"),
         atif_filename_template=_env("HERMES_NEMO_RELAY_ATIF_FILENAME_TEMPLATE") or "hermes-atif-{session_id}.json",
         atif_subagent_export_mode=_atif_subagent_export_mode(),
-        atif_agent_name=_env("HERMES_NEMO_RELAY_ATIF_AGENT_NAME") or "Hermes Agent",
+        atif_agent_name=_env("HERMES_NEMO_RELAY_ATIF_AGENT_NAME") or "Indagis Agent",
         atif_agent_version=_env("HERMES_NEMO_RELAY_ATIF_AGENT_VERSION") or "unknown",
         atif_model_name=_env("HERMES_NEMO_RELAY_ATIF_MODEL_NAME") or "unknown",
     )
@@ -723,7 +723,7 @@ def _dynamic_plugin_specs(
             return []
         if plugins_section:
             logger.error(
-                "Hermes cannot activate Relay gateway [[plugins.dynamic]] records because "
+                "Indagis cannot activate Relay gateway [[plugins.dynamic]] records because "
                 "the Python binding does not expose the CLI lifecycle resolver for "
                 "enablement, trust policy, and worker environments. Use Hermes-owned "
                 "[[dynamic_plugins]] activation specs instead; no dynamic plugins will be "
