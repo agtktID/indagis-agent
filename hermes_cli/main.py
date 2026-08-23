@@ -5935,18 +5935,32 @@ def _write_desktop_build_stamp(project_root: Path, *, source_mode: bool) -> None
 
 
 def _desktop_packaged_executable(desktop_dir: Path) -> Optional[Path]:
-    """Return the current platform's unpacked Electron app executable."""
+    """Return the current platform's unpacked Electron app executable.
+
+    electron-builder's productName/executableName is "Indagis" (see
+    apps/desktop/package.json). The "Hermes"/"hermes" variants are kept as a
+    fallback so a pre-rebrand cached build on an existing install still
+    resolves instead of silently failing.
+    """
     release_dir = desktop_dir / "release"
     if sys.platform == "darwin":
-        candidates = list(release_dir.glob("mac*/Hermes.app/Contents/MacOS/Hermes"))
+        candidates = list(release_dir.glob("mac*/Indagis.app/Contents/MacOS/Indagis"))
+        candidates += list(release_dir.glob("mac*/Hermes.app/Contents/MacOS/Hermes"))
     elif sys.platform == "win32":
         candidates = [
+            release_dir / "win-unpacked" / "Indagis.exe",
+            release_dir / "win-ia32-unpacked" / "Indagis.exe",
+            release_dir / "win-arm64-unpacked" / "Indagis.exe",
             release_dir / "win-unpacked" / "Hermes.exe",
             release_dir / "win-ia32-unpacked" / "Hermes.exe",
             release_dir / "win-arm64-unpacked" / "Hermes.exe",
         ]
     else:
         candidates = [
+            release_dir / "linux-unpacked" / "indagis",
+            release_dir / "linux-unpacked" / "Indagis",
+            release_dir / "linux-arm64-unpacked" / "indagis",
+            release_dir / "linux-arm64-unpacked" / "Indagis",
             release_dir / "linux-unpacked" / "hermes",
             release_dir / "linux-unpacked" / "Hermes",
             release_dir / "linux-arm64-unpacked" / "hermes",

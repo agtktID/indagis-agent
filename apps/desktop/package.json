@@ -168,7 +168,7 @@
     "executableName": "Indagis",
     "protocols": [
       {
-        "name": "Hermes Protocol",
+        "name": "Indagis Protocol",
         "schemes": [
           "hermes"
         ]
