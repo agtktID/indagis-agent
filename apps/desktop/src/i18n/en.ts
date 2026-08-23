@@ -610,7 +610,7 @@ export const en: Translations = {
       title: 'Gateway Connection',
       envOverride: 'env override',
       intro:
-        'Local by default. Use remote when this app should drive a Indagis backend elsewhere. Per-profile overrides below.',
+        'Local by default. Use remote when this app should drive an Indagis backend elsewhere. Per-profile overrides below.',
       appliesTo: 'Applies to',
       allProfiles: 'All profiles',
       defaultConnection: 'Default connection for every profile that has no override of its own.',

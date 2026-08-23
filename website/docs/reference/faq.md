@@ -803,7 +803,7 @@ rsync -av --exclude='hermes-agent' ~/.indagis/ newmachine:~/.indagis/
 
 **Scenario:** After running the Indagis installer, `source ~/.zshrc` gives a permission denied error.
 
-**Cause:** This usually happens when `~/.zshrc` (or `~/.bashrc`) has incorrect file permissions, or when the installer couldn't write to it cleanly. It's not a Indagis-specific issue — it's a shell config permissions problem.
+**Cause:** This usually happens when `~/.zshrc` (or `~/.bashrc`) has incorrect file permissions, or when the installer couldn't write to it cleanly. It's not an Indagis-specific issue — it's a shell config permissions problem.
 
 **Solution:**
 ```bash

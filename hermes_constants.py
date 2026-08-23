@@ -353,7 +353,7 @@ def get_indagis_dir(
     *,
     home: Path | None = None,
 ) -> Path:
-    """Resolve a Indagis subdirectory with backward compatibility.
+    """Resolve an Indagis subdirectory with backward compatibility.
 
     New installs get the consolidated layout (e.g. ``cache/images``).
     Existing installs that already have the old path (e.g. ``image_cache``)
@@ -580,7 +580,7 @@ def _bootstrap_managed_node_posix() -> bool:
 
 
 def bootstrap_hermes_managed_node() -> str | None:
-    """Install a Indagis-managed Node tree and return its npm path.
+    """Install an Indagis-managed Node tree and return its npm path.
 
     Used when the only Node/npm on the machine belongs to the user (system,
     nvm, brew, Nix) and cannot satisfy the repo's ``engines`` requirements —
@@ -690,7 +690,7 @@ def _managed_node_tree_outdated(home: Path | None = None) -> bool:
 
 
 def find_hermes_node_executable(command: str) -> str | None:
-    """Return a Indagis-managed Node/npm executable path, healing broken trees.
+    """Return an Indagis-managed Node/npm executable path, healing broken trees.
 
     Outdated trees (node major below ``_HERMES_NODE_TARGET_MAJOR``) heal the
     same way broken ones do — the once-per-process heal redownloads the target

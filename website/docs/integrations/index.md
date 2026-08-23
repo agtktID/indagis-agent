@@ -97,7 +97,7 @@ See the [Messaging Gateway overview](/user-guide/messaging) for the platform com
 
 ## Collaboration Workspaces
 
-- **[Buzz](/integrations/buzz)** — Block's Nostr-based human+agent workspace. Three integration paths: Buzz Desktop spawns Indagis as a managed ACP runtime, the `buzz-acp` relay bridge hosts a Indagis identity server-side, or the native gateway platform joins Buzz channels with full Indagis memory/skills/approvals/cron. The overview page compares all three.
+- **[Buzz](/integrations/buzz)** — Block's Nostr-based human+agent workspace. Three integration paths: Buzz Desktop spawns Indagis as a managed ACP runtime, the `buzz-acp` relay bridge hosts an Indagis identity server-side, or the native gateway platform joins Buzz channels with full Indagis memory/skills/approvals/cron. The overview page compares all three.
 
 ## Home Automation
 

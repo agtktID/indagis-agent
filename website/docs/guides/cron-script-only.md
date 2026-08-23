@@ -237,7 +237,7 @@ Silent when both filesystems are under 90%; fires exactly one line per over-thre
 | `cronjob` (default, LLM) | Agent with optional pre-check script | When the message content requires reasoning over data |
 | OS cron + `curl` to a [webhook subscription](/user-guide/messaging/webhooks) | Your script on the OS schedule | When Indagis might be unhealthy (the thing you're monitoring) |
 
-For critical system-health watchdogs that must fire *even when the gateway is down*, use OS-level cron with a plain `curl` to a Indagis webhook subscription (or any external alerting endpoint) — those run as independent OS processes and don't depend on Indagis being up. The in-gateway scheduler is the right choice when the thing being monitored is external.
+For critical system-health watchdogs that must fire *even when the gateway is down*, use OS-level cron with a plain `curl` to an Indagis webhook subscription (or any external alerting endpoint) — those run as independent OS processes and don't depend on Indagis being up. The in-gateway scheduler is the right choice when the thing being monitored is external.
 
 ## Related
 

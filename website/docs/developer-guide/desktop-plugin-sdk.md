@@ -27,7 +27,7 @@ desktop app** (`indagis desktop`) SDK — the `@indagis/plugin-sdk` module and
 its own, unrelated plugin system on `window.__HERMES_PLUGIN_SDK__` with a
 `manifest.json` — documented at
 [Extending the Dashboard](/user-guide/features/extending-the-dashboard). Python
-CLI/gateway plugins are documented at [Build a Indagis Plugin](/developer-guide/plugins).
+CLI/gateway plugins are documented at [Build an Indagis Plugin](/developer-guide/plugins).
 The three do not share code, APIs, or delivery. Only the backend `plugin_api.py`
 namespace (`/api/plugins/<id>`) is shared between the desktop and dashboard SDKs.
 :::

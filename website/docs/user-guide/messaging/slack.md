@@ -167,7 +167,7 @@ This step enables direct messages to the bot. Without it, users see **"Sending m
 4. Check **"Allow users to send Slash commands and messages from the messages tab"**
 
 :::danger Without this step, DMs are completely blocked
-Even with all the correct scopes and event subscriptions, Slack will not allow users to send direct messages to the bot unless the Messages Tab is enabled. This is a Slack platform requirement, not a Indagis configuration issue.
+Even with all the correct scopes and event subscriptions, Slack will not allow users to send direct messages to the bot unless the Messages Tab is enabled. This is a Slack platform requirement, not an Indagis configuration issue.
 :::
 
 ---

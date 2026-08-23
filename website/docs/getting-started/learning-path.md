@@ -85,7 +85,7 @@ Cron jobs let Indagis Agent run tasks on a schedule — daily summaries, periodi
 Extend Indagis Agent with your own tools and reusable skill packages.
 
 1. [Plugins](/user-guide/features/plugins)
-2. [Build a Indagis Plugin](/developer-guide/plugins)
+2. [Build an Indagis Plugin](/developer-guide/plugins)
 3. [Tools Overview](/user-guide/features/tools)
 4. [Skills Overview](/user-guide/features/skills)
 5. [MCP (Model Context Protocol)](/user-guide/features/mcp)

@@ -41,7 +41,7 @@ The Ink TUI has a dev path already: `indagis --tui --dev` runs the TypeScript so
 ```bash
 htui() {
   local root
-  root="$(_hermes_root)" || { echo "htui: not in a Indagis checkout" >&2; return 1; }
+  root="$(_hermes_root)" || { echo "htui: not in an Indagis checkout" >&2; return 1; }
   ( cd "$root" && PYTHONPATH="$root" \
       "$HERMES_MAIN_CHECKOUT/.venv/bin/python" -m hermes_cli.main --tui --dev "$@" )
 }
@@ -60,7 +60,7 @@ The desktop app is heavier: it needs `node_modules` at both the repo root and `a
 ```bash
 hgui() {
   local root deps desktop
-  root="$(_hermes_root)" || { echo "hgui: not in a Indagis checkout" >&2; return 1; }
+  root="$(_hermes_root)" || { echo "hgui: not in an Indagis checkout" >&2; return 1; }
   deps="${HERMES_GUI_DEPS_CHECKOUT:-$HERMES_MAIN_CHECKOUT}"
   desktop="$root/apps/desktop"
 

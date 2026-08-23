@@ -1,11 +1,11 @@
 ---
 sidebar_label: "Build a Plugin"
 slug: /developer-guide/plugins
-title: "Build a Indagis Plugin"
+title: "Build an Indagis Plugin"
 description: "Step-by-step guide to building a complete Indagis plugin with tools, hooks, data files, and skills"
 ---
 
-# Build a Indagis Plugin
+# Build an Indagis Plugin
 
 This guide walks through building a complete Indagis plugin from scratch. By the end you'll have a working plugin with multiple tools, lifecycle hooks, shipped data files, and a bundled skill — everything the plugin system supports.
 

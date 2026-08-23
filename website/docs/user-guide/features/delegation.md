@@ -312,7 +312,7 @@ Top-level model-facing `delegate_task` calls run in the background automatically
 
 - Normal follow-up messages do not cancel background children. `/stop` cancels running background delegations, and closing or resetting the owning session discards its active children.
 - Explicit session close/reset interrupts that session's background children. Closing a TUI viewer of a gateway-owned session does not kill the gateway's work.
-- A Indagis process restart does **not** resume a running child. Its attempt becomes `unknown` because Indagis cannot prove which side effects happened.
+- An Indagis process restart does **not** resume a running child. Its attempt becomes `unknown` because Indagis cannot prove which side effects happened.
 - A child that completed before restart but whose result was not delivered is restored and routed back through the owning session's normal checks.
 - Cancelled children return a structured result (`status="interrupted"`, `exit_reason="interrupted"`), but because the parent was interrupted too, that result often never makes it into a user-visible reply.
 

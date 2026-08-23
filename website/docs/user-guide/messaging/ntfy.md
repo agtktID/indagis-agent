@@ -12,7 +12,7 @@ ntfy makes a great lightweight push channel for Indagis: subscribe to a topic fr
 - The [ntfy mobile app](https://ntfy.sh/docs/subscribe/phone/) installed and subscribed to that topic
 - Optional: a self-hosted ntfy server, or an `ntfy.sh` account token for private/reserved topics
 
-That's it. No SDK, no daemon, no Node.js. The adapter uses `httpx` which is already a Indagis dependency.
+That's it. No SDK, no daemon, no Node.js. The adapter uses `httpx` which is already an Indagis dependency.
 
 ## Configure Indagis
 

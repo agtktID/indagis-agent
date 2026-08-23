@@ -102,7 +102,7 @@ Indagis has **two** model commands that serve different purposes:
 | Command | Where to run | What it does |
 |---------|-------------|--------------|
 | **`indagis model`** | Your terminal (outside any session) | Full setup wizard — add providers, run OAuth, enter API keys, configure endpoints |
-| **`/model`** | Inside a Indagis chat session | Quick switch between **already-configured** providers and models |
+| **`/model`** | Inside an Indagis chat session | Quick switch between **already-configured** providers and models |
 
 If you're trying to switch to a provider you haven't set up yet (e.g. you only have OpenRouter configured and want to use Anthropic), you need `indagis model`, not `/model`. Exit your session first (`Ctrl+C` or `/quit`), run `indagis model`, complete the provider setup, then start a new session.
 

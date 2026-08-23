@@ -6,7 +6,7 @@ It interoperates with any A2A-compliant peer — another Indagis, LangChain, Cre
 
 ## When to use A2A
 
-- **Indagis ↔ Indagis across machines** — let your desktop agent hand tasks to a Indagis on a server, or vice versa, each with its own memory, tools, and credentials.
+- **Indagis ↔ Indagis across machines** — let your desktop agent hand tasks to an Indagis on a server, or vice versa, each with its own memory, tools, and credentials.
 - **Delegating to specialist agents** — a peer that advertises `web_search`/`research`/`coding` skills on its Agent Card can be discovered and called mid-conversation.
 - **Being a callable service** — expose your Indagis so other frameworks' agents can send it tasks.
 

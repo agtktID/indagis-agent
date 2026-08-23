@@ -56,7 +56,7 @@ The bar along the bottom of the chat shows live session state and exposes quick 
 - **Context-usage meter** — a live "% full" meter of the session's context window. Click it to open the **Context Usage** popover with a token breakdown by category (system prompt, tool definitions, skills, memory, rules, MCP, subagent definitions, and the conversation itself) so you can see exactly what's eating the window before compression kicks in.
 - **Customizable items** — right-click the status bar (**Show in status bar**) to choose what appears: the context meter, workspace, model, approvals, turn/session timers, terminal, Command Center, backend version, and more — or hide the bar entirely (**Cmd/Ctrl+Shift+S** toggles it).
 
-Chatting against a Indagis instance on another machine instead of the bundled local backend? See [Connecting to a remote backend](#connecting-to-a-remote-backend) below — and for the full picture of how the remote-hosted dashboard connection works (the auth gate, the `/api/ws` chat socket, and WebSocket close-code triage), see [Web Dashboard → Connecting Indagis Desktop to a remote backend](./features/web-dashboard.md#connecting-hermes-desktop-to-a-remote-backend).
+Chatting against an Indagis instance on another machine instead of the bundled local backend? See [Connecting to a remote backend](#connecting-to-a-remote-backend) below — and for the full picture of how the remote-hosted dashboard connection works (the auth gate, the `/api/ws` chat socket, and WebSocket close-code triage), see [Web Dashboard → Connecting Indagis Desktop to a remote backend](./features/web-dashboard.md#connecting-hermes-desktop-to-a-remote-backend).
 
 #### Repository discovery
 
@@ -209,7 +209,7 @@ The packaged app ships the Electron shell and a native React chat surface. On fi
 
 ## Connecting to a remote backend
 
-By default the app starts and manages its own **local** backend. You can instead point it at a Indagis backend running on another machine — a VPS, a home server, or a Mini behind Tailscale.
+By default the app starts and manages its own **local** backend. You can instead point it at an Indagis backend running on another machine — a VPS, a home server, or a Mini behind Tailscale.
 
 **Settings → Gateway → Connection mode** offers the alternatives to the local gateway:
 

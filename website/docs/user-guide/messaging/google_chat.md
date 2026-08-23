@@ -88,7 +88,7 @@ After creation, the topic's detail page has a **Subscriptions** tab. Create one:
 
 - Subscription ID: `hermes-chat-events-sub`
 - Delivery type: **Pull**
-- Message retention: **7 days** (so backlog survives a indagis restart)
+- Message retention: **7 days** (so backlog survives an indagis restart)
 - Leave the rest default.
 
 ---

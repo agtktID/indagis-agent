@@ -52,7 +52,7 @@ env vars unlock more automation (all documented in `SKILL.md` under Prerequisite
 
 ## Usage
 
-Drive it from a Indagis session:
+Drive it from an Indagis session:
 
 > "Use the unbroker skill to remove my data from data brokers. Here is my consent. Run it hands-off
 > and show me the human-task digest at the end."

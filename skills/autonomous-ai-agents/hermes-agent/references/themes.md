@@ -1,6 +1,6 @@
-# Themes / Skins — Author a Indagis Color Theme
+# Themes / Skins — Author an Indagis Color Theme
 
-Author a Indagis **skin** — one YAML file that themes the CLI, the TUI, and the
+Author an Indagis **skin** — one YAML file that themes the CLI, the TUI, and the
 desktop GUI at once. The skin engine (`hermes_cli/skin_engine.py`) resolves the
 active skin and the gateway pushes it to every surface, so a file dropped in
 `~/.indagis/skins/` is the theme analogue of a plugin: no code, all surfaces. This
