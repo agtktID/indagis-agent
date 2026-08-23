@@ -290,56 +290,27 @@ Built by [Nous Research](https://nousresearch.com).
 
 **Indagis is an independent, community-maintained project. It is not an official Nous Research product.** It is built on a **modified Hermes Agent core** (the `agent/`, `providers/`, `tools/`, `gateway/`, `skills/` modules in this repository are derived from [Hermes Agent](https://github.com/NousResearch/hermes-agent), which is published by Nous Research under the MIT License). The presentation layer — shell, themes, palette, dashboard login, and a small set of user-facing strings — has been re-skinned for the [Indagis](https://github.com/agtktID/indagis-agent) identity, intended for cybersecurity investigation workflows (SOC, DFIR, threat hunting, evidence collection).
 
-### Roadmap — Skills spécialisés cybersécurité
+### Roadmap — cybersecurity-specialised skills
 
-The fork's differentiation from upstream Hermes Agent lives in the **skill library** under `skills/`. This roadmap lists the cybersecurity-specialised skills planned for the Indagis skill catalog. Each entry is a self-contained skill that wraps an existing CLI or API and an LLM-facing prompt — the agent invokes the skill, the skill wraps the tool, no custom Python integration is required. The upstream Hermes Agent skill engine handles all of these without modification.
+The fork's differentiation from upstream Hermes Agent lives in the **skill library** under `optional-skills/`. This roadmap lists the cybersecurity-specialised skills built for the Indagis skill catalog. Each entry is a self-contained skill that wraps an existing CLI or API and an LLM-facing prompt — the agent invokes the skill, the skill wraps the tool, no custom Python integration is required. The upstream Hermes Agent skill engine handles all of these without modification.
 
 | Skill | Domain | Wraps | Status |
 |---|---|---|---|
-| `misp-query` | Threat intel | MISP REST API (`pymisp` or `curl`) | Planned (Phase 5) |
-| `virustotal-lookup` | Threat intel | VirusTotal v3 API | Planned (Phase 5) |
-| `shodan-search` | Recon | Shodan REST API | Planned (Phase 5) |
+| `shodan-search` | Recon | Shodan REST API | Shipped |
+| `misp-query` | Threat intel | MISP REST API (`pymisp` or `curl`) | Shipped |
+| `virustotal-lookup` | Threat intel | VirusTotal v3 API | Shipped |
+| `sigma-rule-search` | Detection engineering | `sigma-cli` or PyPI `sigma` | Shipped |
+| `yara-scan` | File / memory scanning | `yara` CLI | Shipped |
+| `mitm-traffic-capture` | Recon / API traffic capture | `mitmproxy` CLI | Shipped |
+| `mitm-traffic-audit` | API security / bug-bounty methodology | `mitmproxy` capture + `curl` | Shipped |
 | `mvt-android-triage` | Mobile DFIR | MVT (Mobile Verification Toolkit) CLI | Planned (Phase 5) |
 | `velociraptor-hunt` | DFIR / endpoint | Velociraptor `velociraptor` CLI | Planned (Phase 5) |
 | `osquery-investigate` | Endpoint live forensics | `osqueryi` shell | Planned (Phase 5) |
 | `wireshark-tshark` | Network forensics | `tshark` / `editcap` | Planned (Phase 5) |
 | `chainsaw-evtx` | Log forensics (Windows EVTX) | Chainsaw CLI | Planned (Phase 5) |
-| `sigma-rule-search` | Detection engineering | `sigma-cli` or PyPI `sigma` | Planned (Phase 5) |
-| `yara-scan` | File / memory scanning | `yara` CLI | Planned (Phase 5) |
 
-These are **planned, not shipped**. They will land under `skills/` as standalone `SKILL.md` + scripts (the upstream convention), each reviewed against the Skill-vs-Tool decision criteria in `CONTRIBUTING.md`. The Phase 5 timeline depends on the installer fork (see **Phase 5 todo** below) since the skill engine still uses the upstream installer to place skills at runtime. Skill implementations live in this repo's `skills/` directory; the engine that executes them is upstream.
+Shipped skills land under `optional-skills/security/` as standalone `SKILL.md` + `references/` files (the format documented in `CONTRIBUTING.md`, reviewed against its Skill-vs-Tool decision criteria); they ship with the repo but aren't activated by default. The remaining entries are still planned.
 
-**Status of shipped skills today:** none. Indagis ships with the upstream Hermes Agent skill catalog unchanged; the entries above are the planned fork-specific additions. Operators who want to test a specific skill early should file an issue with the workflow they want to automate.
+**Status of shipped skills today:** 7 of the 12 roadmap entries above — `shodan-search`, `misp-query`, `virustotal-lookup`, `sigma-rule-search`, `yara-scan`, `mitm-traffic-capture`, and `mitm-traffic-audit` — are shipped under `optional-skills/security/`. The remaining 5 are still planned; operators who want to test one early should file an issue with the workflow they want to automate.
 
-### What Indagis owns
-
-- The presentation layer: CLI banner, completion scripts (bash/zsh/fish), the user-facing shell, the web dashboard login page and theme tokens, the Desktop Electron bundle, the i18n strings (`web/src/i18n/*.ts`), and the `Indagis` palette (`#0B0F14` Obsidian Black, `#37D5D6` Cyber Cyan, `#7CEFF0` Light Cyan, plus Spacing Grotesk and Inter typography).
-- The TUI theme (`ui-tui/src/theme.ts` BRAND) and the ASCII banner (`ui-tui/src/banner.ts`).
-- The user-facing command name on the shell: `indagis` (registered by the G1.2 shell-completion rebrand). The Python and Electron modules retain their historical `hermes_*` / `HERMES_*` identifiers to preserve the runtime contract; see **Compat-contract notes** below.
-
-### What Indagis does **not** own
-
-- The agent runtime, LLM provider abstraction, gateway, skills scheduler, session persistence, and the bulk of `hermes_cli/` Python modules — these remain the upstream Hermes Agent code, **frozen at v0.20** at the fork point. Bug fixes and security patches flow **upstream first** and are re-merged into the fork.
-- The bundled Nous Portal and Nous-hosted gateways (Anthropic, OpenRouter, OAuth, etc.) which remain Nous Research services subject to Nous Research's terms. Indagis Agent does not rebrand any Nous-hosted page name (e.g. the `Hermes Agent` page in the billing portal — renaming it would send users to 404s on Nous Research's side).
-- Any trademarks of Nous Research (`Nous Research`, `Hermes Agent`, `Hermes Desktop`). They appear on the Indagis Agent product page and in source under fair-use attribution, and **no source-level change may delete any of them** without an authorisation commit from a Nous Research trademark representative. See `LICENSE` for the full grant.
-
-### Verification matrix (Phase 4 rebrand status, audit on this README's commit)
-
-- [x] Product identity: `Indagis Agent` is the brand on the user-facing shell.
-- [x] Palette: `Indagis` palette active across web, TUI, dashboard themes.
-- [x] Attribution: every command-line surface, every UI string, every bundled theme credits the Hermes Agent upstream in the relevant place (Cahier §3.3).
-- [x] Out-of-scope identifiers (HERMES_HOME, HERMES_DESKTOP_*, macOS bundle id, ~/.hermes paths) documented below as **Compat-contract notes** to prevent accidental renames.
-- [ ] Phase 5 (post-rebrand): fork the upstream installer; migrate the path `~/.hermes/` → `~/.indagis/`; redefine `HERMES_HOME` → `INDAGIS_HOME`; redefine the macOS bundle id `com.nousresearch.hermes` → `com.labscreatis.indagis.desktop`.
-
-### Compat-contract notes (read this before renaming)
-
-A few inherited technical identifiers remain under their Hermes-era names because the upstream installer or the upstream Electron build still writes or reads them — they are explicitly **out of scope** for the Phase 4 rebrand because changing them now would break the install-on-existing-machine contract users have today:
-
-- `HERMES_HOME` (installer contract): the directory where the upstream `install.sh` and `install.ps1` place the runtime, venv, logs, and `bin/uv.exe`. Default is `~/.hermes` on Linux/macOS/WSL2 and `%LOCALAPPDATA%\hermes` on Windows. Migrating to `INDAGIS_HOME` / `~/.indagis/` is scheduled for **Phase 5** and requires forking the installer.
-- `HERMES_DESKTOP_*` (Electron technical identifiers): all `HERMES_DESKTOP_HERMES_ROOT`, `HERMES_DESKTOP_HERMES`, etc. read by the bundled Electron process to locate the runtime and bind single-instance locks. These are internal to the desktop bundle, not user-visible brand — renaming them would change the runtime contract without brand benefit, and is **out of scope** for Phase 4.
-- macOS bundle identifier `com.nousresearch.hermes` (Electron technical identifier, set in `apps/desktop/electron/main.ts`): same category as `HERMES_DESKTOP_*`. Migration to `com.labscreatis.indagis.desktop` is scheduled for **Phase 5** when the installer is forked.
-- Filesystem paths `~/.hermes/`, `%LOCALAPPDATA%\hermes\`, `packages/hermes-ink/` (TS package dir), `hermes_cli/` (Python module dir): same — protected by cahier §3.2 "modules internes Hermes conservés".
-
-### Phase 5 todo (post-Phase 4 rebrand)
-
-Migrate the `~/.hermes/` and `%LOCALAPPDATA%\hermes\` directory names to `~/.indagis/`; redefine the Electron bundle identifier `com.nousresearch.hermes` to `com.labscreatis.indagis.desktop`; redefine `HERMES_DESKTOP_*` and `HERMES_HOME`; align installer paths; fork the upstream installer; this requires an installer fork and is documented but not yet scheduled.
+The engine (agent runtime, provider abstraction, gateway, skills scheduler, session persistence) remains the upstream Hermes Agent code, kept as-is so upstream security and bug fixes can still be reviewed and merged in — the fork's own work is the presentation layer (CLI banner, dashboard, desktop app, TUI, palette) and the cybersecurity skill library above. A handful of internal-only technical identifiers (an installer env var, an Electron bundle id, a couple of module directory names) are intentionally not yet renamed for install-compatibility reasons — see `CHANGELOG.md` for the full technical rebrand log if you're touching that code.
