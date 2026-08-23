@@ -1,4 +1,4 @@
-"""disk_cleanup — ephemeral file cleanup for Hermes Agent.
+"""disk_cleanup — ephemeral file cleanup for Indagis Agent.
 
 Library module wrapping the deterministic cleanup rules written by
 @LVT382009 in PR #12212. The plugin ``__init__.py`` wires these
@@ -16,7 +16,7 @@ Rules:
   - >500 MB files → prompt always (deep only)
 
 Scope: strictly INDAGIS_HOME and /tmp/hermes-*
-Never touches: ~/.hermes/logs/ or any system directory.
+Never touches: ~/.indagis/logs/ or any system directory.
 """
 
 from __future__ import annotations
@@ -383,7 +383,7 @@ def quick() -> Dict[str, Any]:
             new_tracked.append(item)
 
     # Remove empty dirs under INDAGIS_HOME, but never recurse into known
-    # durable state trees.  Some installs place the Hermes checkout, venv,
+    # durable state trees.  Some installs place the Indagis checkout, venv,
     # and desktop build under INDAGIS_HOME; a full rglob over that tree can
     # stall the gateway event loop for minutes.
     hermes_home = get_indagis_home()

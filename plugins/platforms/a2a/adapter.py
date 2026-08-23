@@ -1,5 +1,5 @@
 """
-A2A inbound platform adapter — exposes Hermes as an A2A-discoverable agent.
+A2A inbound platform adapter — exposes Indagis as an A2A-discoverable agent.
 
 Design (the #11025 insight, done as a plugin with zero core edits):
   - Runs a stdlib http.server in a daemon thread (no a2a-sdk, no asyncio loop
@@ -120,7 +120,7 @@ def _profile_home(profile: str) -> Optional[str]:
                 return str(get_indagis_home())
             except Exception:
                 return None
-        return os.path.expanduser(f"~/.hermes/profiles/{profile}")
+        return os.path.expanduser(f"~/.indagis/profiles/{profile}")
 
 def _safe_context_slug(value: str, max_len: int = 96) -> str:
     """Sanitize attacker-provided context ids before using in session titles."""
@@ -502,7 +502,7 @@ class A2AAdapter(BasePlatformAdapter):
         agents: dict[str, dict] = {}
         default_desc = os.getenv(
             "A2A_AGENT_DESCRIPTION",
-            "Hermes Agent — a general-purpose agent reachable over A2A.",
+            "Indagis Agent — a general-purpose agent reachable over A2A.",
         )
         agents[""] = {
             "slug": "",
@@ -549,8 +549,8 @@ class A2AAdapter(BasePlatformAdapter):
                 "tenant": tenant,
                 "profile": profile or slug,
                 "local": local,
-                "name": str(val.get("name") or f"Hermes {slug}"),
-                "description": str(val.get("description") or f"Hermes profile '{profile or slug}' exposed over A2A."),
+                "name": str(val.get("name") or f"Indagis {slug}"),
+                "description": str(val.get("description") or f"Indagis profile '{profile or slug}' exposed over A2A."),
                 "advertised_toolsets": list(toolsets or []),
                 "timeout": int(val.get("timeout") or _reply_timeout()),
             }
@@ -607,7 +607,7 @@ class A2AAdapter(BasePlatformAdapter):
         return protocol.build_agent_card(
             name=agent.get("name") or self.agent_name,
             url=url,
-            description=agent.get("description") or "Hermes Agent — a general-purpose agent reachable over A2A.",
+            description=agent.get("description") or "Indagis Agent — a general-purpose agent reachable over A2A.",
             skills=self._advertised_skills(agent),
             streaming=bool(agent.get("local", True)),
             push_notifications=True,
@@ -847,7 +847,7 @@ class A2AAdapter(BasePlatformAdapter):
             logger.debug("A2A: could not title forwarded session", exc_info=True)
 
     def _forward_to_profile(self, agent: dict, peer: str, context_id: str, framed_text: str) -> tuple[str, str]:
-        """Forward a routed A2A task to another local Hermes profile.
+        """Forward a routed A2A task to another local Indagis profile.
 
         First contact creates a normal ``source=a2a`` CLI session, records its
         session id, and titles it deterministically. Later turns resume by the
@@ -864,7 +864,7 @@ class A2AAdapter(BasePlatformAdapter):
         lock = self._forward_lock(key)
         with lock:
             session_id = self._profile_sessions.get(key) or self._lookup_forward_session(profile, session_title)
-            cmd = ["hermes", "chat", "-q", framed_text, "-Q", "--source", "a2a"]
+            cmd = ["indagis", "chat", "-q", framed_text, "-Q", "--source", "a2a"]
             if session_id:
                 cmd.extend(["--resume", session_id])
 

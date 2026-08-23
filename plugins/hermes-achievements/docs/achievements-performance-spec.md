@@ -1,4 +1,4 @@
-# Hermes Achievements Performance Spec (Post-Hackathon)
+# Indagis Achievements Performance Spec (Post-Hackathon)
 
 Status: Draft (no code changes yet)
 Owner: hermes-achievements plugin
@@ -96,12 +96,12 @@ Rules:
 - TTL: 60–180 seconds (configurable).
 - Single-flight dedupe for scan requests.
 - Persist plugin data under:
-  - `~/.hermes/plugins/hermes-achievements/scan_snapshot.json`
+  - `~/.indagis/plugins/hermes-achievements/scan_snapshot.json`
 
 ### Phase 2
 - Incremental scan checkpoints with per-session fingerprints.
 - Persist checkpoint data under:
-  - `~/.hermes/plugins/hermes-achievements/scan_checkpoint.json`
+  - `~/.indagis/plugins/hermes-achievements/scan_checkpoint.json`
 - Checkpoint stores, per session:
   - `session_id`
   - fingerprint (`updated_at`, message_count, or hash)
@@ -166,7 +166,7 @@ Expose minimal diagnostics in `/scan-status`.
 ## 12) Persistence Files (Explicit)
 
 Plugin state directory:
-- `~/.hermes/plugins/hermes-achievements/`
+- `~/.indagis/plugins/hermes-achievements/`
 
 Files:
 - `state.json` (existing): unlock tracking

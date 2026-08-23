@@ -159,7 +159,7 @@ class HolographicMemoryProvider(MemoryProvider):
         _default_db = _hermes_home + "/memory_store.db"
         db_path = self._config.get("db_path", _default_db)
         # Expand $INDAGIS_HOME in user-supplied paths so config values like
-        # "$INDAGIS_HOME/memory_store.db" or "~/.hermes/memory_store.db" both
+        # "$INDAGIS_HOME/memory_store.db" or "~/.indagis/memory_store.db" both
         # resolve to the active profile's directory.
         if isinstance(db_path, str):
             db_path = db_path.replace("$INDAGIS_HOME", _hermes_home)

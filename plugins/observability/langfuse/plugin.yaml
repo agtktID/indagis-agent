@@ -1,6 +1,6 @@
 name: langfuse
 version: "1.0.0"
-description: "Optional Langfuse observability for Hermes — traces conversations, LLM calls, and tool usage. Opt-in via `hermes plugins enable observability/langfuse` or `hermes tools → Langfuse Observability`."
+description: "Optional Langfuse observability for Indagis — traces conversations, LLM calls, and tool usage. Opt-in via `indagis plugins enable observability/langfuse` or `indagis tools → Langfuse Observability`."
 author: NousResearch
 requires_env:
   - HERMES_LANGFUSE_PUBLIC_KEY

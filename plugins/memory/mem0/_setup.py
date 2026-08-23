@@ -240,7 +240,7 @@ def _setup_platform(hermes_home: str, config: dict, flags: dict[str, str]) -> No
     schema = [
         {"key": "api_key", "description": "Mem0 Platform API key", "secret": True, "required": True, "env_var": "MEM0_API_KEY", "url": "https://app.mem0.ai"},
         {"key": "user_id", "description": "User identifier", "default": "hermes-user"},
-        {"key": "agent_id", "description": "Agent identifier", "default": "hermes"},
+        {"key": "agent_id", "description": "Agent identifier", "default": "indagis"},
         {"key": "rerank", "description": "Enable reranking for recall", "default": "false", "choices": ["true", "false"]},
     ]
 
@@ -313,13 +313,13 @@ def _setup_platform(hermes_home: str, config: dict, flags: dict[str, str]) -> No
     provider_config["host"] = ""
     # The json-file clear above can't help when the host comes from the
     # environment: _load_config() seeds ``host`` from MEM0_HOST, and the
-    # docs tell self-hosted users to put MEM0_HOST in ~/.hermes/.env. Warn
+    # docs tell self-hosted users to put MEM0_HOST in ~/.indagis/.env. Warn
     # so the user knows platform mode won't take effect until it's removed.
     if os.environ.get("MEM0_HOST", "").strip():
         print(
             "\n  ⚠ MEM0_HOST is set in your environment "
             f"({os.environ['MEM0_HOST']}). It overrides platform mode — "
-            "remove it from ~/.hermes/.env (or unset it) or Hermes will keep "
+            "remove it from ~/.indagis/.env (or unset it) or Indagis will keep "
             "routing to the self-hosted server."
         )
 
@@ -402,7 +402,7 @@ def _setup_selfhosted(hermes_home: str, config: dict, flags: dict[str, str]) -> 
     user_id = flags.get("user_id") or _prompt(
         "User identifier", default=provider_config.get("user_id") or "hermes-user"
     )
-    agent_id = _prompt("Agent identifier", default=provider_config.get("agent_id") or "hermes")
+    agent_id = _prompt("Agent identifier", default=provider_config.get("agent_id") or "indagis")
 
     if flags.get("dry_run"):
         print(f"\n  [dry-run] Would save config: host={host}, user_id={user_id}, agent_id={agent_id}")
@@ -474,7 +474,7 @@ def _setup_oss(hermes_home: str, config: dict, flags: dict[str, str]) -> None:
 
     if env_writes:
         _write_env(Path(hermes_home) / ".env", env_writes)
-    _save_mem0_json(hermes_home, {"mode": "oss", "user_id": user_id, "agent_id": "hermes", "oss": oss_config})
+    _save_mem0_json(hermes_home, {"mode": "oss", "user_id": user_id, "agent_id": "indagis", "oss": oss_config})
 
     _install_provider_deps(llm_id, embedder_id, vector_id)
 
@@ -517,7 +517,7 @@ def _prompt_api_key(label: str, env_var: str, hermes_home: str) -> str:
 
 _PGVECTOR_CONTAINER = "hermes-pgvector"
 _PGVECTOR_IMAGE = "pgvector/pgvector:pg17"
-_PGVECTOR_PASSWORD = "hermes"
+_PGVECTOR_PASSWORD = "indagis"
 
 
 def _ensure_pgvector(host: str = "localhost", port: int = 5432) -> dict | None:
@@ -802,8 +802,8 @@ def _setup_oss_interactive(hermes_home: str, config: dict) -> None:
     user_id = input(f"  User ID [{os.getenv('USER', 'hermes-user')}]: ").strip()
     user_id = user_id or os.getenv("USER", "hermes-user")
 
-    agent_id = input("  Agent ID [hermes]: ").strip()
-    agent_id = agent_id or "hermes"
+    agent_id = input("  Agent ID [indagis]: ").strip()
+    agent_id = agent_id or "indagis"
 
     flags = {
         "oss_llm": llm_id,
@@ -962,7 +962,7 @@ def _check_min_dep_version() -> None:
 
 
 def post_setup(hermes_home: str, config: dict) -> None:
-    """Entry point called by hermes memory setup framework.
+    """Entry point called by indagis memory setup framework.
 
     Routes on --mode (platform / selfhosted / oss); with no flag it shows an
     interactive picker with all three modes. Platform keeps the framework's

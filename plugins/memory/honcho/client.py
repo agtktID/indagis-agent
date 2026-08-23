@@ -1,7 +1,7 @@
 """Honcho client initialization and configuration.
 
 Resolution order for config file:
-  1. $INDAGIS_HOME/honcho.json  (instance-local, enables isolated Hermes instances)
+  1. $INDAGIS_HOME/honcho.json  (instance-local, enables isolated Indagis instances)
   2. ~/.honcho/config.json     (global, shared across all Honcho-enabled apps)
   3. Environment variables     (HONCHO_API_KEY, HONCHO_ENVIRONMENT)
 
@@ -33,11 +33,11 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-HOST = "hermes"
+HOST = "indagis"
 
 
 def profile_host_key(profile: str | None) -> str:
-    """Return the safe Honcho host key for a Hermes profile."""
+    """Return the safe Honcho host key for an Indagis profile."""
     if not profile or profile in {"default", "custom"}:
         return HOST
     sanitized = "".join(c if c.isalnum() or c in "_-" else "_" for c in profile).strip("_")
@@ -55,13 +55,13 @@ def _host_block(raw: dict, host: str) -> dict:
 
 
 def resolve_active_host() -> str:
-    """Derive the Honcho host key from the active Hermes profile.
+    """Derive the Honcho host key from the active Indagis profile.
 
     Resolution order:
       1. HERMES_HONCHO_HOST env var (explicit override)
       2. Active profile name via profiles system -> ``hermes_<profile>``
       3. defaultHost from the active config, but only for the default profile
-      4. Fallback: ``"hermes"`` (default profile)
+      4. Fallback: ``"indagis"`` (default profile)
     """
     explicit = os.environ.get("HERMES_HONCHO_HOST", "").strip()
     if explicit:
@@ -75,9 +75,9 @@ def resolve_active_host() -> str:
         profile_host = HOST
 
     # Honcho's generic config can carry a defaultHost (for example "local"),
-    # but applying it before profile resolution makes every named Hermes
+    # but applying it before profile resolution makes every named Indagis
     # profile share that same host.  Keep named profiles isolated; only the
-    # default Hermes profile may opt into the config's default host.
+    # default Indagis profile may opt into the config's default host.
     if profile_host == HOST:
         try:
             path = resolve_config_path()
@@ -102,7 +102,7 @@ def resolve_config_path() -> Path:
 
     Resolution order:
       1. $INDAGIS_HOME/honcho.json      (profile-local, if it exists)
-      2. ~/.hermes/honcho.json          (default profile — shared host blocks live here)
+      2. ~/.indagis/honcho.json          (default profile — shared host blocks live here)
       3. ~/.honcho/config.json          (global, cross-app interop)
 
     Returns the global path if none exist (for first-time setup writes).
@@ -362,7 +362,7 @@ class HonchoClientConfig:
     """Configuration for Honcho client, resolved for a specific host."""
 
     host: str = HOST
-    workspace_id: str = "hermes"
+    workspace_id: str = "indagis"
     api_key: str | None = None
     environment: str = "production"
     # Optional base URL for self-hosted Honcho (overrides environment mapping)
@@ -371,7 +371,7 @@ class HonchoClientConfig:
     timeout: float | None = None
     # Identity
     peer_name: str | None = None
-    ai_peer: str = "hermes"
+    ai_peer: str = "indagis"
     # When True, ``peer_name`` wins over any gateway-supplied runtime
     # identity (Telegram UID, Discord ID, …) when resolving the user peer.
     # This keeps memory unified across platforms for single-user deployments
@@ -465,7 +465,7 @@ class HonchoClientConfig:
     @classmethod
     def from_env(
         cls,
-        workspace_id: str = "hermes",
+        workspace_id: str = "indagis",
         host: str | None = None,
     ) -> HonchoClientConfig:
         """Create config from environment variables (fallback)."""
@@ -493,7 +493,7 @@ class HonchoClientConfig:
         """Create config from the resolved Honcho config path.
 
         Resolution: $INDAGIS_HOME/honcho.json -> ~/.honcho/config.json -> env vars.
-        When host is None, derives it from the active Hermes profile.
+        When host is None, derives it from the active Indagis profile.
         """
         resolved_host = host or resolve_active_host()
         path = config_path or resolve_config_path()
@@ -796,10 +796,10 @@ class HonchoClientConfig:
 
         Resolution order:
           1. Gateway session key (stable per-chat identifier from gateway platforms)
-          2. per-session strategy — Hermes session_id ({timestamp}_{hex}); authoritative,
+          2. per-session strategy — Indagis session_id ({timestamp}_{hex}); authoritative,
              so a generated title never remaps a live conversation
           3. Manual directory override from sessions map
-          4. Hermes session title (from /title command; non-per-session)
+          4. Indagis session title (from /title command; non-per-session)
           5. per-repo strategy — git repo root directory name
           6. per-directory strategy — directory basename
           7. global strategy — workspace name
@@ -1000,7 +1000,7 @@ def get_honcho_client(config: HonchoClientConfig | None = None) -> Honcho:
         raise ValueError(
             "Honcho API key not found. "
             "Get your API key at https://app.honcho.dev, "
-            "then run 'hermes honcho setup' or set HONCHO_API_KEY. "
+            "then run 'indagis honcho setup' or set HONCHO_API_KEY. "
             "For local instances, set HONCHO_BASE_URL instead."
         )
 
@@ -1024,7 +1024,7 @@ def get_honcho_client(config: HonchoClientConfig | None = None) -> Honcho:
             raise ImportError(
                 "honcho-ai is required for Honcho integration. "
                 "Install it with: pip install honcho-ai  "
-                "(or run `hermes honcho setup` to configure)."
+                "(or run `indagis honcho setup` to configure)."
             )
 
         # Allow config.yaml honcho.base_url to override the SDK's environment

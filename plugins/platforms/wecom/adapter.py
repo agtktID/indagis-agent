@@ -1572,7 +1572,7 @@ class WeComAdapter(BasePlatformAdapter):
 
 _QR_GENERATE_URL = "https://work.weixin.qq.com/ai/qc/generate"
 _QR_QUERY_URL = "https://work.weixin.qq.com/ai/qc/query_result"
-_QR_CODE_PAGE = "https://work.weixin.qq.com/ai/qc/gen?source=hermes&scode="
+_QR_CODE_PAGE = "https://work.weixin.qq.com/ai/qc/gen?source=indagis&scode="
 _QR_POLL_INTERVAL = 3  # seconds
 _QR_POLL_TIMEOUT = 300  # 5 minutes
 
@@ -1601,7 +1601,7 @@ def qr_scan_for_bot_info(
         logger.error("urllib is required for WeCom QR scan")
         return None
 
-    generate_url = f"{_QR_GENERATE_URL}?source=hermes"
+    generate_url = f"{_QR_GENERATE_URL}?source=indagis"
 
     # ── Step 1: Fetch QR code ──
     print("  Connecting to WeCom...", end="", flush=True)
@@ -1833,7 +1833,7 @@ def interactive_setup() -> None:
             "How should unauthorized users be handled?",
             [
                 "Enable open access (anyone can message the bot)",
-                "Use DM pairing (unknown users request access, you approve with 'hermes pairing approve')",
+                "Use DM pairing (unknown users request access, you approve with 'indagis pairing approve')",
                 "Disable direct messages",
                 "Skip for now (bot will deny all users until configured)",
             ],
@@ -1846,12 +1846,12 @@ def interactive_setup() -> None:
         elif access_idx == 1:
             save_env_value("WECOM_DM_POLICY", "pairing")
             print_success("DM pairing mode — users will receive a code to request access.")
-            print_info("Approve with: hermes pairing approve <platform> <code>")
+            print_info("Approve with: indagis pairing approve <platform> <code>")
         elif access_idx == 2:
             save_env_value("WECOM_DM_POLICY", "disabled")
             print_warning("Direct messages disabled.")
         else:
-            print_info("Skipped — configure later with 'hermes gateway setup'")
+            print_info("Skipped — configure later with 'indagis gateway setup'")
 
     home = prompt("Home chat ID (optional, for cron/notifications)", password=False).strip()
     if home:
@@ -1900,7 +1900,7 @@ def register(ctx) -> None:
         is_connected=_is_connected,
         validate_config=_is_connected,
         required_env=["WECOM_BOT_ID", "WECOM_SECRET"],
-        install_hint="Run `hermes setup` to install WeCom support.",
+        install_hint="Run `indagis setup` to install WeCom support.",
         setup_fn=interactive_setup,
         allowed_users_env="WECOM_ALLOWED_USERS",
         allow_all_env="WECOM_ALLOW_ALL_USERS",
@@ -1920,7 +1920,7 @@ def register(ctx) -> None:
         is_connected=_callback_is_connected,
         validate_config=_callback_is_connected,
         required_env=["WECOM_CALLBACK_CORP_ID", "WECOM_CALLBACK_CORP_SECRET"],
-        install_hint="Run `hermes setup` to install WeCom support.",
+        install_hint="Run `indagis setup` to install WeCom support.",
         allowed_users_env="WECOM_CALLBACK_ALLOWED_USERS",
         allow_all_env="WECOM_CALLBACK_ALLOW_ALL_USERS",
         emoji="💼",
