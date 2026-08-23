@@ -25,10 +25,14 @@ Le script de merge cherche le format `{{ NOM }}` — ne jamais employer ce
 format ailleurs que dans les emplacements mergeables, sinon le merge
 corrompt le fichier.
 
-Mécanisme de chargement runtime : NON CONFIRMÉ au moment de la rédaction
-de ce master (investigation en cours, voir contexte de session). Ce
-fichier est écrit pour fonctionner comme instructions autonomes lues par
-un agent, indépendamment de la façon dont le moteur Indagis le charge.
+Mécanisme de chargement runtime : CONFIRMÉ. agent/prompt_builder.py
+load_soul_md() lit $INDAGIS_HOME/SOUL.md (un seul fichier par home actif,
+pas de scan de dossier). Chaque profil ayant son propre INDAGIS_HOME
+(~/.indagis/profiles/<nom>/), un profil = un SOUL.md à cet emplacement.
+Les 9 fichiers générés sont copiés (sans ce bloc de commentaire) dans
+profiles/cybersec-<slug>/SOUL.md à la racine du repo — voir
+profiles/README.md pour l'activation et ce qui manque encore
+(skills métier, distribution via `indagis profile install`).
 -->
 
 # SOUL — Réseau
