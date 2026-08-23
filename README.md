@@ -35,25 +35,17 @@ Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenR
 ### Linux, macOS, WSL2, Termux
 
 ```bash
-curl -fsSL https://indagis-agent.example.com/install.sh | bash
+curl -fsSL https://github.com/agtktID/indagis-agent/raw/main/scripts/install.sh | bash
 ```
 
-> **Note:** the local, self-hosted installer for this fork is
-> `scripts/install.sh` in this repository. The `curl` one-liner above targets
-> a hosted install endpoint that will go live once the fork ships a release.
-
 ### Windows (native, PowerShell)
-
-> **Note:** the local, self-hosted installer for this fork is
-> `scripts/install.ps1` in this repository. The one-liner below targets a
-> hosted install endpoint that will go live once the fork ships a release.
 
 > **Heads up:** Native Windows runs Indagis Agent without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/agtktID/indagis-agent/issues).
 
 Run this in PowerShell:
 
 ```powershell
-iex (irm https://indagis-agent.example.com/install.ps1)
+iex (irm https://github.com/agtktID/indagis-agent/raw/main/scripts/install.ps1)
 ```
 
 The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, **and a portable Git Bash** (MinGit, unpacked to `%LOCALAPPDATA%\hermes\git` — no admin required, completely isolated from any system Git install). Indagis Agent uses this bundled Git Bash to run shell commands.
@@ -227,7 +219,7 @@ See `indagis claw migrate --help` for all options, or use the `openclaw-migratio
 
 ## Contributing
 
-We welcome contributions! See the [Contributing Guide](https://indagis-agent.example.com/docs/developer-guide/contributing) (upstream reference) for development setup, code style, and PR process.
+We welcome contributions! See the [Contributing Guide](https://indagis-agent.example.com/docs/developer-guide/contributing) for development setup, code style, and PR process.
 
 Quick start for contributors — use the standard installer, then work from the
 full git checkout it creates at `$INDAGIS_HOME/hermes-agent` (usually
@@ -235,7 +227,7 @@ full git checkout it creates at `$INDAGIS_HOME/hermes-agent` (usually
 managed venv, lazy dependencies, gateway, and docs tooling.
 
 ```bash
-curl -fsSL https://indagis-agent.example.com/install.sh | bash
+curl -fsSL https://github.com/agtktID/indagis-agent/raw/main/scripts/install.sh | bash
 cd "${INDAGIS_HOME:-$HOME/.hermes}/hermes-agent"
 uv pip install -e ".[all,dev]"
 scripts/run_tests.sh

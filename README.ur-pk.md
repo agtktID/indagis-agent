@@ -38,7 +38,7 @@
 <div dir="ltr">
 
 ```bash
-curl -fsSL https://indagis-agent.example.com/install.sh | bash
+curl -fsSL https://github.com/agtktID/indagis-agent/raw/main/scripts/install.sh | bash
 ```
 
 </div>
@@ -52,7 +52,7 @@ curl -fsSL https://indagis-agent.example.com/install.sh | bash
 <div dir="ltr">
 
 ```powershell
-iex (irm https://indagis-agent.example.com/install.ps1)
+iex (irm https://github.com/agtktID/indagis-agent/raw/main/scripts/install.ps1)
 ```
 
 </div>
