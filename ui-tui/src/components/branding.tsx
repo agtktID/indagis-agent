@@ -54,11 +54,9 @@ export function ArtLines({ lines }: { lines: [string, string][] }) {
 // Terminals can't scale glyphs, so "responsive" means picking a layout that
 // fits the available columns. Thresholds are picked so each tier reads
 // comfortably without forcing wrap or truncation drift on box-drawing edges.
-// Indagis tagline — the "built on" credit line is part of the brand voice.
-// Three tiers mirror the responsive banner; the full form carries the
-// NousResearch/MIT attribution mandated by the upstream license.
-const TAG_FULL = 'Indagis Agent · Built on Hermes Agent (NousResearch, MIT)'
-const TAG_MID = 'Indagis Agent · Built on Hermes Agent'
+// Indagis tagline. Three tiers mirror the responsive banner.
+const TAG_FULL = 'Indagis Agent · AI workspace for cybersecurity investigation'
+const TAG_MID = 'Indagis Agent'
 const TAG_TINY = 'Indagis Agent'
 const HIDE_BELOW = 34
 const COMPACT_FROM = 58
@@ -358,7 +356,6 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
 
       <Text color={t.color.accent}>
         {info.model.split('/').pop()}
-        <Text color={t.color.muted}> · Nous Research</Text>
       </Text>
 
       <Text color={t.color.muted} wrap="truncate-end">
@@ -390,7 +387,6 @@ export function SessionPanel({ info, maxWidth, sid, t }: SessionPanelProps) {
         <Box flexDirection="column" marginBottom={1}>
           <Text color={t.color.accent} wrap="truncate-end">
             {info.model.split('/').pop()}
-            <Text color={t.color.muted}> · Nous Research</Text>
           </Text>
           <Text color={t.color.muted} wrap="truncate-end">
             {info.cwd || process.cwd()}
