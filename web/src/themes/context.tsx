@@ -353,7 +353,7 @@ function applyTheme(theme: DashboardTheme) {
     root.style.removeProperty(cssVar);
   }
   // Same clear-then-set for series colors so a theme that defines them
-  // (e.g. Nous Blue) doesn't leave its values behind when the user
+  // (e.g. Azure) doesn't leave its values behind when the user
   // switches to a theme that inherits the `:root` defaults.
   for (const cssVar of ALL_SERIES_VARS) {
     root.style.removeProperty(cssVar);
