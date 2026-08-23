@@ -1,33 +1,33 @@
 ---
 sidebar_label: "Desktop Plugin SDK"
-title: "Desktop Plugin SDK (@hermes/plugin-sdk)"
-description: "Extend the native Hermes Desktop app — panes, pages, sidebar nav, status bar, palette commands, keybinds, themes, and a scoped backend namespace, with one import and no build step."
+title: "Desktop Plugin SDK (@indagis/plugin-sdk)"
+description: "Extend the native Indagis Desktop app — panes, pages, sidebar nav, status bar, palette commands, keybinds, themes, and a scoped backend namespace, with one import and no build step."
 ---
 
 # Desktop Plugin SDK
 
-The native [Hermes Desktop](/user-guide/desktop) app is contribution-driven: every
+The native [Indagis Desktop](/user-guide/desktop) app is contribution-driven: every
 surface in the window — panes, routes, sidebar nav, status-bar items, palette
 entries, keybinds, themes — registers into one central registry. Core registers
 its surfaces exactly the way a plugin does, so the plugin story is the real one,
 not a bolted-on afterthought.
 
 A **desktop plugin** is a single ESM file that default-exports a `HermesPlugin`.
-It imports one module — `@hermes/plugin-sdk` — and gets everything: the app's
+It imports one module — `@indagis/plugin-sdk` — and gets everything: the app's
 live state, the gateway JSON-RPC door, a scoped REST/socket backend namespace,
 React Query, and the app's own UI kit so plugin UI looks native by default. No
 repo clone, no `npm run build`, no patching app source. Drop the file in
-`$HERMES_HOME/desktop-plugins/<id>/plugin.js` and the app loads it within seconds
+`$INDAGIS_HOME/desktop-plugins/<id>/plugin.js` and the app loads it within seconds
 and hot-reloads every save.
 
 :::warning This is not the web-dashboard plugin SDK
-"Plugin" means several unrelated things across Hermes. This page is the **native
-desktop app** (`hermes desktop`) SDK — the `@hermes/plugin-sdk` module and
-`$HERMES_HOME/desktop-plugins/`. The **web dashboard** (`hermes dashboard`) has
+"Plugin" means several unrelated things across Indagis. This page is the **native
+desktop app** (`indagis desktop`) SDK — the `@indagis/plugin-sdk` module and
+`$INDAGIS_HOME/desktop-plugins/`. The **web dashboard** (`indagis dashboard`) has
 its own, unrelated plugin system on `window.__HERMES_PLUGIN_SDK__` with a
 `manifest.json` — documented at
 [Extending the Dashboard](/user-guide/features/extending-the-dashboard). Python
-CLI/gateway plugins are documented at [Build a Hermes Plugin](/developer-guide/plugins).
+CLI/gateway plugins are documented at [Build a Indagis Plugin](/developer-guide/plugins).
 The three do not share code, APIs, or delivery. Only the backend `plugin_api.py`
 namespace (`/api/plugins/<id>`) is shared between the desktop and dashboard SDKs.
 :::
@@ -53,7 +53,7 @@ plugin, and fail to resolve in a disk plugin). Capability comes in tiers:
 
 | Mode | Where | Who | Build step |
 |------|-------|-----|------------|
-| **Disk** (recommended) | `$HERMES_HOME/desktop-plugins/<id>/plugin.js` | users, agents | none — plain ESM, loaded uncompiled |
+| **Disk** (recommended) | `$INDAGIS_HOME/desktop-plugins/<id>/plugin.js` | users, agents | none — plain ESM, loaded uncompiled |
 | **Bundled** | `apps/desktop/src/plugins/<id>/plugin.tsx` | in-tree, shipped with the app | the app's own Vite build |
 
 Both take the same `HermesPlugin` contract, appear in **Settings → Plugins**, and
@@ -66,13 +66,13 @@ repo.
 
 ## Quick start — your first plugin
 
-Create `$HERMES_HOME/desktop-plugins/hello/plugin.js` (that's `~/.hermes/...`
-by default, or `~/.hermes/profiles/<name>/...` under a named profile). The folder
+Create `$INDAGIS_HOME/desktop-plugins/hello/plugin.js` (that's `~/.indagis/...`
+by default, or `~/.indagis/profiles/<name>/...` under a named profile). The folder
 name must equal the plugin `id`.
 
 ```javascript
-// ~/.hermes/desktop-plugins/hello/plugin.js
-import { host, haptic, useValue } from '@hermes/plugin-sdk'
+// ~/.indagis/desktop-plugins/hello/plugin.js
+import { host, haptic, useValue } from '@indagis/plugin-sdk'
 import { jsx, jsxs } from 'react/jsx-runtime'
 
 function HelloPane() {
@@ -81,7 +81,7 @@ function HelloPane() {
   return jsxs('div', {
     className: 'flex h-full flex-col gap-2 p-3 text-sm',
     children: [
-      jsx('div', { className: 'font-medium', children: 'Hello, Hermes' }),
+      jsx('div', { className: 'font-medium', children: 'Hello, Indagis' }),
       jsx('div', {
         className: 'text-(--ui-text-tertiary)',
         children: `gateway: ${gateway}`
@@ -128,7 +128,7 @@ save again.
 :::note No JSX, no build
 The disk file is loaded **uncompiled**, so JSX syntax will not parse. Write UI
 with `jsx()` / `jsxs()` calls from `react/jsx-runtime` (or `React.createElement`).
-The only importable specifiers are `@hermes/plugin-sdk`, `react`, and
+The only importable specifiers are `@indagis/plugin-sdk`, `react`, and
 `react/jsx-runtime` — everything else fails to resolve, on purpose.
 :::
 
@@ -170,7 +170,7 @@ interface PluginContext {
   socket: (path: string, onMessage: (data: unknown) => void) => () => void
   /** The curated OS door: native notification, open-external, reveal-in-file-manager, clipboard. */
   os: PluginOs
-  /** Plugin-scoped JSON persistence (keys live under `hermes.plugin.<id>.`). */
+  /** Plugin-scoped JSON persistence (keys live under `indagis.plugin.<id>.`). */
   storage: PluginStorage
 }
 ```
@@ -248,7 +248,7 @@ A route mounts a full page in the workspace pane, like any built-in view. Pair i
 with a sidebar nav row (and/or a palette command) to make it reachable.
 
 ```javascript
-import { ROUTES_AREA, SIDEBAR_NAV_AREA } from '@hermes/plugin-sdk'
+import { ROUTES_AREA, SIDEBAR_NAV_AREA } from '@indagis/plugin-sdk'
 
 ctx.registerMany([
   {
@@ -275,7 +275,7 @@ Simplest is a `render` function; for a plain button use `data` as a
 `StatusbarItem` (`{ id, label?, icon?, detail?, variant?, menuItems?, … }`).
 
 ```javascript
-import { STATUSBAR_AREAS, TITLEBAR_AREAS } from '@hermes/plugin-sdk'
+import { STATUSBAR_AREAS, TITLEBAR_AREAS } from '@indagis/plugin-sdk'
 
 ctx.register({
   id: 'count',
@@ -291,7 +291,7 @@ data (`{ id, label, icon, active?, onSelect? }`).
 ### Palette commands and keybinds
 
 ```javascript
-import { PALETTE_AREA, KEYBINDS_AREA } from '@hermes/plugin-sdk'
+import { PALETTE_AREA, KEYBINDS_AREA } from '@indagis/plugin-sdk'
 
 ctx.registerMany([
   {
@@ -326,7 +326,7 @@ A theme contribution ships a full `DesktopTheme` as its `data` (name, label,
 colors, …). It appears in the theme picker like a built-in.
 
 ```javascript
-import { THEMES_AREA } from '@hermes/plugin-sdk'
+import { THEMES_AREA } from '@indagis/plugin-sdk'
 
 ctx.register({ id: 'noir', area: THEMES_AREA, data: myDesktopTheme })
 ```
@@ -345,7 +345,7 @@ die with a component that's already on screen (a page's own title-bar control
 leaves when the page unmounts), render `<Contribute>` inside it instead:
 
 ```javascript
-import { Contribute, TITLEBAR_AREAS } from '@hermes/plugin-sdk'
+import { Contribute, TITLEBAR_AREAS } from '@indagis/plugin-sdk'
 
 jsx(Contribute, {
   area: TITLEBAR_AREAS.center,
@@ -394,7 +394,7 @@ rejection your `.catch()` sees, never an error-boundary crash.
 `ctx.os` is the curated OS door — every way a plugin reaches outside the app
 window, in one namespace attributed to your plugin. `ctx.os.notify` posts a
 **native OS notification** — the same Electron pipeline the app's own
-approval/turn alerts use. It fires only while the user is away from Hermes
+approval/turn alerts use. It fires only while the user is away from Indagis
 (backgrounded / unfocused); use `host.notify` for the in-app toast when
 they're looking at the app. Users can silence it per device under Settings ▸
 Notifications ▸ "Plugin notifications", and repeats from the same plugin are
@@ -409,7 +409,7 @@ Plugins share the app's single `QueryClient`, so plugin queries cache, dedupe,
 poll, and invalidate exactly like core screens — never hand-roll a fetch loop.
 
 ```javascript
-import { useQuery, useMutation, useQueryClient, atom, computed, useValue } from '@hermes/plugin-sdk'
+import { useQuery, useMutation, useQueryClient, atom, computed, useValue } from '@indagis/plugin-sdk'
 
 function MyPanel() {
   const { data, isLoading } = useQuery({
@@ -426,7 +426,7 @@ renders the value with `useValue`. To invalidate a query from **outside** React
 (e.g. a `ctx.socket` frame arriving), import the shared `queryClient`:
 
 ```javascript
-import { queryClient } from '@hermes/plugin-sdk'
+import { queryClient } from '@indagis/plugin-sdk'
 
 ctx.socket('/events', () => {
   queryClient.invalidateQueries({ queryKey: ['my-plugin', 'items'] })
@@ -467,11 +467,11 @@ construction**.
 ### The Python side
 
 Desktop plugins reuse the dashboard plugin backend mount. Put the backend in a
-`dashboard/` subfolder of a regular Hermes plugin and declare it in a
+`dashboard/` subfolder of a regular Indagis plugin and declare it in a
 `manifest.json`:
 
 ```
-~/.hermes/plugins/<id>/
+~/.indagis/plugins/<id>/
 └── dashboard/
     ├── manifest.json      # { "name": "<id>", "api": "plugin_api.py" }
     └── plugin_api.py      # exports `router = APIRouter()`
@@ -547,7 +547,7 @@ choice is remembered:
   stays disabled — don't fight it; the user turned you off.
 
 Persist your own state with `ctx.storage`, namespaced to your plugin
-(`hermes.plugin.<id>.*`) so plugins can't read or clobber each other:
+(`indagis.plugin.<id>.*`) so plugins can't read or clobber each other:
 
 ```javascript
 ctx.storage.set('lastTab', 'board')
@@ -563,8 +563,8 @@ no import, no registry edit — and shares the exact inventory + live
 enable/disable contract as a disk plugin. The two differences:
 
 1. It goes through the app's Vite build, so you can write **real JSX** and import
-   the SDK by its `@hermes/plugin-sdk` alias.
-2. It's still lint-fenced to `@hermes/plugin-sdk` + `react` only — no `@/…` app
+   the SDK by its `@indagis/plugin-sdk` alias.
+2. It's still lint-fenced to `@indagis/plugin-sdk` + `react` only — no `@/…` app
    internals.
 
 No desktop plugins ship in the core tree today; the shipped app stays uncluttered
@@ -592,7 +592,7 @@ not treat this pipeline as a trust boundary.
 - **JSX won't parse in a disk plugin.** The file loads uncompiled — use `jsx()` /
   `jsxs()` (or `React.createElement`), not JSX syntax. (Bundled plugins are built,
   so JSX is fine there.)
-- **Only three specifiers resolve:** `@hermes/plugin-sdk`, `react`,
+- **Only three specifiers resolve:** `@indagis/plugin-sdk`, `react`,
   `react/jsx-runtime`. Any other import surfaces an up-front load error.
 - **Never hardcode colors** (`#000`, `black`, `rgb(...)`). Leave the background
   alone; use theme variables (`var(--ui-*)`) for everything.
@@ -634,20 +634,20 @@ human/developer reference; the skill is the working checklist.
 ## Troubleshooting
 
 **My plugin doesn't appear.** Confirm the file is at
-`$HERMES_HOME/desktop-plugins/<id>/plugin.js` and the folder name matches the
+`$INDAGIS_HOME/desktop-plugins/<id>/plugin.js` and the folder name matches the
 export `id`. Run ⌘K → **Reload desktop plugins**. Check the app for an error
-toast naming the failure, and tail `hermes logs gui -f`.
+toast naming the failure, and tail `indagis logs gui -f`.
 
 **"unsupported import" on load.** A disk plugin may only import
-`@hermes/plugin-sdk`, `react`, and `react/jsx-runtime`. Remove any other import.
+`@indagis/plugin-sdk`, `react`, and `react/jsx-runtime`. Remove any other import.
 
 **A `jsx` element renders nothing / throws `ReferenceError`.** An identifier used
 in a `jsx()` call isn't imported. Add it to the import line.
 
 **`ctx.rest` returns 404.** The backend isn't mounted: confirm
-`~/.hermes/plugins/<id>/dashboard/manifest.json` has `"api": "plugin_api.py"`,
+`~/.indagis/plugins/<id>/dashboard/manifest.json` has `"api": "plugin_api.py"`,
 that the plugin is in `plugins.enabled` in `config.yaml`, and restart the gateway
-(backend routes mount at startup). Tail `~/.hermes/logs/errors.log` for
+(backend routes mount at startup). Tail `~/.indagis/logs/errors.log` for
 `Failed to load plugin <id> API routes`.
 
 **`ctx.socket` never fires.** On an OAuth remote it's a no-op by design — use your

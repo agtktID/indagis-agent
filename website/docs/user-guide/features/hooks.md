@@ -6,14 +6,14 @@ description: "Run custom code at key lifecycle points — log activity, send ale
 
 # Event Hooks
 
-Hermes has four hook systems that run custom code at key lifecycle points:
+Indagis has four hook systems that run custom code at key lifecycle points:
 
 | System | Registered via | Runs in | Use case |
 |--------|---------------|---------|----------|
-| **[Gateway hooks](#gateway-event-hooks)** | `HOOK.yaml` + `handler.py` in `~/.hermes/hooks/` | Gateway only | Logging, alerts, webhooks |
+| **[Gateway hooks](#gateway-event-hooks)** | `HOOK.yaml` + `handler.py` in `~/.indagis/hooks/` | Gateway only | Logging, alerts, webhooks |
 | **[Plugin hooks](#plugin-hooks)** | `ctx.register_hook()` in a [plugin](/user-guide/features/plugins) | CLI + Gateway | Tool interception, metrics, guardrails |
-| **[Shell hooks](#shell-hooks)** | `hooks:` block in `~/.hermes/config.yaml` pointing at shell scripts | CLI + Gateway | Drop-in scripts for blocking, auto-formatting, context injection |
-| **[Outbound webhooks](#outbound-webhooks)** | `hooks.outbound:` list in `~/.hermes/config.yaml` | CLI + Gateway | Push signed lifecycle events to external HTTP endpoints — CI, dashboards, other agents |
+| **[Shell hooks](#shell-hooks)** | `hooks:` block in `~/.indagis/config.yaml` pointing at shell scripts | CLI + Gateway | Drop-in scripts for blocking, auto-formatting, context injection |
+| **[Outbound webhooks](#outbound-webhooks)** | `hooks.outbound:` list in `~/.indagis/config.yaml` | CLI + Gateway | Push signed lifecycle events to external HTTP endpoints — CI, dashboards, other agents |
 
 All four systems are non-blocking — errors in any hook are caught and logged, never crashing the agent.
 
@@ -23,10 +23,10 @@ Gateway hooks fire automatically during gateway operation (Telegram, Discord, Sl
 
 ### Creating a Hook
 
-Each hook is a directory under `~/.hermes/hooks/` containing two files:
+Each hook is a directory under `~/.indagis/hooks/` containing two files:
 
 ```text
-~/.hermes/hooks/
+~/.indagis/hooks/
 └── my-hook/
     ├── HOOK.yaml      # Declares which events to listen for
     └── handler.py     # Python handler function
@@ -102,7 +102,7 @@ A handler posting a follow-up message into the same Telegram forum topic should 
 Send yourself a message when the agent takes more than 10 steps:
 
 ```yaml
-# ~/.hermes/hooks/long-task-alert/HOOK.yaml
+# ~/.indagis/hooks/long-task-alert/HOOK.yaml
 name: long-task-alert
 description: Alert when agent is taking many steps
 events:
@@ -110,7 +110,7 @@ events:
 ```
 
 ```python
-# ~/.hermes/hooks/long-task-alert/handler.py
+# ~/.indagis/hooks/long-task-alert/handler.py
 import os
 import httpx
 
@@ -135,7 +135,7 @@ async def handle(event_type: str, context: dict):
 Track which slash commands are used:
 
 ```yaml
-# ~/.hermes/hooks/command-logger/HOOK.yaml
+# ~/.indagis/hooks/command-logger/HOOK.yaml
 name: command-logger
 description: Log slash command usage
 events:
@@ -143,7 +143,7 @@ events:
 ```
 
 ```python
-# ~/.hermes/hooks/command-logger/handler.py
+# ~/.indagis/hooks/command-logger/handler.py
 import json
 from datetime import datetime
 from pathlib import Path
@@ -168,7 +168,7 @@ def handle(event_type: str, context: dict):
 POST to an external service on new sessions:
 
 ```yaml
-# ~/.hermes/hooks/session-webhook/HOOK.yaml
+# ~/.indagis/hooks/session-webhook/HOOK.yaml
 name: session-webhook
 description: Notify external service on new sessions
 events:
@@ -177,7 +177,7 @@ events:
 ```
 
 ```python
-# ~/.hermes/hooks/session-webhook/handler.py
+# ~/.indagis/hooks/session-webhook/handler.py
 import httpx
 
 WEBHOOK_URL = "https://your-service.example.com/hermes-events"
@@ -192,24 +192,24 @@ async def handle(event_type: str, context: dict):
 
 ### Tutorial: BOOT.md — Run a Startup Checklist on Every Gateway Boot
 
-A popular pattern from the community: drop a Markdown checklist at `~/.hermes/BOOT.md`, and have the agent run it once every time the gateway starts. Useful for "on every boot, check overnight cron failures and ping me on Discord if anything failed," or "summarize the last 24h of deploy.log and post it to Slack #ops."
+A popular pattern from the community: drop a Markdown checklist at `~/.indagis/BOOT.md`, and have the agent run it once every time the gateway starts. Useful for "on every boot, check overnight cron failures and ping me on Discord if anything failed," or "summarize the last 24h of deploy.log and post it to Slack #ops."
 
-This tutorial shows how to build it yourself as a user-defined hook. Hermes does not ship a built-in BOOT.md hook — you wire up exactly the behavior you want.
+This tutorial shows how to build it yourself as a user-defined hook. Indagis does not ship a built-in BOOT.md hook — you wire up exactly the behavior you want.
 
 #### What we're building
 
-1. A file at `~/.hermes/BOOT.md` with natural-language startup instructions.
+1. A file at `~/.indagis/BOOT.md` with natural-language startup instructions.
 2. A gateway hook that fires on `gateway:startup`, spawns a one-shot agent with your gateway's resolved model/credentials, and runs the BOOT.md instructions.
 3. A `[SILENT]` convention so the agent can opt out of sending a message when there's nothing to report.
 
 #### Step 1: Write your checklist
 
-Create `~/.hermes/BOOT.md`. Write it as if you were giving instructions to a human assistant:
+Create `~/.indagis/BOOT.md`. Write it as if you were giving instructions to a human assistant:
 
 ```markdown
 # Startup Checklist
 
-1. Run `hermes cron list` and check if any scheduled jobs failed overnight.
+1. Run `indagis cron list` and check if any scheduled jobs failed overnight.
 2. If any failed, summarize them for Discord #ops (the hook delivers your final response to its configured target).
 3. Check if `/opt/app/deploy.log` has any ERROR lines from the last 24 hours. If yes, summarize them and include in the same report.
 4. If nothing went wrong, reply with only `[SILENT]` so no message is sent.
@@ -220,24 +220,24 @@ The agent sees this as part of its prompt, so anything you can describe in plain
 #### Step 2: Create the hook
 
 ```text
-~/.hermes/hooks/boot-md/
+~/.indagis/hooks/boot-md/
 ├── HOOK.yaml
 └── handler.py
 ```
 
-**`~/.hermes/hooks/boot-md/HOOK.yaml`**
+**`~/.indagis/hooks/boot-md/HOOK.yaml`**
 
 ```yaml
 name: boot-md
-description: Run ~/.hermes/BOOT.md on gateway startup
+description: Run ~/.indagis/BOOT.md on gateway startup
 events:
   - gateway:startup
 ```
 
-**`~/.hermes/hooks/boot-md/handler.py`**
+**`~/.indagis/hooks/boot-md/handler.py`**
 
 ```python
-"""Run ~/.hermes/BOOT.md on every gateway startup."""
+"""Run ~/.indagis/BOOT.md on every gateway startup."""
 
 import logging
 import threading
@@ -323,18 +323,18 @@ Without these, a bare `AIAgent()` falls back to built-in defaults and will 401 a
 Restart the gateway:
 
 ```bash
-hermes gateway restart
+indagis gateway restart
 ```
 
 Watch the logs:
 
 ```bash
-hermes logs --follow --level INFO | grep boot-md
+indagis logs --follow --level INFO | grep boot-md
 ```
 
 You should see `Running BOOT.md (N chars)` followed by either `boot-md completed: ...` (summary of what the agent did) or `boot-md completed (nothing to report)` when the agent replied with an exact silence token such as `[SILENT]`.
 
-Delete `~/.hermes/BOOT.md` to disable the checklist — the hook stays loaded but silently skips when the file isn't there.
+Delete `~/.indagis/BOOT.md` to disable the checklist — the hook stays loaded but silently skips when the file isn't there.
 
 #### Extending the pattern
 
@@ -344,11 +344,11 @@ Delete `~/.hermes/BOOT.md` to disable the checklist — the hook stays loaded bu
 
 #### Why this isn't a built-in
 
-An earlier version of Hermes shipped this as a built-in hook and silently spawned an agent with bare defaults on every gateway boot. That surprised users with custom endpoints and made the feature invisible to users who didn't know it was running. Keeping it as a documented pattern — built by you, in your hooks directory — means you see exactly what it does and opt in by writing the files.
+An earlier version of Indagis shipped this as a built-in hook and silently spawned an agent with bare defaults on every gateway boot. That surprised users with custom endpoints and made the feature invisible to users who didn't know it was running. Keeping it as a documented pattern — built by you, in your hooks directory — means you see exactly what it does and opt in by writing the files.
 
 ### How It Works
 
-1. On gateway startup, `HookRegistry.discover_and_load()` scans `~/.hermes/hooks/`
+1. On gateway startup, `HookRegistry.discover_and_load()` scans `~/.indagis/hooks/`
 2. Each subdirectory with `HOOK.yaml` + `handler.py` is loaded dynamically
 3. Handlers are registered for their declared events
 4. At each lifecycle point, `hooks.emit()` fires all matching handlers
@@ -555,7 +555,7 @@ return "Recalled memories:\n- User likes Python"
 return None
 ```
 
-**Where context is injected:** Always the **user message**, never the system prompt. This preserves the prompt cache — the system prompt stays identical across turns, so cached tokens are reused. The system prompt is Hermes's territory (model guidance, tool enforcement, personality, skills). Plugins contribute context alongside the user's input.
+**Where context is injected:** Always the **user message**, never the system prompt. This preserves the prompt cache — the system prompt stays identical across turns, so cached tokens are reused. The system prompt is Indagis's territory (model guidance, tool enforcement, personality, skills). Plugins contribute context alongside the user's input.
 
 All injected context is **ephemeral** — added at API call time only. The original user message in the conversation history is never mutated, and nothing is persisted to the session database.
 
@@ -669,7 +669,7 @@ def register(ctx):
 
 Fires **once per turn when the agent edited code**, just before it finishes (after the built-in verify-on-stop guard). This is a user/plugin policy gate: a callback can keep the agent going — run a check, defer it, tidy the diff — instead of letting it stop.
 
-Hermes' shipped verification guidance is not a default `pre_verify` hook. It is appended to the evidence-based verify-on-stop nudge when edited code lacks fresh verification evidence, so it does not create a second default continuation path. Set `agent.verify_guidance: false` to keep that built-in evidence nudge terse.
+Indagis' shipped verification guidance is not a default `pre_verify` hook. It is appended to the evidence-based verify-on-stop nudge when edited code lacks fresh verification evidence, so it does not create a second default continuation path. Set `agent.verify_guidance: false` to keep that built-in evidence nudge terse.
 
 **Callback signature:**
 
@@ -1110,7 +1110,7 @@ def my_callback(
 import subprocess
 
 def notify_approval(command, description, session_key, **kwargs):
-    title = "Hermes needs approval"
+    title = "Indagis needs approval"
     body = f"{description}: {command[:80]}"
     subprocess.Popen([
         "osascript", "-e",
@@ -1296,7 +1296,7 @@ The hook is guarded on a non-empty, non-interrupted response — it will not fir
 
 ## Shell Hooks
 
-Declare shell-script hooks in your `~/.hermes/config.yaml` and Hermes will run them as subprocesses whenever the corresponding plugin-hook event fires — in both CLI and gateway sessions. No Python plugin authoring required.
+Declare shell-script hooks in your `~/.indagis/config.yaml` and Indagis will run them as subprocesses whenever the corresponding plugin-hook event fires — in both CLI and gateway sessions. No Python plugin authoring required.
 
 Use shell hooks when you want a drop-in, single-file script (Bash, Python, anything with a shebang) to:
 
@@ -1311,8 +1311,8 @@ Shell hooks are registered by calling `agent.shell_hooks.register_from_config(cf
 
 | Dimension | Shell hooks | [Plugin hooks](#plugin-hooks) | [Gateway hooks](#gateway-event-hooks) |
 |-----------|-------------|-------------------------------|---------------------------------------|
-| Declared in | `hooks:` block in `~/.hermes/config.yaml` | `register()` in a `plugin.yaml` plugin | `HOOK.yaml` + `handler.py` directory |
-| Lives under | `~/.hermes/agent-hooks/` (by convention) | `~/.hermes/plugins/<name>/` | `~/.hermes/hooks/<name>/` |
+| Declared in | `hooks:` block in `~/.indagis/config.yaml` | `register()` in a `plugin.yaml` plugin | `HOOK.yaml` + `handler.py` directory |
+| Lives under | `~/.indagis/agent-hooks/` (by convention) | `~/.indagis/plugins/<name>/` | `~/.indagis/hooks/<name>/` |
 | Language | Any (Bash, Python, Go binary, …) | Python only | Python only |
 | Runs in | CLI + Gateway | CLI + Gateway | Gateway only |
 | Events | `VALID_HOOKS` (incl. `subagent_stop`) | `VALID_HOOKS` | Gateway lifecycle (`gateway:startup`, `agent:*`, `command:*`) |
@@ -1337,7 +1337,7 @@ Event names must be one of the [plugin hook events](#plugin-hooks); typos produc
 
 ### JSON wire protocol
 
-Each time the event fires, Hermes spawns a subprocess for every matching hook (matcher permitting), pipes a JSON payload to **stdin**, and reads **stdout** back as JSON.
+Each time the event fires, Indagis spawns a subprocess for every matching hook (matcher permitting), pipes a JSON payload to **stdin**, and reads **stdout** back as JSON.
 
 **stdin — payload the script receives:**
 
@@ -1378,16 +1378,16 @@ Malformed JSON, non-zero exit codes, and timeouts log a warning but never abort 
 #### 1. Auto-format Python files after every write
 
 ```yaml
-# ~/.hermes/config.yaml
+# ~/.indagis/config.yaml
 hooks:
   post_tool_call:
     - matcher: "write_file|patch"
-      command: "~/.hermes/agent-hooks/auto-format.sh"
+      command: "~/.indagis/agent-hooks/auto-format.sh"
 ```
 
 ```bash
 #!/usr/bin/env bash
-# ~/.hermes/agent-hooks/auto-format.sh
+# ~/.indagis/agent-hooks/auto-format.sh
 payload="$(cat -)"
 path=$(echo "$payload" | jq -r '.tool_input.path // empty')
 [[ "$path" == *.py ]] && command -v black >/dev/null && black "$path" 2>/dev/null
@@ -1402,13 +1402,13 @@ The agent's in-context view of the file is **not** re-read automatically — the
 hooks:
   pre_tool_call:
     - matcher: "terminal"
-      command: "~/.hermes/agent-hooks/block-rm-rf.sh"
+      command: "~/.indagis/agent-hooks/block-rm-rf.sh"
       timeout: 5
 ```
 
 ```bash
 #!/usr/bin/env bash
-# ~/.hermes/agent-hooks/block-rm-rf.sh
+# ~/.indagis/agent-hooks/block-rm-rf.sh
 payload="$(cat -)"
 cmd=$(echo "$payload" | jq -r '.tool_input.command // empty')
 if echo "$cmd" | grep -qE 'rm[[:space:]]+-rf?[[:space:]]+/'; then
@@ -1423,12 +1423,12 @@ fi
 ```yaml
 hooks:
   pre_llm_call:
-    - command: "~/.hermes/agent-hooks/inject-cwd-context.sh"
+    - command: "~/.indagis/agent-hooks/inject-cwd-context.sh"
 ```
 
 ```bash
 #!/usr/bin/env bash
-# ~/.hermes/agent-hooks/inject-cwd-context.sh
+# ~/.indagis/agent-hooks/inject-cwd-context.sh
 cat - >/dev/null   # discard stdin payload
 if status=$(git status --porcelain 2>/dev/null) && [[ -n "$status" ]]; then
   jq --null-input --arg s "$status" \
@@ -1438,41 +1438,41 @@ else
 fi
 ```
 
-Claude Code's `UserPromptSubmit` event is intentionally not a separate Hermes event — `pre_llm_call` fires at the same place and already supports context injection. Use it here.
+Claude Code's `UserPromptSubmit` event is intentionally not a separate Indagis event — `pre_llm_call` fires at the same place and already supports context injection. Use it here.
 
 #### 4. Log every subagent completion
 
 ```yaml
 hooks:
   subagent_stop:
-    - command: "~/.hermes/agent-hooks/log-orchestration.sh"
+    - command: "~/.indagis/agent-hooks/log-orchestration.sh"
 ```
 
 ```bash
 #!/usr/bin/env bash
-# ~/.hermes/agent-hooks/log-orchestration.sh
-log=~/.hermes/logs/orchestration.log
+# ~/.indagis/agent-hooks/log-orchestration.sh
+log=~/.indagis/logs/orchestration.log
 jq -c '{ts: now, parent: .session_id, extra: .extra}' < /dev/stdin >> "$log"
 printf '{}\n'
 ```
 
 ### Consent model
 
-Each unique `(event, command)` pair prompts the user for approval the first time Hermes sees it, then persists the decision to `~/.hermes/shell-hooks-allowlist.json`. Subsequent runs (CLI or gateway) skip the prompt.
+Each unique `(event, command)` pair prompts the user for approval the first time Indagis sees it, then persists the decision to `~/.indagis/shell-hooks-allowlist.json`. Subsequent runs (CLI or gateway) skip the prompt.
 
 Three escape hatches bypass the interactive prompt — any one is sufficient:
 
-1. `--accept-hooks` flag on the CLI (e.g. `hermes --accept-hooks chat`)
+1. `--accept-hooks` flag on the CLI (e.g. `indagis --accept-hooks chat`)
 2. `HERMES_ACCEPT_HOOKS=1` environment variable
-3. `hooks_auto_accept: true` in `~/.hermes/config.yaml`
+3. `hooks_auto_accept: true` in `~/.indagis/config.yaml`
 
 Non-TTY runs (gateway, cron, CI) need one of these three — otherwise any newly-added hook silently stays un-registered and logs a warning.
 
-**Script edits are silently trusted.** The allowlist keys on the exact command string, not the script's hash, so editing the script on disk does not invalidate consent. `hermes hooks doctor` flags mtime drift so you can spot edits and decide whether to re-approve.
+**Script edits are silently trusted.** The allowlist keys on the exact command string, not the script's hash, so editing the script on disk does not invalidate consent. `indagis hooks doctor` flags mtime drift so you can spot edits and decide whether to re-approve.
 
 #### Manual allowlisting
 
-Manual allowlisting is useful for non-TTY or service-account deployments where an operator cannot answer the first-use prompt interactively. The allowlist file is `~/.hermes/shell-hooks-allowlist.json`, and the expected format is an `approvals` array. Each approval records the hook `event` and the exact `command` string:
+Manual allowlisting is useful for non-TTY or service-account deployments where an operator cannot answer the first-use prompt interactively. The allowlist file is `~/.indagis/shell-hooks-allowlist.json`, and the expected format is an `approvals` array. Each approval records the hook `event` and the exact `command` string:
 
 ```json
 {
@@ -1485,24 +1485,24 @@ Manual allowlisting is useful for non-TTY or service-account deployments where a
 }
 ```
 
-The command string must match the configured hook command exactly. A path-keyed object with a `sha256` field is not the expected format and will not approve the hook. Verify manual entries with `hermes hooks list`.
+The command string must match the configured hook command exactly. A path-keyed object with a `sha256` field is not the expected format and will not approve the hook. Verify manual entries with `indagis hooks list`.
 
-### The `hermes hooks` CLI
+### The `indagis hooks` CLI
 
 | Command | What it does |
 |---------|--------------|
-| `hermes hooks list` | Dump configured hooks with matcher, timeout, and consent status |
-| `hermes hooks test <event> [--for-tool X] [--payload-file F]` | Fire every matching hook against a synthetic payload and print the parsed response |
-| `hermes hooks revoke <command>` | Remove every allowlist entry matching `<command>` (takes effect on next restart) |
-| `hermes hooks doctor` | For every configured hook: check exec bit, allowlist status, mtime drift, JSON output validity, and rough execution time |
+| `indagis hooks list` | Dump configured hooks with matcher, timeout, and consent status |
+| `indagis hooks test <event> [--for-tool X] [--payload-file F]` | Fire every matching hook against a synthetic payload and print the parsed response |
+| `indagis hooks revoke <command>` | Remove every allowlist entry matching `<command>` (takes effect on next restart) |
+| `indagis hooks doctor` | For every configured hook: check exec bit, allowlist status, mtime drift, JSON output validity, and rough execution time |
 
 ### Security
 
 Shell hooks run with **your full user credentials** — same trust boundary as a cron entry or a shell alias. Treat the `hooks:` block in `config.yaml` as privileged configuration:
 
 - Only reference scripts you wrote or fully reviewed.
-- Keep scripts inside `~/.hermes/agent-hooks/` so the path is easy to audit.
-- Re-run `hermes hooks doctor` after you pull a shared config to spot newly-added hooks before they register.
+- Keep scripts inside `~/.indagis/agent-hooks/` so the path is easy to audit.
+- Re-run `indagis hooks doctor` after you pull a shared config to spot newly-added hooks before they register.
 - If your config.yaml is version-controlled across a team, review PRs that change the `hooks:` section the same way you'd review CI config.
 
 ### Ordering and precedence
@@ -1511,18 +1511,18 @@ Both Python plugin hooks and shell hooks flow through the same `invoke_hook()` d
 
 ## Outbound Webhooks
 
-Outbound webhooks are the push-side mirror of the [inbound webhook platform](/user-guide/messaging/webhooks): inbound webhooks wake Hermes when the world changes; outbound webhooks tell the world when Hermes does something. Configure a list of HTTP endpoints and the lifecycle events they care about, and Hermes POSTs a signed JSON payload to each endpoint whenever a matching event fires — no polling on the receiving end.
+Outbound webhooks are the push-side mirror of the [inbound webhook platform](/user-guide/messaging/webhooks): inbound webhooks wake Indagis when the world changes; outbound webhooks tell the world when Indagis does something. Configure a list of HTTP endpoints and the lifecycle events they care about, and Indagis POSTs a signed JSON payload to each endpoint whenever a matching event fires — no polling on the receiving end.
 
 Typical uses:
 
 - Notify a CI system or dashboard when an agent turn finishes (`on_session_end`)
 - Track subagent completions across a fleet (`subagent_stop`)
 - Feed tool activity into external monitoring (`post_tool_call` with a `matcher`)
-- Wake *another* Hermes instance: point the URL at that instance's inbound webhook
+- Wake *another* Indagis instance: point the URL at that instance's inbound webhook
 
 ### Configuration
 
-Add a `hooks.outbound:` list to `~/.hermes/config.yaml`:
+Add a `hooks.outbound:` list to `~/.indagis/config.yaml`:
 
 ```yaml
 hooks:
@@ -1541,7 +1541,7 @@ hooks:
 
 Any event from the plugin-hook set is valid (`pre_tool_call`, `post_tool_call`, `pre_llm_call`, `post_llm_call`, `on_session_start`, `on_session_end`, `subagent_start`, `subagent_stop`, ...). Malformed entries warn and are skipped — a broken webhook never crashes the agent. Changes take effect on the next CLI session / gateway restart.
 
-Secrets: prefer `secret_env` (the name of an environment variable, typically set in `~/.hermes/.env`) over an inline `secret:` literal, so the config file stays free of credentials. Entries without a secret are delivered unsigned (flagged as `UNSIGNED` by `hermes hooks list`).
+Secrets: prefer `secret_env` (the name of an environment variable, typically set in `~/.indagis/.env`) over an inline `secret:` literal, so the config file stays free of credentials. Entries without a secret are delivered unsigned (flagged as `UNSIGNED` by `indagis hooks list`).
 
 ### Wire format
 
@@ -1581,7 +1581,7 @@ def verify(body: bytes, header: str, secret: str) -> bool:
 
 Because `delivery_id` and `timestamp` live **inside the signed body**, a verified receiver also gets replay protection for free:
 
-- **Dedupe** on `delivery_id` (or the matching `X-Hermes-Delivery` header) — remember recently seen ids and skip duplicates. Hermes retries failed deliveries once, so the same id can legitimately arrive twice.
+- **Dedupe** on `delivery_id` (or the matching `X-Hermes-Delivery` header) — remember recently seen ids and skip duplicates. Indagis retries failed deliveries once, so the same id can legitimately arrive twice.
 - **Reject stale events** by checking `timestamp` against your clock with a tolerance window (5 minutes is the common default). An attacker replaying a captured request can't forge a fresh timestamp without the secret.
 
 ### Delivery semantics
@@ -1593,4 +1593,4 @@ Because `delivery_id` and `timestamp` live **inside the signed body**, a verifie
 - **Bounded queue.** If the queue backs up (dead endpoint, event storm), new events are dropped with a warning rather than consuming unbounded memory.
 - **No consent prompt.** Outbound targets execute no code on your machine — they receive data at a URL you configured. `HERMES_SAFE_MODE=1` still skips registration, same as plugins and shell hooks. Note that payloads include tool inputs and event metadata, so only point targets at endpoints you trust, and prefer `https://`.
 
-`hermes hooks list` shows configured outbound targets alongside shell hooks, including whether each target is signed.
+`indagis hooks list` shows configured outbound targets alongside shell hooks, including whether each target is signed.
