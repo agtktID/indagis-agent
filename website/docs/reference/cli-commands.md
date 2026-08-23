@@ -68,7 +68,7 @@ indagis [global-options] <command> [subcommand/options]
 | `indagis debug` | Debug tools — upload logs and system info for support. |
 | `indagis backup` | Back up Indagis home directory to a zip file. |
 | `indagis checkpoints` | Inspect / prune / clear `~/.indagis/checkpoints/` (the shadow store used by `/rollback`). Run with no args for a status overview. |
-| `indagis import` | Restore a Indagis backup from a zip file. |
+| `indagis import` | Restore an Indagis backup from a zip file. |
 | `indagis logs` | View, tail, and filter agent/gateway/error log files. |
 | `indagis config` | Show, edit, migrate, and query configuration files. |
 | `indagis skin` | List, switch, and tweak display skins. |
@@ -957,7 +957,7 @@ See [Checkpoints and `/rollback`](../user-guide/checkpoints-and-rollback.md) for
 indagis import <zipfile> [options]
 ```
 
-Restore a previously created Indagis backup into your Indagis home directory. All files in the archive overwrite existing files in your Indagis home; `--force` only skips the confirmation prompt that fires when the target already has a Indagis installation.
+Restore a previously created Indagis backup into your Indagis home directory. All files in the archive overwrite existing files in your Indagis home; `--force` only skips the confirmation prompt that fires when the target already has an Indagis installation.
 
 | Option | Description |
 |--------|-------------|
@@ -1383,7 +1383,7 @@ Provider plugin selections are saved to `config.yaml`:
 
 General plugin disabled list is stored in `config.yaml` under `plugins.disabled`.
 
-See [Plugins](../user-guide/features/plugins.md) and [Build a Indagis Plugin](../developer-guide/plugins/index.md).
+See [Plugins](../user-guide/features/plugins.md) and [Build an Indagis Plugin](../developer-guide/plugins/index.md).
 
 ## `indagis tools`
 

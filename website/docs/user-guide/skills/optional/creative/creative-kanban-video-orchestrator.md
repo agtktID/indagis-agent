@@ -32,7 +32,7 @@ The following is the complete skill definition that Indagis Agent loads when thi
 # Kanban Video Orchestrator
 
 Wrap any video request — from a 15-second product teaser to a 5-minute narrative
-short to a music video to an ASCII loop — in a Indagis Kanban pipeline that
+short to a music video to an ASCII loop — in an Indagis Kanban pipeline that
 decomposes the work to specialized agent profiles.
 
 This skill does **not** render anything itself. It is a meta-pipeline that:

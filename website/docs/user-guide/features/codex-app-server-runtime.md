@@ -169,7 +169,7 @@ uses:
 
 ## Enabling
 
-In a Indagis session:
+In an Indagis session:
 
 ```
 /codex-runtime codex_app_server

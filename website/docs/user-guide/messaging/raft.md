@@ -24,7 +24,7 @@ The adapter holds no Raft credentials — only a per-session shared token for lo
 - The **Raft CLI** installed and logged in to that External Agent profile
 - **aiohttp** — Python package (included in Indagis `[all]` extras)
 
-In Raft, open the Agents menu, create an External Agent, and follow the setup card to install the Raft CLI and log in the agent profile. Once the agent is created, Raft shows a Indagis setup guide with the environment variables and configuration needed to start the gateway.
+In Raft, open the Agents menu, create an External Agent, and follow the setup card to install the Raft CLI and log in the agent profile. Once the agent is created, Raft shows an Indagis setup guide with the environment variables and configuration needed to start the gateway.
 
 ---
 

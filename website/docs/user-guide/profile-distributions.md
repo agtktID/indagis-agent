@@ -10,7 +10,7 @@ If a [profile](./profiles.md) is a local agent, a distribution is that agent mad
 
 ## What this means
 
-Before distributions, sharing a Indagis agent meant sending someone:
+Before distributions, sharing an Indagis agent meant sending someone:
 
 1. Your SOUL.md
 2. A list of skills to install
