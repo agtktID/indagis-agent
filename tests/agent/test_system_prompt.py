@@ -141,6 +141,7 @@ def test_coding_prompt_preserves_legacy_workspace_order(monkeypatch):
     monkeypatch.setattr(system_prompt, "DEFAULT_AGENT_IDENTITY", "IDENTITY")
     monkeypatch.setattr(system_prompt, "HERMES_AGENT_HELP_GUIDANCE", "HELP")
     monkeypatch.setattr(system_prompt, "OSINT_REFERENCE_SOURCES_GUIDANCE", "REFS")
+    monkeypatch.setattr(system_prompt, "PENTEST_REFERENCE_SOURCES_GUIDANCE", "PENTESTREFS")
     monkeypatch.setattr(system_prompt, "STEER_CHANNEL_NOTE", "STEER")
     monkeypatch.setattr(system_prompt, "get_indagis_home", lambda: Path("/hermes"))
 
@@ -155,6 +156,7 @@ def test_coding_prompt_preserves_legacy_workspace_order(monkeypatch):
         "IDENTITY",
         "HELP",
         "REFS",
+        "PENTESTREFS",
         "STEER",
         "CODING_STABLE",
         "WORKSPACE",
@@ -184,7 +186,7 @@ def test_coding_prompt_preserves_legacy_workspace_order(monkeypatch):
         prompt = build_system_prompt(agent, system_message="SYSTEM_MESSAGE")
 
     assert prompt == expected
-    assert agent._cached_system_prompt_static == "\n\n".join(expected.split("\n\n")[:5])
+    assert agent._cached_system_prompt_static == "\n\n".join(expected.split("\n\n")[:6])
 
 
 class TestTelegramRichMessagesHint:

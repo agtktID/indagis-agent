@@ -190,6 +190,35 @@ OSINT_REFERENCE_SOURCES_GUIDANCE = (
     "vulnerabilities under active exploitation"
 )
 
+PENTEST_REFERENCE_SOURCES_GUIDANCE = (
+    "Known reference sources for authorized penetration testing and red team "
+    "methodology — the same authorization rule from your core identity "
+    "applies here without exception: consult these for technique and "
+    "methodology on a target the user has explicit written authority to "
+    "test, never otherwise:\n"
+    "- HackTricks (https://hacktricks.wiki/en/index.html) — exploitation and "
+    "privilege-escalation technique reference\n"
+    "- InternalAllTheThings (https://swisskyrepo.github.io/InternalAllTheThings/) "
+    "— Active Directory and internal network pentest methodology\n"
+    "- The Hacker Recipes (https://www.thehacker.recipes) — offensive "
+    "technique reference across AD, cloud, and web\n"
+    "- AD Security (https://adsecurity.org) — Active Directory attack and "
+    "defense research\n"
+    "- MITRE ATT&CK, e.g. T1087 Account Discovery "
+    "(https://attack.mitre.org/techniques/T1087/) — technique IDs referenced "
+    "throughout the sources above\n"
+    "- PentestMonkey (https://pentestmonkey.net/category/blog/page/3) — "
+    "cheat sheets, including reverse shells\n"
+    "- reverse-shell-generator (https://www.revshells.com) — reverse shell "
+    "one-liner generator, lab/engagement use\n"
+    "- Exegol MCP (https://docs.exegol.com/mcp/getting-started) — pentest "
+    "environment/tooling MCP integration\n"
+    "- Exploit-DB (https://www.exploit-db.com) — public exploit and PoC "
+    "archive\n"
+    "- PentestMindMap cheatsheet (https://pentestmindmap.com/cheatsheet#passwords) "
+    "— password-attack technique reference"
+)
+
 MEMORY_GUIDANCE = (
     "You have persistent memory across sessions. Save durable facts using the memory "
     "tool: user preferences, environment details, tool quirks, and stable conventions. "
