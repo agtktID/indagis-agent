@@ -256,6 +256,39 @@ def is_target_authorized(scope: Iterable[str], target: str) -> bool:
     return any(_matches_scope_entry(entry, target) for entry in entries)
 
 
+_UNSAFE_TEXT_CHARS = ("`", "\n", "\r")
+_HASH_RE = re.compile(r"^[0-9a-fA-F]{6,128}$")
+
+
+def _require_safe_target(target: str) -> None:
+    """Reject a target containing characters that could break out of the
+    Markdown export's inline code spans or inject a forged heading.
+
+    Defense in depth: investigation_export.py escapes every rendered
+    field regardless, but a target this shaped has no legitimate reason
+    to exist (hostnames and IPs don't contain backticks or newlines), so
+    it's rejected at the write boundary rather than only neutralized at
+    export time.
+    """
+    if any(ch in target for ch in _UNSAFE_TEXT_CHARS):
+        raise ValueError(
+            "target must not contain backticks or newlines "
+            "(these are not valid in a hostname/IP and would corrupt Markdown exports)"
+        )
+
+
+def _require_valid_content_hash(content_hash: Optional[str]) -> None:
+    if content_hash is None:
+        return
+    value = content_hash.strip()
+    if not value:
+        return
+    if not _HASH_RE.match(value):
+        raise ValueError(
+            f"invalid content_hash {content_hash!r}: expected a hex digest (6-128 hex characters)"
+        )
+
+
 def _require_authorized(conn: sqlite3.Connection, investigation_id: str, target: str) -> None:
     inv = get_investigation(conn, investigation_id)
     if inv is None:
@@ -582,6 +615,8 @@ def add_evidence(
         raise ValueError(f"invalid confidence {confidence!r}, must be one of {sorted(VALID_CONFIDENCE)}")
     source = _redact(source)
     tool = _redact(tool)
+    _require_safe_target(target)
+    _require_valid_content_hash(content_hash)
 
     _require_authorized(conn, investigation_id, target)
 
@@ -645,6 +680,8 @@ def add_finding(
         raise ValueError(f"invalid confidence {confidence!r}, must be one of {sorted(VALID_CONFIDENCE)}")
     source = _redact(source)
     tool = _redact(tool)
+    _require_safe_target(target)
+    _require_valid_content_hash(content_hash)
 
     evidence_id_list = [str(e).strip() for e in evidence_ids if str(e).strip()]
     for eid in evidence_id_list:
