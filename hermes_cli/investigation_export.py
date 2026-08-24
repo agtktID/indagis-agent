@@ -94,6 +94,26 @@ def _frontmatter_line(key: str, value: Any) -> str:
     return f"{key}: {_frontmatter_value(value)}"
 
 
+def _md_escape(value: object) -> str:
+    """Neutralize Markdown structure characters in an interpolated field.
+
+    Every value rendered into this export originates from analyst- or
+    tool-supplied free text (description, summary, target, content_hash)
+    that is validated for authorization and secrets, but never for
+    Markdown safety. A value containing a backtick can break out of the
+    single-backtick code spans used throughout this template, and a value
+    containing a newline can inject a new Markdown block (e.g. a forged
+    ``## heading``) into the exported report. Collapsing embedded
+    newlines to a space and swapping backticks for a lookalike quote
+    closes both vectors without needing every field to pre-validate its
+    own contents.
+    """
+    text = str(value if value is not None else "")
+    text = text.replace("\r\n", " ").replace("\r", " ").replace("\n", " ")
+    text = text.replace("`", "'")
+    return text
+
+
 def _render_evidence_section(evidence: list[idb.Evidence]) -> list[str]:
     lines = ["## Evidence", ""]
     if not evidence:
@@ -101,14 +121,14 @@ def _render_evidence_section(evidence: list[idb.Evidence]) -> list[str]:
         lines.append("")
         return lines
     for e in evidence:
-        lines.append(f"### {e.description}")
-        lines.append(f"- Source: `{e.source}`")
-        lines.append(f"- Tool: `{e.tool}`")
-        lines.append(f"- Target: `{e.target}`")
+        lines.append(f"### {_md_escape(e.description)}")
+        lines.append(f"- Source: `{_md_escape(e.source)}`")
+        lines.append(f"- Tool: `{_md_escape(e.tool)}`")
+        lines.append(f"- Target: `{_md_escape(e.target)}`")
         lines.append(f"- Observed: {_iso_timestamp(e.observed_at)}")
-        lines.append(f"- Confidence: `{e.confidence}`")
+        lines.append(f"- Confidence: `{_md_escape(e.confidence)}`")
         if e.content_hash:
-            lines.append(f"- Hash: `{e.content_hash}`")
+            lines.append(f"- Hash: `{_md_escape(e.content_hash)}`")
         lines.append(f"- Evidence ID: `{e.id}`")
         lines.append("")
     return lines
@@ -121,15 +141,15 @@ def _render_findings_section(findings: list[idb.Finding]) -> list[str]:
         lines.append("")
         return lines
     for f in findings:
-        lines.append(f"### {f.summary}")
-        lines.append(f"- Severity: `{f.severity}`")
-        lines.append(f"- Source: `{f.source}`")
-        lines.append(f"- Tool: `{f.tool}`")
-        lines.append(f"- Target: `{f.target}`")
+        lines.append(f"### {_md_escape(f.summary)}")
+        lines.append(f"- Severity: `{_md_escape(f.severity)}`")
+        lines.append(f"- Source: `{_md_escape(f.source)}`")
+        lines.append(f"- Tool: `{_md_escape(f.tool)}`")
+        lines.append(f"- Target: `{_md_escape(f.target)}`")
         lines.append(f"- Observed: {_iso_timestamp(f.observed_at)}")
-        lines.append(f"- Confidence: `{f.confidence}`")
+        lines.append(f"- Confidence: `{_md_escape(f.confidence)}`")
         if f.content_hash:
-            lines.append(f"- Hash: `{f.content_hash}`")
+            lines.append(f"- Hash: `{_md_escape(f.content_hash)}`")
         if f.evidence_ids:
             lines.append(f"- Based on evidence: {', '.join(f'`{eid}`' for eid in f.evidence_ids)}")
         lines.append(f"- Finding ID: `{f.id}`")
@@ -145,7 +165,7 @@ def _render_timeline_section(timeline: list[dict]) -> list[str]:
         return lines
     for event in timeline:
         ts = _iso_timestamp(event.get("created_at"))
-        lines.append(f"- {ts} — **{event['kind']}**: {event['message']}")
+        lines.append(f"- {ts} — **{_md_escape(event['kind'])}**: {_md_escape(event['message'])}")
     lines.append("")
     return lines
 
