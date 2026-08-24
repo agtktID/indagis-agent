@@ -25,4 +25,4 @@ echo "[hermes] WARNING: docker/entrypoint.sh is a deprecated shim under " \
     "and does NOT exec the CMD. If you hard-coded docker/entrypoint.sh " \
     "as your ENTRYPOINT, drop the override — docker will use the image's " \
     "default ENTRYPOINT dispatcher, which handles bootstrap AND CMD." >&2
-exec /opt/hermes/docker/stage2-hook.sh "$@"
+exec /opt/indagis/docker/stage2-hook.sh "$@"

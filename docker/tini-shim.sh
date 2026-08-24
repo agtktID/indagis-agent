@@ -37,7 +37,7 @@
 set -e
 
 INIT_TARGET="${HERMES_TINI_SHIM_TARGET:-/init}"
-WRAPPER="${HERMES_TINI_SHIM_WRAPPER:-/opt/hermes/docker/main-wrapper.sh}"
+WRAPPER="${HERMES_TINI_SHIM_WRAPPER:-/opt/indagis/docker/main-wrapper.sh}"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
