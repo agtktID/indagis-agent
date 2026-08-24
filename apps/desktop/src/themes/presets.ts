@@ -276,23 +276,6 @@ export const slateTheme: DesktopTheme = {
   }
 }
 
-export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
-  nous: nousTheme,
-  indagis: indagisTheme,
-  midnight: midnightTheme,
-  ember: emberTheme,
-  mono: monoTheme,
-  cyberpunk: cyberpunkTheme,
-  slate: slateTheme
-}
-
-export const BUILTIN_THEME_LIST = Object.values(BUILTIN_THEMES).filter(t => t.name !== "indagis")
-export const ALL_THEMES_INCLUDING_INDAGIS = [...BUILTIN_THEME_LIST, indagisTheme]
-
-/** Skin used when nothing is persisted or the persisted name is retired. */
-export const DEFAULT_SKIN_NAME = 'indagis'
-
-
 /**
  * Indagis — premium-investigation theme for Indagis Agent.
  *
@@ -347,3 +330,19 @@ export const indagisTheme: DesktopTheme = {
     fontMono: '"JetBrains Mono", "Cascadia Code", Menlo, Monaco, monospace, ' + EMOJI_FALLBACK
   }
 }
+
+export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
+  nous: nousTheme,
+  indagis: indagisTheme,
+  midnight: midnightTheme,
+  ember: emberTheme,
+  mono: monoTheme,
+  cyberpunk: cyberpunkTheme,
+  slate: slateTheme
+}
+
+export const BUILTIN_THEME_LIST = Object.values(BUILTIN_THEMES).filter(t => t.name !== "indagis")
+export const ALL_THEMES_INCLUDING_INDAGIS = [...BUILTIN_THEME_LIST, indagisTheme]
+
+/** Skin used when nothing is persisted or the persisted name is retired. */
+export const DEFAULT_SKIN_NAME = 'indagis'
