@@ -67,12 +67,12 @@ def _skin_color(key: str, fallback: str) -> str:
 
 from hermes_cli import __version__ as VERSION, __release_date__ as RELEASE_DATE
 
-LOGO_ART_INDAGIS = """  ██╗███╗   ██╗██████╗  █████╗  ██████╗ ██╗███████╗
-  ██║████╗  ██║██╔══██╗██╔══██╗██╔════╝ ██║██╔════╝
-  ██║██╔██╗ ██║██║  ██║███████║██║  ███╗██║███████╗
-  ██║██║╚██╗██║██║  ██║██╔══██║██║   ██║██║╚════██║
-  ██║██║ ╚████║██████╔╝██║  ██║╚██████╔╝██║███████║
-  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝╚══════╝
+LOGO_ART_INDAGIS = """  ██╗███╗   ██╗██████╗  █████╗  ██████╗ ██╗███████╗     █████╗  ██████╗ ███████╗███╗   ██╗████████╗
+  ██║████╗  ██║██╔══██╗██╔══██╗██╔════╝ ██║██╔════╝    ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝
+  ██║██╔██╗ ██║██║  ██║███████║██║  ███╗██║███████╗    ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║
+  ██║██║╚██╗██║██║  ██║██╔══██║██║   ██║██║╚════██║    ██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║
+  ██║██║ ╚████║██████╔╝██║  ██║╚██████╔╝██║███████║    ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║
+  ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝
 """
 
 HERMES_AGENT_LOGO = "[bold #37D5D6]" + LOGO_ART_INDAGIS + "[/]"
@@ -891,7 +891,7 @@ def build_welcome_banner(console: "Console", model: str, cwd: str,
 
     console.print()
     term_width = shutil.get_terminal_size().columns
-    if term_width >= 95:
+    if term_width >= 100:
         _logo = _bskin.banner_logo if _bskin and hasattr(_bskin, 'banner_logo') and _bskin.banner_logo else HERMES_AGENT_LOGO
         console.print(_logo)
         console.print()
