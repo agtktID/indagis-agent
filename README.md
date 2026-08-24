@@ -148,6 +148,30 @@ hermes investigation export <investigation> --format md --output ./reports
 
 ---
 
+## Bot Mode
+
+Any Hermes profile can be a **teammate agent**: give it a `ui_meta.hermes-bots` block in `profile.yaml`, and its canonical `"Bot Chat"` session gains a `message_agent` tool for messaging other bots on the same install. Delivery is fire-and-forget — the message lands in the target's Bot Chat with your handle prefixed, and the reply arrives later as a background completion notification, exactly like any other async tool result.
+
+```bash
+hermes profile create researcher
+```
+
+```yaml
+# ~/.indagis/profiles/researcher/profile.yaml
+description: Deep research and literature review
+ui_meta:
+  hermes-bots:
+    title: Research Buddy
+```
+
+Once at least one profile carries that block, every Bot Chat session on the install (default profile included, aliased `@hermes`) gets a live teammate roster injected into its system prompt, and can reach any of them with `message_agent(target="researcher", message="...")`.
+
+- **Containment** — the tool is injected only into a session titled exactly `"Bot Chat"` on a Bot-Mode-managed install, re-checked again at dispatch time, and never appears in the global tool registry, CLI sessions, group chats, cron agents, or subagents.
+- **Config toggle**: `agent.bot_mode_protocol` in `config.yaml` (default `true`).
+- **Current scope**: this is the backend messaging protocol only — profiles are wired by hand-editing `profile.yaml` as shown above. The desktop plugin (Bots roster UI, avatars, group chats, cron routines) and the `hermes peer` CLI for cross-machine messaging are not yet implemented in this fork.
+
+---
+
 ## Skip the API-key collection — Nous Portal
 
 Hermes works with whatever provider you want — that's not changing. But if you'd rather not collect five separate API keys for the model, web search, image generation, TTS, and a cloud browser, **[Nous Portal](https://portal.nousresearch.com)** covers all of them under one subscription:
