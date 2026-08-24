@@ -1,6 +1,6 @@
 #!/bin/sh
 # shellcheck shell=sh
-# /opt/hermes/docker/main-wrapper.sh — wraps the container's CMD with
+# /opt/indagis/docker/main-wrapper.sh — wraps the container's CMD with
 # the same argument-routing logic the pre-s6 entrypoint.sh used. Runs
 # as /init's "main program" (Docker CMD) so it inherits stdin/stdout/
 # stderr from the container. The non-PID-1 entrypoint fallback also
@@ -71,7 +71,7 @@ _hermes_orig_cwd="${HERMES_ORIG_CWD:-$PWD}"
 
 cd /opt/data
 # shellcheck disable=SC1091
-. /opt/hermes/.venv/bin/activate
+. /opt/indagis/.venv/bin/activate
 
 # Restore the original working directory before handing off to
 # the user's command so `hermes chat` starts in the Docker -w

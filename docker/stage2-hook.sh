@@ -18,7 +18,7 @@
 set -eu
 
 HERMES_HOME="${HERMES_HOME:-/opt/data}"
-INSTALL_DIR="/opt/hermes"
+INSTALL_DIR="/opt/indagis"
 
 # Drop to hermes via s6-setuidgid, but skip it when already non-root.
 as_hermes() { [ "$(id -u)" = 0 ] || { "$@"; return; }; s6-setuidgid hermes "$@"; }
@@ -30,7 +30,7 @@ as_hermes() { [ "$(id -u)" = 0 ] || { "$@"; return; }; s6-setuidgid hermes "$@";
 #
 # Under s6-overlay this no longer works: the bootstrap (UID remap, data-volume
 # ownership, config seeding) requires root, and it is skipped when the container
-# starts non-root. The baked install tree under /opt/hermes is intentionally
+# starts non-root. The baked install tree under /opt/indagis is intentionally
 # root-owned and non-writable; mutable runtime state must live under
 # $HERMES_HOME. An arbitrary `--user` UID therefore cannot repair or populate
 # the data volume, and startup fails with EACCES. See #34837 for the
@@ -53,7 +53,7 @@ if [ "$cur_uid" != 0 ] && [ "$cur_uid" != "$(id -u hermes)" ]; then
 
 This is not supported under the s6-overlay image. The container bootstrap
 (UID remap, data-volume ownership, config seeding) needs to start as root,
-and the baked /opt/hermes install tree is intentionally root-owned and
+and the baked /opt/indagis install tree is intentionally root-owned and
 non-writable, so a pinned --user UID cannot repair startup state — startup
 will fail.
 
@@ -258,7 +258,7 @@ fi
 # Do not chown runtime code or dependency trees under $INSTALL_DIR back to the
 # hermes user. Hosted/container instances keep mutable state under
 # $HERMES_HOME (/opt/data) and run with PYTHONDONTWRITEBYTECODE plus
-# HERMES_DISABLE_LAZY_INSTALLS=1. Keeping /opt/hermes root-owned and
+# HERMES_DISABLE_LAZY_INSTALLS=1. Keeping /opt/indagis root-owned and
 # non-writable prevents an agent session from self-modifying the installed
 # source, venv, TUI bundle, or node_modules and bricking the gateway.
 #
@@ -397,7 +397,7 @@ as_hermes mkdir -p \
 
 # --- Install-method stamp ---
 # The 'docker' stamp is baked into the immutable install tree at
-# /opt/hermes/.install_method (see Dockerfile), NOT written here into
+# /opt/indagis/.install_method (see Dockerfile), NOT written here into
 # $HERMES_HOME. detect_install_method() reads the code-scoped stamp first.
 #
 # Why we no longer stamp $HERMES_HOME: it is a shared DATA volume, commonly
@@ -407,7 +407,7 @@ as_hermes mkdir -p \
 # 'hermes update'. To heal homes already poisoned by older images, remove a
 # stale 'docker' stamp from $HERMES_HOME if one is present (the host install's
 # own installer re-creates its code-scoped stamp; a genuine container relies on
-# the baked /opt/hermes stamp, so deleting the data-dir copy is safe).
+# the baked /opt/indagis stamp, so deleting the data-dir copy is safe).
 if [ -f "$HERMES_HOME/.install_method" ]; then
     stamped="$(tr -d '[:space:]' < "$HERMES_HOME/.install_method" 2>/dev/null || true)"
     if [ "$stamped" = "docker" ]; then
@@ -542,7 +542,7 @@ fi
 
 # --- Discover agent-browser's Chromium binary ---
 # The image's Dockerfile runs `npx playwright install chromium`, which
-# populates ``$PLAYWRIGHT_BROWSERS_PATH`` (=/opt/hermes/.playwright) with
+# populates ``$PLAYWRIGHT_BROWSERS_PATH`` (=/opt/indagis/.playwright) with
 # a ``chromium_headless_shell-<build>/chrome-headless-shell-linux64/``
 # directory. agent-browser (the runtime CLI Hermes spawns for the
 # browser tool) doesn't recognise this layout in its own cache scan and

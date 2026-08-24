@@ -4,6 +4,7 @@
   "private": true,
   "version": "0.17.0",
   "description": "Native desktop shell for Hermes Agent.",
+  "homepage": "https://github.com/agtktID/indagis-agent",
   "author": "Nous Research",
   "type": "module",
   "main": "dist/electron-main.mjs",
