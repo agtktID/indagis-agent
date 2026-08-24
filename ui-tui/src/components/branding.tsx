@@ -108,7 +108,7 @@ export function Banner({ maxWidth, t }: { maxWidth?: number; t: Theme }) {
     return null
   }
 
-  const logoLines = logo(t.color, t.bannerLogo || undefined)
+  const logoLines = logo(t.bannerLogo || undefined)
   const logoW = t.bannerLogo ? artWidth(logoLines) : LOGO_WIDTH
 
   // Each tier renders its rows through a single-column WidgetGrid sized to
