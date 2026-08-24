@@ -9,7 +9,9 @@ you are about to push:
     python3 scripts/audit_pr_attribution.py --fix      # create mapping files
 
 Logic (kept in sync with contributor-check.yml):
-  - scans ``git log $(git merge-base origin/main HEAD)..HEAD --format=%ae``
+  - scans ``git log $(git merge-base origin/<default-branch> HEAD)..HEAD
+    --format=%ae`` — ``<default-branch>`` is auto-detected (see
+    ``default_base_ref()``), not hardcoded to "main"
   - skips teknium/bot emails and ``<id>+<login>@users.noreply.github.com``
     (CI auto-resolves those)
   - everything else must have ``contributors/emails/<email>`` or a legacy
@@ -55,8 +57,27 @@ def run(*args: str, check: bool = True) -> str:
     return result.stdout.strip()
 
 
+def default_base_ref() -> str:
+    """The remote's default branch (e.g. "main" or "test-orphan"), not hardcoded.
+
+    A fork's default branch isn't guaranteed to be named "main" — this repo's
+    default branch is "test-orphan". Tries the cheap, offline
+    `origin/HEAD` symref first, falls back to a `git remote show` network
+    call, and finally to the literal "main" if both are unavailable.
+    """
+    symref = run("git", "symbolic-ref", "refs/remotes/origin/HEAD", check=False)
+    if symref:
+        return symref.rsplit("/", 1)[-1]
+    shown = run("git", "remote", "show", "origin", check=False)
+    for line in shown.splitlines():
+        line = line.strip()
+        if line.startswith("HEAD branch:"):
+            return line.split(":", 1)[1].strip()
+    return "main"
+
+
 def new_emails() -> list[str]:
-    base = run("git", "merge-base", "origin/main", "HEAD")
+    base = run("git", "merge-base", f"origin/{default_base_ref()}", "HEAD")
     log = run("git", "log", f"{base}..HEAD", "--format=%ae", "--no-merges", check=False)
     return sorted({e for e in log.splitlines() if e.strip()})
 
