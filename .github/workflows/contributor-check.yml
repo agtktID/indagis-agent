@@ -2,6 +2,14 @@ name: Contributor Attribution Check
 
 on:
   workflow_call:
+    inputs:
+      base-ref:
+        description: >
+          The PR's actual base branch name. Passed explicitly by the caller
+          instead of hardcoding "main" here, since a fork's default branch
+          name isn't guaranteed to be "main".
+        required: true
+        type: string
     outputs:
       review_status:
         description: "JSON array of review status objects"
@@ -23,9 +31,11 @@ jobs:
 
       - name: Check for unmapped contributor emails
         id: check-emails
+        env:
+          BASE_REF: ${{ inputs.base-ref }}
         run: |
-          # Get the merge base between this PR and main
-          MERGE_BASE=$(git merge-base origin/main HEAD)
+          # Get the merge base between this PR and its actual base branch
+          MERGE_BASE=$(git merge-base "origin/${BASE_REF}" HEAD)
 
           # Find any new author emails in this PR's commits
           NEW_EMAILS=$(git log ${MERGE_BASE}..HEAD --format='%ae' --no-merges | sort -u)
