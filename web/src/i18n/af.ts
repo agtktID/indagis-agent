@@ -50,7 +50,7 @@ export const af: Translations = {
   },
 
   app: {
-    brand: "Hermes Agent",
+    brand: "Indagis Agent",
     brandShort: "HA",
     closeNavigation: "Maak navigasie toe",
     closeModelTools: "Maak model en gereedskap toe",
@@ -120,8 +120,8 @@ export const af: Translations = {
     starting: "Begin",
     startedInBackground: "Begin in agtergrond — kyk logs vir vordering",
     stopped: "Gestop",
-    updateHermes: "Werk Hermes op",
-    updatingHermes: "Besig om Hermes op te werk…",
+    updateHermes: "Werk Indagis op",
+    updatingHermes: "Besig om Indagis op te werk…",
     waitingForOutput: "Wag vir uitset…",
   },
 
@@ -503,7 +503,7 @@ export const af: Translations = {
   achievements: {
     hero: {
       kicker: "Agentic Gamerscore",
-      title: "Hermes Achievements",
+      title: "Indagis Achievements",
       subtitle:
         "Versamelbare Hermes-kentekens wat verdien word uit werklike sessiegeskiedenis. Bekende, onvoltooide prestasies word as Ontdek vertoon; Geheime prestasies bly verborge totdat die eerste ooreenstemmende gedrag verskyn.",
       scan_subtitle:
@@ -603,7 +603,7 @@ export const af: Translations = {
         "Deel op X maak 'n vooraf-ingevulde plasing in 'n nuwe oortjie oop. Klik eers op Kopieer beeld as jy die 1200×630-kenteken aangeheg wil hê — X laat jou dit direk in die tweet-skrywer plak. Laai PNG af stoor die lêer om enige plek te gebruik.",
       clipboard_unsupported:
         "Beeldkopiëring na knipbord word nie in hierdie blaaier ondersteun nie — gebruik eerder Aflaai.",
-      tweet_text: "Just unlocked {tier_part}\"{name}\" in Hermes Agent ☤",
+      tweet_text: "Just unlocked {tier_part}\"{name}\" in Indagis Agent ◆",
     },
   },
   kanban: {

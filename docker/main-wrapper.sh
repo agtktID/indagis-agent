@@ -13,9 +13,9 @@
 # re-exec and continue directly.
 #
 # Routing:
-#   no args                       → exec `hermes` (the default)
+#   no args                       → exec `indagis` (the default)
 #   first arg is an executable    → exec it directly (sleep, bash, sh, …)
-#   first arg is anything else    → exec `hermes <args>` (subcommand passthrough)
+#   first arg is anything else    → exec `indagis <args>` (subcommand passthrough)
 #
 # Drop to hermes via s6-setuidgid, but skip it when already non-root.
 set -e
@@ -74,12 +74,12 @@ cd /opt/data
 . /opt/indagis/.venv/bin/activate
 
 # Restore the original working directory before handing off to
-# the user's command so `hermes chat` starts in the Docker -w
+# the user's command so `indagis chat` starts in the Docker -w
 # directory, not /opt/data.
 cd "$_hermes_orig_cwd"
 
 if [ $# -eq 0 ]; then
-    drop hermes
+    drop indagis
 fi
 
 if command -v "$1" >/dev/null 2>&1; then
@@ -87,5 +87,5 @@ if command -v "$1" >/dev/null 2>&1; then
     drop "$@"
 fi
 
-# Hermes subcommand pass-through.
-drop hermes "$@"
+# Indagis subcommand pass-through.
+drop indagis "$@"

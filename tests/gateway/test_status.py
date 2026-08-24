@@ -239,6 +239,7 @@ class TestGatewayRuntimeStatus:
         for cmdline in (
             "hermes -p coder gateway run --replace",
             "/opt/hermes/.venv/bin/hermes --profile coder gateway run --replace",
+            "/opt/indagis/.venv/bin/indagis --profile coder gateway run --replace",
             "hermes_home=/opt/data/profiles/coder hermes gateway run --replace",
         ):
             monkeypatch.setattr(status, "_read_process_cmdline", lambda pid, c=cmdline: c)

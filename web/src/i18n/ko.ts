@@ -50,7 +50,7 @@ export const ko: Translations = {
   },
 
   app: {
-    brand: "Hermes Agent",
+    brand: "Indagis Agent",
     brandShort: "HA",
     closeNavigation: "내비게이션 닫기",
     closeModelTools: "모델 및 도구 닫기",
@@ -120,8 +120,8 @@ export const ko: Translations = {
     starting: "시작 중",
     startedInBackground: "백그라운드에서 시작됨 — 진행 상황은 로그를 확인하세요",
     stopped: "중지됨",
-    updateHermes: "Hermes 업데이트",
-    updatingHermes: "Hermes 업데이트 중…",
+    updateHermes: "Indagis 업데이트",
+    updatingHermes: "Indagis 업데이트 중…",
     waitingForOutput: "출력 대기 중…",
   },
 
@@ -502,7 +502,7 @@ export const ko: Translations = {
   achievements: {
     hero: {
       kicker: "Agentic Gamerscore",
-      title: "Hermes Achievements",
+      title: "Indagis Achievements",
       subtitle:
         "실제 세션 기록에서 획득하는 Hermes 컬렉터블 배지입니다. 알려져 있지만 아직 달성되지 않은 업적은 Discovered로 표시되며, Secret 업적은 일치하는 동작이 처음 나타날 때까지 숨겨집니다.",
       scan_subtitle:
@@ -602,7 +602,7 @@ export const ko: Translations = {
         "X에 공유를 누르면 새 탭에서 미리 작성된 게시물이 열립니다. 1200×630 배지를 첨부하려면 먼저 이미지 복사를 누르세요 — X 작성기에서 바로 붙여넣을 수 있습니다. PNG 다운로드는 파일을 저장하여 어디서나 사용할 수 있게 합니다.",
       clipboard_unsupported:
         "이 브라우저에서는 클립보드 이미지 복사를 지원하지 않습니다 — 대신 다운로드를 이용하세요.",
-      tweet_text: "Just unlocked {tier_part}\"{name}\" in Hermes Agent ☤",
+      tweet_text: "Just unlocked {tier_part}\"{name}\" in Indagis Agent ◆",
     },
   },
   kanban: {
