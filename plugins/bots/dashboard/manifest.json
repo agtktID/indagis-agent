@@ -1,0 +1,11 @@
+{
+  "name": "bots",
+  "label": "Bots",
+  "description": "Create and list Bot-Mode teammate agents — profiles that message each other via message_agent.",
+  "icon": "Bot",
+  "version": "0.1.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
