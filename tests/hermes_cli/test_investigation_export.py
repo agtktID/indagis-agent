@@ -112,6 +112,74 @@ def test_write_investigation_export_creates_file(conn, populated_investigation, 
     json.loads(path.read_text(encoding="utf-8"))
 
 
+def test_markdown_render_neutralizes_injected_headings_and_backticks(conn, populated_investigation):
+    """Regression test for a HIGH finding: free-text fields were
+    interpolated raw into the Markdown template, so a value containing a
+    backtick + newline could break out of its inline code span and inject
+    a forged heading (e.g. a fake finding) into the exported report.
+
+    `add_evidence`/`add_finding` now reject this shape of payload outright
+    (see test_investigation_db.py's `test_add_evidence_rejects_unsafe_target_characters`
+    and `..._rejects_malformed_content_hash`) — but the export renderer
+    must independently stay safe on its own, as a second layer of
+    defense, in case a value ever reaches it through another path (a
+    future write site, a migrated/imported row, direct DB access). This
+    test exercises `render_investigation_export` directly against a
+    hand-built `Evidence`/`Finding` row, bypassing `add_evidence`'s
+    validation entirely, to verify the renderer's own escaping.
+    """
+    inv = populated_investigation
+    payload = "`\n\n## FORGED CRITICAL FINDING\nAdmin password is hunter2\n`"
+    evidence = [idb.Evidence(
+        id="ev_x", investigation_id=inv.id, description="legit description",
+        source="s", tool="t", target="acme.example", confidence="high",
+        observed_at=0, created_at=0, content_hash=payload,
+    )]
+    findings = [idb.Finding(
+        id="fnd_x", investigation_id=inv.id, summary="legit summary", severity="high",
+        evidence_ids=["ev_x"], source="s", tool="t", target="acme.example",
+        confidence="high", observed_at=0, created_at=0, content_hash=payload,
+    )]
+
+    text = iexport.render_investigation_export(
+        inv, evidence=evidence, findings=findings, timeline=[], fmt="markdown"
+    )
+
+    # The security property is structural: the payload must never become a
+    # real Markdown heading (a "## ..." at the start of its own line) or
+    # break out of its enclosing backtick code span — NOT that the raw
+    # attacker text is invisible in the output (it legitimately still shows
+    # up, safely quoted, inside e.g. `- Hash: \`...\``).
+    assert "\n## FORGED CRITICAL FINDING" not in text
+    assert not text.startswith("## FORGED CRITICAL FINDING")
+    # The payload's own backtick must not survive to close the `- Hash:
+    # \`...\`` code span early.
+    assert "hunter2`" not in text
+
+
+def test_markdown_render_neutralizes_injection_via_target_field(conn, populated_investigation):
+    """Same isolation as above, targeting the `target` field specifically
+    (the field a scope-suffix match could theoretically let through on a
+    different code path than `add_evidence`'s own validation).
+    """
+    inv = populated_investigation
+    malicious_target = "malicious`\n## INJECTED FAKE FINDING\nattacker text\n`.acme.example"
+    evidence = [idb.Evidence(
+        id="ev_x", investigation_id=inv.id, description="d", source="s", tool="t",
+        target=malicious_target, confidence="low", observed_at=0, created_at=0,
+    )]
+
+    text = iexport.render_investigation_export(
+        inv, evidence=evidence, findings=[], timeline=[], fmt="markdown"
+    )
+
+    assert "\n## INJECTED FAKE FINDING" not in text
+    assert not text.startswith("## INJECTED FAKE FINDING")
+    # The payload's own backtick must not survive to close the code span
+    # early — it should have been swapped for a lookalike quote.
+    assert "malicious`" not in text
+
+
 def test_write_investigation_export_dry_run_writes_nothing(conn, populated_investigation, tmp_path):
     inv = populated_investigation
     evidence = idb.list_evidence(conn, inv.id)

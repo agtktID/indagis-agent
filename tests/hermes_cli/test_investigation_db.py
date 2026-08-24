@@ -185,6 +185,50 @@ def test_add_evidence_rejects_invalid_confidence(conn):
         )
 
 
+def test_add_evidence_rejects_unsafe_target_characters(conn):
+    """Defense in depth: a target containing a backtick or newline can
+    still pass scope authorization (it's a plain suffix match) but would
+    let a Markdown-export injection payload reach the database. Reject it
+    at the write boundary rather than relying solely on export-side
+    escaping.
+    """
+    inv_id = idb.create_investigation(conn, objective="I1", scope=["acme.example"])
+    with pytest.raises(ValueError):
+        idb.add_evidence(
+            conn,
+            inv_id,
+            description="x",
+            source="s",
+            tool="t",
+            target="malicious`\n## FAKE\n`.acme.example",
+            confidence="low",
+        )
+
+
+def test_add_evidence_rejects_malformed_content_hash(conn):
+    inv_id = idb.create_investigation(conn, objective="I1", scope=["acme.example"])
+    with pytest.raises(ValueError):
+        idb.add_evidence(
+            conn,
+            inv_id,
+            description="x",
+            source="s",
+            tool="t",
+            target="acme.example",
+            confidence="low",
+            content_hash="`\n## FORGED\n`",
+        )
+
+
+def test_add_evidence_accepts_a_plausible_hex_hash(conn):
+    inv_id = idb.create_investigation(conn, objective="I1", scope=["acme.example"])
+    ev_id = idb.add_evidence(
+        conn, inv_id, description="x", source="s", tool="t",
+        target="acme.example", confidence="low", content_hash="deadbeef",
+    )
+    assert idb.get_evidence(conn, ev_id).content_hash == "deadbeef"
+
+
 # ---------------------------------------------------------------------------
 # Findings
 # ---------------------------------------------------------------------------
@@ -283,6 +327,39 @@ def test_add_finding_rejects_invalid_severity(conn):
             tool="t",
             target="acme.example",
             confidence="low",
+        )
+
+
+def test_add_finding_rejects_unsafe_target_characters(conn):
+    inv_id = idb.create_investigation(conn, objective="I1", scope=["acme.example"])
+    with pytest.raises(ValueError):
+        idb.add_finding(
+            conn,
+            inv_id,
+            summary="s",
+            severity="low",
+            evidence_ids=[],
+            source="s",
+            tool="t",
+            target="malicious`\n## FAKE\n`.acme.example",
+            confidence="low",
+        )
+
+
+def test_add_finding_rejects_malformed_content_hash(conn):
+    inv_id = idb.create_investigation(conn, objective="I1", scope=["acme.example"])
+    with pytest.raises(ValueError):
+        idb.add_finding(
+            conn,
+            inv_id,
+            summary="s",
+            severity="low",
+            evidence_ids=[],
+            source="s",
+            tool="t",
+            target="acme.example",
+            confidence="low",
+            content_hash="`\n## FORGED\n`",
         )
 
 
