@@ -1,23 +1,29 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Hermes Agent" width="100%">
+  <img src="assets/indagis-banner.png" alt="Indagis Agent 横幅" width="100%">
 </p>
 
-# Hermes Agent ☤
+<h1 align="center">Indagis Agent</h1>
+<p align="center"><b>面向网络安全调查的 AI 工作台——OSINT（开源情报）、威胁情报、数字取证与事件响应（DFIR）。</b></p>
+<p align="center">
+  构建于 <a href="https://hermes-agent.nousresearch.com/">Hermes Agent</a>（Nous Research，MIT 许可）之上
+</p>
 
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>
+  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/引擎文档-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Engine Documentation"></a>
+  <a href="https://github.com/agtktID/indagis-agent/issues"><img src="https://img.shields.io/badge/Issues-agtktID%2Findagis--agent-blue?style=for-the-badge&logo=github" alt="Issues"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
   <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="Built by Nous Research"></a>
   <a href="README.md"><img src="https://img.shields.io/badge/Lang-English-lightgrey?style=for-the-badge" alt="English"></a>
   <a href="README.ur-pk.md"><img src="https://img.shields.io/badge/Lang-اردو-green?style=for-the-badge" alt="اردو"></a>
+  <a href="README.es.md"><img src="https://img.shields.io/badge/Lang-Español-orange?style=for-the-badge" alt="Español"></a>
 </p>
 
-**由 [Nous Research](https://nousresearch.com) 构建的自进化 AI 代理。** 它是唯一内置学习闭环的智能代理——从经验中创建技能，在使用中改进技能，主动持久化知识，搜索过往对话，并在跨会话中逐步构建对你的深度理解。可以在 $5 的 VPS 上运行，也可以在 GPU 集群上运行，或者使用几乎零成本的 Serverless 基础设施。它不绑定你的笔记本——你可以在 Telegram 上与它对话，而它在云端 VM 上工作。
+**Indagis Agent 是一个面向网络安全调查——OSINT（开源情报）、威胁情报与 DFIR（数字取证与事件响应）——的开源核心 AI 工作台。** 它将安全工作作为持久化的**调查（Investigation）**进行跟踪：包含目标（objective）、授权范围（authorized scope）、证据（evidence）、发现（findings）与时间线（timeline）。这一切都构建在自进化的代理引擎之上——它是唯一内置学习闭环的智能代理，从经验中创建技能，在使用中改进技能，主动持久化知识，并在跨会话中逐步构建对你的深度理解。可以在 $5 的 VPS 上运行，也可以在 GPU 集群上运行，或者使用几乎零成本的 Serverless 基础设施。它不绑定你的笔记本——你可以在 Telegram 上与它对话，而它在云端 VM 上工作。
 
 支持任意模型——[Nous Portal](https://portal.nousresearch.com)、[OpenRouter](https://openrouter.ai)（200+ 模型）、[NVIDIA NIM](https://build.nvidia.com)（Nemotron）、[小米 MiMo](https://platform.xiaomimimo.com)、[z.ai/GLM](https://z.ai)、[Kimi/Moonshot](https://platform.moonshot.ai)、[MiniMax](https://www.minimax.io)、[Hugging Face](https://huggingface.co)、OpenAI，或自定义端点。使用 `hermes model` 即可切换——无需改代码，无锁定。
 
 <table>
+<tr><td><b>授权范围调查（Authorization-gated investigations）</b></td><td>持久化的 <code>Investigation</code>（调查）模型——目标、授权范围、证据、发现、时间线。每个被记录的目标在写入前都会与授权范围核对（失败即拒绝，fail-closed），并提供 <code>--dry-run</code> 预览以及 Markdown/JSON 导出。</td></tr>
 <tr><td><b>真正的终端界面</b></td><td>完整的 TUI，支持多行编辑、斜杠命令自动补全、对话历史、中断重定向和流式工具输出。</td></tr>
 <tr><td><b>随你所在</b></td><td>Telegram、Discord、Slack、WhatsApp、Signal 和 CLI——全部从单个网关进程运行。语音备忘录转写、跨平台对话连续性。</td></tr>
 <tr><td><b>闭环学习</b></td><td>代理管理记忆并定期自我提醒。复杂任务后自动创建技能。技能在使用中自我改进。FTS5 会话搜索配合 LLM 摘要实现跨会话回溯。<a href="https://github.com/plastic-labs/honcho">Honcho</a> 辩证式用户建模。兼容 <a href="https://agentskills.io">agentskills.io</a> 开放标准。</td></tr>
@@ -69,6 +75,31 @@ hermes doctor       # 诊断问题
 ```
 
 📖 **[完整文档 →](https://hermes-agent.nousresearch.com/docs/)**
+
+---
+
+## 调查（Investigations）
+
+Indagis Agent 将安全工作作为一等公民的**调查（Investigations）**进行跟踪——每一项调查都是持久化的、限定在授权范围内的工作单元，包含证据、发现与时间线。每条结果都携带来源信息（source、tool、target、date，可选的哈希值，以及置信度 confidence level），并且每一个记录目标的操作在写入前都会与该调查的授权范围进行核对。
+
+```bash
+hermes investigation create "Assess acme-corp exposure" --scope acme.example
+
+hermes investigation add-evidence <investigation> \
+  --description "Open port 443" --source nmap-scan --tool nmap \
+  --target acme.example --confidence high
+
+hermes investigation add-finding <investigation> \
+  --summary "TLS misconfiguration" --severity high --evidence <evidence-id> \
+  --source analyst --tool manual --target acme.example --confidence high
+
+hermes investigation show <investigation>
+hermes investigation export <investigation> --format md --output ./reports
+```
+
+- **失败即拒绝的授权检查（Fail-closed authorization）**——对超出调查声明授权范围的目标记录证据或发现时，会被明确拒绝并给出具体原因；`--dry-run` 可在不写入任何内容的情况下预览授权判定结果。
+- **完整命令列表**：`create`、`list`（`ls`）、`show`（`open`）、`add-evidence`、`add-finding`、`export`、`close`、`reopen`、`archive`。
+- **导出格式**：Markdown（导出正文附带 SHA256 完整性校验行）或 JSON，两者都包含完整的来源信息和时间线。
 
 ---
 
@@ -195,14 +226,24 @@ python -m pytest tests/ -q
 
 - 💬 [Discord](https://discord.gg/NousResearch)
 - 📚 [技能中心](https://agentskills.io)
-- 🐛 [问题反馈](https://github.com/NousResearch/hermes-agent/issues)
+- 🐛 [问题反馈](https://github.com/agtktID/indagis-agent/issues)
 - 💡 [讨论区](https://github.com/NousResearch/hermes-agent/discussions)
 - 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — 社区微信桥接：在同一微信账号上运行 Hermes Agent 和 OpenClaw。
 
 ---
 
+## 构建基础（Foundations）
+
+Indagis Agent 构建于 [Hermes Agent](https://github.com/NousResearch/hermes-agent)（Nous Research，MIT 许可证）之上。Hermes Agent 提供了代理引擎、LLM 服务商层、消息网关、技能编排和会话持久化能力。Indagis Agent 对面向用户的外壳进行了重新品牌化，应用了 Indagis 配色方案，将 UI 组件适配到网络安全调查场景，并在此基础上新增了调查专用的数据模型和 CLI（`Investigation`（调查）/ `Evidence`（证据）/ `Finding`（发现）/ `Timeline`（时间线））。
+
+| | |
+|---|---|
+| **引擎** | Hermes Agent v0.20（MIT）—— `agent/`、`providers/`、`tools/`、`gateway/`、`skills/` |
+| **调查层** | Indagis Agent v0.1（本仓库）—— `hermes_cli/investigation_*.py` |
+| **许可证** | MIT（Nous Research + Indagis Agent 贡献者） |
+
 ## 许可证
 
 MIT — 详见 [LICENSE](LICENSE)。
 
-由 [Nous Research](https://nousresearch.com) 构建。
+引擎由 [Nous Research](https://nousresearch.com) 构建。
