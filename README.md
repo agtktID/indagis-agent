@@ -39,7 +39,7 @@ Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenR
 ### Linux, macOS, WSL2, Termux
 
 ```bash
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.sh | bash
 ```
 
 ### Windows (native, PowerShell)
@@ -49,7 +49,13 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 Run this in PowerShell:
 
 ```powershell
-iex (irm https://hermes-agent.nousresearch.com/install.ps1)
+iex (irm https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.ps1)
+```
+
+**From `cmd.exe` instead of PowerShell**, download and run the CMD wrapper:
+
+```cmd
+curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
 The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, **and a portable Git Bash** (MinGit, unpacked to `%LOCALAPPDATA%\hermes\git` — no admin required, completely isolated from any system Git install). Hermes uses this bundled Git Bash to run shell commands.
@@ -120,6 +126,57 @@ hermes doctor       # Diagnose any issues
 ```
 
 📖 **[Full documentation →](https://hermes-agent.nousresearch.com/docs/)**
+
+---
+
+## Dashboard
+
+A local web UI for managing config, API keys, sessions, and (optionally) the desktop's plugin surface. No account and no domain required — it's a local HTTP server.
+
+```bash
+hermes dashboard              # starts on http://127.0.0.1:9119, opens your browser
+hermes dashboard --port 8080  # custom port
+hermes dashboard --host 0.0.0.0  # bind non-loopback (requires an auth provider — see below)
+hermes dashboard --status     # check whether it's running
+hermes dashboard --stop       # stop it
+```
+
+Binding to anything other than loopback (`127.0.0.1`) requires an auth provider — set `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` + `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD`, or configure OAuth. `hermes dashboard register` optionally registers a self-hosted dashboard with Nous Portal — entirely optional, only needed if you want Portal-backed OAuth login instead of basic auth.
+
+## Desktop
+
+The native Electron app (chat window, session sidebar, plugins).
+
+```bash
+hermes desktop     # builds (first run) and launches the packaged app for your OS
+hermes gui         # same command, alias
+```
+
+**Building distributable installers yourself** (Linux/Windows), from a git checkout:
+
+```bash
+cd apps/desktop
+npm install
+npm run dist:linux     # → release/*.AppImage, release/*.deb (needs `rpm` installed for the .rpm target)
+npm run dist:win:nsis  # → release/*.exe (NSIS installer; cross-building from Linux needs Wine — wine64 on PATH — for icon/exe stamping, otherwise the .exe still builds with the stock Electron icon)
+```
+
+Verified on this repo: `dist:linux` produces a working AppImage and .deb. The `.rpm` target additionally needs the `rpm` package on the build host (`sudo apt-get install rpm` on Debian/Ubuntu). Windows builds were verified by cross-compiling from Linux; building natively on Windows (or in CI with `windows-latest`) is the recommended path for a signed, fully-stamped release artifact.
+
+## Docker
+
+Runs the gateway and/or dashboard in a container. No account, no domain — everything binds locally by default.
+
+```bash
+git clone https://github.com/agtktID/indagis-agent.git
+cd indagis-agent
+cp .env.example .env   # fill in at least one provider key, or configure providers after first boot
+HERMES_UID=$(id -u) HERMES_GID=$(id -g) docker compose up -d gateway
+```
+
+**Set `HERMES_UID`/`HERMES_GID` to your own host user** (`id -u` / `id -g`) — the container's default user is UID 10000, and without this override, files it writes into your mounted `~/.hermes` directory will be owned by UID 10000 and unreadable by your own account. If you forget and this happens: `sudo chown -R $(id -u):$(id -g) ~/.hermes`.
+
+To also run the dashboard container: `docker compose up -d dashboard` (binds `127.0.0.1:9119` on the host network — `network_mode: host`, no port mapping needed). Verified: `docker build .` succeeds and produces a ~972MB image; `docker compose up` starts both containers and all internal services report started. The dashboard's HTTP endpoint responding within a few seconds of container start was not fully confirmed in this session's sandboxed test environment — if `curl http://localhost:9119` doesn't respond right away, check `docker compose logs dashboard` and give it a bit longer before assuming it's broken.
 
 ---
 
@@ -265,9 +322,56 @@ See `hermes claw migrate --help` for all options, or use the `openclaw-migration
 
 ---
 
+## Configuration & Providers
+
+```bash
+hermes model              # interactive picker: pick a provider + model
+hermes config set <key> <value>   # set one config value (e.g. agent.bot_mode_protocol false)
+hermes config get <key>           # read one config value
+hermes doctor              # diagnose provider/config/environment issues
+```
+
+Config lives at `~/.indagis/config.yaml` (or `%LOCALAPPDATA%\hermes\config.yaml` on native Windows); provider API keys go in `.env` (copy `.env.example` to `~/.indagis/.env` or set them via `hermes secrets`). No provider is required to try the CLI in a limited capacity, but you need at least one configured (via `hermes model`, `hermes setup`, or Nous Portal below) to actually chat.
+
+## Nous Portal (optional)
+
+Entirely optional — connects your own Nous Portal subscription so you don't have to collect separate API keys for the model, web search, image generation, TTS, and a cloud browser. No Indagis account, no separate signup for Indagis itself.
+
+```bash
+hermes setup --portal     # OAuth login, sets Nous as provider, enables the Tool Gateway
+hermes portal info        # check what's wired up
+```
+
+## Updating
+
+```bash
+hermes update --check   # see if an update is available, without installing
+hermes update           # pull latest + reinstall dependencies
+```
+
+## Uninstalling
+
+```bash
+hermes uninstall --dry-run   # preview what would be removed, changes nothing
+hermes uninstall             # remove the CLI/gateway, keep config & data for a future reinstall
+hermes uninstall --full      # remove everything, including ~/.indagis config and data
+hermes uninstall --gui       # remove only the desktop app, leave the CLI/agent intact
+```
+
+## Troubleshooting
+
+- **`curl ... | bash` fails to clone / 404s**: the installer clones `github.com/agtktID/indagis-agent`. If you're testing an unmerged branch, pass `--branch <name>` (Linux/macOS) or `-Branch <name>` (PowerShell).
+- **Windows Defender/antivirus flags `uv.exe`**: see the dedicated section under [Quick Install](#quick-install) above — it's a documented false positive with a verification procedure.
+- **Docker: files under `~/.hermes` become unreadable after `docker compose up`**: you forgot `HERMES_UID`/`HERMES_GID` — see [Docker](#docker) above. Fix with `sudo chown -R $(id -u):$(id -g) ~/.hermes`.
+- **Docker: `.rpm` build fails locally**: install the `rpm` package (`sudo apt-get install rpm` on Debian/Ubuntu) — electron-builder's FPM tooling needs `rpmbuild` on the host.
+- **`hermes doctor`** is the first stop for anything else — it checks provider config, environment, and common misconfigurations.
+- **Still stuck?** [Open an issue](https://github.com/agtktID/indagis-agent/issues) with `hermes doctor` output attached.
+
+---
+
 ## Contributing
 
-We welcome contributions! See the [Contributing Guide](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing) for development setup, code style, and PR process.
+We welcome contributions! See the [Contributing Guide](CONTRIBUTING.md) for development setup, code style, and PR process. The engine internals (agent loop, providers, tools, gateway) also follow [Hermes Agent's contributing guide](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing) where this repo hasn't diverged.
 
 Quick start for contributors — use the standard installer, then work from the
 full git checkout it creates at `$INDAGIS_HOME/hermes-agent` (usually
@@ -275,7 +379,7 @@ full git checkout it creates at `$INDAGIS_HOME/hermes-agent` (usually
 managed venv, lazy dependencies, gateway, and docs tooling.
 
 ```bash
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.sh | bash
 cd "${INDAGIS_HOME:-$HOME/.hermes}/hermes-agent"
 uv pip install -e ".[all,dev]"
 scripts/run_tests.sh
