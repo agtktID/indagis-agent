@@ -1,25 +1,31 @@
 <div dir="rtl">
 
 <p align="center">
-  <img src="assets/banner.png" alt="Hermes Agent" width="100%">
+  <img src="assets/indagis-banner.png" alt="Indagis Agent بینر" width="100%">
 </p>
 
-# ہرمیس ایجنٹ ☤ (Hermes Agent)
+<h1 align="center">Indagis Agent</h1>
+<p align="center"><b>سائبر سیکیورٹی تحقیقات کے لیے اے آئی ورک اسپیس — OSINT، تھریٹ انٹیلیجنس، اور DFIR (ڈیجیٹل فارنزکس اینڈ انسیڈنٹ رسپانس)۔</b></p>
+<p align="center">
+  یہ <a href="https://hermes-agent.nousresearch.com/">Hermes Agent</a> (Nous Research، MIT) پر تیار کیا گیا ہے
+</p>
 
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="Built by Nous Research"></a>
+  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Engine%20Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Engine Documentation"></a>
+  <a href="https://github.com/agtktID/indagis-agent/issues"><img src="https://img.shields.io/badge/Issues-agtktID%2Findagis--agent-blue?style=for-the-badge&logo=github" alt="Issues"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-Hermes%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
   <a href="README.md"><img src="https://img.shields.io/badge/Lang-English-lightgrey?style=for-the-badge" alt="English"></a>
   <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/Lang-中文-red?style=for-the-badge" alt="中文"></a>
+  <a href="README.es.md"><img src="https://img.shields.io/badge/Lang-Español-orange?style=for-the-badge" alt="Español"></a>
 </p>
 
-**[نوس ریسرچ (Nous Research)](https://nousresearch.com) کا تیار کردہ خود کو بہتر بنانے والا اے آئی (AI) ایجنٹ۔** یہ واحد ایجنٹ ہے جس میں سیکھنے کا عمل (learning loop) پہلے سے موجود ہے — یہ اپنے تجربات سے نئی مہارتیں (skills) بناتا ہے، استعمال کے دوران ان کو بہتر کرتا ہے، معلومات کو محفوظ رکھنے کے لیے خود کو یاد دہانی کرواتا ہے، اپنی پرانی بات چیت کو تلاش کر سکتا ہے، اور مختلف سیشنز کے دوران آپ کے بارے میں ایک گہری سمجھ پیدا کرتا ہے۔ اسے $5 والے VPS پر چلائیں، GPU کلسٹر پر، یا سرور لیس (serverless) انفراسٹرکچر پر جس کی قیمت استعمال نہ ہونے پر تقریباً صفر ہے۔ یہ آپ کے لیپ ٹاپ تک محدود نہیں ہے — آپ ٹیلی گرام (Telegram) سے اس کے ساتھ بات چیت کر سکتے ہیں جبکہ یہ کلاؤڈ VM پر کام کر رہا ہو۔
+**Indagis Agent سائبر سیکیورٹی تحقیقات کے لیے ایک اوپن-کور (open-core) اے آئی ورک اسپیس ہے** — OSINT، تھریٹ انٹیلیجنس، اور DFIR (ڈیجیٹل فارنزکس اینڈ انسیڈنٹ رسپانس)۔ یہ سیکیورٹی سے متعلق کام کو مستقل **Investigations (تحقیقات)** کے طور پر ٹریک کرتا ہے: ایک مقصد (objective)، ایک اجازت یافتہ دائرہ کار (authorized scope)، شواہد (evidence)، نتائج (findings)، اور ایک ٹائم لائن — یہ سب ایک خود کو بہتر بنانے والے ایجنٹ انجن پر تعمیر کیا گیا ہے۔ یہ واحد ایجنٹ ہے جس میں سیکھنے کا عمل (learning loop) پہلے سے موجود ہے — یہ اپنے تجربات سے نئی مہارتیں (skills) بناتا ہے، استعمال کے دوران ان کو بہتر کرتا ہے، معلومات کو محفوظ رکھنے کے لیے خود کو یاد دہانی کرواتا ہے، اپنی پرانی بات چیت کو تلاش کر سکتا ہے، اور مختلف سیشنز کے دوران آپ کے بارے میں ایک گہری سمجھ پیدا کرتا ہے۔ اسے $5 والے VPS پر چلائیں، GPU کلسٹر پر، یا سرور لیس (serverless) انفراسٹرکچر پر جس کی قیمت استعمال نہ ہونے پر تقریباً صفر ہے۔ یہ آپ کے لیپ ٹاپ تک محدود نہیں ہے — آپ ٹیلی گرام (Telegram) سے اس کے ساتھ بات چیت کر سکتے ہیں جبکہ یہ کلاؤڈ VM پر کام کر رہا ہو۔
 
 آپ اپنی مرضی کا کوئی بھی ماڈل استعمال کر سکتے ہیں — [Nous Portal](https://portal.nousresearch.com)، [OpenRouter](https://openrouter.ai) (200 سے زائد ماڈلز)، [NovitaAI](https://novita.ai) (ماڈل API، ایجنٹ سینڈ باکس، اور GPU کلاؤڈ کے لیے اے آئی مقامی کلاؤڈ)، [NVIDIA NIM](https://build.nvidia.com) (Nemotron)، [Xiaomi MiMo](https://platform.xiaomimimo.com)، [z.ai/GLM](https://z.ai)، [Kimi/Moonshot](https://platform.moonshot.ai)، [MiniMax](https://www.minimax.io)، [Hugging Face](https://huggingface.co)، OpenAI، یا اپنا حسب ضرورت اینڈ پوائنٹ (endpoint) استعمال کریں۔ ماڈل تبدیل کرنے کے لیے صرف `hermes model` استعمال کریں — کسی کوڈ کو تبدیل کرنے کی ضرورت نہیں، کوئی پابندی نہیں۔
 
 <table>
+<tr><td><b>اجازت کی پابند تحقیقات (Authorization-gated investigations)</b></td><td>مستقل <code>Investigation</code> ماڈل — مقصد، اجازت یافتہ دائرہ کار، شواہد، نتائج، ٹائم لائن۔ ریکارڈ کیے جانے والے ہر ٹارگٹ کو لکھے جانے سے پہلے دائرہ کار کے خلاف چیک کیا جاتا ہے (fail-closed)، ساتھ ہی <code>--dry-run</code> پریویو اور Markdown/JSON ایکسپورٹ۔</td></tr>
 <tr><td><b>حقیقی ٹرمینل انٹرفیس</b></td><td>مکمل TUI جس میں ملٹی لائن ایڈیٹنگ، سلیش-کمانڈ آٹو کمپلیٹ، بات چیت کی ہسٹری، انٹرپٹ اور ری ڈائریکٹ، اور سٹریمنگ ٹول آؤٹ پٹ شامل ہے۔</td></tr>
 <tr><td><b>یہ وہاں موجود ہے جہاں آپ ہیں</b></td><td>ٹیلی گرام، ڈسکارڈ (Discord)، سلیک (Slack)، واٹس ایپ (WhatsApp)، سگنل (Signal)، اور CLI — سب ایک ہی گیٹ وے پروسیس سے کام کرتے ہیں۔ وائس میمو (Voice memo) ٹرانسکرپشن، کراس پلیٹ فارم بات چیت کا تسلسل۔</td></tr>
 <tr><td><b>سیکھنے کا ایک مکمل عمل</b></td><td>ایجنٹ کی اپنی ترتیب دی گئی میموری، جس میں وہ خود کو وقتاً فوقتاً یاد دہانی کرواتا ہے۔ پیچیدہ کاموں کے بعد خود کار طریقے سے مہارت (skill) کی تخلیق۔ استعمال کے دوران مہارتوں میں بہتری۔ LLM سمرائزیشن کے ساتھ FTS5 سیشن سرچ تاکہ پرانے سیشنز کی یاددہانی کی جا سکے۔ <a href="https://github.com/plastic-labs/honcho">Honcho</a> کے ذریعے صارف کی ماڈلنگ۔ <a href="https://agentskills.io">agentskills.io</a> اوپن سٹینڈرڈ کے ساتھ مکمل مطابقت۔</td></tr>
@@ -45,7 +51,7 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 
 ### ونڈوز (نیٹو، پاور شیل)
 
-> **توجہ فرمائیں:** مقامی ونڈوز (Native Windows) پر ہرمیس بغیر WSL کے چلتا ہے — CLI، گیٹ وے، TUI، اور ٹولز سب مقامی طور پر کام کرتے ہیں۔ اگر آپ WSL2 استعمال کرنا پسند کرتے ہیں، تو اوپر دی گئی لینکس/میک او ایس کی کمانڈ وہاں بھی کام کرے گی۔ کوئی مسئلہ نظر آیا؟ براہ کرم [مسائل (issues) درج کریں](https://github.com/NousResearch/hermes-agent/issues)۔
+> **توجہ فرمائیں:** مقامی ونڈوز (Native Windows) پر ہرمیس بغیر WSL کے چلتا ہے — CLI، گیٹ وے، TUI، اور ٹولز سب مقامی طور پر کام کرتے ہیں۔ اگر آپ WSL2 استعمال کرنا پسند کرتے ہیں، تو اوپر دی گئی لینکس/میک او ایس کی کمانڈ وہاں بھی کام کرے گی۔ کوئی مسئلہ نظر آیا؟ براہ کرم [مسائل (issues) درج کریں](https://github.com/agtktID/indagis-agent/issues)۔
 
 اسے پاور شیل (PowerShell) میں چلائیں:
 
@@ -97,6 +103,35 @@ hermes doctor       # کسی بھی مسئلے کی تشخیص کریں
 </div>
 
 📖 **[مکمل دستاویزات →](https://hermes-agent.nousresearch.com/docs/)**
+
+---
+
+## تحقیقات (Investigations)
+
+Indagis Agent سیکیورٹی سے متعلق کام کو ایک درجہ اول (first-class) **Investigation** کے طور پر ٹریک کرتا ہے — یعنی ایسی مستقل (persisted) اور اجازت کے دائرہ کار تک محدود (authorization-scoped) اکائی جس میں شواہد (evidence)، نتائج (findings)، اور ایک ٹائم لائن شامل ہوتی ہے۔ ہر نتیجے کے ساتھ اس کی اصلیت (provenance) — یعنی سورس، ٹول، ٹارگٹ، تاریخ، اختیاری ہیش (hash)، اور اعتماد کی سطح (confidence level) — بھی محفوظ رہتی ہے، اور کسی بھی ٹارگٹ کو ریکارڈ کرنے والی ہر کارروائی کو لکھے جانے سے پہلے تحقیقات کے اجازت یافتہ دائرہ کار (authorized scope) کے خلاف چیک کیا جاتا ہے۔
+
+<div dir="ltr">
+
+```bash
+hermes investigation create "Assess acme-corp exposure" --scope acme.example
+
+hermes investigation add-evidence <investigation> \
+  --description "Open port 443" --source nmap-scan --tool nmap \
+  --target acme.example --confidence high
+
+hermes investigation add-finding <investigation> \
+  --summary "TLS misconfiguration" --severity high --evidence <evidence-id> \
+  --source analyst --tool manual --target acme.example --confidence high
+
+hermes investigation show <investigation>
+hermes investigation export <investigation> --format md --output ./reports
+```
+
+</div>
+
+- **Fail-closed اجازت (authorization)** — کسی تحقیقات کے اعلان کردہ دائرہ کار (declared scope) سے باہر کسی ٹارگٹ کے لیے شواہد اور نتائج کو واضح وجہ کے ساتھ مسترد کر دیا جاتا ہے؛ `--dry-run` کچھ بھی لکھے بغیر اجازت کے فیصلے (authorization verdict) کا پیش نظارہ (preview) دکھاتا ہے۔
+- **مکمل کمانڈ لسٹ**: `create`، `list` (`ls`)، `show` (`open`)، `add-evidence`، `add-finding`، `export`، `close`، `reopen`، `archive`۔
+- **ایکسپورٹ (Export)**: Markdown (ایکسپورٹ شدہ باڈی پر SHA256 انٹیگریٹی لائن کے ساتھ) یا JSON — دونوں مکمل اصلیت (provenance) اور ٹائم لائن کے ساتھ۔
 
 ---
 
@@ -246,16 +281,30 @@ scripts/run_tests.sh
 
 - 💬 [ڈسکارڈ (Discord)](https://discord.gg/NousResearch)
 - 📚 [سکلز ہب (Skills Hub)](https://agentskills.io)
-- 🐛 [مسائل (Issues)](https://github.com/NousResearch/hermes-agent/issues)
+- 🐛 [مسائل (Issues)](https://github.com/agtktID/indagis-agent/issues)
 - 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — ہرمیس اور دیگر MCP ہوسٹس کے لیے لینکس (Linux) ڈیسک ٹاپ کنٹرول MCP سرور، جس میں AT-SPI ایکسیسیبلٹی ٹریز، Wayland/X11 ان پٹ، سکرین شاٹس، اور کمپوزیٹر ونڈو ٹارگیٹنگ شامل ہے۔
 - 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — کمیونٹی وی چیٹ (WeChat) برج: ہرمیس ایجنٹ اور OpenClaw کو ایک ہی وی چیٹ اکاؤنٹ پر چلائیں۔
 
 ---
 
+## بنیادیں (Foundations)
+
+Indagis Agent، [Hermes Agent](https://github.com/NousResearch/hermes-agent) (نوس ریسرچ، MIT لائسنس) پر تعمیر کیا گیا ہے۔ ہرمیس ایجنٹ (Hermes Agent) ایجنٹ انجن، LLM پرووائیڈر لیئر، میسجنگ گیٹ وے، سکل آرکیسٹریشن، اور سیشن پرسسٹنس فراہم کرتا ہے۔ Indagis Agent صارف کے سامنے آنے والے شیل (shell) کو ری برانڈ کرتا ہے، انڈاگس (Indagis) کے کلر پیلیٹ کا اطلاق کرتا ہے، UI اجزاء کو سائبر سیکیورٹی تحقیقات کے تناظر سے ہم آہنگ کرتا ہے، اور اس پر تحقیقات سے مخصوص ڈیٹا ماڈل اور CLI (`Investigation` / `Evidence` / `Finding` / `Timeline`) کا اضافہ کرتا ہے۔
+
+<div dir="ltr">
+
+| | |
+|---|---|
+| **Engine (انجن)** | Hermes Agent v0.20 (MIT) — `agent/`, `providers/`, `tools/`, `gateway/`, `skills/` |
+| **Investigation layer (تحقیقات کی تہہ)** | Indagis Agent v0.1 (یہ ریپوزیٹری) — `hermes_cli/investigation_*.py` |
+| **License (لائسنس)** | MIT (نوس ریسرچ + Indagis Agent کے تعاون کنندگان) |
+
+</div>
+
 ## لائسنس (License)
 
 MIT — تفصیلات کے لیے [LICENSE](LICENSE) دیکھیں۔
 
-[نوس ریسرچ (Nous Research)](https://nousresearch.com) کی جانب سے تیار کردہ۔
+انجن [نوس ریسرچ (Nous Research)](https://nousresearch.com) کی جانب سے تیار کردہ۔
 
 </div>
