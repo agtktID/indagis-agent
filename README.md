@@ -3,25 +3,26 @@
 </p>
 
 <h1 align="center">Indagis Agent</h1>
-# Hermes Agent ☤
+<p align="center"><b>AI workspace for cybersecurity investigation — OSINT, threat intel, DFIR.</b></p>
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/">Hermes Agent</a> | <a href="https://hermes-agent.nousresearch.com/">Hermes Desktop</a>
+  Built on <a href="https://hermes-agent.nousresearch.com/">Hermes Agent</a> (Nous Research, MIT)
 </p>
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="Built by Nous Research"></a>
+  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Engine%20Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Engine Documentation"></a>
+  <a href="https://github.com/agtktID/indagis-agent/issues"><img src="https://img.shields.io/badge/Issues-agtktID%2Findagis--agent-blue?style=for-the-badge&logo=github" alt="Issues"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-Hermes%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
   <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/Lang-中文-red?style=for-the-badge" alt="中文"></a>
   <a href="README.ur-pk.md"><img src="https://img.shields.io/badge/Lang-اردو-green?style=for-the-badge" alt="اردو"></a>
   <a href="README.es.md"><img src="https://img.shields.io/badge/Lang-Español-orange?style=for-the-badge" alt="Español"></a>
 </p>
 
-**The self-improving AI agent built by [Nous Research](https://nousresearch.com).** It's the only agent with a built-in learning loop — it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
+**Indagis Agent is an open-core AI workspace for cybersecurity investigation** — OSINT, threat intelligence, and DFIR (digital forensics & incident response). It tracks security work as persisted **Investigations**: an objective, an authorized scope, evidence, findings, and a timeline, all built on a self-improving agent engine — the only agent with a built-in learning loop, creating and refining skills from experience, nudging itself to persist knowledge, and building a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
 
 Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenRouter, OpenAI, your own endpoint, and [many others](https://hermes-agent.nousresearch.com/docs/integrations/providers). Switch with `hermes model` — no code changes, no lock-in.
 
 <table>
+<tr><td><b>Authorization-gated investigations</b></td><td>Persisted <code>Investigation</code> model — objective, authorized scope, evidence, findings, timeline. Every recorded target is checked against scope before being written (fail-closed), with <code>--dry-run</code> previews and Markdown/JSON export.</td></tr>
 <tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
 <tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
 <tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
@@ -43,7 +44,7 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 
 ### Windows (native, PowerShell)
 
-> **Heads up:** Native Windows runs Hermes without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/NousResearch/hermes-agent/issues).
+> **Heads up:** Native Windows runs Hermes without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/agtktID/indagis-agent/issues).
 
 Run this in PowerShell:
 
@@ -119,6 +120,31 @@ hermes doctor       # Diagnose any issues
 ```
 
 📖 **[Full documentation →](https://hermes-agent.nousresearch.com/docs/)**
+
+---
+
+## Investigations
+
+Indagis Agent tracks security work as first-class **Investigations** — persisted, authorization-scoped units of work with evidence, findings, and a timeline. Every result carries provenance (source, tool, target, date, optional hash, confidence level), and every action that records a target is checked against the investigation's authorized scope before it's written.
+
+```bash
+hermes investigation create "Assess acme-corp exposure" --scope acme.example
+
+hermes investigation add-evidence <investigation> \
+  --description "Open port 443" --source nmap-scan --tool nmap \
+  --target acme.example --confidence high
+
+hermes investigation add-finding <investigation> \
+  --summary "TLS misconfiguration" --severity high --evidence <evidence-id> \
+  --source analyst --tool manual --target acme.example --confidence high
+
+hermes investigation show <investigation>
+hermes investigation export <investigation> --format md --output ./reports
+```
+
+- **Fail-closed authorization** — evidence and findings for a target outside the investigation's declared scope are refused with an explicit reason; `--dry-run` previews the authorization verdict without writing anything.
+- **Full command list**: `create`, `list` (`ls`), `show` (`open`), `add-evidence`, `add-finding`, `export`, `close`, `reopen`, `archive`.
+- **Export**: Markdown (with a SHA256 integrity line over the exported body) or JSON, both carrying full provenance and the timeline.
 
 ---
 
@@ -252,23 +278,24 @@ scripts/run_tests.sh
 
 - 💬 [Discord](https://discord.gg/NousResearch)
 - 📚 [Skills Hub](https://agentskills.io)
-- 🐛 [Issues](https://github.com/NousResearch/hermes-agent/issues)
+- 🐛 [Issues](https://github.com/agtktID/indagis-agent/issues)
 - 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Linux desktop-control MCP server for Hermes and other MCP hosts, with AT-SPI accessibility trees, Wayland/X11 input, screenshots, and compositor window targeting.
 - 🔌 [HermesClaw](https://github.com/AaronWong1999/hermesclaw) — Community WeChat bridge: Run Hermes Agent and OpenClaw on the same WeChat account.
 
 ---
 
+## Foundations
+
+Indagis Agent is built on [Hermes Agent](https://github.com/NousResearch/hermes-agent) (Nous Research, MIT License). Hermes Agent provides the agent engine, LLM provider layer, messaging gateway, skill orchestration, and session persistence. Indagis Agent rebrands the user-facing shell, applies the Indagis palette, adapts UI components to a cybersecurity investigation context, and adds the investigation-specific data model and CLI (`Investigation` / `Evidence` / `Finding` / `Timeline`) on top.
+
+| | |
+|---|---|
+| **Engine** | Hermes Agent v0.20 (MIT) — `agent/`, `providers/`, `tools/`, `gateway/`, `skills/` |
+| **Investigation layer** | Indagis Agent v0.1 (this repository) — `hermes_cli/investigation_*.py` |
+| **License** | MIT (Nous Research + Indagis Agent contributors) |
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
 
-Built by [Nous Research](https://nousresearch.com).
-
-
-## Fondations
-
-Indagis Agent est bâti sur [Hermes Agent](https://github.com/NousResearch/hermes-agent) (NousResearch, MIT License). Hermes Agent fournit le moteur d'agent, la couche de providers LLM, le gateway de messagerie, l'orchestration de skills et la persistance de sessions. Indagis Agent rebrand le shell utilisateur, applique la palette Indagis et adapte les composants UI au contexte d'investigation cybersécurité.
-
-**Moteur** : Hermes Agent v0.20 (MIT) — `agent/`, `providers/`, `tools/`, `gateway/`, `skills/`
-**Identité** : Indagis Agent v0.1 (Ce dépôt)
-**Licence** : MIT (NousResearch + Indagis Agent)
+Engine built by [Nous Research](https://nousresearch.com).
