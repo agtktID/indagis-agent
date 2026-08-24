@@ -19,7 +19,7 @@
 
 **Indagis Agent is an open-core AI workspace for cybersecurity investigation** — OSINT, threat intelligence, and DFIR (digital forensics & incident response). It tracks security work as persisted **Investigations**: an objective, an authorized scope, evidence, findings, and a timeline, all built on a self-improving agent engine — the only agent with a built-in learning loop, creating and refining skills from experience, nudging itself to persist knowledge, and building a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
 
-Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenRouter, OpenAI, your own endpoint, and [many others](https://hermes-agent.nousresearch.com/docs/integrations/providers). Switch with `hermes model` — no code changes, no lock-in.
+Use any model you want — [Nous Portal](https://portal.nousresearch.com), OpenRouter, OpenAI, your own endpoint, and [many others](https://hermes-agent.nousresearch.com/docs/integrations/providers). Switch with `indagis model` — no code changes, no lock-in.
 
 <table>
 <tr><td><b>Authorization-gated investigations</b></td><td>Persisted <code>Investigation</code> model — objective, authorized scope, evidence, findings, timeline. Every recorded target is checked against scope before being written (fail-closed), with <code>--dry-run</code> previews and Markdown/JSON export.</td></tr>
@@ -70,7 +70,7 @@ After installation:
 
 ```bash
 source ~/.bashrc    # reload shell (or: source ~/.zshrc)
-hermes              # start chatting!
+indagis             # start chatting!
 ```
 
 ### Troubleshooting
@@ -113,16 +113,16 @@ For more context, see the upstream Astral reports: [astral-sh/uv#13553](https://
 ## Getting Started
 
 ```bash
-hermes              # Interactive CLI — start a conversation
-hermes model        # Choose your LLM provider and model
-hermes tools        # Configure which tools are enabled
-hermes config set   # Set individual config values
-hermes config get   # Print individual config values
-hermes gateway      # Start the messaging gateway (Telegram, Discord, etc.)
-hermes setup        # Run the full setup wizard (configures everything at once)
-hermes claw migrate # Migrate from OpenClaw (if coming from OpenClaw)
-hermes update       # Update to the latest version
-hermes doctor       # Diagnose any issues
+indagis              # Interactive CLI — start a conversation
+indagis model        # Choose your LLM provider and model
+indagis tools        # Configure which tools are enabled
+indagis config set   # Set individual config values
+indagis config get   # Print individual config values
+indagis gateway      # Start the messaging gateway (Telegram, Discord, etc.)
+indagis setup        # Run the full setup wizard (configures everything at once)
+indagis claw migrate # Migrate from OpenClaw (if coming from OpenClaw)
+indagis update       # Update to the latest version
+indagis doctor       # Diagnose any issues
 ```
 
 📖 **[Full documentation →](https://hermes-agent.nousresearch.com/docs/)**
@@ -134,22 +134,22 @@ hermes doctor       # Diagnose any issues
 A local web UI for managing config, API keys, sessions, and (optionally) the desktop's plugin surface. No account and no domain required — it's a local HTTP server.
 
 ```bash
-hermes dashboard              # starts on http://127.0.0.1:9119, opens your browser
-hermes dashboard --port 8080  # custom port
-hermes dashboard --host 0.0.0.0  # bind non-loopback (requires an auth provider — see below)
-hermes dashboard --status     # check whether it's running
-hermes dashboard --stop       # stop it
+indagis dashboard              # starts on http://127.0.0.1:9119, opens your browser
+indagis dashboard --port 8080  # custom port
+indagis dashboard --host 0.0.0.0  # bind non-loopback (requires an auth provider — see below)
+indagis dashboard --status     # check whether it's running
+indagis dashboard --stop       # stop it
 ```
 
-Binding to anything other than loopback (`127.0.0.1`) requires an auth provider — set `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` + `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD`, or configure OAuth. `hermes dashboard register` optionally registers a self-hosted dashboard with Nous Portal — entirely optional, only needed if you want Portal-backed OAuth login instead of basic auth.
+Binding to anything other than loopback (`127.0.0.1`) requires an auth provider — set `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` + `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD`, or configure OAuth. `indagis dashboard register` optionally registers a self-hosted dashboard with Nous Portal — entirely optional, only needed if you want Portal-backed OAuth login instead of basic auth.
 
 ## Desktop
 
 The native Electron app (chat window, session sidebar, plugins).
 
 ```bash
-hermes desktop     # builds (first run) and launches the packaged app for your OS
-hermes gui         # same command, alias
+indagis desktop     # builds (first run) and launches the packaged app for your OS
+indagis gui         # same command, alias
 ```
 
 **Building distributable installers yourself** (Linux/Windows), from a git checkout:
@@ -185,18 +185,18 @@ To also run the dashboard container: `docker compose up -d dashboard` (binds `12
 Indagis Agent tracks security work as first-class **Investigations** — persisted, authorization-scoped units of work with evidence, findings, and a timeline. Every result carries provenance (source, tool, target, date, optional hash, confidence level), and every action that records a target is checked against the investigation's authorized scope before it's written.
 
 ```bash
-hermes investigation create "Assess acme-corp exposure" --scope acme.example
+indagis investigation create "Assess acme-corp exposure" --scope acme.example
 
-hermes investigation add-evidence <investigation> \
+indagis investigation add-evidence <investigation> \
   --description "Open port 443" --source nmap-scan --tool nmap \
   --target acme.example --confidence high
 
-hermes investigation add-finding <investigation> \
+indagis investigation add-finding <investigation> \
   --summary "TLS misconfiguration" --severity high --evidence <evidence-id> \
   --source analyst --tool manual --target acme.example --confidence high
 
-hermes investigation show <investigation>
-hermes investigation export <investigation> --format md --output ./reports
+indagis investigation show <investigation>
+indagis investigation export <investigation> --format md --output ./reports
 ```
 
 - **Fail-closed authorization** — evidence and findings for a target outside the investigation's declared scope are refused with an explicit reason; `--dry-run` previews the authorization verdict without writing anything.
@@ -210,7 +210,7 @@ hermes investigation export <investigation> --format md --output ./reports
 Any Hermes profile can be a **teammate agent**: give it a `ui_meta.hermes-bots` block in `profile.yaml`, and its canonical `"Bot Chat"` session gains a `message_agent` tool for messaging other bots on the same install. Delivery is fire-and-forget — the message lands in the target's Bot Chat with your handle prefixed, and the reply arrives later as a background completion notification, exactly like any other async tool result.
 
 ```bash
-hermes profile create researcher
+indagis profile create researcher
 ```
 
 ```yaml
@@ -225,7 +225,7 @@ Once at least one profile carries that block, every Bot Chat session on the inst
 
 - **Containment** — the tool is injected only into a session titled exactly `"Bot Chat"` on a Bot-Mode-managed install, re-checked again at dispatch time, and never appears in the global tool registry, CLI sessions, group chats, cron agents, or subagents.
 - **Config toggle**: `agent.bot_mode_protocol` in `config.yaml` (default `true`).
-- **Current scope**: this is the backend messaging protocol only — profiles are wired by hand-editing `profile.yaml` as shown above. The desktop plugin (Bots roster UI, avatars, group chats, cron routines) and the `hermes peer` CLI for cross-machine messaging are not yet implemented in this fork.
+- **Current scope**: this is the backend messaging protocol only — profiles are wired by hand-editing `profile.yaml` as shown above. The desktop plugin (Bots roster UI, avatars, group chats, cron routines) and the `indagis peer` CLI for cross-machine messaging are not yet implemented in this fork.
 
 ---
 
@@ -239,10 +239,10 @@ Hermes works with whatever provider you want — that's not changing. But if you
 One command from a fresh install:
 
 ```bash
-hermes setup --portal
+indagis setup --portal
 ```
 
-That logs you in via OAuth, sets Nous as your provider, and turns on the Tool Gateway. Check what's wired up any time with `hermes portal info`. Full details on the [Tool Gateway docs page](https://hermes-agent.nousresearch.com/docs/user-guide/features/tool-gateway).
+That logs you in via OAuth, sets Nous as your provider, and turns on the Tool Gateway. Check what's wired up any time with `indagis portal info`. Full details on the [Tool Gateway docs page](https://hermes-agent.nousresearch.com/docs/user-guide/features/tool-gateway).
 
 You can still bring your own keys per-tool whenever you want — the gateway is per-backend, not all-or-nothing.
 
@@ -250,11 +250,11 @@ You can still bring your own keys per-tool whenever you want — the gateway is 
 
 ## CLI vs Messaging Quick Reference
 
-Hermes has two entry points: start the terminal UI with `hermes`, or run the gateway and talk to it from Telegram, Discord, Slack, WhatsApp, Signal, or Email. Once you're in a conversation, many slash commands are shared across both interfaces.
+Hermes has two entry points: start the terminal UI with `indagis`, or run the gateway and talk to it from Telegram, Discord, Slack, WhatsApp, Signal, or Email. Once you're in a conversation, many slash commands are shared across both interfaces.
 
 | Action                         | CLI                                           | Messaging platforms                                                              |
 | ------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------- |
-| Start chatting                 | `hermes`                                      | Run `hermes gateway setup` + `hermes gateway start`, then send the bot a message |
+| Start chatting                 | `indagis`                                     | Run `indagis gateway setup` + `indagis gateway start`, then send the bot a message |
 | Start fresh conversation       | `/new` or `/reset`                            | `/new` or `/reset`                                                               |
 | Change model                   | `/model [provider:model]`                     | `/model [provider:model]`                                                        |
 | Set a personality              | `/personality [name]`                         | `/personality [name]`                                                            |
@@ -296,15 +296,15 @@ All documentation lives at **[hermes-agent.nousresearch.com/docs](https://hermes
 
 If you're coming from OpenClaw, Hermes can automatically import your settings, memories, skills, and API keys.
 
-**During first-time setup:** The setup wizard (`hermes setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
+**During first-time setup:** The setup wizard (`indagis setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
 
 **Anytime after install:**
 
 ```bash
-hermes claw migrate              # Interactive migration (full preset)
-hermes claw migrate --dry-run    # Preview what would be migrated
-hermes claw migrate --preset user-data   # Migrate without secrets
-hermes claw migrate --overwrite  # Overwrite existing conflicts
+indagis claw migrate              # Interactive migration (full preset)
+indagis claw migrate --dry-run    # Preview what would be migrated
+indagis claw migrate --preset user-data   # Migrate without secrets
+indagis claw migrate --overwrite  # Overwrite existing conflicts
 ```
 
 What gets imported:
@@ -318,44 +318,44 @@ What gets imported:
 - **TTS assets** — workspace audio files
 - **Workspace instructions** — AGENTS.md (with `--workspace-target`)
 
-See `hermes claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
+See `indagis claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
 
 ---
 
 ## Configuration & Providers
 
 ```bash
-hermes model              # interactive picker: pick a provider + model
-hermes config set <key> <value>   # set one config value (e.g. agent.bot_mode_protocol false)
-hermes config get <key>           # read one config value
-hermes doctor              # diagnose provider/config/environment issues
+indagis model              # interactive picker: pick a provider + model
+indagis config set <key> <value>   # set one config value (e.g. agent.bot_mode_protocol false)
+indagis config get <key>           # read one config value
+indagis doctor              # diagnose provider/config/environment issues
 ```
 
-Config lives at `~/.indagis/config.yaml` (or `%LOCALAPPDATA%\hermes\config.yaml` on native Windows); provider API keys go in `.env` (copy `.env.example` to `~/.indagis/.env` or set them via `hermes secrets`). No provider is required to try the CLI in a limited capacity, but you need at least one configured (via `hermes model`, `hermes setup`, or Nous Portal below) to actually chat.
+Config lives at `~/.indagis/config.yaml` (or `%LOCALAPPDATA%\hermes\config.yaml` on native Windows); provider API keys go in `.env` (copy `.env.example` to `~/.indagis/.env` or set them via `indagis secrets`). No provider is required to try the CLI in a limited capacity, but you need at least one configured (via `indagis model`, `indagis setup`, or Nous Portal below) to actually chat.
 
 ## Nous Portal (optional)
 
 Entirely optional — connects your own Nous Portal subscription so you don't have to collect separate API keys for the model, web search, image generation, TTS, and a cloud browser. No Indagis account, no separate signup for Indagis itself.
 
 ```bash
-hermes setup --portal     # OAuth login, sets Nous as provider, enables the Tool Gateway
-hermes portal info        # check what's wired up
+indagis setup --portal     # OAuth login, sets Nous as provider, enables the Tool Gateway
+indagis portal info        # check what's wired up
 ```
 
 ## Updating
 
 ```bash
-hermes update --check   # see if an update is available, without installing
-hermes update           # pull latest + reinstall dependencies
+indagis update --check   # see if an update is available, without installing
+indagis update           # pull latest + reinstall dependencies
 ```
 
 ## Uninstalling
 
 ```bash
-hermes uninstall --dry-run   # preview what would be removed, changes nothing
-hermes uninstall             # remove the CLI/gateway, keep config & data for a future reinstall
-hermes uninstall --full      # remove everything, including ~/.indagis config and data
-hermes uninstall --gui       # remove only the desktop app, leave the CLI/agent intact
+indagis uninstall --dry-run   # preview what would be removed, changes nothing
+indagis uninstall             # remove the CLI/gateway, keep config & data for a future reinstall
+indagis uninstall --full      # remove everything, including ~/.indagis config and data
+indagis uninstall --gui       # remove only the desktop app, leave the CLI/agent intact
 ```
 
 ## Troubleshooting
@@ -364,8 +364,8 @@ hermes uninstall --gui       # remove only the desktop app, leave the CLI/agent 
 - **Windows Defender/antivirus flags `uv.exe`**: see the dedicated section under [Quick Install](#quick-install) above — it's a documented false positive with a verification procedure.
 - **Docker: files under `~/.hermes` become unreadable after `docker compose up`**: you forgot `HERMES_UID`/`HERMES_GID` — see [Docker](#docker) above. Fix with `sudo chown -R $(id -u):$(id -g) ~/.hermes`.
 - **Docker: `.rpm` build fails locally**: install the `rpm` package (`sudo apt-get install rpm` on Debian/Ubuntu) — electron-builder's FPM tooling needs `rpmbuild` on the host.
-- **`hermes doctor`** is the first stop for anything else — it checks provider config, environment, and common misconfigurations.
-- **Still stuck?** [Open an issue](https://github.com/agtktID/indagis-agent/issues) with `hermes doctor` output attached.
+- **`indagis doctor`** is the first stop for anything else — it checks provider config, environment, and common misconfigurations.
+- **Still stuck?** [Open an issue](https://github.com/agtktID/indagis-agent/issues) with `indagis doctor` output attached.
 
 ---
 
@@ -375,7 +375,7 @@ We welcome contributions! See the [Contributing Guide](CONTRIBUTING.md) for deve
 
 Quick start for contributors — use the standard installer, then work from the
 full git checkout it creates at `$INDAGIS_HOME/hermes-agent` (usually
-`~/.indagis/hermes-agent`). This matches the layout used by `hermes update`, the
+`~/.indagis/hermes-agent`). This matches the layout used by `indagis update`, the
 managed venv, lazy dependencies, gateway, and docs tooling.
 
 ```bash

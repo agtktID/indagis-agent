@@ -30,7 +30,7 @@
 # other path.
 #
 # Recursion safety: the shim exec's the venv binary by *absolute path*
-# (/opt/indagis/.venv/bin/hermes), so the second hop cannot re-enter this
+# (/opt/indagis/.venv/bin/indagis), so the second hop cannot re-enter this
 # shim regardless of PATH state. No sentinel env var needed.
 #
 # Opt-out: set HERMES_DOCKER_EXEC_AS_ROOT=1 (1/true/yes, case-insensitive)
@@ -40,7 +40,7 @@
 
 set -e
 
-REAL=/opt/indagis/.venv/bin/hermes
+REAL=/opt/indagis/.venv/bin/indagis
 
 # Defensive: if the venv binary is missing (corrupted image, partial
 # install), fail loudly rather than silently masking it.

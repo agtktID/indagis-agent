@@ -51,6 +51,6 @@ case "${HERMES_DASHBOARD_INSECURE:-}" in
 esac
 
 # Skip the drop when already non-root.
-[ "$(id -u)" = 0 ] || exec hermes dashboard --host "$dash_host" --port "$dash_port" --no-open
-exec s6-setuidgid hermes hermes dashboard \
+[ "$(id -u)" = 0 ] || exec indagis dashboard --host "$dash_host" --port "$dash_port" --no-open
+exec s6-setuidgid hermes indagis dashboard \
     --host "$dash_host" --port "$dash_port" --no-open

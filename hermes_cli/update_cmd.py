@@ -758,7 +758,7 @@ def _update_via_zip(args):
     print("→ Downloading latest version...")
     tmp_dir = tempfile.mkdtemp(prefix="hermes-update-")
     try:
-        zip_path = os.path.join(tmp_dir, f"hermes-agent-{branch}.zip")
+        zip_path = os.path.join(tmp_dir, f"indagis-agent-{branch}.zip")
         urlretrieve(zip_url, zip_path)
 
         print("→ Extracting...")
@@ -788,10 +788,11 @@ def _update_via_zip(args):
                     )
             zf.extractall(tmp_dir)
 
-        # GitHub ZIPs extract to hermes-agent-<branch>/
-        extracted = os.path.join(tmp_dir, f"hermes-agent-{branch}")
+        # GitHub ZIPs extract to <repo>-<branch>/ — the repo is agtktID/indagis-agent.
+        extracted = os.path.join(tmp_dir, f"indagis-agent-{branch}")
         if not os.path.isdir(extracted):
-            # Try to find it
+            # Fallback for forks/renames where the archive folder name doesn't
+            # match the repo name assumed above.
             for d in os.listdir(tmp_dir):
                 candidate = os.path.join(tmp_dir, d)
                 if os.path.isdir(candidate) and d != "__MACOSX":
