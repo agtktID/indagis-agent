@@ -201,71 +201,70 @@ class SkinConfig:
 _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
     "default": {
         "name": "default",
-        "description": "Classic Hermes — gold and kawaii",
-        # Dark-authored. Values match the TUI's DARK_THEME so the classic CLI
-        # and the TUI render the same Hermes gold.
+        "description": "Indagis — cyber cyan, professional",
+        # Dark-authored. Indagis cyber-cyan palette — obsidian surfaces,
+        # cyan accents, WCAG-checked against the terminal's near-black
+        # background (see tests/hermes_cli/test_skin_palettes.py).
         "colors": {
-            "banner_border": "#CD7F32",
-            "banner_title": "#FFD700",
-            "banner_accent": "#FFBF00",
-            "banner_dim": "#B8860B",
-            "banner_text": "#FFF8DC",
-            "ui_accent": "#FFBF00",
-            "ui_label": "#DAA520",
-            "ui_ok": "#4caf50",
-            "ui_error": "#ef5350",
-            "ui_warn": "#ffa726",
-            "prompt": "#FFF8DC",
-            "input_rule": "#CD7F32",
-            "response_border": "#FFD700",
-            "status_bar_bg": "#1a1a2e",
-            "status_bar_text": "#C0C0C0",
-            "status_bar_strong": "#FFD700",
-            "status_bar_dim": "#8A7A4A",
-            "status_bar_good": "#8FBC8F",
-            "status_bar_warn": "#FFD700",
-            "status_bar_bad": "#FF8C00",
-            "status_bar_critical": "#FF6B6B",
-            "session_label": "#DAA520",
-            "session_border": "#8B8682",
-            "completion_menu_bg": "#1a1a2e",
-            "completion_menu_current_bg": "#333355",
-            "selection_bg": "#3a3a55",
-            "shell_dollar": "#4dabf7",
-            "voice_status_bg": "#1a1a2e",
+            "banner_border": "#5A6E85",
+            "banner_title": "#37D5D6",
+            "banner_accent": "#37D5D6",
+            "banner_dim": "#7A8595",
+            "banner_text": "#E2E8F0",
+            "ui_accent": "#37D5D6",
+            "ui_label": "#B0C4D8",
+            "ui_ok": "#2CB67D",
+            "ui_error": "#C74B50",
+            "ui_warn": "#E0A33A",
+            "prompt": "#E2E8F0",
+            "input_rule": "#5A6E85",
+            "response_border": "#37D5D6",
+            "status_bar_bg": "#0B0F14",
+            "status_bar_text": "#B0C4D8",
+            "status_bar_strong": "#37D5D6",
+            "status_bar_dim": "#7A8595",
+            "status_bar_good": "#2CB67D",
+            "status_bar_warn": "#E0A33A",
+            "status_bar_bad": "#C74B50",
+            "status_bar_critical": "#C74B50",
+            "session_label": "#B0C4D8",
+            "session_border": "#5A6E85",
+            "completion_menu_bg": "#121A24",
+            "completion_menu_current_bg": "#1D2733",
+            "selection_bg": "#1D2733",
+            "shell_dollar": "#37D5D6",
+            "voice_status_bg": "#0B0F14",
         },
         # Light overlay (merged onto `colors`; dark mode renders the vivid
-        # block above untouched). The goldenrod ladder: on white, the vivid
-        # #FFD700/#FFBF00 read as glare and WCAG-darkened mustard (#867000)
-        # reads as mud — the sweet spot is the statusbar's goldenrod family
-        # (#B8860B/#DAA520): hue kept, saturation tamed, mid luminance.
-        # Hierarchy on white: ink body 8.9:1 > fade 5.2 > label 3.7 >
-        # muted 3.3 > title 2.7 > headers 2.4 (accents recede last, like
-        # slate's pastels — the raw-canon look, just not neon).
+        # block above untouched). Cyber Cyan ladder: the vivid #37D5D6 reads
+        # too bright on white, so light mode uses a deeper teal (#0891A8/#0EA5B5)
+        # — same hue family, tamed saturation and luminance for legibility.
+        # Exact contrast ratios are enforced by test_skin_palettes.py, not
+        # hardcoded here.
         "light_colors": {
-            "banner_title": "#C8961E",
-            "banner_accent": "#D89B04",
-            "banner_dim": "#B8860B",
-            "banner_text": "#5C4718",
-            "ui_accent": "#D89B04",
-            "ui_label": "#A97E10",
+            "banner_title": "#0891A8",
+            "banner_accent": "#0EA5B5",
+            "banner_dim": "#4A5568",
+            "banner_text": "#1A2B33",
+            "ui_accent": "#0EA5B5",
+            "ui_label": "#3D6B75",
             "ui_ok": "#2E7D32",
             "ui_error": "#C62828",
             "ui_warn": "#D97706",
-            "prompt": "#5C4718",
-            "response_border": "#C8961E",
-            "session_label": "#A97E10",
+            "prompt": "#1A2B33",
+            "response_border": "#0891A8",
+            "session_label": "#3D6B75",
             "status_bar_text": "#6F6F6F",
-            "status_bar_strong": "#C8961E",
-            "status_bar_dim": "#9A8A5A",
+            "status_bar_strong": "#0891A8",
+            "status_bar_dim": "#7A8A8A",
             "status_bar_good": "#2E7D32",
-            "status_bar_warn": "#C8961E",
+            "status_bar_warn": "#0891A8",
             "status_bar_bad": "#C2410C",
             "status_bar_critical": "#B91C1C",
             "shell_dollar": "#1E6FC0",
             # Fills: flip the dark navy surfaces to light polarity.
             "completion_menu_bg": "#F5F5F5",
-            "completion_menu_current_bg": "#E0D1BF",
+            "completion_menu_current_bg": "#9DC8D5",
             "selection_bg": "#D4E4F7",
             "status_bar_bg": "#F5F5F5",
             "voice_status_bg": "#F5F5F5",
@@ -274,14 +273,36 @@ _BUILTIN_SKINS: Dict[str, Dict[str, Any]] = {
             # Empty = use hardcoded defaults in display.py
         },
         "branding": {
-            "agent_name": "Hermes Agent",
-            "welcome": "Welcome to Hermes Agent! Type your message or /help for commands.",
-            "goodbye": "Goodbye! ⚕",
-            "response_label": " ⚕ Hermes ",
+            "agent_name": "Indagis Agent",
+            "welcome": "Welcome to Indagis Agent! Type your message or /help for commands.",
+            "goodbye": "Goodbye!",
+            "response_label": " Indagis ",
             "prompt_symbol": "❯",
             "help_header": "(^_^)? Available Commands",
         },
         "tool_prefix": "┊",
+        # Braille-art rendition of assets/indagis-agent-logo.png (crows +
+        # butterfly mark), generated by sampling the source PNG: blur the
+        # sparse scattered-glyph texture into a solid silhouette before
+        # thresholding into braille dots, then color each dot from the
+        # brightest *unblurred* source pixel in its region so the vivid
+        # cyan butterfly core survives instead of averaging down to navy.
+        # See the conversion script referenced in the PR that added this.
+        "banner_hero": """[#33E6E6]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#141C4D]⠀⠀⠀⠀⠀⠀⣴⡆⠀⠀[/][#33E6E6]⢠⣾⠟⠀⠀⠀⠀⢻⣷⣄[/][#141C4D]⠀⠀⢠⣆⠀⠀⠀⠀⠀⠀[/]
+[#141C4D]⠀⠀⠀⠀⠀⠼⠋⠀⠀[/][#33E6E6]⣰⣿⡟⠀⢀⡀⠀⠀⠀⢻⣿⣆[/][#141C4D]⠀⠀⠙⠣⠀⠀⠀⠀⠀[/]
+[#2B5FE0]⠀⠀⠀⠀⠀⠀⢀⡀[/][#33E6E6]⢠⣿⣿[/][#141C4D]⠀⢀[/][#33E6E6]⣾⣿⡆⠀⠀⠀⣿⣿⡄[/][#2B5FE0]⢀⡀⠀⠀⠀⠀⠀⠀[/]
+[#33E6E6]⠀⠀⠀⠀⣤⣴⡿[/][#2B5FE0]⠗[/][#33E6E6]⢿⣿⡇⠀[/][#2B5FE0]⠘[/][#33E6E6]⢿⣿⣿⡄⠀⠀⢸⣿⡿[/][#2B5FE0]⠻[/][#33E6E6]⢿⣤⣤⠀⠀⠀⠀[/]
+[#2B5FE0]⠀⠀⣠⣾[/][#33E6E6]⣿⣿⣿⣶⣾[/][#2B5FE0]⡉[/][#33E6E6]⠁⣠[/][#2B5FE0]⣀[/][#33E6E6]⣼⣿⣿⣧[/][#2B5FE0]⣠[/][#33E6E6]⣤[/][#2B5FE0]⠚⢋[/][#33E6E6]⣿⣶⣿⣿⣿[/][#2B5FE0]⣷⣄⠀⠀[/]
+[#2B5FE0]⠀⢰⣿⣿⣿[/][#33E6E6]⣿⣿⣿⣿⣿⣶⣿⣿⣿⡿⢿⣿⣿⣿⣶⣿⣿⣿⢿⣿[/][#2B5FE0]⣿⣿⣿⡆⠀[/]
+[#2B5FE0]⠀⠛⢿⣿⣿⡿⠁⡟[/][#33E6E6]⠹⣿⣿⣿⣿⣿⣷⣾⣿⣿⣿⣿⣿⣯[/][#2B5FE0]⡀⠀⢿⣿⣿⡿⠿⠀[/]
+[#2B5FE0]⠀⠀⠀⠉⢿⡇⠸⣷⣤⣿[/][#33E6E6]⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿[/][#2B5FE0]⣿⣿⣿⠀⢸⣿⠉⠀⠀⠀[/]
+[#2B5FE0]⠀⠀⠀⠀⠀⠀⠀⠹[/][#33E6E6]⣿[/][#2B5FE0]⣿⣾[/][#33E6E6]⣿⣿⣿⣿⣿⣿⣿⡟[/][#2B5FE0]⠃⣿[/][#33E6E6]⣿[/][#2B5FE0]⠁⠀⠀⠉⠀⠀⠀⠀[/]
+[#33E6E6]⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿[/][#2B5FE0]⠋⠈[/][#33E6E6]⣿⣿⣿⣿⣿⣿[/][#2B5FE0]⠁⠀[/][#33E6E6]⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#33E6E6]⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⡇⠀[/][#33E6E6]⢸⡿[/][#141C4D]⠃⠘[/][#33E6E6]⢿⡇⠀⣸⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#33E6E6]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣄[/][#2B5FE0]⣼⣅⣀⣀⣸⣷[/][#33E6E6]⣠⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#33E6E6]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿[/][#2B5FE0]⣿⣿⣿⣿⣿[/][#33E6E6]⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#2B5FE0]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢻⣿⣿⡟⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]""",
     },
     "ares": {
         "name": "ares",
