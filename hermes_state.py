@@ -879,7 +879,7 @@ def _wal_reset_repair_hint() -> str:
         method = detect_install_method(get_project_root())
         cmd = recommended_update_command_for_method(method)
         if method in {"git", "unknown"}:
-            return f"Hermes-managed installs can repair the embedded runtime with `{cmd}`"
+            return f"Indagis-managed installs can repair the embedded runtime with `{cmd}`"
         if method == "docker":
             return f"update the container image with `{cmd}`"
         # nix/nixos
@@ -888,7 +888,7 @@ def _wal_reset_repair_hint() -> str:
         pass
     return (
         "install a Python build bundled with SQLite 3.51.3+ "
-        "(or backports 3.50.7 / 3.44.6) and restart Hermes"
+        "(or backports 3.50.7 / 3.44.6) and restart Indagis"
     )
 
 
@@ -916,7 +916,7 @@ def _log_wal_reset_bug_once(
         "%s: linked SQLite %s is vulnerable to the WAL-reset corruption "
         "bug (https://sqlite.org/wal.html#walresetbug) — %s. "
         "Upgrade to SQLite 3.51.3+ (or backports 3.50.7 / 3.44.6); "
-        "%s. See `hermes doctor`. This warning fires once per "
+        "%s. See `indagis doctor`. This warning fires once per "
         "process per database.",
         db_label,
         sqlite3.sqlite_version,
@@ -1224,7 +1224,7 @@ def preflight_db_writability(
         )
         raise sqlite3.OperationalError(
             f"{db_label} is not writable: {kind} {p} is read-only for this "
-            f"user. Hermes needs read-write access to open the database. "
+            f"user. Indagis needs read-write access to open the database. "
             f"Fix with: chmod u+rw{'x' if is_dir else ''} '{p}'"
             f" (files owned by another user may need sudo/chown).{wal_note}"
         )
@@ -2399,7 +2399,7 @@ class SessionDB(SessionSearchMixin, SessionSchemaMixin, SessionPortabilityMixin)
         self._fts_unavailable_warned = True
         logger.warning(
             "SQLite FTS5 unavailable for %s; full-text session search "
-            "disabled. Run `hermes update` to rebuild the venv with a "
+            "disabled. Run `indagis update` to rebuild the venv with a "
             "current Python (managed uv guarantees FTS5). "
             "(underlying error: %s)",
             self.db_path,
@@ -2453,7 +2453,7 @@ class SessionDB(SessionSearchMixin, SessionSchemaMixin, SessionPortabilityMixin)
                         "cjk_unicode61 tokenizer is unavailable (%s) — "
                         "dropping the cjk triggers so message writes keep "
                         "working. CJK search falls back to trigram/LIKE; "
-                        "run `hermes sessions optimize-storage` on a host "
+                        "run `indagis sessions optimize-storage` on a host "
                         "with the extension to rebuild.",
                         fts5_cjk_so_path(),
                     )
@@ -2654,7 +2654,7 @@ class SessionDB(SessionSearchMixin, SessionSchemaMixin, SessionPortabilityMixin)
                     # Patience exhausted — say what actually happened so the
                     # surfaced error doesn't read as disk/permission damage.
                     raise sqlite3.OperationalError(
-                        f"database is locked (another Hermes process held the "
+                        f"database is locked (another Indagis process held the "
                         f"state.db write lock for over {patience_s:.0f}s — "
                         "likely a long maintenance operation such as VACUUM, "
                         "a large WAL checkpoint, or an older pre-update "
