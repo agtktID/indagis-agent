@@ -8056,7 +8056,11 @@ def _hermes_exe_shims(scripts_dir: Path) -> list[Path]:
     names = set(_load_console_script_names()) or {"indagis", "indagis-agent", "indagis-acp"}
     # The gateway shim is not a [project.scripts] entry point, but older
     # update/install paths still rewrite and quarantine it.
+    # Both gateway shim names: not a [project.scripts] entry point, so it is
+    # added by hand — and a pre-rebrand install still has hermes-gateway.exe
+    # on disk, which must be quarantined too.
     names.add("indagis-gateway")
+    names.add("hermes-gateway")
     return [scripts_dir / f"{name}.exe" for name in sorted(names)]
 
 

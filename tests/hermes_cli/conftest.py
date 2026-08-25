@@ -54,3 +54,39 @@ def _suppress_concurrent_hermes_gate(request, monkeypatch):
         lambda *_a, **_k: [],
         raising=False,
     )
+
+
+@pytest.fixture(autouse=True)
+def _restore_dashboard_app_state():
+    """Restore ``web_server.app.state.auth_required`` around every test.
+
+    ``web_server.app`` is a module-level FastAPI singleton shared by every test
+    in this directory, and ~18 dashboard-auth test files deliberately flip
+    ``app.state.auth_required`` to exercise the gated (OAuth) mode. None of
+    them put it back, so a leaked ``True`` makes ``auth_middleware`` skip the
+    ``_SESSION_TOKEN`` branch for the rest of the session — every later
+    dashboard test then 401s, purely as a function of file ordering.
+
+    Restoring the previous value keeps those tests' intent intact while making
+    the ones that follow deterministic.
+    """
+    try:
+        from hermes_cli import web_server
+    except Exception:  # pragma: no cover - optional dependency (fastapi) absent
+        yield
+        return
+
+    sentinel = object()
+    previous = getattr(web_server.app.state, "auth_required", sentinel)
+    try:
+        yield
+    finally:
+        if previous is sentinel:
+            # Starlette's State is dict-backed: deleting a key that was never
+            # set raises KeyError, not AttributeError.
+            try:
+                delattr(web_server.app.state, "auth_required")
+            except (AttributeError, KeyError):
+                pass
+        else:
+            web_server.app.state.auth_required = previous
