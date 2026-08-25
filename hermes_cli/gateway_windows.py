@@ -1468,7 +1468,7 @@ def status(deep: bool = False) -> None:
     if not task_installed and not startup_installed and not pids:
         print()
         print("To install:")
-        print("  hermes gateway install")
+        print("  indagis gateway install")
 
 
 def start() -> None:
@@ -1487,7 +1487,7 @@ def start() -> None:
 
         print("✗ Gateway service is not installed")
         if not prompt_yes_no("  Install it now so the gateway starts on login?", True):
-            print("  Run: hermes gateway install")
+            print("  Run: indagis gateway install")
             return
         install(force=False)
         task_installed = is_task_registered()
