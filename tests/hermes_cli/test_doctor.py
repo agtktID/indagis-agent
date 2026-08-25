@@ -172,8 +172,19 @@ class TestHonchoDoctorConfigDetection:
     def test_reports_configured_when_enabled_with_api_key(self, monkeypatch):
         fake_config = SimpleNamespace(enabled=True, api_key="***")
 
+        # Patch the class object directly rather than via monkeypatch's
+        # string form. That form walks the dotted path with getattr hops, and
+        # `plugins.memory` only carries a `honcho` attribute if the submodule
+        # was imported through that exact parent object. Earlier tests in the
+        # same session re-import `plugins.memory`, and because the child stays
+        # cached in sys.modules a later `import plugins.memory.honcho.client`
+        # short-circuits without re-attaching it to the new parent — so the
+        # string form fails purely as a function of test ordering.
+        from plugins.memory.honcho.client import HonchoClientConfig
+
         monkeypatch.setattr(
-            "plugins.memory.honcho.client.HonchoClientConfig.from_global_config",
+            HonchoClientConfig,
+            "from_global_config",
             lambda: fake_config,
         )
 

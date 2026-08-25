@@ -32,6 +32,14 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setenv("HERMES_DASHBOARD_SESSION_TOKEN", "soul-test-token")
     from hermes_cli import web_server
 
+    # web_server resolves _SESSION_TOKEN once, at import time (see
+    # TestSessionTokenInjection in test_web_server.py: the module deliberately
+    # does not re-read the env var afterwards). Setting the env var above only
+    # takes effect if this module happens to be the first to import
+    # web_server, so pin the token explicitly — otherwise every request here
+    # 401s depending on test ordering.
+    monkeypatch.setattr(web_server, "_SESSION_TOKEN", "soul-test-token")
+
     with TestClient(web_server.app, raise_server_exceptions=False) as c:
         c.headers["Authorization"] = "Bearer soul-test-token"
         yield c
