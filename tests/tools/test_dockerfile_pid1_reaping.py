@@ -135,7 +135,7 @@ def test_dockerfile_entrypoint_routes_through_the_init(dockerfile_text):
     if any(name in entrypoint_line for name in _KNOWN_INIT_TOKENS):
         return
 
-    assert "/opt/hermes/docker/entrypoint-dispatch.sh" in entrypoint_line, (
+    assert "/opt/indagis/docker/entrypoint-dispatch.sh" in entrypoint_line, (
         f"Unexpected Dockerfile ENTRYPOINT: {entrypoint_line!r}"
     )
     assert ENTRYPOINT_DISPATCH.exists(), (
@@ -143,7 +143,7 @@ def test_dockerfile_entrypoint_routes_through_the_init(dockerfile_text):
     )
     dispatcher = ENTRYPOINT_DISPATCH.read_text(encoding="utf-8")
     assert 'if [ "$$" -eq 1 ]; then' in dispatcher
-    assert "exec /init /opt/hermes/docker/main-wrapper.sh" in dispatcher, (
+    assert "exec /init /opt/indagis/docker/main-wrapper.sh" in dispatcher, (
         "The entrypoint dispatcher must hand PID-1 execution off to /init; "
         "otherwise the shell becomes PID 1 and zombies will accumulate."
     )

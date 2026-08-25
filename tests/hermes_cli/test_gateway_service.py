@@ -199,7 +199,7 @@ class TestGeneratedSystemdUnits:
         # systemd_unit_is_current() perpetually false and forcing a
         # daemon-reload restart loop on every boot.
         local_bin = tmp_path / ".local" / "bin"
-        profile_node_bin = tmp_path / ".hermes" / "profiles" / "jarvis" / "node" / "bin"
+        profile_node_bin = tmp_path / ".indagis" / "profiles" / "jarvis" / "node" / "bin"
         local_bin.mkdir(parents=True)
         profile_node_bin.mkdir(parents=True)
         real_node = profile_node_bin / "node"
@@ -217,7 +217,7 @@ class TestGeneratedSystemdUnits:
     def test_launchd_plist_does_not_leak_profile_node_symlink_target(self, tmp_path, monkeypatch):
         # Same #48700 regression for the macOS twin generate_launchd_plist().
         local_bin = tmp_path / ".local" / "bin"
-        profile_node_bin = tmp_path / ".hermes" / "profiles" / "jarvis" / "node" / "bin"
+        profile_node_bin = tmp_path / ".indagis" / "profiles" / "jarvis" / "node" / "bin"
         local_bin.mkdir(parents=True)
         profile_node_bin.mkdir(parents=True)
         real_node = profile_node_bin / "node"
@@ -280,7 +280,7 @@ class TestLaunchdServiceRecovery:
             "generate_launchd_plist",
             lambda: (
                 "<plist>--replace\n<key>INDAGIS_HOME</key>"
-                "<string>/Users/alice/.hermes</string></plist>"
+                "<string>/Users/alice/.indagis</string></plist>"
             ),
         )
         # Pretend the gateway is running and that we ARE inside its tree.
@@ -630,8 +630,8 @@ class TestSystemUnitHermesHome:
 
         unit = gateway_cli.generate_systemd_unit(system=True, run_as_user="alice")
 
-        assert 'INDAGIS_HOME=/home/alice/.hermes' in unit
-        assert '/root/.hermes' not in unit
+        assert 'INDAGIS_HOME=/home/alice/.indagis' in unit
+        assert '/root/.indagis' not in unit
 
 
     def test_user_unit_unaffected_by_change(self):
@@ -648,8 +648,8 @@ class TestSystemUnitRefreshSyncsHermesHome:
     def test_refresh_adopts_unit_hermes_home_before_rewriting(self, tmp_path, monkeypatch):
         root_home = tmp_path / "root"
         alice_home = tmp_path / "alice"
-        root_hermes = root_home / ".hermes"
-        alice_hermes = alice_home / ".hermes"
+        root_hermes = root_home / ".indagis"
+        alice_hermes = alice_home / ".indagis"
         root_hermes.mkdir(parents=True)
         alice_hermes.mkdir(parents=True)
         (root_hermes / "config.yaml").write_text(
@@ -781,7 +781,7 @@ class TestHermesHomeForTargetUser:
         monkeypatch.delenv("INDAGIS_HOME", raising=False)
 
         result = gateway_cli._hermes_home_for_target_user("/home/alice")
-        assert result == "/home/alice/.hermes"
+        assert result == "/home/alice/.indagis"
 
 
 
@@ -975,7 +975,7 @@ class TestProfileArg:
         """sudo system install must keep the target user's named profile in ExecStart."""
         root_home = tmp_path / "root"
         target_home = tmp_path / "home" / "alice"
-        root_profile = root_home / ".hermes" / "profiles" / "mybot"
+        root_profile = root_home / ".indagis" / "profiles" / "mybot"
         root_profile.mkdir(parents=True)
 
         monkeypatch.setattr(Path, "home", lambda: root_home)
@@ -991,12 +991,12 @@ class TestProfileArg:
 
         assert "ExecStart=" in unit
         assert "--profile mybot gateway run" in unit
-        assert f'INDAGIS_HOME={target_home / ".hermes" / "profiles" / "mybot"}' in unit
+        assert f'INDAGIS_HOME={target_home / ".indagis" / "profiles" / "mybot"}' in unit
 
 
 
     def test_launchd_plist_path_uses_real_user_home_not_profile_home(self, tmp_path, monkeypatch):
-        profile_dir = tmp_path / ".hermes" / "profiles" / "orcha"
+        profile_dir = tmp_path / ".indagis" / "profiles" / "orcha"
         profile_dir.mkdir(parents=True)
         machine_home = tmp_path / "machine-home"
         machine_home.mkdir()
@@ -1020,10 +1020,10 @@ class TestRemapPathForUser:
         monkeypatch.setattr(Path, "home", lambda: tmp_path / "root")
         (tmp_path / "root").mkdir()
         result = gateway_cli._remap_path_for_user(
-            str(tmp_path / "root" / ".hermes" / "hermes-agent"),
+            str(tmp_path / "root" / ".indagis" / "hermes-agent"),
             str(tmp_path / "alice"),
         )
-        assert result == str(tmp_path / "alice" / ".hermes" / "hermes-agent")
+        assert result == str(tmp_path / "alice" / ".indagis" / "hermes-agent")
 
 
 class TestSystemUnitPathRemapping:
@@ -1032,7 +1032,7 @@ class TestSystemUnitPathRemapping:
     def test_system_unit_has_no_root_paths(self, monkeypatch, tmp_path):
         root_home = tmp_path / "root"
         root_home.mkdir()
-        project = root_home / ".hermes" / "hermes-agent"
+        project = root_home / ".indagis" / "hermes-agent"
         project.mkdir(parents=True)
         venv_bin = project / "venv" / "bin"
         venv_bin.mkdir(parents=True)
@@ -1041,8 +1041,8 @@ class TestSystemUnitPathRemapping:
         target_home = "/home/alice"
 
         monkeypatch.setattr(Path, "home", lambda: root_home)
-        monkeypatch.setenv("INDAGIS_HOME", str(root_home / ".hermes"))
-        monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: root_home / ".hermes")
+        monkeypatch.setenv("INDAGIS_HOME", str(root_home / ".indagis"))
+        monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: root_home / ".indagis")
         monkeypatch.setattr(gateway_cli, "PROJECT_ROOT", project)
         monkeypatch.setattr(gateway_cli, "_detect_venv_dir", lambda: project / "venv")
         monkeypatch.setattr(gateway_cli, "get_python_path", lambda: str(venv_bin / "python"))
@@ -1061,8 +1061,8 @@ class TestSystemUnitPathRemapping:
         # always exists) — NOT the source checkout under it. Pinning cwd to the
         # checkout is the rot bug fixed alongside this: a relocated/removed
         # checkout would crash-loop the unit on CHDIR (status=200).
-        assert "WorkingDirectory=/home/alice/.hermes" in unit
-        assert "WorkingDirectory=/home/alice/.hermes/hermes-agent" not in unit
+        assert "WorkingDirectory=/home/alice/.indagis" in unit
+        assert "WorkingDirectory=/home/alice/.indagis/hermes-agent" not in unit
 
 
 class TestDockerAwareGateway:
@@ -1626,7 +1626,7 @@ class TestServiceWorkingDirIsStable:
 
 
     def test_user_unit_workingdirectory_is_hermes_home_not_checkout(self, tmp_path, monkeypatch):
-        home = tmp_path / ".hermes"
+        home = tmp_path / ".indagis"
         home.mkdir()
         monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: home)
         unit = gateway_cli.generate_systemd_unit(system=False)
@@ -1640,7 +1640,7 @@ class TestServiceWorkingDirIsStable:
     def test_launchd_workingdirectory_is_hermes_home(self, tmp_path, monkeypatch):
         import re
 
-        home = tmp_path / ".hermes"
+        home = tmp_path / ".indagis"
         home.mkdir()
         monkeypatch.setattr(gateway_cli, "get_indagis_home", lambda: home)
         plist = gateway_cli.generate_launchd_plist()

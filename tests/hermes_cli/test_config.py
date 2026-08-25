@@ -36,7 +36,7 @@ class TestGetHermesHome:
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop("INDAGIS_HOME", None)
             home = get_indagis_home()
-            assert home == Path.home() / ".hermes"
+            assert home == Path.home() / ".indagis"
 
 
 class TestEnsureHermesHome:

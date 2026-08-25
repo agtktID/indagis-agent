@@ -1,4 +1,4 @@
-"""Tests for issue #26670 — concurrent hermes.exe detection and improved
+"""Tests for issue #26670 — concurrent indagis.exe detection and improved
 quarantine retry / reboot-deferred fallback during `hermes update` on Windows.
 
 These tests force ``_is_windows`` to return ``True`` via patching so the
@@ -32,7 +32,7 @@ pytestmark = pytest.mark.real_concurrent_gate
 # ---------------------------------------------------------------------------
 
 
-def _make_proc(pid: int, exe: str, name: str = "hermes.exe"):
+def _make_proc(pid: int, exe: str, name: str = "indagis.exe"):
     """Build a duck-typed psutil Process stand-in with the .info dict."""
     proc = MagicMock()
     proc.info = {"pid": pid, "exe": exe, "name": name}
@@ -105,14 +105,14 @@ def test_detect_concurrent_parents_call_robust_to_one_bad_hop(_winp, tmp_path):
     ancestor independently, so one unreadable hop never strands the launcher.
     """
     scripts_dir = tmp_path
-    shim = scripts_dir / "hermes.exe"
+    shim = scripts_dir / "indagis.exe"
     shim.write_bytes(b"")
     me = os.getpid()
     launcher_pid = me + 100
 
     rows = [
         _make_proc(me, str(shim), "python.exe"),
-        _make_proc(launcher_pid, str(shim), "hermes.exe"),
+        _make_proc(launcher_pid, str(shim), "indagis.exe"),
     ]
     # ancestor_exe=None → every ancestor's .exe() raises OSError. The helper
     # must swallow it per-ancestor and not crash; the launcher won't be
@@ -126,7 +126,7 @@ def test_detect_concurrent_parents_call_robust_to_one_bad_hop(_winp, tmp_path):
         result = cli_main._detect_concurrent_hermes_instances(scripts_dir)
 
     # No crash; helper completes. (Degenerate stub: launcher exe unreadable.)
-    assert result == [(launcher_pid, "hermes.exe")]
+    assert result == [(launcher_pid, "indagis.exe")]
 
 
 
@@ -146,7 +146,7 @@ def test_detect_concurrent_parents_call_robust_to_one_bad_hop(_winp, tmp_path):
 @patch.object(cli_main, "_is_windows", return_value=True)
 def test_quarantine_succeeds_first_attempt(_winp, tmp_path):
     """When the rename works immediately, no warning, single rename pair returned."""
-    shim = tmp_path / "hermes.exe"
+    shim = tmp_path / "indagis.exe"
     shim.write_bytes(b"old")
 
     pairs = cli_main._quarantine_running_hermes_exe(tmp_path)
@@ -154,7 +154,7 @@ def test_quarantine_succeeds_first_attempt(_winp, tmp_path):
     assert len(pairs) == 1
     orig, quarantine = pairs[0]
     assert orig == shim
-    assert quarantine.name.startswith("hermes.exe.old.")
+    assert quarantine.name.startswith("indagis.exe.old.")
     assert quarantine.exists()
     assert not shim.exists()
 
@@ -162,7 +162,7 @@ def test_quarantine_succeeds_first_attempt(_winp, tmp_path):
 @patch.object(cli_main, "_is_windows", return_value=True)
 def test_quarantine_falls_back_to_reboot_schedule(_winp, tmp_path, capsys, monkeypatch):
     """When every retry fails, we schedule via MoveFileEx and warn helpfully."""
-    shim = tmp_path / "hermes.exe"
+    shim = tmp_path / "indagis.exe"
     shim.write_bytes(b"locked")
 
     def always_fails(self, target):
