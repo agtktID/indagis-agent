@@ -571,7 +571,7 @@ TOOL_CATEGORIES = {
         "name": "X (Twitter) Search",
         "setup_title": "Select xAI Credential Source",
         "setup_note": (
-            "Hermes routes X searches through xAI's built-in x_search "
+            "Indagis routes X searches through xAI's built-in x_search "
             "Responses tool for read-only public X discovery. Use the xurl "
             "skill for authenticated X API reads and account actions. Both "
             "credential sources hit the same "
@@ -1600,7 +1600,7 @@ def _run_cua_driver_installer(
                     _print_info("    IMPORTANT — grant macOS permissions now:")
                     _print_info("      System Settings > Privacy & Security > Accessibility")
                     _print_info("      System Settings > Privacy & Security > Screen Recording")
-                    _print_info("    Both must allow the terminal / Hermes process.")
+                    _print_info("    Both must allow the terminal / Indagis process.")
             return True
         _print_warning(f"    cua-driver {label.lower()} did not complete. Re-run manually:")
         _print_info(f"      {manual_hint}")
@@ -1800,7 +1800,7 @@ def _run_post_setup(post_setup_key: str):
             if result.returncode == 0:
                 _print_success("    faster-whisper installed")
                 _print_info("    Model sizes: tiny, base (default), small, medium, large-v3")
-                _print_info("    Change via stt.local.model in ~/.hermes/config.yaml")
+                _print_info("    Change via stt.local.model in ~/.indagis/config.yaml")
             else:
                 _print_warning("    faster-whisper install failed:")
                 _print_info(f"      {(result.stderr or '').strip()[:300]}")
@@ -1856,7 +1856,7 @@ def _run_post_setup(post_setup_key: str):
                 return
         _print_info("    Default voice: en_US-lessac-medium (downloaded on first TTS call)")
         _print_info("    Full voice list: https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md")
-        _print_info("    Switch voices by setting tts.piper.voice in ~/.hermes/config.yaml")
+        _print_info("    Switch voices by setting tts.piper.voice in ~/.indagis/config.yaml")
 
     elif post_setup_key == "ddgs":
         try:
@@ -1891,7 +1891,7 @@ def _run_post_setup(post_setup_key: str):
             from hermes_cli.auth import login_spotify_command
         except Exception as exc:
             _print_warning(f"    Could not load Spotify auth: {exc}")
-            _print_info("    Run manually: hermes auth spotify")
+            _print_info("    Run manually: indagis auth spotify")
             return
         _print_info("    Starting Spotify login...")
         try:
@@ -1904,10 +1904,10 @@ def _run_post_setup(post_setup_key: str):
             # User aborted the wizard, or OAuth failed — don't fail the
             # toolset enable; they can retry with `hermes auth spotify`.
             _print_warning(f"    Spotify login did not complete: {exc}")
-            _print_info("    Run later: hermes auth spotify")
+            _print_info("    Run later: indagis auth spotify")
         except Exception as exc:
             _print_warning(f"    Spotify login failed: {exc}")
-            _print_info("    Run manually: hermes auth spotify")
+            _print_info("    Run manually: indagis auth spotify")
 
     elif post_setup_key == "langfuse":
         # Install the langfuse SDK.
@@ -1935,9 +1935,9 @@ def _run_post_setup(post_setup_key: str):
                 _print_success("    Plugin observability/langfuse enabled")
         except Exception as exc:
             _print_warning(f"    Could not enable plugin automatically: {exc}")
-            _print_info("    Run manually: hermes plugins enable observability/langfuse")
-        _print_info("    Restart Hermes for tracing to take effect.")
-        _print_info("    Verify: hermes plugins list")
+            _print_info("    Run manually: indagis plugins enable observability/langfuse")
+        _print_info("    Restart Indagis for tracing to take effect.")
+        _print_info("    Verify: indagis plugins list")
 
     elif post_setup_key == "xai_grok":
         # Shared credential bootstrap for any picker entry that talks to xAI
@@ -1972,7 +1972,7 @@ def _run_post_setup(post_setup_key: str):
             from hermes_cli.config import save_env_value
         except Exception as exc:
             _print_warning(f"    Could not load setup helpers: {exc}")
-            _print_info("    Run later: hermes auth add xai-oauth   (or set XAI_API_KEY)")
+            _print_info("    Run later: indagis auth add xai-oauth   (or set XAI_API_KEY)")
             return
 
         idx = prompt_choice(
@@ -1980,7 +1980,7 @@ def _run_post_setup(post_setup_key: str):
             choices=[
                 "Sign in with xAI Grok OAuth (SuperGrok / Premium+) — browser login",
                 "Paste an xAI API key (console.x.ai)",
-                "Skip — configure later via `hermes auth add xai-oauth`",
+                "Skip — configure later via `indagis auth add xai-oauth`",
             ],
             default=0,
         )
@@ -1992,7 +1992,7 @@ def _run_post_setup(post_setup_key: str):
             else:
                 _print_warning(
                     "    xAI Grok OAuth login did not complete. "
-                    "Run later: hermes auth add xai-oauth"
+                    "Run later: indagis auth add xai-oauth"
                 )
         elif idx == 1:
             api_key = _setup_prompt("    xAI API key", password=True)
@@ -2001,7 +2001,7 @@ def _run_post_setup(post_setup_key: str):
                 _print_success("    XAI_API_KEY saved")
             else:
                 _print_warning(
-                    "    No API key provided. Run later: hermes auth add xai-oauth"
+                    "    No API key provided. Run later: indagis auth add xai-oauth"
                 )
         else:
             _print_info("    xAI will remain inactive until credentials are configured.")
@@ -2050,7 +2050,7 @@ def run_post_setup_command(args) -> int:
     """
     key = getattr(args, "post_setup_key", None)
     if not key:
-        _print_error("Usage: hermes tools post-setup <key>")
+        _print_error("Usage: indagis tools post-setup <key>")
         return 2
     valid = valid_post_setup_keys()
     if key not in valid:
@@ -2509,7 +2509,7 @@ def _get_platform_tools(
             _warned_invalid_platform_toolsets.add(platform)
             logger.warning(
                 "platform '%s' has no valid toolsets configured (unknown "
-                "name(s): %s) - tools will be unavailable. Run `hermes tools` "
+                "name(s): %s) - tools will be unavailable. Run `indagis tools` "
                 "to reconfigure. See issue #38798.",
                 platform,
                 ", ".join(_named),
@@ -4444,7 +4444,7 @@ def _configure_vision_provider_model(config: dict, vision_cfg: dict) -> None:
     if not providers:
         _print_warning(
             "  No authenticated providers found. Configure a provider first "
-            "with `hermes model`, then re-run this."
+            "with `indagis model`, then re-run this."
         )
         return
 
@@ -4882,7 +4882,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
                 print(color("    (none enabled)", Colors.DIM))
         print()
         return
-    print(color("⚕ Hermes Tool Configuration", Colors.CYAN, Colors.BOLD))
+    print(color("⚕ Indagis Tool Configuration", Colors.CYAN, Colors.BOLD))
     print(color("  Enable or disable tools per platform.", Colors.DIM))
     print(color("  Tools that need API keys will be configured when enabled.", Colors.DIM))
     print(color("  Guide: https://hermes-agent.nousresearch.com/docs/user-guide/features/tools", Colors.DIM))

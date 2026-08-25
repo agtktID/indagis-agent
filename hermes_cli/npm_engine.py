@@ -249,7 +249,7 @@ def _print_manual_fix(npm: str, npm_range: str, actual: str | None) -> None:
     print(
         f"\n✗ {have}does not satisfy the range this project requires: {npm_range}\n"
         f"  Resolved npm: {npm}\n"
-        "  Hermes could not provision its own Node.js runtime and never\n"
+        "  Indagis could not provision its own Node.js runtime and never\n"
         "  modifies a system/nvm/brew/Nix npm. Upgrade yours yourself with:\n"
         f'      npm install -g npm@"{npm_range}"',
         file=sys.stderr,

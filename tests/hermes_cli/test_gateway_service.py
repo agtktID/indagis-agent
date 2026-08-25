@@ -991,7 +991,7 @@ class TestProfileArg:
 
         assert "ExecStart=" in unit
         assert "--profile mybot gateway run" in unit
-        assert f'INDAGIS_HOME={target_home / ".hermes" / "profiles" / "mybot"}' in unit
+        assert f'INDAGIS_HOME={target_home / ".indagis" / "profiles" / "mybot"}' in unit
 
 
 
@@ -1023,7 +1023,7 @@ class TestRemapPathForUser:
             str(tmp_path / "root" / ".hermes" / "hermes-agent"),
             str(tmp_path / "alice"),
         )
-        assert result == str(tmp_path / "alice" / ".hermes" / "hermes-agent")
+        assert result == str(tmp_path / "alice" / ".indagis" / "hermes-agent")
 
 
 class TestSystemUnitPathRemapping:

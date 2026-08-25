@@ -36,7 +36,7 @@ class TestGetHermesHome:
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop("INDAGIS_HOME", None)
             home = get_indagis_home()
-            assert home == Path.home() / ".hermes"
+            assert home == Path.home() / ".indagis"
 
 
 class TestEnsureHermesHome:
@@ -659,7 +659,7 @@ class TestConfigSupportFloor:
         )
         assert expected_fragment in captured.out
         assert expected_fragment in captured.err
-        assert "run `hermes setup` to regenerate" in captured.out
+        assert "run `indagis setup` to regenerate" in captured.out
         assert "_config_version: 12" in captured.out
         assert any(expected_fragment in w for w in results["warnings"])
         # No 'Config version: X → Y' line — nothing was migrated.

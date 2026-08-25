@@ -62,7 +62,7 @@ def test_install_writes_entry_with_absolute_exec_and_icon(tmp_path, xdg_home, mo
     assert icon_path.read_bytes() == b"\x89PNG fake"
 
     assert values["Type"] == "Application"
-    assert values["Name"] == "Hermes"
+    assert values["Name"] == "Indagis"
     assert values["Terminal"] == "false"
 
 

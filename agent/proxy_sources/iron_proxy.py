@@ -2206,7 +2206,7 @@ def _build_proxy_subprocess_env(
                 if warnings:
                     logger.warning(
                         "Bitwarden refresh produced %d warning(s); "
-                        "run `hermes secrets bitwarden status` for detail.",
+                        "run `indagis secrets bitwarden status` for detail.",
                         len(warnings),
                     )
             else:

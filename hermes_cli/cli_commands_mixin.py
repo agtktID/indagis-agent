@@ -242,7 +242,7 @@ class CLICommandsMixin:
         stat = result.get("stat", "")
         diff = result.get("diff", "")
         if result.get("empty") or (not stat and not diff):
-            print("  No changes — Hermes hasn't edited any files here yet.")
+            print("  No changes — Indagis hasn't edited any files here yet.")
             return
 
         if stat:
@@ -390,7 +390,7 @@ class CLICommandsMixin:
         try:
             result = export_profile(name, output)
             print(f"  ✓ Exported '{name}' to {result}")
-            print("  Share it: the other user runs /import or `hermes profile import <archive>`.")
+            print("  Share it: the other user runs /import or `indagis profile import <archive>`.")
         except (ValueError, FileNotFoundError) as e:
             print(f"  Error: {e}")
 
@@ -683,7 +683,7 @@ class CLICommandsMixin:
         if _remainder:
             _cprint(f"  {_DIM}Now type your prompt (or use --image in single-query mode): {_remainder}{_RST}")
         elif _is_termux_environment():
-            _cprint(f"  {_DIM}Tip: type your next message, or run hermes chat -q --image {_termux_example_image_path(image_path.name)} \"What do you see?\"{_RST}")
+            _cprint(f"  {_DIM}Tip: type your next message, or run indagis chat -q --image {_termux_example_image_path(image_path.name)} \"What do you see?\"{_RST}")
 
     def _handle_tools_command(self, cmd: str):
         """Handle /tools [list|disable|enable] slash commands.
@@ -943,7 +943,7 @@ class CLICommandsMixin:
             self._session_db.fail_handoff(self.session_id, "timed out waiting for gateway")
         except Exception:
             pass
-        _cprint("  Timed out waiting for the gateway. Is `hermes gateway` running?")
+        _cprint("  Timed out waiting for the gateway. Is `indagis gateway` running?")
         _cprint("  Your CLI session is intact.")
         return True
 
@@ -977,7 +977,7 @@ class CLICommandsMixin:
                 # #34584.
                 self._pending_resume_sessions = self._list_recent_sessions(limit=10)
                 return
-            _cprint("  Tip:   Use /history or `hermes sessions list` to find sessions.")
+            _cprint("  Tip:   Use /history or `indagis sessions list` to find sessions.")
             return
 
         # Any explicit /resume <target> supersedes a previously-armed bare
@@ -1007,7 +1007,7 @@ class CLICommandsMixin:
         session_meta = self._session_db.get_session(target_id)
         if not session_meta:
             _cprint(f"  Session not found: {target}")
-            _cprint("  Use /history or `hermes sessions list` to see available sessions.")
+            _cprint("  Use /history or `indagis sessions list` to see available sessions.")
             return
 
         # If the target is the empty head of a compression chain, redirect to
@@ -2047,11 +2047,11 @@ class CLICommandsMixin:
                     try:
                         from hermes_cli.skin_engine import get_active_skin
                         _skin = get_active_skin()
-                        label = _skin.get_branding("response_label", "⚕ Hermes")
+                        label = _skin.get_branding("response_label", "⚕ Indagis")
                         _resp_color = _maybe_remap_for_light_mode(_skin.get_color("response_border", "#CD7F32"))
                         _resp_text = _maybe_remap_for_light_mode(_skin.get_color("banner_text", "#FFF8DC"))
                     except Exception:
-                        label = "⚕ Hermes"
+                        label = "⚕ Indagis"
                         _resp_color = "#CD7F32"
                         _resp_text = "#FFF8DC"
 
@@ -2488,7 +2488,7 @@ class CLICommandsMixin:
         _cprint(
             f"  {_DIM}After each turn, a judge model checks if the goal is done"
             f"{' against the contract above' if state.has_contract() else ''}. "
-            f"Hermes keeps working until it is, you pause/clear it, or the budget is "
+            f"Indagis keeps working until it is, you pause/clear it, or the budget is "
             f"exhausted. Use /goal status, /goal show, /goal pause, /goal resume, /goal clear.{_RST}"
         )
         # Kick the loop off immediately so the user doesn't have to send a
@@ -3133,11 +3133,11 @@ class CLICommandsMixin:
         self.busy_input_mode = arg
         if save_config_value("display.busy_input_mode", arg):
             if arg == "queue":
-                behavior = "Enter will queue follow-up input while Hermes is busy."
+                behavior = "Enter will queue follow-up input while Indagis is busy."
             elif arg == "steer":
                 behavior = "Enter will steer your message into the current run (after the next tool call)."
             else:
-                behavior = "Enter will redirect the current run while Hermes is busy; /stop still cancels it."
+                behavior = "Enter will redirect the current run while Indagis is busy; /stop still cancels it."
             _cprint(f"  {_ACCENT}✓ Busy input mode set to '{arg}' (saved to config){_RST}")
             _cprint(f"  {_DIM}{behavior}{_RST}")
         else:
@@ -3292,7 +3292,7 @@ class CLICommandsMixin:
         ]
         raw = self._prompt_text_input_modal(
             title="⚕  Update Indagis Agent",
-            detail="This will exit the current session and run `hermes update`.",
+            detail="This will exit the current session and run `indagis update`.",
             choices=choices,
         )
         if raw is None:

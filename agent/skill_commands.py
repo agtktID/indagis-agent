@@ -437,7 +437,7 @@ def scan_skill_commands() -> Dict[str, Dict[str, Any]]:
                     if resolve_command(cmd_name) is not None:
                         logger.warning(
                             "Skill %r generates slash command '/%s' which "
-                            "collides with a core Hermes command; skipping "
+                            "collides with a core Indagis command; skipping "
                             "auto-registration. Use '/skill %s' instead.",
                             name, cmd_name, name,
                         )

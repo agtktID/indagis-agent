@@ -93,7 +93,7 @@ class TestGatewayPersonalityNone:
             event = self._make_event("")
             result = await runner._handle_personality_command(event)
 
-        assert result == "No personalities configured in `~/.hermes/profiles/coder/config.yaml`"
+        assert result == "No personalities configured in `~/.indagis/profiles/coder/config.yaml`"
 
 
 class TestPersonalityDictFormat:

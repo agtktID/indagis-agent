@@ -6807,7 +6807,7 @@ class DispatchResult:
     rather than on explicit per-task assignments."""
     skipped_nonspawnable: list[str] = field(default_factory=list)
     """Ready task ids skipped because their assignee names a control-plane
-    lane (a Claude Code terminal like ``orion-cc``) rather than a Hermes
+    lane (a Claude Code terminal like ``orion-cc``) rather than a Indagis
     profile. Expected steady-state on multi-lane setups; NOT an
     operator-actionable failure. Tracked separately so health telemetry
     can distinguish "real stuck" (nothing spawned but spawnable work

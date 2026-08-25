@@ -95,7 +95,7 @@ def test_format_prefetch_context_deduplicates_overlap():
         max_results=10,
     )
     assert result.count("Jordan prefers short answers") == 1
-    assert result.count("Uses Hermes") == 1
+    assert result.count("Uses Indagis") == 1
     assert "<supermemory-context>" in result
 
 

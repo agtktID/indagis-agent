@@ -1406,7 +1406,7 @@ class TestHydrateBotIdentity(unittest.TestCase):
         asyncio.run(adapter._hydrate_bot_identity())
 
         self.assertEqual(adapter._bot_open_id, "ou_hermes_hydrated")
-        self.assertEqual(adapter._bot_name, "Hermes Bot")
+        self.assertEqual(adapter._bot_name, "Indagis Bot")
 
     @patch.dict(
         os.environ,
@@ -1437,7 +1437,7 @@ class TestHydrateBotIdentity(unittest.TestCase):
         # from an old app registration doesn't break @mention gating.
         adapter._client.request.assert_called_once()
         self.assertEqual(adapter._bot_open_id, "ou_hydrated")
-        self.assertEqual(adapter._bot_name, "Hydrated Hermes")
+        self.assertEqual(adapter._bot_name, "Hydrated Indagis")
 
 
 @unittest.skipUnless(_HAS_LARK_OAPI, "lark-oapi not installed")
@@ -1923,7 +1923,7 @@ class TestFeishuMentionMap(unittest.TestCase):
         ref = _build_mentions_map([mention], _FeishuBotIdentity(open_id="ou_bot"))["@_user_1"]
         self.assertTrue(ref.is_self)
         self.assertEqual(ref.open_id, "ou_bot")
-        self.assertEqual(ref.name, "Hermes")
+        self.assertEqual(ref.name, "Indagis")
 
 
     def test_build_mentions_map_name_match_does_not_override_mismatching_open_id(self):
@@ -2441,7 +2441,7 @@ class TestFeishuMentionEndToEnd(unittest.TestCase):
         event = adapter._dispatch_inbound_event.call_args.args[0]
         # Hint surfaces Alice; bot excluded because is_self=True.
         self.assertIn("[Mentioned: Alice (open_id=ou_alice)]", event.text)
-        self.assertNotIn("Hermes (open_id=", event.text)
+        self.assertNotIn("Indagis (open_id=", event.text)
         # Body: leading @Hermes stripped, Alice preserved, trailing text intact.
         self.assertIn("@Alice review the spec with Alice", event.text)
         self.assertNotIn("@Hermes @Alice", event.text)

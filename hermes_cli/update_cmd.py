@@ -364,8 +364,8 @@ def _print_curator_first_run_notice() -> None:
         f"~{days}d after installation; only agent-created skills are in "
         f"scope and nothing is ever auto-deleted (archive is recoverable)."
     )
-    print("  Preview now:  hermes curator run --dry-run")
-    print("  Pause it:     hermes curator pause")
+    print("  Preview now:  indagis curator run --dry-run")
+    print("  Pause it:     indagis curator pause")
     print(
         "  Docs:         https://hermes-agent.nousresearch.com/docs/user-guide/features/curator"
     )
@@ -452,11 +452,11 @@ def _print_fts_optimize_available_notice() -> None:
         print()
         print("◆ Session database optimization incomplete")
         print(
-            "  A previous `hermes sessions optimize-storage` run was "
+            "  A previous `indagis sessions optimize-storage` run was "
             "interrupted. Search still works; re-run the command to resume "
             "and finish reclaiming disk:"
         )
-        print("    hermes sessions optimize-storage")
+        print("    indagis sessions optimize-storage")
         return
 
     # Concrete size framing — lead with the savings the user cares about.
@@ -477,7 +477,7 @@ def _print_fts_optimize_available_notice() -> None:
             f"typically frees ~60% of state.db — about {est_reclaim:.1f} GB "
             f"of your current {size_gb:.1f} GB."
         )
-    print("  Run when convenient:  hermes sessions optimize-storage")
+    print("  Run when convenient:  indagis sessions optimize-storage")
     print(
         "  It runs in the foreground with a progress bar, is safe to "
         "interrupt/re-run, and never changes your conversations."
@@ -538,7 +538,7 @@ def _print_curator_recent_run_notice() -> None:
         print(f"  {line}")
     print(
         "  (This message shows once per curator run. "
-        "View anytime: hermes curator status)"
+        "View anytime: indagis curator status)"
     )
 
     # Stamp shown so we don't repeat on the next update.
@@ -747,8 +747,8 @@ def _update_via_zip(args):
         print(
             "  This path runs when git file I/O is broken on the system. "
             "Either resolve the git-side breakage (typically an antivirus "
-            "or NTFS filter holding files open) and rerun `hermes update "
-            f"--branch {branch}`, or update against main with `hermes update`."
+            "or NTFS filter holding files open) and rerun `indagis update "
+            f"--branch {branch}`, or update against main with `indagis update`."
         )
         _m().sys.exit(1)
     zip_url = (
@@ -954,7 +954,7 @@ def _update_via_zip(args):
         print(f"  {failing_module}: {import_error}")
         print()
         print("  This usually means the copy was interrupted partway through.")
-        print("  Re-run `hermes update` to complete it.")
+        print("  Re-run `indagis update` to complete it.")
         _m().sys.exit(1)
 
     node_failures = _update_node_dependencies()
@@ -975,7 +975,7 @@ def _update_via_zip(args):
         if result.get("user_modified"):
             print(f"  ~ {len(result['user_modified'])} user-modified (kept)")
             print(
-                "    → see them: hermes skills list-modified  "
+                "    → see them: indagis skills list-modified  "
                 "(diff/reset to resume updates)"
             )
         if result.get("cleaned"):
@@ -1173,7 +1173,7 @@ def _stash_local_changes_if_needed(git_cmd: list[str], cwd: Path) -> Optional[st
                 print(f"  {push.stderr.strip().splitlines()[0]}")
             print(
                 "  Commit, stash, or clean up your local changes manually, "
-                "then re-run `hermes update`."
+                "then re-run `indagis update`."
             )
             raise subprocess.CalledProcessError(
                 push.returncode, push.args, output=push.stdout, stderr=push.stderr
@@ -1538,7 +1538,7 @@ def _sync_with_upstream_if_needed(git_cmd: list[str], cwd: Path) -> None:
 
         # Ask user if they want to add upstream
         print()
-        print("ℹ Your fork is not tracking the official Hermes repository.")
+        print("ℹ Your fork is not tracking the official Indagis repository.")
         print("  This means you may miss updates from NousResearch/hermes-agent.")
         print()
         try:
@@ -1694,8 +1694,8 @@ def _format_concurrent_instances_message(
     lines.append(f"  Updating now would fail to overwrite {shim} because")
     lines.append("  Windows blocks REPLACE on a running executable.")
     lines.append("")
-    lines.append("  Close Hermes Desktop, exit any open `hermes` REPLs, and")
-    lines.append("  stop the gateway (`hermes gateway stop`) before retrying.")
+    lines.append("  Close Indagis Desktop, exit any open `hermes` REPLs, and")
+    lines.append("  stop the gateway (`indagis gateway stop`) before retrying.")
     lines.append("")
     if matches:
         pid_args = " ".join(f"/PID {pid}" for pid, _ in matches)
@@ -1703,7 +1703,7 @@ def _format_concurrent_instances_message(
         lines.append("  stale, terminate them directly, then retry the update:")
         lines.append(f"      taskkill {pid_args} /F")
         lines.append("")
-    lines.append("  Override with `hermes update --force` if you've already")
+    lines.append("  Override with `indagis update --force` if you've already")
     lines.append("  confirmed those processes will not write to the venv.")
     return "\n".join(lines)
 
@@ -1806,7 +1806,7 @@ def _refresh_active_lazy_features(
         print(f"  ⚠ {feature} failed to refresh: {reason}")
 
     if install_cmd_prefix is None:
-        print("  ⚠ Lazy refresh failed; rerun `hermes update` once resolved.")
+        print("  ⚠ Lazy refresh failed; rerun `indagis update` once resolved.")
         return False
 
     # Immediate import-based recovery — metadata-only verifiers miss the case
@@ -1822,7 +1822,7 @@ def _refresh_active_lazy_features(
         print(
             "  Lazy backend(s) keep their previous version; probed packages look intact."
         )
-        print("  Rerun `hermes update` once the upstream issue is resolved.")
+        print("  Rerun `indagis update` once the upstream issue is resolved.")
         return True
     if status == "indeterminate":
         print(
@@ -2063,7 +2063,7 @@ def _update_node_dependencies() -> list[str]:
             print("→ Updating Node.js dependencies...")
             print("  ⚠ Skipped: only a Windows npm is reachable from this WSL shell.")
             print("    Install Node.js inside the WSL distro (nvm, or your distro's")
-            print("    package manager), then re-run `hermes update`.")
+            print("    package manager), then re-run `indagis update`.")
             failed = ["repo root"]
             if any(
                 (_m().PROJECT_ROOT / workspace / "package.json").exists()
@@ -2096,7 +2096,7 @@ def _update_node_dependencies() -> list[str]:
         print()
         print("  ⚠ Node.js dependency refresh did not complete cleanly; the")
         print("    installation may be in a mixed state (updated code, stale Node")
-        print("    deps). Fix npm and re-run `hermes update`.")
+        print("    deps). Fix npm and re-run `indagis update`.")
         return list(labels)
 
     extra_args = ["--no-fund", "--no-audit", "--prefer-offline", "--progress=false"]
@@ -2483,7 +2483,7 @@ def _ensure_acp_launcher() -> None:
                 continue
             shim = (
                 "#!/usr/bin/env bash\n"
-                "# Indagis Agent — ACP launcher (written by `hermes update`).\n"
+                "# Indagis Agent — ACP launcher (written by `indagis update`).\n"
                 "# ACP hosts (Zed, JetBrains, Buzz) resolve the agent by this\n"
                 "# command name on the login-shell PATH.\n"
                 f'exec "{hermes_cmd}" acp "$@"\n'
@@ -2712,7 +2712,7 @@ def _run_pre_update_backup(args) -> Optional[str]:
         display_path = str(out_path)
 
     print(f"  Saved:    {display_path} ({size_str}, {elapsed:.1f}s)")
-    print(f"  Restore:  hermes import {out_path}")
+    print(f"  Restore:  indagis import {out_path}")
     print("  Disable:  set updates.pre_update_backup: quick (or off) in config.yaml")
     print()
     return snapshot_id
@@ -2949,8 +2949,8 @@ def _format_venv_python_holders_message(matches: list[tuple[int, str, str]]) -> 
     lines.append(
         "  Close the Indagis desktop app / other Indagis terminals, then re-run:"
     )
-    lines.append("    hermes update")
-    lines.append("  (or use `hermes update --force-venv` to proceed anyway at your own risk)")
+    lines.append("    indagis update")
+    lines.append("  (or use `indagis update --force-venv` to proceed anyway at your own risk)")
     return "\n".join(lines)
 
 def _venv_launcher_ancestors(pids: list[int]) -> list[int]:
@@ -3929,7 +3929,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
                     _print_update_completion("✓ Update complete!")
                 else:
                     print(f"⚠ Venv still unhealthy after repair: {detail_after}")
-                    print("  Close all Indagis windows/gateways and re-run: hermes update")
+                    print("  Close all Indagis windows/gateways and re-run: indagis update")
             else:
                 _print_update_completion("✓ Already up to date!")
             if runtime_repaired is not None and not _m()._is_windows():
@@ -4019,7 +4019,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
                     )
                     if rollback_result.returncode == 0:
                         print("  ✓ Rollback complete — your install is unchanged.")
-                        print("  Try ``hermes update`` again later once a fix lands.")
+                        print("  Try ``indagis update`` again later once a fix lands.")
                     else:
                         print("  ✗ Rollback failed. Recover manually with:")
                         print(f"    cd {_m().PROJECT_ROOT} && git reset --hard {pre_pull_sha}")
@@ -4197,7 +4197,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
             print()
             print(f"  ⚠ {failing_module} still fails to import after updating:")
             print(f"      {import_error}")
-            print("    Run `hermes update` again — if it persists, reinstall:")
+            print("    Run `indagis update` again — if it persists, reinstall:")
             print("    https://hermes-agent.nousresearch.com")
 
         node_failures = _update_node_dependencies()
@@ -4370,7 +4370,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
             if result.get("user_modified"):
                 print(f"  ~ {len(result['user_modified'])} user-modified (kept)")
                 print(
-                    "    → see them: hermes skills list-modified  "
+                    "    → see them: indagis skills list-modified  "
                     "(diff/reset to resume updates)"
                 )
             if result.get("cleaned"):
@@ -4487,7 +4487,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
                 print("  ✓ Config format updated (no new settings to configure)")
             except Exception as _mig_err:
                 print(f"  ⚠️  Config format update failed: {_mig_err}")
-                print("     Run 'hermes config migrate' to retry.")
+                print("     Run 'indagis config migrate' to retry.")
         elif needs_migration:
             print()
             # Show WHAT changed, not just a count, so the user can make an
@@ -4565,10 +4565,10 @@ def _cmd_update_impl(args, gateway_mode: bool):
                     print()
                     print("✓ Configuration updated!")
                 if (gateway_mode or assume_yes or response == "auto") and missing_env:
-                    print("  ℹ API keys require manual entry: hermes config migrate")
+                    print("  ℹ API keys require manual entry: indagis config migrate")
             else:
                 print()
-                print("Skipped. Run 'hermes config migrate' later to configure.")
+                print("Skipped. Run 'indagis config migrate' later to configure.")
         else:
             print("  ✓ Configuration is up to date")
 
@@ -5089,7 +5089,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
                                 f"  ⚠ {svc_name} is a system service and restarting it needs root.\n"
                                 f"    Restart it manually to load the new version:\n"
                                 f"      sudo systemctl restart {svc_name}\n"
-                                f"    To let `hermes update` restart it automatically, allow\n"
+                                f"    To let `indagis update` restart it automatically, allow\n"
                                 f"    passwordless sudo for systemctl, or run updates with sudo."
                             )
                             return
@@ -5394,7 +5394,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
 
             if supports_systemd_services() and has_legacy_hermes_units():
                 print()
-                print("⚠ Legacy Hermes gateway unit(s) detected:")
+                print("⚠ Legacy Indagis gateway unit(s) detected:")
                 for name, path, is_sys in _find_legacy_hermes_units():
                     scope = "system" if is_sys else "user"
                     print(f"    {path}  ({scope} scope)")
@@ -5418,7 +5418,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
 
         print()
         print("Tip: You can now select a provider and model:")
-        print("  hermes model              # Select provider and model")
+        print("  indagis model              # Select provider and model")
 
         if gateway_fleet_restart_incomplete:
             # Code update itself succeeded, but at least one gateway still

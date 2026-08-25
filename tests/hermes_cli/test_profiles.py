@@ -104,7 +104,7 @@ class TestGetProfileDir:
     def test_default_returns_hermes_home(self, profile_env):
         tmp_path = profile_env
         result = get_profile_dir("default")
-        assert result == tmp_path / ".hermes"
+        assert result == tmp_path / ".indagis"
 
 
 # ===================================================================
@@ -543,7 +543,7 @@ class TestRenameProfile:
 
         assert not old_dir.is_dir()
         assert new_dir.is_dir()
-        assert new_dir == tmp_path / ".hermes" / "profiles" / "newname"
+        assert new_dir == tmp_path / ".indagis" / "profiles" / "newname"
 
     def test_renames_root_honcho_host_without_changing_ai_peer(self, profile_env):
         tmp_path = profile_env

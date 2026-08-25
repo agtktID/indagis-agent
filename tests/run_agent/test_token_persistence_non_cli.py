@@ -84,5 +84,5 @@ def test_session_search_lazily_opens_db_when_entrypoint_did_not_pass_one(monkeyp
 
     assert result["success"] is True
     assert captured["db"] is sentinel_db
-    assert captured["query"] == "Hermes"
+    assert captured["query"] == "Indagis"
     assert agent._session_db is sentinel_db
