@@ -39,29 +39,29 @@ def _inherited_flag(parser, *args, **kwargs):
 
 _EPILOGUE = """
 Examples:
-    hermes                        Start interactive chat
+    indagis                        Start interactive chat
     indagis chat -q "Hello"        Single query mode
-    hermes --tui                  Launch the modern TUI (or set display.interface: tui)
-    hermes --cli                  Force the classic REPL (overrides display.interface: tui)
-    hermes -c                     Resume the most recent session
-    hermes -c "my project"        Resume a session by name (latest in lineage)
-    hermes --resume <session_id>  Resume a specific session by ID
+    indagis --tui                  Launch the modern TUI (or set display.interface: tui)
+    indagis --cli                  Force the classic REPL (overrides display.interface: tui)
+    indagis -c                     Resume the most recent session
+    indagis -c "my project"        Resume a session by name (latest in lineage)
+    indagis --resume <session_id>  Resume a specific session by ID
     indagis setup                  Run setup wizard
-    hermes logout                 Clear stored authentication
+    indagis logout                 Clear stored authentication
     indagis auth add <provider>    Add a pooled credential
     indagis auth list              List pooled credentials
     indagis auth remove <p> <t>    Remove pooled credential by index, id, or label
     indagis auth reset <provider>  Clear exhaustion status for a provider
     indagis model                  Select default model
-    hermes fallback [list]        Show fallback provider chain
-    hermes fallback add           Add a fallback provider (same picker as `indagis model`)
-    hermes fallback remove        Remove a fallback provider from the chain
+    indagis fallback [list]        Show fallback provider chain
+    indagis fallback add           Add a fallback provider (same picker as `indagis model`)
+    indagis fallback remove        Remove a fallback provider from the chain
     indagis config                 View configuration
     indagis config edit            Edit config in $EDITOR
     indagis config set model gpt-4 Set a config value
     indagis gateway                Run messaging gateway
-    hermes -s hermes-agent-dev,github-auth
-    hermes -w                     Start in isolated git worktree
+    indagis -s hermes-agent-dev,github-auth
+    indagis -w                     Start in isolated git worktree
     indagis gateway install        Install gateway background service
     indagis sessions list          List past sessions
     indagis sessions browse        Interactive session picker
@@ -71,14 +71,14 @@ Examples:
     indagis logs errors            View errors.log
     indagis logs --since 1h        Lines from the last hour
     indagis debug share             Upload debug report for support
-    hermes console                Open the safe Indagis command console
+    indagis console                Open the safe Indagis command console
     indagis update                 Update to latest version
     indagis dashboard              Start web UI dashboard (port 9119)
     indagis dashboard --stop       Stop running dashboard processes
     indagis dashboard --status     List running dashboard processes
 
 For more help on a command:
-    hermes <command> --help
+    indagis <command> --help
 """
 
 

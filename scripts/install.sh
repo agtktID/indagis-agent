@@ -489,10 +489,13 @@ configure_managed_node_npm_prefix() {
 get_hermes_command_path() {
     local link_dir
     link_dir="$(get_command_link_dir)"
-    if [ -x "$link_dir/hermes" ]; then
+    if [ -x "$link_dir/indagis" ]; then
+        echo "$link_dir/indagis"
+    elif [ -x "$link_dir/hermes" ]; then
+        # Pre-rebrand install: the launcher is still named `hermes`.
         echo "$link_dir/hermes"
     else
-        echo "hermes"
+        echo "indagis"
     fi
 }
 
@@ -1753,7 +1756,12 @@ exec "$HERMES_BIN" "\$@"
 EOF
     fi
     chmod +x "$command_link_dir/hermes"
-    log_success "Installed hermes launcher → $command_link_display_dir/hermes"
+    # The public command is `indagis` (matches [project.scripts] and every
+    # hint the CLI prints). `hermes` is kept as a compatibility alias so
+    # existing scripts, cron entries and muscle memory keep working.
+    cp -f "$command_link_dir/hermes" "$command_link_dir/indagis"
+    chmod +x "$command_link_dir/indagis"
+    log_success "Installed indagis launcher → $command_link_display_dir/indagis (alias: hermes)"
 
     # Also expose `hermes-agent`. The `hermes-agent` console script declared in
     # pyproject.toml's [project.scripts] lives inside the venv, which is not on

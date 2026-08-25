@@ -115,10 +115,19 @@ def remove_path_from_shell_configs():
 
 def remove_wrapper_script():
     """Remove the hermes wrapper script if it exists."""
+    # Both launcher families: the installer now writes `indagis*` and keeps
+    # `hermes*` as a compatibility alias, and a pre-rebrand install only has
+    # the latter. Removing just one would leave a dangling command behind.
     wrapper_paths = [
+        Path.home() / ".local" / "bin" / "indagis",
+        Path.home() / ".local" / "bin" / "indagis-acp",
+        Path.home() / ".local" / "bin" / "indagis-agent",
         Path.home() / ".local" / "bin" / "hermes",
         Path.home() / ".local" / "bin" / "hermes-acp",
         Path.home() / ".local" / "bin" / "hermes-agent",
+        Path("/usr/local/bin/indagis"),
+        Path("/usr/local/bin/indagis-acp"),
+        Path("/usr/local/bin/indagis-agent"),
         Path("/usr/local/bin/hermes"),
         Path("/usr/local/bin/hermes-acp"),
         Path("/usr/local/bin/hermes-agent"),
