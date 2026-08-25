@@ -420,7 +420,7 @@ def test_format_auth_error_tier_denied_does_not_suggest_relogin():
     )
     rendered = format_auth_error(err)
     assert "re-authenticate" not in rendered.lower()
-    assert "hermes model" not in rendered.lower()
+    assert "indagis model" not in rendered.lower()
     assert "XAI_API_KEY" in rendered
 
 

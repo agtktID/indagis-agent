@@ -193,7 +193,7 @@ def print_fast_version_info() -> None:
 
     openai_version = read_openai_version()
     print(f"OpenAI SDK: {openai_version}" if openai_version else "OpenAI SDK: Not installed")
-    print("Run 'hermes version' for update status.")
+    print("Run 'indagis version' for update status.")
 
 
 def try_fast_version(argv: list[str] | None = None) -> bool:

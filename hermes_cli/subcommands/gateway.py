@@ -262,7 +262,7 @@ def build_gateway_parser(
             "authoritative tenant from it), mints this gateway's per-gateway secret "
             "and per-tenant delivery key, and writes GATEWAY_RELAY_ID / "
             "GATEWAY_RELAY_SECRET / GATEWAY_RELAY_DELIVERY_KEY into ~/.hermes/.env. "
-            "Requires being logged in (hermes setup). Not available in managed installs."
+            "Requires being logged in (indagis setup). Not available in managed installs."
         ),
     )
     gateway_enroll.add_argument(

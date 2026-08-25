@@ -103,7 +103,7 @@ def test_hint_fires_for_first_party_import_error():
     hint = partial_update_hint(exc)
 
     assert hint, "expected recovery guidance for a first-party ImportError"
-    assert any("hermes update" in line for line in hint)
+    assert any("indagis update" in line for line in hint)
 
 
 @pytest.mark.parametrize(

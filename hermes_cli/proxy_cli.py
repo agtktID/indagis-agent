@@ -197,7 +197,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
                 "secrets.bitwarden.enabled is false.[/red]"
             )
             console.print(
-                "  Run `hermes secrets bitwarden setup` first, or omit "
+                "  Run `indagis secrets bitwarden setup` first, or omit "
                 "--from-bitwarden."
             )
             return 1
@@ -632,7 +632,7 @@ def cmd_start(args: argparse.Namespace) -> int:
                 "secrets.bitwarden.project_id is empty.[/red]"
             )
             console.print(
-                "  Run `hermes secrets bitwarden setup` to configure the "
+                "  Run `indagis secrets bitwarden setup` to configure the "
                 "project, or switch back via `hermes egress setup "
                 "--no-bitwarden`."
             )

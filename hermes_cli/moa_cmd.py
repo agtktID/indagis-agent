@@ -52,7 +52,7 @@ def _model_options() -> list[dict[str, Any]]:
 def _pick_slot(current: dict[str, str] | None = None) -> dict[str, str]:
     providers = _model_options()
     if not providers:
-        raise RuntimeError("No configured model providers found. Run `hermes model` first.")
+        raise RuntimeError("No configured model providers found. Run `indagis model` first.")
     current_provider = (current or {}).get("provider", "")
     provider_default = next(
         (idx for idx, p in enumerate(providers) if p.get("slug") == current_provider),

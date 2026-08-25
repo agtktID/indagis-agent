@@ -179,7 +179,7 @@ def tail_log(
     log_path = get_indagis_home() / "logs" / filename
     if not log_path.exists():
         print(f"Log file not found: {log_path}")
-        print("(Logs are created when Indagis runs — try 'hermes chat' first)")
+        print("(Logs are created when Indagis runs — try 'indagis chat' first)")
         sys.exit(1)
 
     # Parse --since into a datetime cutoff
@@ -394,4 +394,4 @@ def list_logs() -> None:
             found = True
 
     if not found:
-        print("  (no log files yet — run 'hermes chat' to generate logs)")
+        print("  (no log files yet — run 'indagis chat' to generate logs)")

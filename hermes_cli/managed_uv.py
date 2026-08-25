@@ -145,7 +145,7 @@ def _report_runtime_repair_failure(repair: RuntimeRepairResult) -> None:
         )
         print(
             "    Sessions stay protected meanwhile: Indagis keeps databases "
-            "out of WAL mode on this SQLite build. The next `hermes update` "
+            "out of WAL mode on this SQLite build. The next `indagis update` "
             "will retry."
         )
         return
