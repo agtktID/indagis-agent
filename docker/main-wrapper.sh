@@ -8,7 +8,7 @@
 #
 # Env note: /init scrubs env before invoking CMD, so when this wrapper
 # is launched through the supervised path it must rehydrate via
-# with-contenv before touching HERMES_HOME / PATH. On the non-PID-1
+# with-contenv before touching INDAGIS_HOME / PATH. On the non-PID-1
 # fallback path the Dockerfile env is still intact, so we skip the
 # re-exec and continue directly.
 #
@@ -21,7 +21,7 @@
 set -e
 
 if [ -z "${HERMES_MAIN_WRAPPER_ENV_READY:-}" ] && \
-   [ -z "${HERMES_HOME:-}" ] && \
+   [ -z "${INDAGIS_HOME:-}" ] && \
    [ -x /command/with-contenv ]; then
     export HERMES_MAIN_WRAPPER_ENV_READY=1
     exec /command/with-contenv sh "$0" "$@"
