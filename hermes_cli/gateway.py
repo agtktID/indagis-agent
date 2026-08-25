@@ -2038,7 +2038,7 @@ def _raise_user_systemd_unavailable(
         "\n"
         "  Alternative: run the gateway in the foreground (stays up until\n"
         "  you exit / close the terminal):\n"
-        "    hermes gateway run"
+        "    indagis gateway run"
     )
     raise UserSystemdUnavailableError(msg)
 
@@ -2298,8 +2298,8 @@ def print_systemd_scope_conflict_warning() -> None:
         "  Default gateway commands target the user service unless you pass --system."
     )
     print_info("  Keep one of these:")
-    print_info("    hermes gateway uninstall")
-    print_info("    sudo hermes gateway uninstall --system")
+    print_info("    indagis gateway uninstall")
+    print_info("    sudo indagis gateway uninstall --system")
 
 
 def _require_root_for_system_service(action: str) -> None:
@@ -2670,20 +2670,28 @@ def _hermes_home_for_target_user(target_home_dir: str) -> str:
     # Keep explicit custom paths lexical. Resolving a non-existent custom path
     # can rewrite it through host-specific path mappings, which would bake a
     # different INDAGIS_HOME into the generated service unit.
-    current_default = Path.home() / ".hermes"
-    target_default = Path(target_home_dir) / ".hermes"
+    # Both home layouts: ~/.indagis is the current default, ~/.hermes is the
+    # legacy one the resolution ladder still honours (P4). A sudo install
+    # started from either must remap to the SAME layout under the target user,
+    # otherwise the generated unit points the service at a directory that
+    # holds none of the operator's data. (#8)
+    for dir_name in (".indagis", ".hermes"):
+        current_default = Path.home() / dir_name
+        target_default = Path(target_home_dir) / dir_name
 
-    # Default ~/.hermes → remap to target user's default
-    if current_hermes == current_default:
-        return str(target_default)
+        # Exact default → the target user's equivalent default.
+        if current_hermes == current_default:
+            return str(target_default)
 
-    # Profile or subdir of ~/.hermes → preserve the relative structure
-    try:
-        relative = current_hermes.relative_to(current_default)
+        # Profile or subdir of that default → preserve the relative structure.
+        try:
+            relative = current_hermes.relative_to(current_default)
+        except ValueError:
+            continue
         return str(target_default / relative)
-    except ValueError:
-        # Completely custom path (not under ~/.hermes) — keep as-is
-        return str(current_hermes)
+
+    # Completely custom path (under neither default) — keep as-is.
+    return str(current_hermes)
 
 
 def _build_service_path_dirs(project_root: Path | None = None) -> list[str]:
@@ -3264,9 +3272,9 @@ def _print_system_scope_remediation(action: str) -> None:
     else:
         print_info(f"         sudo systemctl {action} {svc}")
     print_info("    2. Switch to a per-user service (recommended for personal use):")
-    print_info("         sudo hermes gateway uninstall --system")
-    print_info("         hermes gateway install")
-    print_info("         hermes gateway start")
+    print_info("         sudo indagis gateway uninstall --system")
+    print_info("         indagis gateway install")
+    print_info("         indagis gateway start")
 
 
 def _get_restart_drain_timeout() -> float:
@@ -4369,7 +4377,7 @@ def launchd_install(force: bool = False):
     _clear_launchd_unsupported_marker()
     print()
     print("Next steps:")
-    print("  hermes gateway status             # Check status")
+    print("  indagis gateway status             # Check status")
     from hermes_constants import display_indagis_home as _dhh
 
     print(f"  tail -f {_dhh()}/logs/gateway.log  # View logs")
@@ -4811,7 +4819,7 @@ def _guard_named_profile_under_multiplexer(force: bool = False) -> None:
     )
     print("  Manage the multiplexer instead (from the default profile):")
     print()
-    print("    hermes gateway restart")
+    print("    indagis gateway restart")
     print()
     print("  Pass --force to start a separate profile gateway anyway (not")
     print("  recommended while the multiplexer is running).")
@@ -4849,7 +4857,7 @@ def _guard_supervised_gateway_conflict(force: bool = False) -> None:
         "  instead:"
     )
     print()
-    print("    hermes gateway restart")
+    print("    indagis gateway restart")
     print()
     print(
         "  Pass --force to start a foreground gateway anyway (not recommended\n"
@@ -6953,7 +6961,7 @@ def _gateway_command_inner(args):
             print("or run the gateway in foreground mode:")
             print()
             print(
-                "  hermes gateway run                              # direct foreground"
+                "  indagis gateway run                              # direct foreground"
             )
             print(
                 "  tmux new -s hermes 'indagis gateway run'         # persistent via tmux"
@@ -7072,7 +7080,7 @@ def _gateway_command_inner(args):
             print("Run the gateway in foreground mode instead:")
             print()
             print(
-                "  hermes gateway run                              # direct foreground"
+                "  indagis gateway run                              # direct foreground"
             )
             print(
                 "  tmux new -s hermes 'indagis gateway run'         # persistent via tmux"
@@ -7332,7 +7340,7 @@ def _gateway_command_inner(args):
                     print(f"  Run:  sudo loginctl enable-linger {_username}")
                     print()
                     print("  Then restart the gateway:")
-                    print("    hermes gateway restart")
+                    print("    indagis gateway restart")
                     return
 
             if service_configured:
@@ -7408,11 +7416,11 @@ def _gateway_command_inner(args):
                     print(
                         "To install as a Windows Scheduled Task (auto-start on login):"
                     )
-                    print("  hermes gateway install")
+                    print("  indagis gateway install")
                 else:
                     print("To install as a service:")
-                    print("  hermes gateway install")
-                    print("  sudo hermes gateway install --system")
+                    print("  indagis gateway install")
+                    print("  sudo indagis gateway install --system")
             else:
                 print("✗ Gateway is not running")
                 runtime_lines = _runtime_health_lines()
@@ -7423,7 +7431,7 @@ def _gateway_command_inner(args):
                         print(f"  {line}")
                 print()
                 print("To start:")
-                print("  hermes gateway run      # Run in foreground")
+                print("  indagis gateway run      # Run in foreground")
                 if is_termux():
                     print(
                         "  nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # Best-effort background start"
@@ -7437,12 +7445,12 @@ def _gateway_command_inner(args):
                     )
                 elif is_windows():
                     print(
-                        "  hermes gateway install  # Install as Windows Scheduled Task (auto-start on login)"
+                        "  indagis gateway install  # Install as Windows Scheduled Task (auto-start on login)"
                     )
                 else:
-                    print("  hermes gateway install  # Install as user service")
+                    print("  indagis gateway install  # Install as user service")
                     print(
-                        "  sudo hermes gateway install --system  # Install as boot-time system service"
+                        "  sudo indagis gateway install --system  # Install as boot-time system service"
                     )
 
         # Show other profiles' gateway status for multi-profile awareness
