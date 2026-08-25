@@ -289,7 +289,7 @@ def _config_default_interface_early() -> str:
         if home:
             cfg_path = os.path.join(home, "config.yaml")
         else:
-            cfg_path = os.path.join(os.path.expanduser("~"), ".hermes", "config.yaml")
+            cfg_path = os.path.join(os.path.expanduser("~"), ".indagis", "config.yaml")
         if os.path.exists(cfg_path):
             import yaml as _yaml_iface
 
@@ -558,7 +558,7 @@ def _apply_profile_override() -> None:
         except Exception:
             return None
 
-        candidate = home / ".hermes" / "profiles" / name
+        candidate = home / ".indagis" / "profiles" / name
         try:
             if candidate.is_dir():
                 return str(candidate)
@@ -8043,10 +8043,10 @@ def _hermes_exe_shims(scripts_dir: Path) -> list[Path]:
     if not _is_windows():
         return []
 
-    names = set(_load_console_script_names()) or {"hermes", "hermes-agent", "hermes-acp"}
+    names = set(_load_console_script_names()) or {"indagis", "indagis-agent", "indagis-acp"}
     # The gateway shim is not a [project.scripts] entry point, but older
     # update/install paths still rewrite and quarantine it.
-    names.add("hermes-gateway")
+    names.add("indagis-gateway")
     return [scripts_dir / f"{name}.exe" for name in sorted(names)]
 
 
