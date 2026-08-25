@@ -369,7 +369,7 @@ export function buildPalette(seeds: ThemeSeeds, isLight: boolean): ThemeColors {
 
 export const DARK_SEEDS: ThemeSeeds = {
   accent: '#FFBF00',
-  // The classic Hermes navy surfaces are IDENTITY, not derivation drift —
+  // The classic Indagis navy surfaces are IDENTITY, not derivation drift —
   // keep them as explicit fill seeds (the ladder derives them for skins
   // that don't care).
   activeRow: '#333355',
@@ -391,7 +391,7 @@ export const DARK_SEEDS: ThemeSeeds = {
 }
 
 // Light-terminal seeds: darker golds/ambers that stay legible on white.
-// The classic light-mode Hermes look was never hand-authored: for years the
+// The classic light-mode Indagis look was never hand-authored: for years the
 // TUI emitted the DARK golds and hosts with xterm's minimumContrastRatio
 // (Cursor defaults to 4.5) lifted them against white — hue and saturation
 // kept, luminance clamped. These seeds are those exact lifts
@@ -697,7 +697,7 @@ function backgroundLuminance(raw: string): null | number {
 //      allow-list below cannot override an explicit dark profile.
 //   5. `TERM_PROGRAM` light-default allow-list.
 //
-// Anything we can't decide stays dark — the default Hermes palette
+// Anything we can't decide stays dark — the default Indagis palette
 // is the dark one.
 export function detectLightMode(
   env: NodeJS.ProcessEnv = process.env,
@@ -857,7 +857,7 @@ export function fromSkin(
   const hasSkinColors = Object.keys(colors).length > 0
 
   // 1. Seeds: the skin's identity. Anything it doesn't define comes from the
-  //    base seeds for this polarity. The base's IDENTITY FILLS (Hermes navy
+  //    base seeds for this polarity. The base's IDENTITY FILLS (Indagis navy
   //    surfaces, gold muted) only carry over for the skinless default — a
   //    skin with its own identity derives its fills from its own seeds.
   const identityFills: Partial<ThemeSeeds> = hasSkinColors
@@ -895,7 +895,7 @@ export function fromSkin(
   const surface = c('completion_menu_bg') ?? c('background') ?? derived.completionBg
 
   // Re-mix the chip only when the skin authored its own surface; otherwise
-  // the derived value already carries the identity seeds (e.g. Hermes navy).
+  // the derived value already carries the identity seeds (e.g. Indagis navy).
   const activeRow =
     c('completion_menu_current_bg') ??
     (c('completion_menu_bg') ? mix(surface, seeds.accent, 0.22) : derived.completionCurrentBg)

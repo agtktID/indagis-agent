@@ -29,7 +29,7 @@ export interface ThemePalette {
   background: ThemeLayer;
   /** Primary text + accent. Most UI chrome reads this. */
   midground: ThemeLayer;
-  /** Top-layer highlight. In the default Hermes teal skin this is white @
+  /** Top-layer highlight. In the default Indagis teal skin this is white @
    *  alpha 0 — invisible by default but still drives `--color-ring`-style
    *  accents. The Indagis theme overrides this with concrete values. */
   foreground: ThemeLayer;

@@ -64,7 +64,7 @@ export const LOGO_ART = [
 ]
 
 // Fixed Indagis Cyber Cyan → deep blue gradient, independent of the active
-// theme's primary/accent (those still carry the inherited Hermes gold
+// theme's primary/accent (those still carry the inherited Indagis gold
 // palette pending the broader UI rebrand — see tasks/design-system-audit.md).
 // The product wordmark stays on-brand regardless of that unresolved
 // decision. Closing tag is bare `[/]` — RICH_RE only matches that exact

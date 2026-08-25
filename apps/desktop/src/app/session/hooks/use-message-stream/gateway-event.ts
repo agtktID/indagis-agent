@@ -85,7 +85,7 @@ function firstBillingLine(text: string): string {
  * A turn failed on a billing wall (out of credits / payment required). The
  * gateway forwards the structured descriptor built by `agent/billing_links.py`;
  * we cache it per-session (drives the in-chat banner) AND raise one sticky,
- * billing-specific toast — never the generic "Hermes error" — with a smart CTA
+ * billing-specific toast — never the generic "Indagis error" — with a smart CTA
  * (Nous → in-app Settings → Billing, other providers → their billing page).
  */
 function surfaceBillingBlock(sessionId: string, raw: unknown): void {
@@ -295,7 +295,7 @@ export function useGatewayEventHandler(deps: GatewayEventDeps) {
 
         return
       } else if (event.type === 'skin.changed') {
-        // A runtime skin switch (Hermes activating an authored skin, or `/skin`
+        // A runtime skin switch (Indagis activating an authored skin, or `/skin`
         // on another surface). Only the active profile's change repaints.
         const fromActiveProfile =
           !event.profile || normalizeProfileKey(event.profile) === normalizeProfileKey($activeGatewayProfile.get())
@@ -726,7 +726,7 @@ export function useGatewayEventHandler(deps: GatewayEventDeps) {
         const failure =
           payload?.status === 'error'
             ? {
-                error: coerceGatewayText(payload.error).trim() || finalText || 'Hermes reported an error',
+                error: coerceGatewayText(payload.error).trim() || finalText || 'Indagis reported an error',
                 partial: Boolean(payload.partial)
               }
             : undefined
@@ -1141,7 +1141,7 @@ export function useGatewayEventHandler(deps: GatewayEventDeps) {
         showAgentNotice(notice)
 
         // The urgent pair (access paused / restored) also breaks through as a
-        // native OS notification when Hermes is backgrounded; dispatch is gated
+        // native OS notification when Indagis is backgrounded; dispatch is gated
         // by the user's notification prefs + backgrounded check.
         const native = nativeNoticeInput(notice, translateNow('notifications.native.creditsTitle'))
 
@@ -1161,7 +1161,7 @@ export function useGatewayEventHandler(deps: GatewayEventDeps) {
         // straight to dismissNotification(key).
         clearAgentNotice((event.payload as AgentNoticePayload | undefined)?.key)
       } else if (event.type === 'error') {
-        const errorMessage = payload?.message || 'Hermes reported an error'
+        const errorMessage = payload?.message || 'Indagis reported an error'
         const looksLikeProviderSetup = isProviderSetupErrorMessage(errorMessage)
 
         // A turn that errors out has also ended — drop any open blocking prompt
