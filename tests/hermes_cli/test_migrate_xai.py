@@ -291,6 +291,6 @@ class TestCrashDurability:
         apply_migration(trap_config, issues, backup=False)
 
         text = trap_config.read_text(encoding="utf-8")
-        assert "# Indagis config (sample)" in text
+        assert "# Hermes config (sample)" in text
         assert "# the main model" in text
         assert "# not affected" in text
