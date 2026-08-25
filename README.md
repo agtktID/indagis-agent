@@ -44,7 +44,7 @@ curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/
 
 ### Windows (native, PowerShell)
 
-> **Heads up:** Native Windows runs Hermes without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/agtktID/indagis-agent/issues).
+> **Heads up:** Native Windows runs Indagis without WSL — CLI, gateway, TUI, and tools all work natively. If you'd rather use WSL2, the Linux/macOS one-liner above works there too. Found a bug? Please [file issues](https://github.com/agtktID/indagis-agent/issues).
 
 Run this in PowerShell:
 
@@ -58,13 +58,13 @@ iex (irm https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/in
 curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
-The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, **and a portable Git Bash** (MinGit, unpacked to `%LOCALAPPDATA%\hermes\git` — no admin required, completely isolated from any system Git install). Hermes uses this bundled Git Bash to run shell commands.
+The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, **and a portable Git Bash** (MinGit, unpacked to `%LOCALAPPDATA%\indagis\git` — no admin required, completely isolated from any system Git install). Indagis uses this bundled Git Bash to run shell commands.
 
 If you already have Git installed, the installer detects it and uses that instead. Otherwise a ~45MB MinGit download is all you need — it won't touch or interfere with any system Git.
 
-> **Android / Termux:** The tested manual path is documented in the [Termux guide](https://hermes-agent.nousresearch.com/docs/getting-started/termux). On Termux, Hermes installs a curated `.[termux]` extra because the full `.[all]` extra currently pulls Android-incompatible voice dependencies.
+> **Android / Termux:** The tested manual path is documented in the [Termux guide](https://hermes-agent.nousresearch.com/docs/getting-started/termux). On Termux, Indagis installs a curated `.[termux]` extra because the full `.[all]` extra currently pulls Android-incompatible voice dependencies.
 >
-> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. Native Windows install lives under `%LOCALAPPDATA%\hermes`; WSL2 installs under `~/.hermes` as on Linux.
+> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. Native Windows install lives under `%LOCALAPPDATA%\indagis`; WSL2 installs under `~/.indagis` as on Linux.
 
 After installation:
 
@@ -77,7 +77,7 @@ indagis             # start chatting!
 
 #### Windows Defender or antivirus flags `uv.exe` as malware
 
-If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Hermes `bin` folder (`%LOCALAPPDATA%\hermes\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Hermes bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
+If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Indagis `bin` folder (`%LOCALAPPDATA%\indagis\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Indagis bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
 
 **To verify your copy is authentic:**
 
@@ -101,10 +101,10 @@ Expand-Archive $zip "$env:TEMP\uv_x" -Force
 
 If attestation says "Verification succeeded" and the last line prints `True`, you're good.
 
-**To whitelist Hermes:**
+**To whitelist Indagis:**
 - **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\hermes\bin"`
 - **Bitdefender:** Add an exception in the Bitdefender console (Protection > Antivirus > Settings > Manage Exceptions)
-- Whitelist the **folder**, not the file hash — Hermes updates `uv` and the hash changes every version
+- Whitelist the **folder**, not the file hash — Indagis updates `uv` and the hash changes every version
 
 For more context, see the upstream Astral reports: [astral-sh/uv#13553](https://github.com/astral-sh/uv/issues/13553), [astral-sh/uv#15011](https://github.com/astral-sh/uv/issues/15011), [astral-sh/uv#10079](https://github.com/astral-sh/uv/issues/10079).
 
@@ -174,7 +174,7 @@ cp .env.example .env   # fill in at least one provider key, or configure provide
 HERMES_UID=$(id -u) HERMES_GID=$(id -g) docker compose up -d gateway
 ```
 
-**Set `HERMES_UID`/`HERMES_GID` to your own host user** (`id -u` / `id -g`) — the container's default user is UID 10000, and without this override, files it writes into your mounted `~/.hermes` directory will be owned by UID 10000 and unreadable by your own account. If you forget and this happens: `sudo chown -R $(id -u):$(id -g) ~/.hermes`.
+**Set `HERMES_UID`/`HERMES_GID` to your own host user** (`id -u` / `id -g`) — the container's default user is UID 10000, and without this override, files it writes into your mounted `~/.indagis` directory will be owned by UID 10000 and unreadable by your own account. If you forget and this happens: `sudo chown -R $(id -u):$(id -g) ~/.indagis`.
 
 To also run the dashboard container: `docker compose up -d dashboard` (binds `127.0.0.1:9119` on the host network — `network_mode: host`, no port mapping needed). Verified: `docker build .` succeeds and produces a ~972MB image; `docker compose up` starts both containers and all internal services report started. The dashboard's HTTP endpoint responding within a few seconds of container start was not fully confirmed in this session's sandboxed test environment — if `curl http://localhost:9119` doesn't respond right away, check `docker compose logs dashboard` and give it a bit longer before assuming it's broken.
 
@@ -207,7 +207,7 @@ indagis investigation export <investigation> --format md --output ./reports
 
 ## Bot Mode
 
-Any Hermes profile can be a **teammate agent**: give it a `ui_meta.hermes-bots` block in `profile.yaml`, and its canonical `"Bot Chat"` session gains a `message_agent` tool for messaging other bots on the same install. Delivery is fire-and-forget — the message lands in the target's Bot Chat with your handle prefixed, and the reply arrives later as a background completion notification, exactly like any other async tool result.
+Any Indagis profile can be a **teammate agent**: give it a `ui_meta.hermes-bots` block in `profile.yaml`, and its canonical `"Bot Chat"` session gains a `message_agent` tool for messaging other bots on the same install. Delivery is fire-and-forget — the message lands in the target's Bot Chat with your handle prefixed, and the reply arrives later as a background completion notification, exactly like any other async tool result.
 
 ```bash
 indagis profile create researcher
@@ -231,7 +231,7 @@ Once at least one profile carries that block, every Bot Chat session on the inst
 
 ## Skip the API-key collection — Nous Portal
 
-Hermes works with whatever provider you want — that's not changing. But if you'd rather not collect five separate API keys for the model, web search, image generation, TTS, and a cloud browser, **[Nous Portal](https://portal.nousresearch.com)** covers all of them under one subscription:
+Indagis works with whatever provider you want — that's not changing. But if you'd rather not collect five separate API keys for the model, web search, image generation, TTS, and a cloud browser, **[Nous Portal](https://portal.nousresearch.com)** covers all of them under one subscription:
 
 - **300+ models** — pick any of them with `/model <name>`
 - **Tool Gateway** — web search (Firecrawl), image generation (FAL), text-to-speech (OpenAI), cloud browser (Browser Use), all routed through your sub. No extra accounts.
@@ -250,7 +250,7 @@ You can still bring your own keys per-tool whenever you want — the gateway is 
 
 ## CLI vs Messaging Quick Reference
 
-Hermes has two entry points: start the terminal UI with `indagis`, or run the gateway and talk to it from Telegram, Discord, Slack, WhatsApp, Signal, or Email. Once you're in a conversation, many slash commands are shared across both interfaces.
+Indagis has two entry points: start the terminal UI with `indagis`, or run the gateway and talk to it from Telegram, Discord, Slack, WhatsApp, Signal, or Email. Once you're in a conversation, many slash commands are shared across both interfaces.
 
 | Action                         | CLI                                           | Messaging platforms                                                              |
 | ------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -294,7 +294,7 @@ All documentation lives at **[hermes-agent.nousresearch.com/docs](https://hermes
 
 ## Migrating from OpenClaw
 
-If you're coming from OpenClaw, Hermes can automatically import your settings, memories, skills, and API keys.
+If you're coming from OpenClaw, Indagis can automatically import your settings, memories, skills, and API keys.
 
 **During first-time setup:** The setup wizard (`indagis setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
 
@@ -362,7 +362,7 @@ indagis uninstall --gui       # remove only the desktop app, leave the CLI/agent
 
 - **`curl ... | bash` fails to clone / 404s**: the installer clones `github.com/agtktID/indagis-agent`. If you're testing an unmerged branch, pass `--branch <name>` (Linux/macOS) or `-Branch <name>` (PowerShell).
 - **Windows Defender/antivirus flags `uv.exe`**: see the dedicated section under [Quick Install](#quick-install) above — it's a documented false positive with a verification procedure.
-- **Docker: files under `~/.hermes` become unreadable after `docker compose up`**: you forgot `HERMES_UID`/`HERMES_GID` — see [Docker](#docker) above. Fix with `sudo chown -R $(id -u):$(id -g) ~/.hermes`.
+- **Docker: files under `~/.indagis` become unreadable after `docker compose up`**: you forgot `HERMES_UID`/`HERMES_GID` — see [Docker](#docker) above. Fix with `sudo chown -R $(id -u):$(id -g) ~/.indagis`.
 - **Docker: `.rpm` build fails locally**: install the `rpm` package (`sudo apt-get install rpm` on Debian/Ubuntu) — electron-builder's FPM tooling needs `rpmbuild` on the host.
 - **`indagis doctor`** is the first stop for anything else — it checks provider config, environment, and common misconfigurations.
 - **Still stuck?** [Open an issue](https://github.com/agtktID/indagis-agent/issues) with `indagis doctor` output attached.
@@ -380,7 +380,7 @@ managed venv, lazy dependencies, gateway, and docs tooling.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.sh | bash
-cd "${INDAGIS_HOME:-$HOME/.hermes}/hermes-agent"
+cd "${INDAGIS_HOME:-$HOME/.indagis}/hermes-agent"
 uv pip install -e ".[all,dev]"
 scripts/run_tests.sh
 ```
