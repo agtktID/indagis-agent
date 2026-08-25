@@ -1,5 +1,5 @@
 /**
- * Bots — create and list Bot-Mode teammate agents (Hermes profiles marked
+ * Bots — create and list Bot-Mode teammate agents (Indagis profiles marked
  * ui_meta['hermes-bots']) from a `/bots` page + sidebar nav row. Reuses the
  * `plugins/bots/dashboard/plugin_api.py` REST router through `ctx.rest`
  * (namespace-scoped to `/api/plugins/bots`), same pattern as the kanban

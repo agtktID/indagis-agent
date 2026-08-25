@@ -139,7 +139,7 @@ export function BotsPage({ os }: { os: BotsPageOs }) {
       <div>
         <h1 className="text-base font-semibold">Bots</h1>
         <p className="text-xs text-muted-foreground">
-          A bot is a Hermes profile with a canonical "Bot Chat" session and the <code>message_agent</code> tool to
+          A bot is a Indagis profile with a canonical "Bot Chat" session and the <code>message_agent</code> tool to
           message its teammates. Active gateway profile: <code>{profile || 'default'}</code>.
         </p>
       </div>

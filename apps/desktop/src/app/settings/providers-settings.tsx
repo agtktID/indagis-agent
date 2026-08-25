@@ -234,9 +234,9 @@ function ConnectedProviderRow({
   const copy = t.settings.providers
   const title = providerTitle(provider)
   const Trail = provider.flow === 'external' ? Terminal : ChevronRight
-  // Hermes can clear this provider's creds via the API.
+  // Indagis can clear this provider's creds via the API.
   const canDisconnect = provider.disconnectable ?? provider.flow !== 'external'
-  // External (CLI-managed) provider Hermes can't clear via the API, but ships a
+  // External (CLI-managed) provider Indagis can't clear via the API, but ships a
   // command we can run in the embedded terminal (Electron shell only).
   const terminalDisconnect = !canDisconnect && Boolean(provider.disconnect_command) && canRunInTerminal()
   // Only fall back to a static "remove it elsewhere" hint when we offer no button.
@@ -379,7 +379,7 @@ export function ProvidersSettings({
   }, [onboardingActive])
 
   // External (CLI-managed) providers can't be cleared via the API by design —
-  // Hermes never deletes creds another tool owns behind a silent API call.
+  // Indagis never deletes creds another tool owns behind a silent API call.
   // Instead we run the documented removal command in the embedded terminal so
   // the user sees exactly what executes, then return them to chat to watch it.
   function handleTerminalDisconnect(provider: OAuthProvider) {
