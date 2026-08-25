@@ -8039,6 +8039,9 @@ def _hermes_exe_shims(scripts_dir: Path) -> list[Path]:
         return []
 
     names = set(_load_console_script_names()) or {"indagis", "indagis-agent", "indagis-acp"}
+    # A pre-rebrand venv still holds hermes*.exe; quarantine must rename those
+    # too or `pip install -e .` hits a locked file on Windows.
+    names.update({"hermes", "hermes-agent", "hermes-acp"})
     # The gateway shim is not a [project.scripts] entry point, but older
     # update/install paths still rewrite and quarantine it.
     # Both gateway shim names: not a [project.scripts] entry point, and a
