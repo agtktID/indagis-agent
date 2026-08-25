@@ -13,7 +13,7 @@ def _hermes_home_path() -> Path:
         from hermes_constants import get_indagis_home  # local import to avoid cycles
         return get_indagis_home()
     except Exception:
-        return Path(os.path.expanduser("~/.hermes"))
+        return Path(os.path.expanduser("~/.indagis"))
 
 
 def _hermes_root_path() -> Path:
@@ -22,7 +22,7 @@ def _hermes_root_path() -> Path:
         from hermes_constants import get_default_indagis_root  # local import to avoid cycles
         return get_default_indagis_root()
     except Exception:
-        return Path(os.path.expanduser("~/.hermes"))
+        return Path(os.path.expanduser("~/.indagis"))
 
 
 def build_write_denied_paths(home: str) -> set[str]:

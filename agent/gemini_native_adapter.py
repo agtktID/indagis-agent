@@ -194,7 +194,7 @@ _STANDARD_KEY_GUIDANCE = (
     "key's type and status, and create a replacement Gemini API key (or, as "
     "a temporary bridge, restrict the Standard key to "
     "generativelanguage.googleapis.com). Then update GEMINI_API_KEY / "
-    "GOOGLE_API_KEY in ~/.hermes/.env and restart your session. "
+    "GOOGLE_API_KEY in ~/.indagis/.env and restart your session. "
     "Details: https://ai.google.dev/gemini-api/docs/api-key"
 )
 
@@ -927,7 +927,7 @@ class GeminiNativeClient:
         if not (api_key or "").strip():
             raise RuntimeError(
                 "Gemini native client requires an API key, but none was provided. "
-                "Set GOOGLE_API_KEY or GEMINI_API_KEY in your environment / ~/.hermes/.env "
+                "Set GOOGLE_API_KEY or GEMINI_API_KEY in your environment / ~/.indagis/.env "
                 "(get one at https://aistudio.google.com/app/apikey), or run `indagis setup` "
                 "to configure the Google provider."
             )

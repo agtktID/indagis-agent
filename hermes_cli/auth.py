@@ -2177,7 +2177,7 @@ def resolve_provider(
     raise AuthError(
         "No inference provider configured. Run 'indagis model' to choose a "
         "provider and model, or set an API key (OPENROUTER_API_KEY, "
-        "OPENAI_API_KEY, etc.) in ~/.hermes/.env.",
+        "OPENAI_API_KEY, etc.) in ~/.indagis/.env.",
         code="no_provider_configured",
     )
 
@@ -3290,7 +3290,7 @@ def _spotify_interactive_setup(redirect_uri_hint: str) -> str:
         save_env_value("HERMES_SPOTIFY_REDIRECT_URI", redirect_uri_hint)
 
     print()
-    print("Saved HERMES_SPOTIFY_CLIENT_ID to ~/.hermes/.env")
+    print("Saved HERMES_SPOTIFY_CLIENT_ID to ~/.indagis/.env")
     print()
     return raw
 
@@ -5756,7 +5756,7 @@ def _refresh_access_token(
             "Nous Portal detected refresh-token reuse and revoked this session.\n"
             "This usually means an external process (monitoring script, "
             "custom self-heal hook, or another Indagis install sharing "
-            "~/.hermes/auth.json) called POST /api/oauth/token with Indagis's "
+            "~/.indagis/auth.json) called POST /api/oauth/token with Indagis's "
             "refresh token without persisting the rotated token back.\n"
             "Nous refresh tokens are single-use — only Indagis may call the "
             "refresh endpoint. For health checks, use `indagis auth status` "
