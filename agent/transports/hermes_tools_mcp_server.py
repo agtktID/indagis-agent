@@ -169,7 +169,7 @@ def _build_server() -> Any:
     mcp = FastMCP(
         "hermes-tools",
         instructions=(
-            "Hermes Agent's tool surface, exposed for use inside a Codex "
+            "Indagis Agent's tool surface, exposed for use inside a Codex "
             "session. Use these for capabilities Codex's built-in toolset "
             "doesn't cover: web search/extract, browser automation, "
             "subagent delegation, vision, image generation, persistent "
@@ -191,11 +191,11 @@ def _build_server() -> Any:
         spec = all_defs.get(name)
         if spec is None:
             logger.debug(
-                "skipping %s — not registered in this Hermes process", name
+                "skipping %s — not registered in this Indagis process", name
             )
             continue
 
-        description = spec.get("description") or f"Hermes {name} tool"
+        description = spec.get("description") or f"Indagis {name} tool"
         params_schema = spec.get("parameters") or {"type": "object", "properties": {}}
 
         # FastMCP wants a Python callable. Build a closure that takes the

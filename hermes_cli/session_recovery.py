@@ -334,7 +334,7 @@ def _snapshot_and_inspect(
         if before != after:
             raise SessionRecoverySafetyError(
                 "The source database bundle changed while it was being copied. "
-                "Stop every Hermes process using this profile and retry."
+                "Stop every Indagis process using this profile and retry."
             )
 
         conn = sqlite3.connect(

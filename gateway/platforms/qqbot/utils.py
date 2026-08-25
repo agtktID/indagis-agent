@@ -36,7 +36,7 @@ def build_user_agent() -> str:
     py_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
     os_name = platform.system().lower()
     hermes_version = _get_hermes_version()
-    return f"QQBotAdapter/{QQBOT_VERSION} (Python/{py_version}; {os_name}; Hermes/{hermes_version})"
+    return f"QQBotAdapter/{QQBOT_VERSION} (Python/{py_version}; {os_name}; Indagis/{hermes_version})"
 
 
 def get_api_headers() -> Dict[str, str]:

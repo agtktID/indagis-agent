@@ -484,7 +484,7 @@ class AgentImporter:
         if commands_dir.is_dir() and any(commands_dir.glob("*.md")):
             self.record(
                 "slash-commands", commands_dir, None, "skipped",
-                "Claude slash commands have no direct Hermes equivalent — "
+                "Claude slash commands have no direct Indagis equivalent — "
                 "consider converting them into skills",
             )
 
@@ -757,7 +757,7 @@ class AgentImporter:
                 continue
             if name in existing and not self.overwrite:
                 self.record(kind, name, f"mcp_servers.{name}", "conflict",
-                            "MCP server already exists in Hermes config")
+                            "MCP server already exists in Indagis config")
                 continue
 
             hermes_srv: Dict[str, Any] = {}
@@ -880,7 +880,7 @@ def import_agent_command(args) -> None:
 
     print()
     print(color("┌─────────────────────────────────────────────────────────┐", Colors.MAGENTA))
-    print(color("│          ⚕ Hermes — Import From Another Agent          │", Colors.MAGENTA))
+    print(color("│          ⚕ Indagis — Import From Another Agent          │", Colors.MAGENTA))
     print(color("└─────────────────────────────────────────────────────────┘", Colors.MAGENTA))
 
     if not source_dir.is_dir():

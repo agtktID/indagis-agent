@@ -673,7 +673,7 @@ def _make_callback_handler() -> tuple[type, dict]:
 
             body = (
                 "<html><body><h2>Authorization Successful</h2>"
-                "<p>You can close this tab and return to Hermes.</p></body></html>"
+                "<p>You can close this tab and return to Indagis.</p></body></html>"
             ) if code else (
                 "<html><body><h2>Authorization Failed</h2>"
                 f"<p>Error: {error or 'unknown'}</p></body></html>"
@@ -1197,7 +1197,7 @@ def _build_client_metadata(cfg: dict) -> "OAuthClientMetadata":
         )
     if OAuthClientMetadata is None:
         _ensure_sdk_loaded()
-    client_name = cfg.get("client_name", "Hermes Agent")
+    client_name = cfg.get("client_name", "Indagis Agent")
     scope = cfg.get("scope")
     redirect_uri = _resolve_redirect_uri(cfg, port)
 
@@ -1287,7 +1287,7 @@ def humanize_oauth_registration_error(
         return (
             f"'{server_name}' is Figma's remote MCP — DCR is allowlisted by "
             f"exact client_name (\"{_FIGMA_DCR_CLIENT_NAME}\" and \"Codex\" "
-            "work; most other names 403). Hermes defaults to "
+            "work; most other names 403). Indagis defaults to "
             f"client_name: {_FIGMA_DCR_CLIENT_NAME!r} automatically. If you "
             "set oauth.client_name yourself, change it to one of those, or "
             "clear it and re-run:\n"
