@@ -5429,7 +5429,7 @@ def _resolve_auto(
                 "OPENAI_BASE_URL is set (%s) but model.provider is '%s'. "
                 "Auxiliary clients may route to the wrong endpoint. "
                 "Run: indagis model to reconfigure, or remove "
-                "OPENAI_BASE_URL from ~/.hermes/.env",
+                "OPENAI_BASE_URL from ~/.indagis/.env",
                 _env_base, _cfg_provider,
             )
             _stale_base_url_warned = True

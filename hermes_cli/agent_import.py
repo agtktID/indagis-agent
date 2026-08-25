@@ -963,7 +963,7 @@ def import_agent_command(args) -> None:
     print()
     print_success("Import complete.")
     print_info("API keys and credentials were NOT imported — run 'indagis setup' "
-               "to configure providers, or add them to ~/.hermes/.env.")
+               "to configure providers, or add them to ~/.indagis/.env.")
 
 
 def print_import_report(report: Dict[str, Any], dry_run: bool) -> None:
@@ -1007,7 +1007,7 @@ def print_import_report(report: Dict[str, Any], dry_run: bool) -> None:
         print(color("  ⚷ Secrets stripped (never imported):", Colors.YELLOW))
         for name in stripped:
             print(f"      {name}")
-        print_info("Re-add credentials deliberately via 'indagis setup' or ~/.hermes/.env.")
+        print_info("Re-add credentials deliberately via 'indagis setup' or ~/.indagis/.env.")
         print()
 
     parts = []
