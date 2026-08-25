@@ -40,12 +40,17 @@
 
 set -e
 
-REAL=/opt/indagis/.venv/bin/hermes
+# [project.scripts] declares `indagis`; `hermes` only exists in a venv built
+# before the rename. Prefer the current name, accept the legacy one.
+REAL=/opt/indagis/.venv/bin/indagis
+if [ ! -x "$REAL" ]; then
+    REAL=/opt/indagis/.venv/bin/hermes
+fi
 
-# Defensive: if the venv binary is missing (corrupted image, partial
+# Defensive: if neither venv binary is present (corrupted image, partial
 # install), fail loudly rather than silently masking it.
 if [ ! -x "$REAL" ]; then
-    echo "hermes-shim: $REAL not found or not executable" >&2
+    echo "indagis-shim: no indagis/hermes entry point under /opt/indagis/.venv/bin" >&2
     exit 127
 fi
 

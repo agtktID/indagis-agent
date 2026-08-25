@@ -297,8 +297,9 @@ RUN uv pip install --no-cache-dir --no-deps -e "."
 
 USER root
 RUN mkdir -p /opt/indagis/bin && \
-    cp /opt/indagis/docker/hermes-exec-shim.sh /opt/indagis/bin/hermes && \
-    chmod 0755 /opt/indagis/bin/hermes && \
+    cp /opt/indagis/docker/hermes-exec-shim.sh /opt/indagis/bin/indagis && \
+    chmod 0755 /opt/indagis/bin/indagis && \
+    ln -sf indagis /opt/indagis/bin/hermes && \
     printf 'docker\n' > /opt/indagis/.install_method
 # The ``.install_method`` stamp is baked next to the running code (the install
 # tree), NOT into $INDAGIS_HOME. $INDAGIS_HOME (/opt/data) is a shared data
@@ -396,14 +397,17 @@ ENV HERMES_LAZY_INSTALL_TARGET=/opt/data/lazy-packages
 # `docker exec <c> hermes ...` they default to root, and any file the
 # command writes under $INDAGIS_HOME (auth.json, .env, config.yaml) ends
 # up root-owned and unreadable to the supervised gateway (UID 10000).
-# The shim lives at /opt/indagis/bin/hermes, sits earliest on PATH, and
+# The shim lives at /opt/indagis/bin/indagis, sits earliest on PATH, and
 # transparently re-exec's the real venv binary via `s6-setuidgid hermes`
 # when invoked as root. Non-root callers (supervised processes,
 # `--user hermes`, etc.) hit the short-circuit path with no overhead.
 # Recursion is impossible because the shim exec's the venv binary by
-# absolute path (/opt/indagis/.venv/bin/hermes). See the shim source for
+# absolute path (/opt/indagis/.venv/bin/indagis). See the shim source for
 # the opt-out env var (HERMES_DOCKER_EXEC_AS_ROOT=1).
-COPY --chmod=0755 docker/hermes-exec-shim.sh /opt/indagis/bin/hermes
+COPY --chmod=0755 docker/hermes-exec-shim.sh /opt/indagis/bin/indagis
+# `hermes` stays as an alias so an existing `docker exec <c> hermes ...`
+# habit, and the s6 services that still invoke it, keep working.
+RUN ln -sf indagis /opt/indagis/bin/hermes
 COPY --chmod=0755 docker/entrypoint-dispatch.sh /opt/indagis/docker/entrypoint-dispatch.sh
 
 # Pre-s6 entrypoint.sh did `source .venv/bin/activate` which exported
