@@ -11,8 +11,6 @@
  * doesn't touch.
  */
 
-import { useState } from 'react'
-
 import {
   Button,
   cn,
@@ -28,6 +26,7 @@ import {
   useQueryClient,
   useValue
 } from '@hermes/plugin-sdk'
+import { useState } from 'react'
 
 import { type Bot, BOTS_KEY, createBot, fetchBots } from './api'
 

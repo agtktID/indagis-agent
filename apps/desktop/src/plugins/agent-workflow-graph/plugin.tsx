@@ -177,6 +177,7 @@ function handleToolComplete(event: RpcEvent<Record<string, unknown>>): void {
 
   // Resolve the original session even if the user has switched away.
   const boundSession = $toolToSession.get(toolId) ?? event.session_id ?? ''
+
   if (boundSession !== activeSessionId) {
     return
   }
@@ -247,6 +248,7 @@ function handleSubagentComplete(event: RpcEvent<Record<string, unknown>>): void 
   }
 
   const parentSession = $subagentParent.get(childId) ?? event.session_id ?? ''
+
   if (parentSession !== activeSessionId) {
     return
   }
@@ -269,16 +271,24 @@ function onAnyEvent(event: RpcEvent): void {
   switch (event.type) {
     case 'tool.start':
       handleToolStart({ ...event, payload })
+
       break
+
     case 'tool.complete':
       handleToolComplete({ ...event, payload })
+
       break
+
     case 'subagent.start':
       handleSubagentStart({ ...event, payload })
+
       break
+
     case 'subagent.complete':
       handleSubagentComplete({ ...event, payload })
+
       break
+
     default:
       // Unrelated events: ignore.
       break
@@ -317,21 +327,26 @@ function layout(graph: Graph): Layout {
   }
 
   const sessionNode = graph.nodes.find(n => n.kind === 'session')
+
   if (!sessionNode) {
     return { positioned: [], width: 0, height: 0 }
   }
 
   const childrenByParent = new Map<string, GraphNode[]>()
+
   for (const edge of graph.edges) {
     const list = childrenByParent.get(edge.from) ?? []
     const child = graph.nodes.find(n => n.id === edge.to)
+
     if (child) {
       list.push(child)
     }
+
     childrenByParent.set(edge.from, list)
   }
 
   const positioned: PositionedNode[] = []
+
   const queue: Array<{ node: GraphNode; x: number; y: number }> = [
     { node: sessionNode, x: MARGIN, y: MARGIN }
   ]
@@ -344,6 +359,7 @@ function layout(graph: Graph): Layout {
     positioned.push({ node, x, y })
 
     const children = childrenByParent.get(node.id) ?? []
+
     if (children.length === 0) {
       continue
     }
@@ -403,10 +419,10 @@ function WorkflowPane() {
           <EmptyState activeId={activeId} />
         ) : (
           <svg
-            style={{ display: 'block' }}
-            width={computed.width}
             height={computed.height}
+            style={{ display: 'block' }}
             viewBox={`0 0 ${computed.width} ${computed.height}`}
+            width={computed.width}
           >
             <defs>
               <marker
@@ -425,6 +441,7 @@ function WorkflowPane() {
             {graph.edges.map((edge, i) => {
               const from = computed.positioned.find(p => p.node.id === edge.from)
               const to = computed.positioned.find(p => p.node.id === edge.to)
+
               if (!from || !to) {
                 return null
               }
@@ -480,9 +497,9 @@ function WorkflowPane() {
                   <text
                     fill={DIM}
                     fontSize="10"
+                    textAnchor="end"
                     x={NODE_W - 10}
                     y={34}
-                    textAnchor="end"
                   >
                     {node.durationS.toFixed(1)}s
                   </text>
