@@ -16,7 +16,7 @@ import {
   testMcpServer
 } from './hermes'
 
-describe('Hermes REST parity helpers (hub / mcp / maintenance)', () => {
+describe('Indagis REST parity helpers (hub / mcp / maintenance)', () => {
   let api: ReturnType<typeof vi.fn>
 
   beforeEach(() => {

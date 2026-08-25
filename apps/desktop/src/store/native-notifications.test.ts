@@ -213,7 +213,7 @@ describe('sendTestNativeNotification', () => {
   it('fires regardless of focus or active session', () => {
     setWindowState({ focused: true, hidden: false })
     setActiveSessionId('on-screen')
-    sendTestNativeNotification('Hermes', 'works')
+    sendTestNativeNotification('Indagis', 'works')
     expect(notify).toHaveBeenCalledTimes(1)
   })
 })
