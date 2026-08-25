@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "indagis-desktop-renderer",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:renderer", "--prefix", "apps/desktop"],
+      "port": 5174
+    }
+  ]
+}
