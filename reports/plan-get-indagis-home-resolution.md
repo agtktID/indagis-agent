@@ -587,7 +587,7 @@ Pour les 3 versions, ajouter 5 tests minimum (un par priorité). Les tests doive
 
 ## Décision actée — Tranche 1 P2 trust model (2026-08-10)
 
-**Contexte** : sur la machine de développement de l'opérateur, **`~/.hermes`** est le **profil de travail réel et actif** (~10 GB, `which hermes` → `/home/user/.local/bin/hermes`, `config.yaml` déclare `model: MiniMax-M3, provider: minimax-oauth` actif, contient `profiles/pentest/sandboxes/docker/default/home/` avec de vrais outils de sécurité — `nuclei-templates`, `naabu`, `ffuf`, `katana`, `dnsx`, `subfinder`, `httpx`, `john`). `~/.indagis` (~2,7 GB, créé le 1er juillet 2026 par une install initiale du fork) coexiste en profil secondaire, peu utilisé au quotidien. L'opérateur n'a pas migré parce que la fenêtre de déprécation n'est pas fermée — la coexistence est le cas prévu par P2 + P4 du ladder.
+**Contexte** : sur une machine de développement, `~/.hermes` peut rester le profil de travail actif tandis que `~/.indagis` coexiste en profil secondaire. L'opérateur n'a pas migré parce que la fenêtre de dépréciation n'est pas fermée — la coexistence est le cas prévu par P2 + P4 du ladder.
 
 **Leçon méthodologique** : une première itération de cette observation avait extrapolé depuis les mtimes de fichiers et **inversé** les rôles (en faisant de `~/.indagis` le profil de travail et de `~/.hermes` l'ancien profil abandonné). La correction a été confirmée par preuve directe (`du -sh`, `which`, `cat config.yaml`, listing du profil pentest). Une investigation qui ne vérifie pas l'usage actif risque d'inverser la cause et la conséquence.
 

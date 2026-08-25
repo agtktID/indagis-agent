@@ -1,4 +1,0 @@
-  File "<string>", line 33
-    if re.search(r'"[^"]*(Hermes Agent|Hermes)[^"]*"|\'[^\\']*(Hermes Agent|Hermes)[^\\']*\'', line):
-                                                            ^
-SyntaxError: closing parenthesis ']' does not match opening parenthesis '('
