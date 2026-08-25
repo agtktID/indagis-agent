@@ -48,13 +48,13 @@ Run this in PowerShell:
 iex (irm https://indagis-agent.example.com/install.ps1)
 ```
 
-The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, **and a portable Git Bash** (MinGit, unpacked to `%LOCALAPPDATA%\hermes\git` — no admin required, completely isolated from any system Git install). Indagis Agent uses this bundled Git Bash to run shell commands.
+The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, **and a portable Git Bash** (MinGit, unpacked to `%LOCALAPPDATA%\indagis\git` — no admin required, completely isolated from any system Git install). Indagis Agent uses this bundled Git Bash to run shell commands.
 
 If you already have Git installed, the installer detects it and uses that instead. Otherwise a ~45MB MinGit download is all you need — it won't touch or interfere with any system Git.
 
 > **Android / Termux:** The tested manual path is documented in the [Termux guide](https://indagis-agent.example.com/docs/getting-started/termux). On Termux, Indagis Agent installs a curated `.[termux]` extra because the full `.[all]` extra currently pulls Android-incompatible voice dependencies.
 
-> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. Native Windows install lives under `%LOCALAPPDATA%\hermes`; WSL2 installs under `~/.hermes` as on Linux. These directory names reflect the current installer path and remain unchanged for now for install compatibility.
+> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. A fresh native Windows install lives under `%LOCALAPPDATA%\indagis`; WSL2 installs under `~/.indagis` as on Linux. An existing `%LOCALAPPDATA%\hermes` / `~/.hermes` from before the rename keeps being used — the installer prefers it over creating a second home, so upgrades stay in place.
 
 After installation:
 
@@ -67,7 +67,7 @@ indagis            # start chatting!
 
 #### Windows Defender or antivirus flags `uv.exe` as malware
 
-If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Indagis Agent install's `bin` folder (`%LOCALAPPDATA%\hermes\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Indagis Agent bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
+If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Indagis Agent install's `bin` folder (`%LOCALAPPDATA%\indagis\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Indagis Agent bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
 
 **To verify your copy is authentic:**
 
@@ -79,7 +79,7 @@ winget install --id GitHub.cli
 gh auth login
 
 # Run verification
-$uv = "$env:LOCALAPPDATA\hermes\bin\uv.exe"
+$uv = "$env:LOCALAPPDATA\indagis\bin\uv.exe"
 $ver = (& $uv --version).Split(' ')[1]
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $zip = "$env:TEMP\uv.zip"
