@@ -1246,8 +1246,8 @@ def _check_version(caps: Dict[str, Any]) -> None:
     major = ver.split(".", 1)[0]
     if major != WIRE_VERSION:
         raise SyncError(
-            f"this server speaks sync version {ver!r}, but this Hermes speaks "
-            f"{WIRE_VERSION} — update Hermes to sync with it"
+            f"this server speaks sync version {ver!r}, but this Indagis speaks "
+            f"{WIRE_VERSION} — update Indagis to sync with it"
         )
 
 

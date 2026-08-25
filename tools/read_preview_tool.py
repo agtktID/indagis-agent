@@ -23,7 +23,7 @@ def read_preview_tool(
 ) -> str:
     """Return the active preview tab's contents (+ metadata) as a JSON string."""
     if callback is None:
-        return tool_error("read_preview is only available in the Hermes desktop app.")
+        return tool_error("read_preview is only available in the Indagis desktop app.")
 
     try:
         window = {
@@ -58,7 +58,7 @@ READ_PREVIEW_SCHEMA = {
     "name": "read_preview",
     "description": (
         "Read what's currently shown in the in-app browser / preview pane of the "
-        "Hermes desktop GUI (the pane open_preview opens beside this chat). Call "
+        "Indagis desktop GUI (the pane open_preview opens beside this chat). Call "
         "with no arguments for the first window of the active tab's content. "
         "Returns JSON {kind, url, title, text, start, end, total_chars, note?}: "
         "a URL (Browser) tab's text is the rendered page's visible text — page "

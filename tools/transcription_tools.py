@@ -322,7 +322,7 @@ def _try_lazy_install_stt() -> bool:
     except Exception as exc:
         logger.warning(
             "Lazy install of faster-whisper failed: %s. "
-            "This is often a permission issue: the Hermes process user cannot "
+            "This is often a permission issue: the Indagis process user cannot "
             "write to the virtual environment. Try running manually as the "
             "venv owner: `stat -c '%%u' '$(dirname $(dirname $(which python3)))'` "
             "then `su - <owner> -c 'VIRTUAL_ENV=/opt/hermes/.venv "

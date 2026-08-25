@@ -509,8 +509,8 @@ class HermesConsoleEngine:
 
             if _contains_shell_syntax(raw_line, tokens):
                 raise ConsoleCommandError(
-                    "Hermes Console does not run shell syntax. Use one supported "
-                    "Hermes command at a time."
+                    "Indagis Console does not run shell syntax. Use one supported "
+                    "Indagis command at a time."
                 )
 
             builtin = self._execute_builtin(tokens)
@@ -542,7 +542,7 @@ class HermesConsoleEngine:
             return f"{command.usage}\n{command.summary}"
 
         lines = [
-            "Hermes Console",
+            "Indagis Console",
             "",
             "Supported commands:",
         ]
@@ -559,9 +559,9 @@ class HermesConsoleEngine:
         return "\n".join(lines)
 
     def _register_defaults(self) -> None:
-        self.register(("status",), "status", "Show Hermes component status.", _status)
+        self.register(("status",), "status", "Show Indagis component status.", _status)
         self.register(("doctor",), "doctor", "Run diagnostics without auto-fix.", _doctor)
-        self.register(("logs",), "logs [name] [-n N]", "Show recent Hermes logs.", _logs)
+        self.register(("logs",), "logs [name] [-n N]", "Show recent Indagis logs.", _logs)
         self.register(("sessions", "list"), "sessions list [--limit N]", "List recent sessions.", _sessions_list)
         self.register(("sessions", "stats"), "sessions stats", "Show session store statistics.", _sessions_stats)
         self.register(("config", "show"), "config show", "Show current configuration.", _config_show)
@@ -572,7 +572,7 @@ class HermesConsoleEngine:
             "Set a configuration value.",
             _config_set,
             mutating=True,
-            confirmation="Update Hermes configuration?",
+            confirmation="Update Indagis configuration?",
         )
         self.register(("cron", "list"), "cron list [--all]", "List scheduled jobs.", _cron_list)
         self.register(("cron", "status"), "cron status", "Show cron scheduler status.", _cron_status)
@@ -872,7 +872,7 @@ class HermesConsoleEngine:
             "Update config with new options.",
             _config_migrate,
             mutating=True,
-            confirmation="Update Hermes configuration with missing defaults?",
+            confirmation="Update Indagis configuration with missing defaults?",
         )
         self.register(
             ("sessions", "export"),
@@ -1167,12 +1167,12 @@ class HermesConsoleEngine:
         probe = " ".join(tokens[:2]) if len(tokens) > 1 else tokens[0]
         suggestions = difflib.get_close_matches(probe, available, n=3, cutoff=0.45)
         suffix = f" Did you mean: {', '.join(suggestions)}?" if suggestions else ""
-        raise ConsoleCommandError(f"Unsupported Hermes Console command: {probe}.{suffix}")
+        raise ConsoleCommandError(f"Unsupported Indagis Console command: {probe}.{suffix}")
 
     def _rejection_for(self, tokens: Sequence[str]) -> str:
         first = tokens[0]
         if first.startswith("-"):
-            return f"{first} is not available in Hermes Console."
+            return f"{first} is not available in Indagis Console."
         blocked_top = {
             "acp",
             "chat",
@@ -1198,30 +1198,30 @@ class HermesConsoleEngine:
             "whatsapp-cloud",
         }
         if first in blocked_top:
-            return f"`hermes {first}` is not available in Hermes Console."
+            return f"`hermes {first}` is not available in Indagis Console."
         blocked_pairs = {
-            ("config", "edit"): "`config edit` opens an editor and is not available in Hermes Console.",
-            ("mcp", "serve"): "`mcp serve` starts a server and is not available in Hermes Console.",
-            ("profile", "alias"): "`profile alias` creates shell wrappers and is not available in Hermes Console.",
-            ("skills", "config"): "`skills config` is interactive and is not available in Hermes Console.",
-            ("skills", "publish"): "`skills publish` is not available in Hermes Console.",
-            ("portal", "login"): "`portal login` is interactive and is not available in Hermes Console.",
-            ("portal", "open"): "`portal open` opens a browser and is not available in Hermes Console.",
-            ("kanban", "tail"): "`kanban tail` streams output and is not available in Hermes Console.",
-            ("kanban", "watch"): "`kanban watch` streams output and is not available in Hermes Console.",
-            ("kanban", "daemon"): "`kanban daemon` starts a service and is not available in Hermes Console.",
-            ("kanban", "dispatcher"): "`kanban dispatcher` starts a worker and is not available in Hermes Console.",
-            ("kanban", "swarm"): "`kanban swarm` starts agent work and is not available in Hermes Console.",
-            ("kanban", "decompose"): "`kanban decompose` starts agent work and is not available in Hermes Console.",
-            ("kanban", "specify"): "`kanban specify` starts agent work and is not available in Hermes Console.",
-            ("kanban", "gc"): "`kanban gc` is not available in Hermes Console.",
+            ("config", "edit"): "`config edit` opens an editor and is not available in Indagis Console.",
+            ("mcp", "serve"): "`mcp serve` starts a server and is not available in Indagis Console.",
+            ("profile", "alias"): "`profile alias` creates shell wrappers and is not available in Indagis Console.",
+            ("skills", "config"): "`skills config` is interactive and is not available in Indagis Console.",
+            ("skills", "publish"): "`skills publish` is not available in Indagis Console.",
+            ("portal", "login"): "`portal login` is interactive and is not available in Indagis Console.",
+            ("portal", "open"): "`portal open` opens a browser and is not available in Indagis Console.",
+            ("kanban", "tail"): "`kanban tail` streams output and is not available in Indagis Console.",
+            ("kanban", "watch"): "`kanban watch` streams output and is not available in Indagis Console.",
+            ("kanban", "daemon"): "`kanban daemon` starts a service and is not available in Indagis Console.",
+            ("kanban", "dispatcher"): "`kanban dispatcher` starts a worker and is not available in Indagis Console.",
+            ("kanban", "swarm"): "`kanban swarm` starts agent work and is not available in Indagis Console.",
+            ("kanban", "decompose"): "`kanban decompose` starts agent work and is not available in Indagis Console.",
+            ("kanban", "specify"): "`kanban specify` starts agent work and is not available in Indagis Console.",
+            ("kanban", "gc"): "`kanban gc` is not available in Indagis Console.",
         }
         if len(tokens) >= 2:
             pair = (tokens[0], tokens[1])
             if pair in blocked_pairs:
                 return blocked_pairs[pair]
         if tuple(tokens[:2]) in {("sessions", "delete"), ("sessions", "prune")}:
-            return "`sessions delete` and `sessions prune` are not available in Hermes Console."
+            return "`sessions delete` and `sessions prune` are not available in Indagis Console."
         return ""
 
     def _help_result(self) -> ConsoleResult:
@@ -1255,7 +1255,7 @@ def _apply_confirmed_defaults(args: argparse.Namespace) -> None:
     if getattr(args, "auth_action", None) == "add":
         auth_type = getattr(args, "auth_type", None)
         if auth_type in {"api-key", "api_key"} and not getattr(args, "api_key", None):
-            raise ConsoleCommandError("auth add --type api-key requires --api-key in Hermes Console.")
+            raise ConsoleCommandError("auth add --type api-key requires --api-key in Indagis Console.")
     if getattr(args, "import_name", None) is not None:
         # profile import has no prompt flag; leave it alone.
         return
@@ -1291,7 +1291,7 @@ def _doctor(_engine: HermesConsoleEngine, args: list[str]) -> str:
 
 def _logs(_engine: HermesConsoleEngine, args: list[str]) -> str:
     if "-f" in args or "--follow" in args:
-        raise ConsoleCommandError("`logs -f` is not available in Hermes Console.")
+        raise ConsoleCommandError("`logs -f` is not available in Indagis Console.")
     parser = _ArgumentParser(prog="logs", add_help=False)
     parser.add_argument("log_name", nargs="?", default="agent")
     parser.add_argument("-n", "--lines", type=int, default=50)
@@ -1603,7 +1603,7 @@ def run_console_repl(
 
     engine = HermesConsoleEngine()
     if interactive:
-        print("Hermes Console. Type `help` for commands, `exit` to quit.", file=stdout)
+        print("Indagis Console. Type `help` for commands, `exit` to quit.", file=stdout)
 
     while True:
         if interactive:

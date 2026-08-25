@@ -442,7 +442,7 @@ def silent_audio_hint(details: Dict[str, Any]) -> str:
     """Platform-specific remediation for an armed stream delivering silence."""
     if sys.platform == "darwin":
         return (
-            "Microphone delivers only silence. Grant the Hermes backend "
+            "Microphone delivers only silence. Grant the Indagis backend "
             "microphone access in System Settings > Privacy & Security > "
             "Microphone, then toggle the wake word."
         )

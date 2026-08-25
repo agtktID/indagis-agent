@@ -160,7 +160,7 @@ class CodexAppServerClient:
     def initialize(
         self,
         client_name: str = "hermes",
-        client_title: str = "Hermes Agent",
+        client_title: str = "Indagis Agent",
         client_version: str = "0.1",
         capabilities: Optional[dict] = None,
         timeout: float = 10.0,

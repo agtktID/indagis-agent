@@ -460,7 +460,7 @@ def build_system_prompt_parts(agent: Any, system_message: Optional[str] = None) 
         active_profile = "default"
     if active_profile == "default":
         post_workspace_parts.append(
-            "Active Hermes profile: default. Other profiles (if any) live "
+            "Active Indagis profile: default. Other profiles (if any) live "
             "under " + str(get_indagis_home()) + "/profiles/<name>/. Each profile has its own "
             "skills/, plugins/, cron/, and memories/ that affect a different "
             "session than this one. Do not modify another profile's "
@@ -469,7 +469,7 @@ def build_system_prompt_parts(agent: Any, system_message: Optional[str] = None) 
         )
     else:
         post_workspace_parts.append(
-            f"Active Hermes profile: {active_profile}. This session reads "
+            f"Active Indagis profile: {active_profile}. This session reads "
             f"and writes {get_indagis_home()}/profiles/{active_profile}/. The default "
             f"profile's data lives at {get_indagis_home()}/skills/, {get_indagis_home()}/plugins/, "
             f"{get_indagis_home()}/cron/, {get_indagis_home()}/memories/ — those belong to a "

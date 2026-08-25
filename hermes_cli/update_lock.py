@@ -208,7 +208,7 @@ def describe_holder(holder: UpdateHolder) -> str:
     minutes, seconds = divmod(int(max(holder.age_seconds, 0)), 60)
     elapsed = f"{minutes}m {seconds}s" if minutes else f"{seconds}s"
     return (
-        f"✗ Another Hermes update is already running (PID {holder.pid}, "
+        f"✗ Another Indagis update is already running (PID {holder.pid}, "
         f"started {elapsed} ago).\n"
         "\n"
         "  Two updates mutating the same checkout corrupt it: one rewrites\n"

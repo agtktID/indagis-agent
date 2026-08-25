@@ -537,7 +537,7 @@ def _unsupported_feature_reason(feature: str) -> Optional[str]:
         return (
             "unsupported on Windows: Matrix E2EE depends on python-olm, "
             "which has no Windows wheel and requires make + libolm to build "
-            "from sdist. Run Hermes under WSL to use Matrix on Windows."
+            "from sdist. Run Indagis under WSL to use Matrix on Windows."
         )
     return None
 
@@ -871,9 +871,9 @@ def ensure(feature: str, *, prompt: bool = True) -> None:
             raise FeatureUnavailable(
                 feature, missing,
                 f"unsupported on {managed_by}-managed installs: this build's "
-                f"packages come from {managed_by}, so Hermes cannot install "
+                f"packages come from {managed_by}, so Indagis cannot install "
                 f"them at runtime. Add the dependencies for {feature!r} via "
-                f"{managed_by} (or run a pip/uv install of Hermes instead)."
+                f"{managed_by} (or run a pip/uv install of Indagis instead)."
             )
 
     # Validate every spec against the allowlist + safety regex. Belt and
