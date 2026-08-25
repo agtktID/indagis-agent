@@ -1630,7 +1630,10 @@ def run_doctor(args):
         # Determine the venv entry point location
         _venv_bin = None
         for _venv_name in ("venv", ".venv"):
-            _candidate = PROJECT_ROOT / _venv_name / "bin" / "hermes"
+            _candidate = PROJECT_ROOT / _venv_name / "bin" / "indagis"
+            if not _candidate.exists():
+                # Pre-rebrand venv: the console script is still `hermes`.
+                _candidate = PROJECT_ROOT / _venv_name / "bin" / "hermes"
             if _candidate.exists():
                 _venv_bin = _candidate
                 break
