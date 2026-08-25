@@ -558,7 +558,7 @@ def _apply_profile_override() -> None:
         except Exception:
             return None
 
-        candidate = home / ".hermes" / "profiles" / name
+        candidate = home / ".indagis" / "profiles" / name
         try:
             if candidate.is_dir():
                 return str(candidate)
@@ -1922,12 +1922,12 @@ def _ensure_tui_workspace(tui_dir: Path) -> None:
     print(
         "Error: the TUI workspace is missing from this Indagis checkout.\n"
         f"Expected directory: {tui_dir}\n"
-        "This usually means `hermes update` left tracked ui-tui files deleted.\n"
+        "This usually means `indagis update` left tracked ui-tui files deleted.\n"
         "Recovery:\n"
         "  1. From the Indagis checkout, run `git restore -- ui-tui`\n"
         "  2. Run `npm install --silent --no-fund --no-audit --progress=false`\n"
         "  3. Retry `hermes --tui`\n"
-        "If the checkout is still inconsistent, run `hermes update --force`.",
+        "If the checkout is still inconsistent, run `indagis update --force`.",
         file=sys.stderr,
     )
     sys.exit(1)
@@ -2605,7 +2605,7 @@ def cmd_chat(args):
             for _ref in _retired_xai_refs:
                 sys.stderr.write(f"  \033[33m⚠\033[0m {format_issue(_ref)}\n")
             sys.stderr.write(f"  \033[2mMigration guide: {MIGRATION_GUIDE_URL}\033[0m\n")
-            sys.stderr.write("  \033[2mRun 'hermes doctor' for details.\033[0m\n\n")
+            sys.stderr.write("  \033[2mRun 'indagis doctor' for details.\033[0m\n\n")
     except Exception:
         pass
 
@@ -3253,7 +3253,7 @@ def select_provider_and_model(args=None):
         else:
             warning = (
                 f"Unknown provider '{effective_provider}'. Check 'indagis model' for "
-                "available providers, or run 'hermes doctor' to diagnose config "
+                "available providers, or run 'indagis doctor' to diagnose config "
                 "issues."
             )
             print(f"Warning: {warning} Falling back to auto provider detection.")
@@ -4662,7 +4662,7 @@ def cmd_sync(args):
             print(
                 f"'{skill}' is not sync-eligible (bundled, hub-installed, "
                 f"external, or not found). Only agent-created / user-authored "
-                f"skills under ~/.hermes/skills/ can sync.",
+                f"skills under ~/.indagis/skills/ can sync.",
                 file=sys.stderr,
             )
             return 1
@@ -5948,9 +5948,9 @@ def _desktop_packaged_executable(desktop_dir: Path) -> Optional[Path]:
     else:
         candidates = [
             release_dir / "linux-unpacked" / "hermes",
-            release_dir / "linux-unpacked" / "Hermes",
+            release_dir / "linux-unpacked" / "Indagis",
             release_dir / "linux-arm64-unpacked" / "hermes",
-            release_dir / "linux-arm64-unpacked" / "Hermes",
+            release_dir / "linux-arm64-unpacked" / "Indagis",
         ]
 
     existing = [p for p in candidates if p.exists()]
@@ -7272,6 +7272,8 @@ def _parse_dashboard_runtime(command: str) -> tuple[str, str, int] | None:
     if any(
         pattern in command
         for pattern in (
+            "indagis dashboard",
+            # A dashboard launched before the rename still runs as `hermes`.
             "hermes dashboard",
             "hermes_cli.main dashboard",
             "hermes_cli/main.py dashboard",
@@ -7846,7 +7848,7 @@ def _recover_core_update_marker_locked() -> None:
     would otherwise look healthy and clear the breadcrumb too early.
     """
     print(
-        "⚠ A previous `hermes update` was interrupted mid-install — "
+        "⚠ A previous `indagis update` was interrupted mid-install — "
         "finishing dependency installation now..."
     )
 
@@ -8036,9 +8038,12 @@ def _hermes_exe_shims(scripts_dir: Path) -> list[Path]:
     if not _is_windows():
         return []
 
-    names = set(_load_console_script_names()) or {"hermes", "hermes-agent", "hermes-acp"}
+    names = set(_load_console_script_names()) or {"indagis", "indagis-agent", "indagis-acp"}
     # The gateway shim is not a [project.scripts] entry point, but older
     # update/install paths still rewrite and quarantine it.
+    # Both gateway shim names: not a [project.scripts] entry point, and a
+    # pre-rebrand install still has hermes-gateway.exe on disk.
+    names.add("indagis-gateway")
     names.add("hermes-gateway")
     return [scripts_dir / f"{name}.exe" for name in sorted(names)]
 
@@ -8140,7 +8145,7 @@ def _quarantine_running_hermes_exe(
         )
         print(
             "    Close Indagis Desktop, exit other `hermes` REPLs, stop the "
-            "gateway, or pause AV scanning, then re-run `hermes update`."
+            "gateway, or pause AV scanning, then re-run `indagis update`."
         )
 
     return moved
@@ -8605,7 +8610,7 @@ def _verify_console_scripts_installed(
     except subprocess.CalledProcessError as e:
         logger.warning("console script verification: repair install failed: %s", e)
         print(
-            "  ⚠ Entry point repair failed; try `hermes update --force` after "
+            "  ⚠ Entry point repair failed; try `indagis update --force` after "
             "closing other hermes processes."
         )
         return
@@ -8789,7 +8794,7 @@ def _verify_core_dependencies_installed(
         logger.warning("dep verification: per-package repair failed: %s", e)
         print(
             f"  ⚠ Could not install: {', '.join(still_missing)}. "
-            "Run `hermes update --force` after closing other hermes processes."
+            "Run `indagis update --force` after closing other hermes processes."
         )
         return
 
@@ -8797,7 +8802,7 @@ def _verify_core_dependencies_installed(
     if final_missing:
         print(
             f"  ⚠ Still missing after repair: {', '.join(final_missing)}. "
-            "Run `hermes update --force` after closing other hermes processes."
+            "Run `indagis update --force` after closing other hermes processes."
         )
     else:
         print("  ✓ All declared core dependencies now installed")
@@ -9335,7 +9340,7 @@ def cmd_profile(args):
         try:
             set_active_profile(name)
             if name == "default":
-                print("Switched to: default (~/.hermes)")
+                print("Switched to: default (~/.indagis)")
             else:
                 print(f"Switched to: {name}")
         except (ValueError, FileNotFoundError) as e:
@@ -9758,7 +9763,7 @@ def cmd_profile(args):
             if current is None:
                 print(
                     f"Error: Profile '{canon}' is not a distribution (no distribution.yaml). "
-                    "Only profiles installed via `hermes profile install` can be updated."
+                    "Only profiles installed via `indagis profile install` can be updated."
                 )
                 sys.exit(1)
 
@@ -11557,7 +11562,7 @@ def main():
     # =========================================================================
     checkpoints_parser = subparsers.add_parser(
         "checkpoints",
-        help="Inspect / prune / clear ~/.hermes/checkpoints/",
+        help="Inspect / prune / clear ~/.indagis/checkpoints/",
         description="Manage the filesystem checkpoint store — the shadow git "
         "repo hermes uses to snapshot working directories before "
         "write_file/patch/terminal calls. Lets you see how much "

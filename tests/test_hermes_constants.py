@@ -38,7 +38,7 @@ class TestGetDefaultHermesRoot:
         monkeypatch.delenv("INDAGIS_HOME", raising=False)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
-        assert get_default_indagis_root() == tmp_path / ".hermes"
+        assert get_default_indagis_root() == tmp_path / ".indagis"
 
 
 

@@ -8022,7 +8022,7 @@ def test_file_attach_uses_in_workspace_file_without_copying(monkeypatch, tmp_pat
         assert resp["result"]["uploaded"] is False
         assert resp["result"]["ref_text"] == "@file:data/exam.csv"
         # No copy: nothing staged under desktop-attachments.
-        assert not (workspace / ".hermes" / "desktop-attachments").exists()
+        assert not (workspace / ".indagis" / "desktop-attachments").exists()
     finally:
         server._sessions.pop("sid", None)
 
@@ -8271,7 +8271,7 @@ def test_session_status_reads_live_gateway_agent(monkeypatch):
         server._sessions.pop("sid", None)
 
     out = resp["result"]["output"]
-    assert "Hermes TUI Status" in out
+    assert "Indagis TUI Status" in out
     assert "Session ID: session-key" in out
     assert "Title: Live TUI" in out
     assert "Model: live-model (live-provider)" in out

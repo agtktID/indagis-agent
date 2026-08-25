@@ -256,7 +256,7 @@ def test_create_project_omits_spectrum_flag(monkeypatch: pytest.MonkeyPatch) -> 
     # Spectrum is always provisioned at create-time; the field was dropped
     # from the API schema, so we must not send it.
     assert "spectrum" not in captured["body"]
-    assert captured["body"]["name"] == "Hermes Agent"
+    assert captured["body"]["name"] == "Indagis Agent"
     assert captured["headers"]["Authorization"] == "Bearer tok"
     assert captured["url"].endswith("/api/projects")
 

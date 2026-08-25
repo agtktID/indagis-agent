@@ -54,7 +54,7 @@ class TestGenerateDeepLink:
             suggested_username="test_bot",
             suggested_name="Hermes & Friends",
         )
-        assert "Hermes+%26+Friends" in link
+        assert "Indagis+%26+Friends" in link
 
 
 class TestPairingNonce:

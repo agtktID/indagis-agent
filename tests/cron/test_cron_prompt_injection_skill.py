@@ -210,7 +210,7 @@ class TestBuildJobPromptScansSkillContent:
         # inside skill bodies; that's what security docs look like.
         prompt = scheduler._build_job_prompt(job)
         assert prompt is not None
-        assert "cat ~/.hermes/.env" in prompt
+        assert "cat ~/.indagis/.env" in prompt
 
 
     def test_no_skills_still_scans_user_prompt(self, cron_env):

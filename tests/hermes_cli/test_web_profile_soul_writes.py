@@ -32,6 +32,10 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setenv("HERMES_DASHBOARD_SESSION_TOKEN", "soul-test-token")
     from hermes_cli import web_server
 
+    # web_server resolves _SESSION_TOKEN once at import time, so the env
+    # var above only lands if this module imports it first.
+    monkeypatch.setattr(web_server, "_SESSION_TOKEN", "soul-test-token")
+
     with TestClient(web_server.app, raise_server_exceptions=False) as c:
         c.headers["Authorization"] = "Bearer soul-test-token"
         yield c

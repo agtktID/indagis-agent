@@ -289,7 +289,7 @@ def _pinned_guard(name: str) -> Optional[str]:
             return (
                 f"Skill '{name}' is pinned and cannot be deleted by "
                 f"skill_manage. Ask the user to run "
-                f"`hermes curator unpin {name}` if they want to delete it. "
+                f"`indagis curator unpin {name}` if they want to delete it. "
                 f"Patches and edits are allowed on pinned skills; only "
                 f"deletion is blocked."
             )
@@ -332,7 +332,7 @@ def _background_review_write_guard(
                     f"Refusing background curator {action} for pinned skill "
                     f"'{name}': pinned skills are off-limits to autonomous "
                     "maintenance. Ask the user to run "
-                    f"`hermes curator unpin {name}` if they want it changed."
+                    f"`indagis curator unpin {name}` if they want it changed."
                 ),
             }
     except Exception:
@@ -405,7 +405,7 @@ def _background_review_write_guard(
                     f"Refusing background curator {action} for skill "
                     f"'{name}': the skill is not curator-managed ({_detail}). "
                     "User-owned skills are off-limits to autonomous curation. "
-                    f"Run `hermes curator adopt {name}` to opt it in."
+                    f"Run `indagis curator adopt {name}` to opt it in."
                 ),
             }
     except Exception:
@@ -1670,7 +1670,7 @@ SKILL_MANAGE_SCHEMA = {
         "via skills_list/skill_view. Keep the trigger self-contained in that "
         "first 57-char window: 'Use when <trigger>. <one-line behavior>.'\n\n"
         "Pinned skills are protected from deletion only — skill_manage(action='delete') "
-        "will refuse with a message pointing the user to `hermes curator unpin <name>`. "
+        "will refuse with a message pointing the user to `indagis curator unpin <name>`. "
         "Patches and edits go through on pinned skills so you can still improve them as "
         "pitfalls come up; pin only guards against irrecoverable loss."
     ),

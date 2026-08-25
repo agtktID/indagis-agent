@@ -892,7 +892,7 @@ def _complete_logical(
             # The provider result is authoritative. Retain the handle so turn
             # finalization can retry cleanup without changing that result.
             logger.warning(
-                "Hermes Relay logical LLM finalization failed",
+                "Indagis Relay logical LLM finalization failed",
                 exc_info=True,
             )
             return

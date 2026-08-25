@@ -149,7 +149,7 @@ VIDEO_GENERATE_SCHEMA: Dict[str, Any] = {
                 "type": "string",
                 "description": (
                     "Optional model override. If omitted, the user's "
-                    "configured ``video_gen.model`` (set via `hermes tools` "
+                    "configured ``video_gen.model`` (set via `indagis tools` "
                     "→ Video Generation) is used. Models that the active "
                     "provider does not know are rejected."
                 ),
@@ -248,8 +248,8 @@ def _missing_provider_error(configured: Optional[str]) -> str:
     if configured:
         msg = (
             f"video_gen.provider='{configured}' is set but no plugin "
-            f"registered that name. Run `hermes plugins list` to see "
-            f"installed video gen backends, or `hermes tools` → Video "
+            f"registered that name. Run `indagis plugins list` to see "
+            f"installed video gen backends, or `indagis tools` → Video "
             f"Generation to pick one."
         )
         return json.dumps(error_response(
@@ -257,7 +257,7 @@ def _missing_provider_error(configured: Optional[str]) -> str:
             provider=configured,
         ))
     msg = (
-        "No video generation backend is configured. Run `hermes tools` → "
+        "No video generation backend is configured. Run `indagis tools` → "
         "Video Generation to enable one (xAI, FAL, or Google Veo)."
     )
     return json.dumps(error_response(
@@ -423,7 +423,7 @@ _GENERIC_DESCRIPTION = (
     "reference-to-video. Video edit/extend workflows are not part of this "
     "unified surface; use a dedicated provider-specific tool when one is "
     "available. The backend and model family are user-configured via "
-    "`hermes tools` → Video Generation; the agent does not pick them. "
+    "`indagis tools` → Video Generation; the agent does not pick them. "
     "Long-running generations may take 30 seconds to several minutes — "
     "the call blocks until the video is ready. Returns the result in the "
     "`video` field — either an HTTP URL or an absolute file path. To show "
@@ -484,7 +484,7 @@ def _build_dynamic_video_schema() -> Dict[str, Any]:
     if provider is None:
         parts.append(
             "\nNo video backend is available. Calls will return an error "
-            "until the user picks one via `hermes tools` → Video Generation."
+            "until the user picks one via `indagis tools` → Video Generation."
         )
         return {"description": "\n".join(parts)}
 

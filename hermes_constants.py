@@ -113,7 +113,7 @@ def _warn_legacy_alias_in_use_once(resolved_via: str, legacy_path: Path) -> None
     if sys.platform == "win32":
         migrate_cmd = "move %LOCALAPPDATA%\\hermes %LOCALAPPDATA%\\indagis"
     else:
-        migrate_cmd = "mv ~/.hermes ~/.indagis"
+        migrate_cmd = "mv ~/.indagis ~/.indagis"
     msg = (
         f"\n⚠ Indagis Agent: {resolved_via} ({legacy_path}) is used as a "
         f"fallback. The deprecation alias will be removed in a future "
@@ -233,7 +233,7 @@ def _resolve_indagis_home_full_ladder() -> Path:
     # P4: ~/.hermes exists (legacy alias, WARNING).
     legacy_default = _legacy_indagis_home_alias_path()
     if legacy_default is not None:
-        _warn_legacy_alias_in_use_once("~/.hermes", legacy_default)
+        _warn_legacy_alias_in_use_once("~/.indagis", legacy_default)
         return legacy_default
 
     # P5: fall back to the default path (will be created on first use).
@@ -1579,6 +1579,6 @@ def partial_update_hint(exc: BaseException) -> list[str]:
         "This looks like a partially-updated install: one module was refreshed "
         "and a related one was not.",
         "Re-run the update to bring the whole tree to the same version:",
-        "    hermes update",
+        "    indagis update",
         "If that also fails, reinstall: https://hermes-agent.nousresearch.com",
     ]

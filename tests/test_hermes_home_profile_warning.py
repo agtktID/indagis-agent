@@ -35,7 +35,7 @@ class TestGetHermesHomeProfileWarning:
     ):
         """Classic mode: no active_profile file → silent, returns ~/.hermes."""
         result = fresh_constants.get_indagis_home()
-        assert result == tmp_path / ".hermes"
+        assert result == tmp_path / ".indagis"
         assert "INDAGIS_HOME fallback" not in capsys.readouterr().err
 
 
@@ -50,7 +50,7 @@ class TestGetHermesHomeProfileWarning:
         result = fresh_constants.get_indagis_home()
 
         # 1. Still returns the fallback — no import-time crash
-        assert result == tmp_path / ".hermes"
+        assert result == tmp_path / ".indagis"
         # 2. Stderr got the warning exactly once
         err = capsys.readouterr().err
         assert err.count("INDAGIS_HOME fallback") == 1
@@ -88,7 +88,7 @@ class TestGetHermesHomeProfileWarning:
 
         result = fresh_constants.get_indagis_home()
 
-        assert result == tmp_path / ".hermes"
+        assert result == tmp_path / ".indagis"
         # Shouldn't crash; shouldn't warn either (can't tell what profile was intended)
         assert "INDAGIS_HOME fallback" not in capsys.readouterr().err
 

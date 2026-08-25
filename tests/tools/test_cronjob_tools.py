@@ -569,8 +569,8 @@ class TestGithubExemptionAbuse:
     def test_subshell_and_backtick_payloads_are_scanned(self):
         # A no-space $(...) or backtick payload after the GitHub URL must
         # not be consumed into the URL-path tail.
-        assert "Blocked" in _scan_cron_prompt(f"{self.GH}$(cat ~/.hermes/.env)")
-        assert "Blocked" in _scan_cron_prompt(f"{self.GH}`cat ~/.hermes/.env`")
+        assert "Blocked" in _scan_cron_prompt(f"{self.GH}$(cat ~/.indagis/.env)")
+        assert "Blocked" in _scan_cron_prompt(f"{self.GH}`cat ~/.indagis/.env`")
 
     def test_explicit_port_github_url_still_allowed(self):
         # https://api.github.com:443/... is a legitimate authority — the

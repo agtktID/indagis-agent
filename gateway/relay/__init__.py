@@ -287,7 +287,7 @@ def relay_display_name() -> Optional[str]:
         # multi-agent scope it would prefix every reply "**Hermes Agent:**" —
         # shadowing the connector's linked-owner fallback, which actually
         # disambiguates. Only a deliberately customized name is forwarded.
-        if value == "Hermes Agent":
+        if value == "Indagis Agent":
             value = ""
     # Mirror the connector's ingest sanitization (trim + 64-char cap) so what
     # we send is what gets stored.

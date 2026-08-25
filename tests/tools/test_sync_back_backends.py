@@ -302,7 +302,7 @@ class TestDaytonaBulkDownload:
         # PID-suffixed temp path avoids collisions on sync_back retry
         assert "/tmp/.hermes_sync." in tar_cmd
         assert ".tar" in tar_cmd
-        assert ".hermes" in tar_cmd
+        assert ".indagis" in tar_cmd
 
         cleanup_cmd = env._sandbox.process.exec.call_args_list[1][0][0]
         assert "rm -f" in cleanup_cmd

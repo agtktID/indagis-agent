@@ -48,7 +48,7 @@ class TestHappyPath:
 
         assert removed == [rc]
         text = rc.read_text(encoding="utf-8")
-        assert "# Hermes Agent" not in text
+        assert "# Indagis Agent" not in text
         # The user's own lines are untouched.
         assert "export EDITOR=vim" in text
         assert "source ~/.work-profile" in text
@@ -102,7 +102,7 @@ class TestCrashDurability:
 
         assert removed == [rc]
         assert rc.is_symlink(), "the symlink was replaced by a regular file"
-        assert "# Hermes Agent" not in real.read_text(encoding="utf-8")
+        assert "# Indagis Agent" not in real.read_text(encoding="utf-8")
         assert "export EDITOR=vim" in real.read_text(encoding="utf-8")
 
     @pytest.mark.skipif(sys.platform == "win32", reason="POSIX permission bits")

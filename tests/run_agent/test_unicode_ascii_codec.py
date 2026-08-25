@@ -154,7 +154,7 @@ class TestSanitizeStructureNonAscii:
             }
         }
         assert _sanitize_structure_non_ascii(payload) is True
-        assert payload["default_headers"]["X-Title"] == "Hermes  Agent"
+        assert payload["default_headers"]["X-Title"] == "Indagis  Agent"
         assert payload["default_headers"]["User-Agent"] == "Hermes/1.0 "
 
 
