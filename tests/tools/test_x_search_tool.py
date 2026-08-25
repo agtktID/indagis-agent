@@ -267,7 +267,7 @@ def test_x_search_returns_tool_error_when_no_credentials(monkeypatch):
     # surfaces a friendly error rather than an HTTP exception.
     result = x_search_tool(query="anything")
     assert "No xAI credentials available" in result
-    assert "hermes auth add xai-oauth" in result
+    assert "indagis auth add xai-oauth" in result
 
 
 # ---------------------------------------------------------------------------

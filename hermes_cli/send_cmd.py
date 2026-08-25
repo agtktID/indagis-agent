@@ -65,10 +65,10 @@ def _read_message_body(
                 "message *body* (logs, reports, markdown).\n"
                 "To send an image/document/audio file as a native attachment, "
                 "reference it with MEDIA: in the message text instead:\n"
-                f'  hermes send --to telegram "MEDIA:{file_path}"\n'
-                f'  hermes send --to telegram "optional caption MEDIA:{file_path}"\n'
+                f'  indagis send --to telegram "MEDIA:{file_path}"\n'
+                f'  indagis send --to telegram "optional caption MEDIA:{file_path}"\n'
                 "Add [[as_document]] to deliver an image as an uncompressed file:\n"
-                f'  hermes send --to telegram "[[as_document]] MEDIA:{file_path}"',
+                f'  indagis send --to telegram "[[as_document]] MEDIA:{file_path}"',
                 file=sys.stderr,
             )
             sys.exit(_USAGE_EXIT)
@@ -202,7 +202,7 @@ def _list_targets(platform_filter: Optional[str], *, json_mode: bool) -> int:
 
     if not platforms:
         print("No messaging platforms configured or no channels discovered yet.")
-        print("Set one up with `hermes gateway setup`, or run the gateway once so")
+        print("Set one up with `indagis gateway setup`, or run the gateway once so")
         print("channel discovery can populate ~/.hermes/channel_directory.json.")
         return _SUCCESS_EXIT
 
@@ -334,9 +334,9 @@ def cmd_send(args: argparse.Namespace) -> None:
         print(
             "indagis send: --to PLATFORM[:channel[:thread]] is required\n"
             "Examples:\n"
-            "  hermes send --to telegram \"hello\"\n"
-            "  hermes send --to discord:#ops --file report.md\n"
-            "  hermes send --list      # list available targets",
+            "  indagis send --to telegram \"hello\"\n"
+            "  indagis send --to discord:#ops --file report.md\n"
+            "  indagis send --list      # list available targets",
             file=sys.stderr,
         )
         sys.exit(_USAGE_EXIT)
@@ -402,13 +402,13 @@ def register_send_subparser(subparsers) -> argparse.ArgumentParser:
         ),
         epilog=(
             "Examples:\n"
-            "  hermes send --to telegram \"deploy finished\"\n"
-            "  echo \"RAM 92%\" | hermes send --to telegram:-1001234567890\n"
-            "  hermes send --to discord:#ops --file /tmp/report.md\n"
-            "  hermes send --to slack:#eng --subject \"[CI]\" --file build.log\n"
-            "  hermes send --to telegram \"MEDIA:/tmp/chart.png\"   # send a media attachment\n"
-            "  hermes send --list                  # all platforms\n"
-            "  hermes send --list telegram         # filter by platform\n"
+            "  indagis send --to telegram \"deploy finished\"\n"
+            "  echo \"RAM 92%\" | indagis send --to telegram:-1001234567890\n"
+            "  indagis send --to discord:#ops --file /tmp/report.md\n"
+            "  indagis send --to slack:#eng --subject \"[CI]\" --file build.log\n"
+            "  indagis send --to telegram \"MEDIA:/tmp/chart.png\"   # send a media attachment\n"
+            "  indagis send --list                  # all platforms\n"
+            "  indagis send --list telegram         # filter by platform\n"
             "\n"
             "Exit codes: 0 ok, 1 delivery/backend error, 2 usage error."
         ),
@@ -464,7 +464,7 @@ def register_send_subparser(subparsers) -> argparse.ArgumentParser:
         dest="list_targets",
         action="store_true",
         default=False,
-        help="List available targets. Optional positional filter: `hermes send --list telegram`.",
+        help="List available targets. Optional positional filter: `indagis send --list telegram`.",
     )
 
     parser.add_argument(

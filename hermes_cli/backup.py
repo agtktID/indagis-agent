@@ -796,7 +796,7 @@ def _run_backup_locked(args, hermes_root: Path) -> None:
             print(f"  ... and {len(errors) - 10} more")
 
     if not errors:
-        print(f"\nRestore with: hermes import {out_path.name}")
+        print(f"\nRestore with: indagis import {out_path.name}")
 
 
 # ---------------------------------------------------------------------------
@@ -1057,13 +1057,13 @@ def run_import(args) -> None:
                 # hermes_cli.profiles might not be available (fresh install)
                 if any(profiles_dir.iterdir()):
                     print("\n  Profiles detected but aliases could not be created.")
-                    print("  Run: hermes profile list  (after installing hermes)")
+                    print("  Run: indagis profile list  (after installing hermes)")
 
         # Guidance
         print()
         if not (hermes_root / "hermes-agent").is_dir():
             print("Note: The hermes-agent codebase was not included in the backup.")
-            print("  If this is a fresh install, run: hermes update")
+            print("  If this is a fresh install, run: indagis update")
 
         if restored_profiles:
             gw_profiles = [n for n, _ in restored_profiles]

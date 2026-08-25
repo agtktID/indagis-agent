@@ -20,7 +20,7 @@ def build_import_agent_parser(subparsers, *, cmd_import_agent: Callable) -> None
             "Maps CLAUDE.md/AGENTS.md instructions, permission allowlists, MCP "
             "servers, skills, and memories into their Indagis equivalents. "
             "Always shows a preview before making changes. API keys and "
-            "credentials are never imported — run 'hermes setup' for those."
+            "credentials are never imported — run 'indagis setup' for those."
         ),
     )
     parser.add_argument(

@@ -102,7 +102,7 @@ def cmd_migrate_xai(args: Any) -> int:
     )
     print()
     print(color(
-        "Run `hermes doctor` to confirm no retired xAI models remain.",
+        "Run `indagis doctor` to confirm no retired xAI models remain.",
         Colors.DIM,
     ))
     return 0

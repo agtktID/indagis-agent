@@ -1003,7 +1003,7 @@ _SCHEMA_OVERRIDES: Dict[str, Dict[str, Any]] = {
     "updates.refresh_cua_driver": {
         "type": "boolean",
         "description": (
-            "Refresh an already-installed cua-driver during hermes update. "
+            "Refresh an already-installed cua-driver during indagis update. "
             "Disable this on non-admin macOS accounts where /Applications is "
             "not writable."
         ),
@@ -4147,7 +4147,7 @@ async def update_hermes():
             env_overrides={"HERMES_ACTION_ID": action_id},
         )
     except Exception as exc:
-        _log.exception("Failed to spawn hermes update")
+        _log.exception("Failed to spawn indagis update")
         raise HTTPException(status_code=500, detail=f"Failed to start update: {exc}")
     return {
         "ok": True,
@@ -8003,11 +8003,11 @@ _MESSAGING_ENV_FALLBACKS: dict[str, dict[str, Any]] = {
         "password": True,
     },
     "WEIXIN_ACCOUNT_ID": {
-        "description": "iLink Bot account ID obtained through QR login in hermes gateway setup",
+        "description": "iLink Bot account ID obtained through QR login in indagis gateway setup",
         "prompt": "iLink Bot account ID",
     },
     "WEIXIN_TOKEN": {
-        "description": "iLink Bot token obtained through QR login in hermes gateway setup",
+        "description": "iLink Bot token obtained through QR login in indagis gateway setup",
         "prompt": "iLink Bot token",
         "password": True,
     },
@@ -16055,7 +16055,7 @@ def mount_spa(application: FastAPI):
     if _headless or not WEB_DIST.exists():
         _msg = (
             "Headless backend (hermes serve): web UI disabled — use "
-            "`hermes dashboard` for the browser UI."
+            "`indagis dashboard` for the browser UI."
             if _headless
             else "Frontend not built. Run: cd web && npm run build"
         )
@@ -17505,7 +17505,7 @@ def start_server(
                 "    (hash with: python -c \"from "
                 "plugins.dashboard_auth.basic import hash_password; "
                 "print(hash_password('your-password'))\")\n"
-                "  • OAuth: run `hermes dashboard register` (Nous Portal) or "
+                "  • OAuth: run `indagis dashboard register` (Nous Portal) or "
                 "install a DashboardAuthProvider plugin.\n"
                 "There is no unauthenticated public-bind option — to keep it "
                 "local, bind 127.0.0.1 and tunnel in (SSH / Tailscale)."
@@ -17531,7 +17531,7 @@ def start_server(
                         "plugins.disabled but dashboard.basic_auth is "
                         "configured.\n"
                         "Remove 'basic' from plugins.disabled (or run "
-                        "`hermes plugins enable basic`), then restart the "
+                        "`indagis plugins enable basic`), then restart the "
                         "dashboard.\n\n"
                     ) + _fix_hint
             except Exception:

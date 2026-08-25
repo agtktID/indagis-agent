@@ -22,18 +22,18 @@ def build_logs_parser(subparsers, *, cmd_logs: Callable) -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""\
 Examples:
-    hermes logs                    Show last 50 lines of agent.log
-    hermes logs -f                 Follow agent.log in real time
-    hermes logs errors             Show last 50 lines of errors.log
-    hermes logs gateway -n 100     Show last 100 lines of gateway.log
-    hermes logs gui -f             Follow gui.log in real time
-    hermes logs desktop -f         Follow desktop.log (Electron app boot/backend)
-    hermes logs --level WARNING    Only show WARNING and above
-    hermes logs --session abc123   Filter by session ID
-    hermes logs --component tools  Only show tool-related lines
-    hermes logs --since 1h         Lines from the last hour
-    hermes logs --since 30m -f     Follow, starting from 30 min ago
-    hermes logs list               List available log files with sizes
+    indagis logs                    Show last 50 lines of agent.log
+    indagis logs -f                 Follow agent.log in real time
+    indagis logs errors             Show last 50 lines of errors.log
+    indagis logs gateway -n 100     Show last 100 lines of gateway.log
+    indagis logs gui -f             Follow gui.log in real time
+    indagis logs desktop -f         Follow desktop.log (Electron app boot/backend)
+    indagis logs --level WARNING    Only show WARNING and above
+    indagis logs --session abc123   Filter by session ID
+    indagis logs --component tools  Only show tool-related lines
+    indagis logs --since 1h         Lines from the last hour
+    indagis logs --since 30m -f     Follow, starting from 30 min ago
+    indagis logs list               List available log files with sizes
 """,
     )
     logs_parser.add_argument(

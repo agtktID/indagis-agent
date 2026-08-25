@@ -3565,7 +3565,7 @@ OPTIONAL_ENV_VARS = {
         "category": "provider",
     },
     "AZURE_FOUNDRY_BASE_URL": {
-        "description": "Azure Foundry base URL (set via 'hermes model' for endpoint-specific config)",
+        "description": "Azure Foundry base URL (set via 'indagis model' for endpoint-specific config)",
         "prompt": "Azure Foundry base URL",
         "url": None,
         "password": False,

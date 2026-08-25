@@ -32,12 +32,12 @@ class TestDoctorPlatformHints:
 
         assert "docker pull nousresearch/hermes-agent:latest" in hint
         assert "recreate all Indagis containers" in hint
-        assert "hermes update" not in hint
+        assert "indagis update" not in hint
 
     def test_sqlite_upgrade_hint_keeps_git_runtime_repair(self):
         hint = doctor._sqlite_upgrade_hint("git")
 
-        assert "run `hermes update`" in hint
+        assert "run `indagis update`" in hint
 
 
 class TestProviderEnvDetection:

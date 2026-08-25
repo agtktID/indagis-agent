@@ -99,7 +99,7 @@ def generate_bash(parser: argparse.ArgumentParser) -> str:
 
     return f"""# Indagis Agent bash completion
 # Add to ~/.bashrc:
-#   eval "$(hermes completion bash)"
+#   eval "$(indagis completion bash)"
 
 _hermes_profiles() {{
     local profiles_dir="$HOME/.hermes/profiles"
@@ -202,7 +202,7 @@ def generate_zsh(parser: argparse.ArgumentParser) -> str:
     return f"""#compdef hermes
 # Indagis Agent zsh completion
 # Add to ~/.zshrc:
-#   eval "$(hermes completion zsh)"
+#   eval "$(indagis completion zsh)"
 
 _hermes_profiles() {{
     local -a profiles
@@ -256,7 +256,7 @@ def generate_fish(parser: argparse.ArgumentParser) -> str:
     lines: list[str] = [
         "# Indagis Agent fish completion",
         "# Add to your config:",
-        "#   hermes completion fish | source",
+        "#   indagis completion fish | source",
         "",
         "# Helper: list available profiles",
         "function __hermes_profiles",

@@ -54,12 +54,16 @@ def _scan_dashboard_processes(
     Returns an empty list on any scan error (missing ps/wmic, timeout, etc.).
     """
     patterns = [
+        # Both entry-point names: a process started before the rebrand still
+        # runs as `hermes ...`, and it must still be found and reaped.
+        "indagis dashboard",
         "hermes dashboard",
         "hermes_cli.main dashboard",
         "hermes_cli/main.py dashboard",
         # The headless backend (`hermes serve`) is the same long-lived server
         # under a different command name — the desktop app spawns it. Reap it
         # on update for the same frontend/backend-mismatch reason.
+        "indagis serve",
         "hermes serve",
         "hermes_cli.main serve",
         "hermes_cli/main.py serve",
@@ -328,11 +332,11 @@ def _kill_stale_dashboard_processes(
 
         if failed_restarts or unrecovered:
             print("  Restart anything not auto-restarted when you're ready:")
-            print("    hermes dashboard --port <port>")
+            print("    indagis dashboard --port <port>")
     elif killed:
         unrecovered = list(killed)
         print("  Restart the dashboard when you're ready:")
-        print("    hermes dashboard --port <port>")
+        print("    indagis dashboard --port <port>")
 
     return {
         "matched": list(pids),

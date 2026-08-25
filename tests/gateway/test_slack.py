@@ -4006,7 +4006,7 @@ class TestMissingCredentials:
         assert fatal_errors[0]["code"] == "missing_slack_app_token"
         assert fatal_errors[0]["retryable"] is False
         assert "SLACK_APP_TOKEN" in fatal_errors[0]["message"]
-        assert "hermes gateway setup" in fatal_errors[0]["message"].lower() or ".env" in fatal_errors[0]["message"]
+        assert "indagis gateway setup" in fatal_errors[0]["message"].lower() or ".env" in fatal_errors[0]["message"]
 
 
 # ---------------------------------------------------------------------------

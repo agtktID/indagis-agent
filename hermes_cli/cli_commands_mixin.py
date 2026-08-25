@@ -390,7 +390,7 @@ class CLICommandsMixin:
         try:
             result = export_profile(name, output)
             print(f"  ✓ Exported '{name}' to {result}")
-            print("  Share it: the other user runs /import or `hermes profile import <archive>`.")
+            print("  Share it: the other user runs /import or `indagis profile import <archive>`.")
         except (ValueError, FileNotFoundError) as e:
             print(f"  Error: {e}")
 
@@ -683,7 +683,7 @@ class CLICommandsMixin:
         if _remainder:
             _cprint(f"  {_DIM}Now type your prompt (or use --image in single-query mode): {_remainder}{_RST}")
         elif _is_termux_environment():
-            _cprint(f"  {_DIM}Tip: type your next message, or run hermes chat -q --image {_termux_example_image_path(image_path.name)} \"What do you see?\"{_RST}")
+            _cprint(f"  {_DIM}Tip: type your next message, or run indagis chat -q --image {_termux_example_image_path(image_path.name)} \"What do you see?\"{_RST}")
 
     def _handle_tools_command(self, cmd: str):
         """Handle /tools [list|disable|enable] slash commands.
@@ -943,7 +943,7 @@ class CLICommandsMixin:
             self._session_db.fail_handoff(self.session_id, "timed out waiting for gateway")
         except Exception:
             pass
-        _cprint("  Timed out waiting for the gateway. Is `hermes gateway` running?")
+        _cprint("  Timed out waiting for the gateway. Is `indagis gateway` running?")
         _cprint("  Your CLI session is intact.")
         return True
 
@@ -977,7 +977,7 @@ class CLICommandsMixin:
                 # #34584.
                 self._pending_resume_sessions = self._list_recent_sessions(limit=10)
                 return
-            _cprint("  Tip:   Use /history or `hermes sessions list` to find sessions.")
+            _cprint("  Tip:   Use /history or `indagis sessions list` to find sessions.")
             return
 
         # Any explicit /resume <target> supersedes a previously-armed bare
@@ -1007,7 +1007,7 @@ class CLICommandsMixin:
         session_meta = self._session_db.get_session(target_id)
         if not session_meta:
             _cprint(f"  Session not found: {target}")
-            _cprint("  Use /history or `hermes sessions list` to see available sessions.")
+            _cprint("  Use /history or `indagis sessions list` to see available sessions.")
             return
 
         # If the target is the empty head of a compression chain, redirect to
@@ -3292,7 +3292,7 @@ class CLICommandsMixin:
         ]
         raw = self._prompt_text_input_modal(
             title="⚕  Update Indagis Agent",
-            detail="This will exit the current session and run `hermes update`.",
+            detail="This will exit the current session and run `indagis update`.",
             choices=choices,
         )
         if raw is None:

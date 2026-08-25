@@ -67,7 +67,7 @@ def _cmd_status(args) -> int:
     if provider == "nous":
         print(f"  Model:   {color('✓ using Nous as inference provider', Colors.GREEN)}")
     elif provider:
-        print(f"  Model:   currently {provider} (switch with `hermes model`)")
+        print(f"  Model:   currently {provider} (switch with `indagis model`)")
 
     # Tool Gateway routing
     print()
@@ -217,8 +217,8 @@ def add_parser(subparsers) -> None:
         description=(
             "Run `hermes portal` with no subcommand to log in to Nous Portal "
             "and set it up — pick a model, set Nous as your provider, and offer "
-            "the Tool Gateway (the human-readable alias for `hermes auth add "
-            "nous --type oauth`, identical to `hermes setup --portal`). "
+            "the Tool Gateway (the human-readable alias for `indagis auth add "
+            "nous --type oauth`, identical to `indagis setup --portal`). "
             "Subcommands: login (default), info, open, tools."
         ),
     )
