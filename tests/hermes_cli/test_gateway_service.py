@@ -81,7 +81,7 @@ class TestSystemdServiceRefresh:
 
         output = capsys.readouterr().out
         assert "still restarting after 90s" in output
-        assert "hermes gateway status" in output
+        assert "indagis gateway status" in output
 
 
     def test_refresh_refuses_to_bake_pytest_tmpdir_into_real_user_unit(
@@ -173,7 +173,7 @@ class TestRequireServiceInstalled:
         assert exc_info.value.code == 1
         out = capsys.readouterr().out
         assert "not installed" in out
-        assert "hermes gateway install" in out
+        assert "indagis gateway install" in out
 
     def test_passes_when_unit_exists(self, tmp_path, monkeypatch):
         unit_path = tmp_path / "hermes-gateway.service"
@@ -923,7 +923,7 @@ class TestPreflightUserSystemd:
 
         msg = str(exc_info.value)
         assert "sudo loginctl enable-linger" in msg
-        assert "hermes gateway run" in msg  # foreground fallback mentioned
+        assert "indagis gateway run" in msg  # foreground fallback mentioned
         assert "Interactive authentication required" in msg
 
 
@@ -991,7 +991,7 @@ class TestProfileArg:
 
         assert "ExecStart=" in unit
         assert "--profile mybot gateway run" in unit
-        assert f'INDAGIS_HOME={target_home / ".indagis" / "profiles" / "mybot"}' in unit
+        assert f'INDAGIS_HOME={target_home / ".hermes" / "profiles" / "mybot"}' in unit
 
 
 
@@ -1023,7 +1023,7 @@ class TestRemapPathForUser:
             str(tmp_path / "root" / ".hermes" / "hermes-agent"),
             str(tmp_path / "alice"),
         )
-        assert result == str(tmp_path / "alice" / ".indagis" / "hermes-agent")
+        assert result == str(tmp_path / "alice" / ".hermes" / "hermes-agent")
 
 
 class TestSystemUnitPathRemapping:
@@ -1578,8 +1578,8 @@ class TestSystemScopeRemediationOutput:
         assert "system-wide service" in out
         assert "start requires root" in out
         assert "sudo systemctl start hermes-gateway" in out
-        assert "sudo hermes gateway uninstall --system" in out
-        assert "hermes gateway install" in out
+        assert "sudo indagis gateway uninstall --system" in out
+        assert "indagis gateway install" in out
 
 
 class TestGatewayCommandCatchesSystemScopeError:
