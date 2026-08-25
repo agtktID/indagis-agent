@@ -4835,6 +4835,13 @@ def cmd_project(args):
     return projects_command(args)
 
 
+def cmd_investigation(args):
+    """Manage security investigations (evidence, findings, timeline)."""
+    from hermes_cli.investigation_cmd import investigation_command
+
+    return investigation_command(args)
+
+
 def cmd_hooks(args):
     """Shell-hook inspection and management."""
     from hermes_cli.hooks import hooks_command
@@ -11520,6 +11527,14 @@ def main():
 
     project_parser = _build_project_parser(subparsers)
     project_parser.set_defaults(func=cmd_project)
+
+    # =========================================================================
+    # investigation command — security investigations (evidence, findings, timeline)
+    # =========================================================================
+    from hermes_cli.investigation_cmd import build_parser as _build_investigation_parser
+
+    investigation_parser = _build_investigation_parser(subparsers)
+    investigation_parser.set_defaults(func=cmd_investigation)
 
     # =========================================================================
     # hooks command — shell-hook inspection and management
