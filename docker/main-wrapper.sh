@@ -1,6 +1,6 @@
 #!/bin/sh
 # shellcheck shell=sh
-# /opt/hermes/docker/main-wrapper.sh — wraps the container's CMD with
+# /opt/indagis/docker/main-wrapper.sh — wraps the container's CMD with
 # the same argument-routing logic the pre-s6 entrypoint.sh used. Runs
 # as /init's "main program" (Docker CMD) so it inherits stdin/stdout/
 # stderr from the container. The non-PID-1 entrypoint fallback also
@@ -8,7 +8,7 @@
 #
 # Env note: /init scrubs env before invoking CMD, so when this wrapper
 # is launched through the supervised path it must rehydrate via
-# with-contenv before touching HERMES_HOME / PATH. On the non-PID-1
+# with-contenv before touching INDAGIS_HOME / PATH. On the non-PID-1
 # fallback path the Dockerfile env is still intact, so we skip the
 # re-exec and continue directly.
 #
@@ -21,7 +21,7 @@
 set -e
 
 if [ -z "${HERMES_MAIN_WRAPPER_ENV_READY:-}" ] && \
-   [ -z "${HERMES_HOME:-}" ] && \
+   [ -z "${INDAGIS_HOME:-}" ] && \
    [ -x /command/with-contenv ]; then
     export HERMES_MAIN_WRAPPER_ENV_READY=1
     exec /command/with-contenv sh "$0" "$@"
@@ -71,7 +71,7 @@ _hermes_orig_cwd="${HERMES_ORIG_CWD:-$PWD}"
 
 cd /opt/data
 # shellcheck disable=SC1091
-. /opt/hermes/.venv/bin/activate
+. /opt/indagis/.venv/bin/activate
 
 # Restore the original working directory before handing off to
 # the user's command so `hermes chat` starts in the Docker -w
