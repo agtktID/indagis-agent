@@ -115,7 +115,7 @@ INSTALLER_PATH=""
 # reachable from main -- so "can a user two releases back still update?" is
 # expressible. --from-main is shorthand for refs/heads/main.
 INSTALL_REF=""
-UPSTREAM_URL="${HERMES_DEV_SANDBOX_UPSTREAM:-https://github.com/NousResearch/hermes-agent.git}"
+UPSTREAM_URL="${HERMES_DEV_SANDBOX_UPSTREAM:-https://github.com/agtktID/indagis-agent.git}"
 
 if [ "${1:-}" = install ]; then
   INSTALL_SHORTCUT=true

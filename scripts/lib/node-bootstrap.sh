@@ -40,13 +40,13 @@ HERMES_NODE_AVAILABLE=false
 _NB_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 # shellcheck source=/dev/null
 source "$_NB_SCRIPT_DIR/../install_helpers.sh"
-if [ -n "${HERMES_HOME:-}" ]; then
-    _indagis_warn_legacy_alias_in_use_once "HERMES_HOME" "$HERMES_HOME"
+if [ -n "${INDAGIS_HOME:-}" ]; then
+    _indagis_warn_legacy_alias_in_use_once "INDAGIS_HOME" "$INDAGIS_HOME"
 elif [ -d "${HOME:-}/.hermes" ]; then
     _indagis_warn_legacy_alias_in_use_once "~/.hermes" "${HOME}/.hermes"
 fi
-HERMES_HOME="$(resolve_indagis_home)"
-export HERMES_HOME
+INDAGIS_HOME="$(resolve_indagis_home)"
+export INDAGIS_HOME
 
 # ---------------------------------------------------------------------------
 # Logging — prefer the host script's log_* helpers when present
@@ -78,16 +78,16 @@ _nb_get_link_dir() {
 }
 
 # Redirect a Hermes-managed Node's `npm install -g` to the command link dir
-# (already on PATH) instead of the default $HERMES_HOME/node/bin, which is off
+# (already on PATH) instead of the default $INDAGIS_HOME/node/bin, which is off
 # PATH and wiped on every Node upgrade. Scoped to the managed Node via its
 # prefix-local global npmrc; the user's other Node installs / ~/.npmrc are
 # untouched. Idempotent no-op when there's no managed npm.
 _nb_configure_npm_prefix() {
-    [ -x "$HERMES_HOME/node/bin/npm" ] || return 0
+    [ -x "$INDAGIS_HOME/node/bin/npm" ] || return 0
     local _link_dir
     _link_dir="$(_nb_get_link_dir)"
-    mkdir -p "$HERMES_HOME/node/etc"
-    printf 'prefix=%s\n' "$(dirname "$_link_dir")" > "$HERMES_HOME/node/etc/npmrc"
+    mkdir -p "$INDAGIS_HOME/node/etc"
+    printf 'prefix=%s\n' "$(dirname "$_link_dir")" > "$INDAGIS_HOME/node/etc/npmrc"
 }
 
 _nb_node_major() {
@@ -143,7 +143,7 @@ _nb_npm_range() {
 # strictly better than no Node at all, and npm_engine.py still covers the
 # EBADENGINE that follows.
 _nb_ensure_bundled_npm_range() {
-    local npm_bin="$HERMES_HOME/node/bin/npm"
+    local npm_bin="$INDAGIS_HOME/node/bin/npm"
     [ -x "$npm_bin" ] || return 0
 
     local range have want
@@ -168,7 +168,7 @@ _nb_ensure_bundled_npm_range() {
         cd "$tmp_cwd" || exit 1
         CI=1 npm_config_min_release_age=0 \
             "$npm_bin" install --global \
-                --prefix "$HERMES_HOME/node" \
+                --prefix "$INDAGIS_HOME/node" \
                 "npm@$range" \
                 --no-fund --no-audit --progress=false >/dev/null 2>&1
     ); then
@@ -179,7 +179,7 @@ _nb_ensure_bundled_npm_range() {
 
     rm -rf "$tmp_cwd"
     _nb_warn "Could not upgrade bundled npm to $range — \`npm ci\` may fail with EBADENGINE."
-    _nb_warn "Fix manually: npm install -g --prefix \"$HERMES_HOME/node\" npm@\"$range\""
+    _nb_warn "Fix manually: npm install -g --prefix \"$INDAGIS_HOME/node\" npm@\"$range\""
     return 1
 }
 
@@ -300,7 +300,7 @@ _nb_install_bundled_node() {
         _nb_warn "Download failed"; rm -rf "$tmp"; return 1
     }
 
-    _nb_log "Extracting to $HERMES_HOME/node/..."
+    _nb_log "Extracting to $INDAGIS_HOME/node/..."
     if [[ "$tarball" == *.tar.xz ]]; then
         tar xf  "$tmp/$tarball" -C "$tmp" || { rm -rf "$tmp"; return 1; }
     else
@@ -315,9 +315,9 @@ _nb_install_bundled_node() {
         return 1
     fi
 
-    mkdir -p "$HERMES_HOME"
-    rm -rf "$HERMES_HOME/node"
-    mv "$extracted" "$HERMES_HOME/node"
+    mkdir -p "$INDAGIS_HOME"
+    rm -rf "$INDAGIS_HOME/node"
+    mv "$extracted" "$INDAGIS_HOME/node"
     rm -rf "$tmp"
 
     local _link_dir
@@ -328,17 +328,17 @@ _nb_install_bundled_node() {
     # PATH instead of shadowing them with ours.
     if [ "${HERMES_NODE_SKIP_LINKS:-0}" != "1" ]; then
         mkdir -p "$_link_dir"
-        ln -sf "$HERMES_HOME/node/bin/node" "$_link_dir/node"
-        ln -sf "$HERMES_HOME/node/bin/npm"  "$_link_dir/npm"
-        ln -sf "$HERMES_HOME/node/bin/npx"  "$_link_dir/npx"
+        ln -sf "$INDAGIS_HOME/node/bin/node" "$_link_dir/node"
+        ln -sf "$INDAGIS_HOME/node/bin/npm"  "$_link_dir/npm"
+        ln -sf "$INDAGIS_HOME/node/bin/npx"  "$_link_dir/npx"
     fi
 
     _nb_configure_npm_prefix
 
-    export PATH="$HERMES_HOME/node/bin:$PATH"
+    export PATH="$INDAGIS_HOME/node/bin:$PATH"
 
     _nb_have_modern_node || return 1
-    _nb_ok "Node $(node --version) installed to $HERMES_HOME/node/"
+    _nb_ok "Node $(node --version) installed to $INDAGIS_HOME/node/"
     # The tarball's bundled npm is usually below the repo's engines.npm floor.
     # Best-effort: an old npm still beats no Node.
     _nb_ensure_bundled_npm_range || true
@@ -353,9 +353,9 @@ _nb_managed_tool_broken() {
     local tool="$1"
     local probe
     for probe in \
-        "$HERMES_HOME/node/bin/$tool" \
-        "$HERMES_HOME/node/${tool}.exe" \
-        "$HERMES_HOME/node/$tool"; do
+        "$INDAGIS_HOME/node/bin/$tool" \
+        "$INDAGIS_HOME/node/${tool}.exe" \
+        "$INDAGIS_HOME/node/$tool"; do
         if [ -x "$probe" ] || [ -f "$probe" ]; then
             if ! "$probe" --version >/dev/null 2>&1; then
                 return 0
@@ -372,7 +372,7 @@ _nb_managed_tool_broken() {
 # hermes_constants.py.
 _nb_managed_node_outdated() {
     local probe ver major
-    for probe in "$HERMES_HOME/node/bin/node" "$HERMES_HOME/node/node"; do
+    for probe in "$INDAGIS_HOME/node/bin/node" "$INDAGIS_HOME/node/node"; do
         [ -x "$probe" ] || continue
         ver="$("$probe" --version 2>/dev/null)" || return 1
         major="${ver#v}"; major="${major%%.*}"
@@ -398,11 +398,11 @@ _nb_managed_node_needs_heal() {
 # absent. Used by hermes_constants.find_hermes_node_executable() and safe
 # to call from install reruns.
 heal_managed_node() {
-    [ -d "$HERMES_HOME/node" ] || return 1
+    [ -d "$INDAGIS_HOME/node" ] || return 1
     if ! _nb_managed_node_needs_heal; then
         return 0
     fi
-    _nb_log "Hermes-managed Node is broken — redownloading to $HERMES_HOME/node/..."
+    _nb_log "Hermes-managed Node is broken — redownloading to $INDAGIS_HOME/node/..."
     _nb_install_bundled_node
 }
 
@@ -423,8 +423,8 @@ ensure_node() {
         return 0
     fi
 
-    if [ -x "$HERMES_HOME/node/bin/node" ]; then
-        export PATH="$HERMES_HOME/node/bin:$PATH"
+    if [ -x "$INDAGIS_HOME/node/bin/node" ]; then
+        export PATH="$INDAGIS_HOME/node/bin:$PATH"
         if _nb_have_modern_node; then
             _nb_ok "Node $(node --version) found (Hermes-managed)"
             HERMES_NODE_AVAILABLE=true
