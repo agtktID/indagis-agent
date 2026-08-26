@@ -16,7 +16,6 @@ import sys
 from pathlib import Path
 
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from tools.environments.local import LocalEnvironment
 from tools.file_operations import ShellFileOperations
