@@ -67,7 +67,7 @@ def test_pollution_detection_logic():
     snap_a = {"indagis": True, "hermes": True}
     cur_a = {"indagis": False, "hermes": False}
     polluted_a = _classify_pollution(snap_a, cur_a)
-    assert polluted_a == ["~/.indagis (deleted)", "~/.indagis (deleted)"], (
+    assert polluted_a == ["~/.indagis (deleted)", "~/.hermes (deleted)"], (
         f"Scenario A: expected both deleted, got {polluted_a}"
     )
 
@@ -75,7 +75,7 @@ def test_pollution_detection_logic():
     snap_b = {"indagis": False, "hermes": False}
     cur_b = {"indagis": True, "hermes": True}
     polluted_b = _classify_pollution(snap_b, cur_b)
-    assert polluted_b == ["~/.indagis (created)", "~/.indagis (created)"], (
+    assert polluted_b == ["~/.indagis (created)", "~/.hermes (created)"], (
         f"Scenario B: expected both created, got {polluted_b}"
     )
 
@@ -91,7 +91,7 @@ def test_pollution_detection_logic():
     snap_d = {"indagis": True, "hermes": False}
     cur_d = {"indagis": True, "hermes": True}
     polluted_d = _classify_pollution(snap_d, cur_d)
-    assert polluted_d == ["~/.indagis (created)"], (
+    assert polluted_d == ["~/.hermes (created)"], (
         f"Scenario D: expected only ~/.hermes created, got {polluted_d}"
     )
 

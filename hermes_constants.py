@@ -113,7 +113,7 @@ def _warn_legacy_alias_in_use_once(resolved_via: str, legacy_path: Path) -> None
     if sys.platform == "win32":
         migrate_cmd = "move %LOCALAPPDATA%\\hermes %LOCALAPPDATA%\\indagis"
     else:
-        migrate_cmd = "mv ~/.indagis ~/.indagis"
+        migrate_cmd = "mv ~/.hermes ~/.indagis"
     msg = (
         f"\n⚠ Indagis Agent: {resolved_via} ({legacy_path}) is used as a "
         f"fallback. The deprecation alias will be removed in a future "
@@ -221,6 +221,11 @@ def _resolve_indagis_home_full_ladder() -> Path:
     # P2: ~/.indagis exists on disk (priority default, no warning).
     default = _get_platform_default_indagis_home()
     if default.exists():
+        # The named-profile guard (#18594) has to run here too. It reads
+        # `active_profile` from this same directory, so gating it on P5 alone
+        # made it unreachable: P5 is only taken when this directory does NOT
+        # exist, and the file it looks for lives inside it.
+        _warn_profile_fallback_once()
         return default
 
     # P3: HERMES_HOME env var (legacy alias, WARNING).
@@ -233,7 +238,7 @@ def _resolve_indagis_home_full_ladder() -> Path:
     # P4: ~/.hermes exists (legacy alias, WARNING).
     legacy_default = _legacy_indagis_home_alias_path()
     if legacy_default is not None:
-        _warn_legacy_alias_in_use_once("~/.indagis", legacy_default)
+        _warn_legacy_alias_in_use_once("~/.hermes", legacy_default)
         return legacy_default
 
     # P5: fall back to the default path (will be created on first use).

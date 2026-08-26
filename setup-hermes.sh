@@ -396,14 +396,28 @@ else
 fi
 
 # ============================================================================
-# Seed bundled skills into ~/.hermes/skills/
+# Seed bundled skills into the Indagis home
 # ============================================================================
 
-HERMES_SKILLS_DIR="${HERMES_HOME:-$HOME/.hermes}/skills"
+# Same 5-priority ladder as hermes_constants.get_indagis_home() and
+# install_helpers.sh:resolve_indagis_home(). Seeding into ~/.hermes
+# unconditionally put the skills where a fresh install never looks.
+if [ -n "${INDAGIS_HOME:-}" ]; then
+    _indagis_home="$INDAGIS_HOME"
+elif [ -d "$HOME/.indagis" ]; then
+    _indagis_home="$HOME/.indagis"
+elif [ -n "${HERMES_HOME:-}" ]; then
+    _indagis_home="$HERMES_HOME"
+elif [ -d "$HOME/.hermes" ]; then
+    _indagis_home="$HOME/.hermes"
+else
+    _indagis_home="$HOME/.indagis"
+fi
+HERMES_SKILLS_DIR="$_indagis_home/skills"
 mkdir -p "$HERMES_SKILLS_DIR"
 
 echo ""
-echo "Syncing bundled skills to ~/.hermes/skills/ ..."
+echo "Syncing bundled skills to $HERMES_SKILLS_DIR ..."
 if "$SCRIPT_DIR/venv/bin/python" "$SCRIPT_DIR/tools/skills_sync.py" 2>/dev/null; then
     echo -e "${GREEN}✓${NC} Skills synced"
 else
