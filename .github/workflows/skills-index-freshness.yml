@@ -27,7 +27,15 @@ jobs:
         id: probe
         run: |
           set -e
-          URL="https://hermes-agent.nousresearch.com/docs/api/skills-index.json"
+          # Set the SKILLS_INDEX_URL repository variable once this fork
+          # publishes its docs site. Probing the upstream URL would monitor
+          # another project's index and file issues here about their data.
+          URL="${{ vars.SKILLS_INDEX_URL }}"
+          if [ -z "$URL" ]; then
+            echo "status=not-configured" >> "$GITHUB_OUTPUT"
+            echo "detail=No SKILLS_INDEX_URL repository variable is set; nothing to probe." >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           echo "Probing $URL"
           # -L follows redirects; -f fails on HTTP errors; -s suppresses progress
           if ! curl -fsSL --retry 3 --retry-delay 10 -o /tmp/skills-index.json "$URL"; then
