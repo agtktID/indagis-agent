@@ -107,7 +107,7 @@ class CodexAppServerClient:
                 else spawn_env.get(
                     "HERMES_KANBAN_ROOT",
                     os.path.join(
-                        spawn_env.get("INDAGIS_HOME", os.path.expanduser("~/.hermes")),
+                        spawn_env.get("INDAGIS_HOME", os.path.expanduser("~/.indagis")),
                         "kanban",
                     ),
                 )
@@ -160,7 +160,7 @@ class CodexAppServerClient:
     def initialize(
         self,
         client_name: str = "hermes",
-        client_title: str = "Hermes Agent",
+        client_title: str = "Indagis Agent",
         client_version: str = "0.1",
         capabilities: Optional[dict] = None,
         timeout: float = 10.0,

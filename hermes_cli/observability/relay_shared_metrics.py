@@ -124,7 +124,7 @@ class _Runtime:
     def __init__(self, host: relay_runtime.RelayRuntime | None = None) -> None:
         resolved_host = host or relay_runtime.get_runtime()
         if resolved_host is None:
-            raise RuntimeError("Hermes core Relay runtime is unavailable")
+            raise RuntimeError("Indagis core Relay runtime is unavailable")
         self.host: relay_runtime.RelayRuntime = resolved_host
         self.relay = self.host.relay
         self._sessions_lock = threading.RLock()
@@ -603,7 +603,7 @@ class _Runtime:
                 self.relay.subscribers.flush()
             except Exception:
                 logger.warning(
-                    "Hermes shared-metrics task flush failed",
+                    "Indagis shared-metrics task flush failed",
                     exc_info=True,
                 )
             else:
@@ -643,7 +643,7 @@ class _Runtime:
                 self._sessions.pop(session.session_id, None)
         if failures:
             logger.warning(
-                "Hermes shared-metrics session %s closed with errors: %s",
+                "Indagis shared-metrics session %s closed with errors: %s",
                 session.session_id,
                 "; ".join(failures),
             )
@@ -660,7 +660,7 @@ class _Runtime:
             self.relay.subscribers.flush()
         except Exception:
             logger.warning(
-                "Hermes shared-metrics shutdown flush failed",
+                "Indagis shared-metrics shutdown flush failed",
                 exc_info=True,
             )
         else:
@@ -911,7 +911,7 @@ class _Runtime:
             )
         except Exception:
             logger.warning(
-                "Hermes shared-metrics tool call close failed",
+                "Indagis shared-metrics tool call close failed",
                 exc_info=True,
             )
 
@@ -960,7 +960,7 @@ class _Runtime:
                 )
         except Exception:
             logger.warning(
-                "Hermes shared-metrics model call close failed", exc_info=True
+                "Indagis shared-metrics model call close failed", exc_info=True
             )
 
     def _end_pending_model_calls(
@@ -1032,7 +1032,7 @@ class _Runtime:
                 metadata=self._event_metadata(),
             )
         except Exception:
-            logger.warning("Hermes shared-metrics task close failed", exc_info=True)
+            logger.warning("Indagis shared-metrics task close failed", exc_info=True)
         finally:
             session.tasks.pop(task_id, None)
             session.retired_turn_ids.extend(task.turn_ids)
@@ -1060,7 +1060,7 @@ class _Runtime:
         try:
             return callback(*args, **kwargs)
         except Exception:
-            logger.warning("Hermes shared metrics operation failed", exc_info=True)
+            logger.warning("Indagis shared metrics operation failed", exc_info=True)
             return None
 
 
@@ -1077,7 +1077,7 @@ def enabled() -> bool:
         # on every call.
         config = read_raw_config_readonly() or {}
     except Exception:
-        logger.debug("Unable to read Hermes shared-metrics policy", exc_info=True)
+        logger.debug("Unable to read Indagis shared-metrics policy", exc_info=True)
         value = False
     else:
         telemetry = config.get("telemetry") if isinstance(config, dict) else None
@@ -1138,7 +1138,7 @@ def observe_lifecycle(hook_name: str, **kwargs: Any) -> None:
             runtime.close_session(kwargs)
     except Exception:
         logger.warning(
-            "Hermes shared metrics hook failed: %s", hook_name, exc_info=True
+            "Indagis shared metrics hook failed: %s", hook_name, exc_info=True
         )
 
 
@@ -1271,7 +1271,7 @@ def _get_runtime(
         try:
             runtime = _Runtime(host=host)
         except Exception:
-            logger.warning("Hermes shared metrics initialization failed", exc_info=True)
+            logger.warning("Indagis shared metrics initialization failed", exc_info=True)
             _RUNTIMES[profile_key] = _RUNTIME_FAILED
             return None
         _RUNTIMES[profile_key] = runtime

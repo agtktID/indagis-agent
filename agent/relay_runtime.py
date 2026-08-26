@@ -199,9 +199,9 @@ class RelayRuntime:
         """Run a Relay operation against a session's isolated scope stack."""
         with session.lock:
             if session.closing and not allow_closing:
-                raise RuntimeError("Hermes Relay session is closing")
+                raise RuntimeError("Indagis Relay session is closing")
             if session.context is None or session.handle is None:
-                raise RuntimeError("Hermes Relay session context is unavailable")
+                raise RuntimeError("Indagis Relay session context is unavailable")
             relay_context = session.context.copy()
 
         context = contextvars.copy_context()
@@ -227,9 +227,9 @@ class RelayRuntime:
         """Create and await an operation inside the session's saved context."""
         with session.lock:
             if session.closing and not allow_closing:
-                raise RuntimeError("Hermes Relay session is closing")
+                raise RuntimeError("Indagis Relay session is closing")
             if session.context is None or session.handle is None:
-                raise RuntimeError("Hermes Relay session context is unavailable")
+                raise RuntimeError("Indagis Relay session context is unavailable")
             relay_context = session.context.copy()
 
         context = contextvars.copy_context()
@@ -337,7 +337,7 @@ class RelayRuntime:
             self._subagent_parent_handles.pop(session_id, None)
         if failures:
             logger.warning(
-                "Hermes Relay session %s closed with errors: %s",
+                "Indagis Relay session %s closed with errors: %s",
                 session_id,
                 "; ".join(failures),
             )
@@ -360,7 +360,7 @@ class RelayRuntime:
         try:
             return callback(*args, **kwargs)
         except Exception:
-            logger.warning("Hermes Relay runtime operation failed", exc_info=True)
+            logger.warning("Indagis Relay runtime operation failed", exc_info=True)
             return None
 
 
@@ -429,7 +429,7 @@ class RelayHostRegistry:
                 host = RelayRuntime(profile_key=key)
             except Exception as exc:
                 logger.warning(
-                    "Hermes Relay runtime initialization failed", exc_info=True
+                    "Indagis Relay runtime initialization failed", exc_info=True
                 )
                 host = NoopRelayRuntime(profile_key=key, reason=str(exc))
             self._hosts[key] = host
@@ -532,7 +532,7 @@ class RelaySessionCoordinator:
                 callback(host, context)
             except Exception:
                 logger.warning(
-                    "Hermes Relay session initializer failed: %s",
+                    "Indagis Relay session initializer failed: %s",
                     name,
                     exc_info=True,
                 )
@@ -576,7 +576,7 @@ class RelaySessionCoordinator:
                     )
             except Exception:
                 logger.warning(
-                    "Hermes Relay conversation initialization failed",
+                    "Indagis Relay conversation initialization failed",
                     exc_info=True,
                 )
         return ConversationLease(
@@ -596,7 +596,7 @@ class RelaySessionCoordinator:
         task_id: str,
     ) -> RelayTurnContext:
         if lease.released:
-            raise RuntimeError("Hermes Relay conversation lease is released")
+            raise RuntimeError("Indagis Relay conversation lease is released")
         turn = RelayTurnContext(lease=lease, turn_id=turn_id, task_id=task_id)
         key = (lease.profile_key, lease.session_id)
         with self._active_turns_lock:
@@ -607,7 +607,7 @@ class RelaySessionCoordinator:
                 # their completion order is not guaranteed to be LIFO.
                 turn.relay_enabled = False
                 logger.warning(
-                    "Skipping Relay instrumentation for concurrent Hermes turn "
+                    "Skipping Relay instrumentation for concurrent Indagis turn "
                     "%s in session %s",
                     turn_id,
                     lease.session_id,
@@ -635,7 +635,7 @@ class RelaySessionCoordinator:
                     },
                 )
             except Exception:
-                logger.warning("Hermes Relay turn initialization failed", exc_info=True)
+                logger.warning("Indagis Relay turn initialization failed", exc_info=True)
         turn._previous_turn = _CURRENT_TURN.get()
         _CURRENT_TURN.set(turn)
         return turn
@@ -669,7 +669,7 @@ class RelaySessionCoordinator:
                             )
                         except Exception:
                             logger.warning(
-                                "Hermes Relay turn finalization failed", exc_info=True
+                                "Indagis Relay turn finalization failed", exc_info=True
                             )
             finally:
                 try:
@@ -685,7 +685,7 @@ class RelaySessionCoordinator:
                         })
                 except Exception:
                     logger.warning(
-                        "Hermes Relay child conversation finalization failed",
+                        "Indagis Relay child conversation finalization failed",
                         exc_info=True,
                     )
                 finally:
@@ -764,7 +764,7 @@ class RelaySessionCoordinator:
                             pending_handle,
                         )
                 logger.warning(
-                    "Hermes Relay logical LLM finalization failed",
+                    "Indagis Relay logical LLM finalization failed",
                     exc_info=True,
                 )
                 break
@@ -889,7 +889,7 @@ def emit_mark(
             metadata=metadata,
         )
     except Exception:
-        logger.warning("Hermes Relay mark failed: %s", name, exc_info=True)
+        logger.warning("Indagis Relay mark failed: %s", name, exc_info=True)
         return False
 
 
@@ -920,7 +920,7 @@ def ensure_session(*, session_id: str, **context: Any) -> RelaySession | None:
     try:
         return runtime.ensure_session({"session_id": session_id, **context})
     except Exception:
-        logger.warning("Hermes Relay session initialization failed", exc_info=True)
+        logger.warning("Indagis Relay session initialization failed", exc_info=True)
         return None
 
 
@@ -933,12 +933,12 @@ def run_in_session(
     """Run a scope, LLM, or tool API against a shared Hermes session."""
     runtime = get_runtime()
     if runtime is None:
-        raise RuntimeError("Hermes Relay runtime is unavailable")
+        raise RuntimeError("Indagis Relay runtime is unavailable")
     session = runtime.get_session(session_id)
     if session is None:
         session = runtime.ensure_session({"session_id": session_id})
     if session is None:
-        raise RuntimeError("Hermes Relay session is unavailable")
+        raise RuntimeError("Indagis Relay session is unavailable")
     return runtime.run_in_session(session, callback, *args, **kwargs)
 
 
@@ -951,12 +951,12 @@ async def run_in_session_async(
     """Await a Relay operation inside a shared Hermes session context."""
     runtime = get_runtime()
     if runtime is None:
-        raise RuntimeError("Hermes Relay runtime is unavailable")
+        raise RuntimeError("Indagis Relay runtime is unavailable")
     session = runtime.get_session(session_id)
     if session is None:
         session = runtime.ensure_session({"session_id": session_id})
     if session is None:
-        raise RuntimeError("Hermes Relay session is unavailable")
+        raise RuntimeError("Indagis Relay session is unavailable")
     return await runtime.run_in_session_async(session, callback, *args, **kwargs)
 
 

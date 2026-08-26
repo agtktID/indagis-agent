@@ -1133,7 +1133,7 @@ class TestUnavailableWarningsPromiseRetry:
 
     @staticmethod
     def _assert_promises_retry(message: str) -> None:
-        assert "for this Hermes run" not in message, message
+        assert "for this Indagis run" not in message, message
         assert "will retry on a later access" in message, message
         assert "when the config changes" in message, message
 

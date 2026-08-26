@@ -2379,7 +2379,7 @@ class MCPServerTask:
         if not _MCP_AVAILABLE:
             raise ImportError(
                 f"MCP server '{self.name}' requires the 'mcp' Python SDK, but "
-                "it is not installed. Run `hermes setup` to install MCP support, "
+                "it is not installed. Run `indagis setup` to install MCP support, "
                 "then retry."
             )
 
@@ -3932,8 +3932,8 @@ def _handle_auth_error_and_retry(
     _bump_server_error(server_name)
     return tool_error(
         f"MCP server '{server_name}' requires re-authentication. "
-        f"Run `hermes mcp login {server_name}` (or delete the tokens "
-        f"file under ~/.hermes/mcp-tokens/ and restart). Do NOT retry "
+        f"Run `indagis mcp login {server_name}` (or delete the tokens "
+        f"file under ~/.indagis/mcp-tokens/ and restart). Do NOT retry "
         f"this tool — ask the user to re-authenticate.",
         needs_reauth=True,
         server=server_name,

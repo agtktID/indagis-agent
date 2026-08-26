@@ -1,13 +1,13 @@
 #!/bin/sh
 # shellcheck shell=sh
-# /opt/hermes/bin/hermes — `docker exec` privilege-drop shim.
+# /opt/indagis/bin/hermes — `docker exec` privilege-drop shim.
 #
 # Background
 # ----------
 # The s6 image runs the supervised gateway/main process as the unprivileged
 # `hermes` user (UID 10000). When an operator runs `docker exec <c> hermes ...`
 # the default UID is root (0), and any file the command writes under
-# $HERMES_HOME — auth.json, .env, config.yaml — ends up root-owned and
+# $INDAGIS_HOME — auth.json, .env, config.yaml — ends up root-owned and
 # unreadable to the supervised gateway. The most common manifestation: the
 # user runs `docker exec <c> hermes login`, this writes
 # /opt/data/auth.json as root:root mode 0600, and from then on the gateway
@@ -19,10 +19,10 @@
 #
 # Fix
 # ---
-# This shim sits at /opt/hermes/bin/hermes and is placed earliest on PATH.
+# This shim sits at /opt/indagis/bin/hermes and is placed earliest on PATH.
 # When invoked as root, it drops to the hermes user (via s6-setuidgid)
 # before exec'ing the real venv binary, so anything that writes under
-# $HERMES_HOME is uid-aligned with the supervised processes. When invoked
+# $INDAGIS_HOME is uid-aligned with the supervised processes. When invoked
 # as any non-root UID — including the supervised processes themselves,
 # `docker exec --user hermes`, kanban subagents, etc. — it short-circuits
 # straight to the venv binary with no privilege change. Net: one extra
@@ -30,7 +30,7 @@
 # other path.
 #
 # Recursion safety: the shim exec's the venv binary by *absolute path*
-# (/opt/hermes/.venv/bin/hermes), so the second hop cannot re-enter this
+# (/opt/indagis/.venv/bin/hermes), so the second hop cannot re-enter this
 # shim regardless of PATH state. No sentinel env var needed.
 #
 # Opt-out: set HERMES_DOCKER_EXEC_AS_ROOT=1 (1/true/yes, case-insensitive)
@@ -40,12 +40,17 @@
 
 set -e
 
-REAL=/opt/hermes/.venv/bin/hermes
+# [project.scripts] declares `indagis`; `hermes` only exists in a venv built
+# before the rename. Prefer the current name, accept the legacy one.
+REAL=/opt/indagis/.venv/bin/indagis
+if [ ! -x "$REAL" ]; then
+    REAL=/opt/indagis/.venv/bin/hermes
+fi
 
-# Defensive: if the venv binary is missing (corrupted image, partial
+# Defensive: if neither venv binary is present (corrupted image, partial
 # install), fail loudly rather than silently masking it.
 if [ ! -x "$REAL" ]; then
-    echo "hermes-shim: $REAL not found or not executable" >&2
+    echo "indagis-shim: no indagis/hermes entry point under /opt/indagis/.venv/bin" >&2
     exit 127
 fi
 

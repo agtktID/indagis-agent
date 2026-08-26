@@ -182,8 +182,8 @@ def build_dashboard_parser(
         description=(
             "Register this install as a self-hosted dashboard with your Nous "
             "Portal account. Creates an OAuth client, writes "
-            "HERMES_DASHBOARD_OAUTH_CLIENT_ID into ~/.hermes/.env, and prints "
-            "how to engage the login gate. Requires being logged in (hermes setup)."
+            "HERMES_DASHBOARD_OAUTH_CLIENT_ID into ~/.indagis/.env, and prints "
+            "how to engage the login gate. Requires being logged in (indagis setup)."
         ),
     )
     dashboard_register_parser.add_argument(

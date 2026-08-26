@@ -533,9 +533,9 @@ def _validate_cron_script_path(script: Optional[str]) -> Optional[str]:
     # Only relative paths within ~/.hermes/scripts/ are allowed.
     if raw.startswith(("/", "~")) or (len(raw) >= 2 and raw[1] == ":"):
         return (
-            f"Script path must be relative to ~/.hermes/scripts/. "
+            f"Script path must be relative to ~/.indagis/scripts/. "
             f"Got absolute or home-relative path: {raw!r}. "
-            f"Place scripts in ~/.hermes/scripts/ and use just the filename."
+            f"Place scripts in ~/.indagis/scripts/ and use just the filename."
         )
 
     # Validate containment after resolution

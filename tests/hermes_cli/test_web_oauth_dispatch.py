@@ -217,7 +217,7 @@ def test_codex_dashboard_start_rewords_device_authorization_error(monkeypatch):
         assert "OpenAI rejected the device-code login request" in detail
         assert "Enable device-code authorization in OpenAI" in detail
         assert "click Login again" in detail
-        assert "hermes auth" not in detail
+        assert "indagis auth" not in detail
     finally:
         for sid in set(ws._oauth_sessions) - before_sessions:
             ws._oauth_sessions.pop(sid, None)

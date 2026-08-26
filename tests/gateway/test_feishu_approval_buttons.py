@@ -443,7 +443,7 @@ class TestResolveUpdatePrompt:
 
         await adapter._resolve_update_prompt(1, "y", "Alice")
 
-        assert (tmp_path / ".hermes" / ".update_response").read_text() == "y"
+        assert (tmp_path / ".indagis" / ".update_response").read_text() == "y"
         assert 1 not in adapter._update_prompt_state
 
 

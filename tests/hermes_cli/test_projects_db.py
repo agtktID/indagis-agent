@@ -44,7 +44,7 @@ def test_create_get_list(conn):
 
     assert proj is not None
     assert proj.slug == "hermes-agent"
-    assert proj.name == "Hermes Agent"
+    assert proj.name == "Indagis Agent"
     # First folder becomes primary.
     assert proj.primary_path == "/tmp/hermes"
     assert [f.path for f in proj.folders] == ["/tmp/hermes"]

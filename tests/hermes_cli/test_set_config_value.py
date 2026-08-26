@@ -462,7 +462,7 @@ class TestSchemaValidation:
         set_config_value("desktop.macos_signing_identity", "Hermes Local Signing")
         import yaml
         saved = yaml.safe_load(_read_config(_isolated_hermes_home))
-        assert saved["desktop"]["macos_signing_identity"] == "Hermes Local Signing"
+        assert saved["desktop"]["macos_signing_identity"] == "Indagis Local Signing"
         assert "not a recognized config key" not in capsys.readouterr().out
 
 

@@ -857,7 +857,7 @@ def cua_driver_install_hint() -> str:
         "  hermes computer-use install\n"
         "Or run the upstream installer directly:\n"
         f"{installer}\n"
-        "Or run `hermes tools` and enable the Computer Use toolset to install it automatically."
+        "Or run `indagis tools` and enable the Computer Use toolset to install it automatically."
     )
 
 

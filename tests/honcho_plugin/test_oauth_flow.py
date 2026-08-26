@@ -261,7 +261,7 @@ def test_config_path_rides_the_authorize_link(fake_as):
     endpoints = oauth_flow.resolve_endpoints()
     url, _ = oauth_flow.begin_authorization(endpoints, config_path="~/.hermes/honcho.json")
     q = parse_qs(urlparse(url).query)
-    assert q["config_path"][0] == "~/.hermes/honcho.json"
+    assert q["config_path"][0] == "~/.indagis/honcho.json"
     bare, _ = oauth_flow.begin_authorization(endpoints)
     assert "config_path=" not in bare
 
@@ -271,7 +271,7 @@ def test_display_config_path_never_leaks_absolute_path():
 
     # Under home → collapsed to ~/…; outside home → bare filename only.
     under_home = Path.home() / ".hermes" / "profiles" / "work" / "honcho.json"
-    assert oauth_flow._display_config_path(under_home) == "~/.hermes/profiles/work/honcho.json"
+    assert oauth_flow._display_config_path(under_home) == "~/.indagis/profiles/work/honcho.json"
     assert oauth_flow._display_config_path("/var/folders/tmp/honcho.json") == "honcho.json"
 
 

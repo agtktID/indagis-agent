@@ -66,7 +66,10 @@ def remove_path_from_shell_configs():
             
             for line in content.split('\n'):
                 # Skip the "# Hermes Agent" comment and following line
-                if '# Hermes Agent' in line or '# hermes-agent' in line:
+                # Both brand markers: installers wrote "# Hermes Agent"
+                # before the rebrand and "# Indagis Agent" after.
+                if ('# Indagis Agent' in line or '# Hermes Agent' in line
+                        or '# hermes-agent' in line):
                     skip_next = True
                     continue
                 if skip_next and ('hermes' in line.lower() and 'PATH' in line):
@@ -577,7 +580,7 @@ def run_gui_uninstall(args):
     print(color("└─────────────────────────────────────────────────────────┘", Colors.GREEN, Colors.BOLD))
     print()
     print("The Indagis agent is still installed. Run 'hermes' to use the CLI,")
-    print("or 'hermes uninstall' to remove the agent too.")
+    print("or 'indagis uninstall' to remove the agent too.")
     print()
 
 
