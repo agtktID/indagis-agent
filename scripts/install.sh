@@ -925,11 +925,17 @@ install_node() {
     # Resolve the latest v${NODE_VERSION}.x.x tarball name from the index page
     local index_url="https://nodejs.org/dist/latest-v${NODE_VERSION}.x/"
     local tarball_name
-    tarball_name=$(curl -fsSL "$index_url" \
-        | grep -oE "node-v${NODE_VERSION}\.[0-9]+\.[0-9]+-${node_os}-${node_arch}\.tar\.xz" \
-        | head -1)
+    # Only ask for the .xz tarball when this machine can actually unpack one.
+    # A minimal base image (debian:*-slim, many container hosts) ships tar but
+    # not xz-utils, and `tar xf` then dies with "xz: Cannot exec" *after* the
+    # download — so probe first and take the .gz instead.
+    if command -v xz >/dev/null 2>&1; then
+        tarball_name=$(curl -fsSL "$index_url" \
+            | grep -oE "node-v${NODE_VERSION}\.[0-9]+\.[0-9]+-${node_os}-${node_arch}\.tar\.xz" \
+            | head -1)
+    fi
 
-    # Fallback to .tar.gz if .tar.xz not available
+    # Fallback to .tar.gz when xz is unavailable or the .xz tarball is missing
     if [ -z "$tarball_name" ]; then
         tarball_name=$(curl -fsSL "$index_url" \
             | grep -oE "node-v${NODE_VERSION}\.[0-9]+\.[0-9]+-${node_os}-${node_arch}\.tar\.gz" \
@@ -955,7 +961,7 @@ install_node() {
         return 0
     fi
 
-    log_info "Extracting to ~/.hermes/node/..."
+    log_info "Extracting to $INDAGIS_HOME/node/..."
     if [[ "$tarball_name" == *.tar.xz ]]; then
         tar xf "$tmp_dir/$tarball_name" -C "$tmp_dir"
     else
@@ -972,7 +978,7 @@ install_node() {
         return 0
     fi
 
-    # Place into ~/.hermes/node/ and symlink binaries into the same bin dir
+    # Place into $INDAGIS_HOME/node/ and symlink binaries into the same bin dir
     # the hermes command uses (get_command_link_dir): /usr/local/bin for root
     # FHS installs, $PREFIX/bin on Termux, ~/.local/bin otherwise.
     rm -rf "$INDAGIS_HOME/node"
@@ -993,7 +999,7 @@ install_node() {
 
     local installed_ver
     installed_ver=$("$INDAGIS_HOME/node/bin/node" --version 2>/dev/null)
-    log_success "Node.js $installed_ver installed to ~/.hermes/node/"
+    log_success "Node.js $installed_ver installed to $INDAGIS_HOME/node/"
     HAS_NODE=true
 }
 
