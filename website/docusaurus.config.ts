@@ -7,7 +7,7 @@ const config: Config = {
   tagline: 'The self-improving AI agent',
   favicon: 'img/favicon.ico',
 
-  url: 'https://indagis-agent.example.com',
+  url: 'https://github.com/agtktID/indagis-agent',
   baseUrl: '/docs/',
 
   organizationName: 'agtktID',
@@ -155,7 +155,7 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://indagis-agent.example.com/',
+          href: 'https://github.com/agtktID/indagis-agent',
           label: 'Download',
           position: 'left',
         },
@@ -164,7 +164,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://indagis-agent.example.com',
+          href: 'https://github.com/agtktID/indagis-agent',
           label: 'Home',
           position: 'right',
         },
@@ -203,7 +203,7 @@ const config: Config = {
         {
           title: 'More',
           items: [
-            { label: 'Desktop Download', href: 'https://indagis-agent.example.com/' },
+            { label: 'Desktop Download', href: 'https://github.com/agtktID/indagis-agent' },
             { label: 'GitHub', href: 'https://github.com/agtktID/indagis-agent' },
             { label: 'Nous Research', href: 'https://nousresearch.com' },
           ],

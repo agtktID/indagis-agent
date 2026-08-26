@@ -115,7 +115,7 @@ describe('buildToolView browser_navigate title', () => {
     const view = buildToolView(
       part({
         toolName: 'browser_navigate',
-        args: { url: 'https://indagis-agent.example.com/docs' },
+        args: { url: 'https://github.com/agtktID/indagis-agentdocs' },
         result: { success: false, error: 'Command timed out after 60 seconds' }
       }),
       ''
@@ -129,8 +129,8 @@ describe('buildToolView browser_navigate title', () => {
     const view = buildToolView(
       part({
         toolName: 'browser_navigate',
-        args: { url: 'https://indagis-agent.example.com/docs' },
-        result: { success: true, url: 'https://indagis-agent.example.com/docs', title: 'Docs' }
+        args: { url: 'https://github.com/agtktID/indagis-agentdocs' },
+        result: { success: true, url: 'https://github.com/agtktID/indagis-agentdocs', title: 'Docs' }
       }),
       ''
     )
