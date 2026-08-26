@@ -55,14 +55,14 @@ class TestGetDefaultHermesRoot:
         assert get_default_indagis_root() == docker_root
 
     def test_no_hermes_home_returns_localappdata_root_on_windows(self, tmp_path, monkeypatch):
-        """Native Windows falls back to %LOCALAPPDATA%\\hermes, not ~/.hermes."""
+        """Native Windows falls back to %LOCALAPPDATA%\\indagis, not ~/.indagis."""
         local_appdata = tmp_path / "LocalAppData"
         monkeypatch.delenv("INDAGIS_HOME", raising=False)
         monkeypatch.setenv("LOCALAPPDATA", str(local_appdata))
         monkeypatch.setattr(Path, "home", lambda: tmp_path / "Home")
         monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
 
-        assert get_default_indagis_root() == local_appdata / "hermes"
+        assert get_default_indagis_root() == local_appdata / "indagis"
 
 
 
@@ -70,7 +70,7 @@ class TestGetHermesHome:
     """Tests for get_indagis_home() platform-aware fallback."""
 
     def test_windows_fallback_uses_localappdata(self, tmp_path, monkeypatch):
-        """When INDAGIS_HOME is unset on Windows, use %LOCALAPPDATA%\\hermes."""
+        """When INDAGIS_HOME is unset on Windows, use %LOCALAPPDATA%\\indagis."""
         local_appdata = tmp_path / "LocalAppData"
         monkeypatch.delenv("INDAGIS_HOME", raising=False)
         monkeypatch.setenv("LOCALAPPDATA", str(local_appdata))
@@ -78,7 +78,7 @@ class TestGetHermesHome:
         monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
         monkeypatch.setattr(hermes_constants, "_profile_fallback_warned", False)
 
-        assert get_indagis_home() == local_appdata / "hermes"
+        assert get_indagis_home() == local_appdata / "indagis"
 
 
 class TestGetProcessHermesHome:

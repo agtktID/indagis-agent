@@ -147,15 +147,15 @@ A well-built third-party-product plugin can clear automated review and still be 
 
 For most contributors, the best development bootstrap is the same path users
 take: run the standard installer, then work inside the repository it cloned.
-The installer creates the Hermes venv, wires the `hermes` command, stamps the
+The installer creates the venv, wires the `indagis` command, stamps the
 install method for `indagis update`, and clones the full git project into
-`$HERMES_HOME/hermes-agent` (usually `~/.hermes/hermes-agent`). That keeps your
+`$INDAGIS_HOME/hermes-agent` (usually `~/.indagis/hermes-agent`). That keeps your
 development environment on the same layout the CLI, updater, lazy dependency
 installer, gateway, and docs assume.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.sh | bash
-cd "${HERMES_HOME:-$HOME/.hermes}/hermes-agent"
+cd "${INDAGIS_HOME:-$HOME/.indagis}/hermes-agent"
 
 # Add dev/test extras on top of the standard install.
 uv pip install -e ".[all,dev]"

@@ -33,7 +33,7 @@ class TestGetHermesHomeProfileWarning:
     def test_classic_mode_no_active_profile_no_warning(
         self, fresh_constants, tmp_path, capsys
     ):
-        """Classic mode: no active_profile file → silent, returns ~/.hermes."""
+        """Classic mode: no active_profile file → silent, returns ~/.indagis."""
         result = fresh_constants.get_indagis_home()
         assert result == tmp_path / ".indagis"
         assert "INDAGIS_HOME fallback" not in capsys.readouterr().err
@@ -43,9 +43,9 @@ class TestGetHermesHomeProfileWarning:
         self, fresh_constants, tmp_path, capsys
     ):
         """active_profile=coder + INDAGIS_HOME unset → warn loudly, still return fallback."""
-        hermes_dir = tmp_path / ".hermes"
-        hermes_dir.mkdir()
-        (hermes_dir / "active_profile").write_text("coder\n")
+        indagis_dir = tmp_path / ".indagis"
+        indagis_dir.mkdir()
+        (indagis_dir / "active_profile").write_text("coder\n")
 
         result = fresh_constants.get_indagis_home()
 
@@ -88,7 +88,7 @@ class TestGetHermesHomeProfileWarning:
 
         result = fresh_constants.get_indagis_home()
 
-        assert result == tmp_path / ".indagis"
+        assert result == tmp_path / ".hermes"
         # Shouldn't crash; shouldn't warn either (can't tell what profile was intended)
         assert "INDAGIS_HOME fallback" not in capsys.readouterr().err
 

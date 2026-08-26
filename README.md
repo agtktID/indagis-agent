@@ -251,7 +251,7 @@ managed venv, lazy dependencies, gateway, and docs tooling.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.sh | bash
-cd "${INDAGIS_HOME:-$HOME/.hermes}/hermes-agent"
+cd "${INDAGIS_HOME:-$HOME/.indagis}/hermes-agent"
 uv pip install -e ".[all,dev]"
 scripts/run_tests.sh
 ```
