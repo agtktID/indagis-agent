@@ -2,7 +2,6 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
   docs: [
-    'user-stories',
     {
       type: 'category',
       label: 'Getting Started',
@@ -682,7 +681,6 @@ const sidebars: SidebarsConfig = {
       collapsed: true,
       items: [
         'integrations/index',
-        'integrations/nous-portal',
         'integrations/providers',
         'integrations/buzz',
         'user-guide/features/mcp',
@@ -697,8 +695,6 @@ const sidebars: SidebarsConfig = {
       label: 'Guides & Tutorials',
       collapsed: true,
       items: [
-        'guides/run-nemotron-3-ultra-free',
-        'guides/run-hermes-with-nous-portal',
         'guides/tips',
         'guides/local-llm-on-mac',
         'guides/daily-briefing-bot',
