@@ -100,6 +100,36 @@ For more context, see the upstream Astral reports: [astral-sh/uv#13553](https://
 
 ---
 
+## Docker
+
+There is no published Indagis image — the compose files build from this
+checkout, so you always run this fork's code rather than upstream Hermes.
+
+```bash
+docker compose up -d
+```
+
+That starts the gateway and the dashboard, both mounting `~/.indagis` as the
+container's data volume. On Windows use the dedicated file:
+
+```bash
+docker compose -f docker-compose.windows.yml up -d
+```
+
+Set `HERMES_UID` / `HERMES_GID` to your own host user (`id -u` / `id -g`) —
+the container runs as UID 10000, and without the override the files it writes
+into your mounted data directory are owned by that UID.
+
+One-off commands run against the same image:
+
+```bash
+docker run --rm -v ~/.indagis:/opt/data indagis-agent --version
+```
+
+Inside the container the command is `indagis` (`hermes` stays as an alias).
+
+---
+
 ## Getting Started
 
 ```bash
