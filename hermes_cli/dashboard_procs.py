@@ -54,12 +54,16 @@ def _scan_dashboard_processes(
     Returns an empty list on any scan error (missing ps/wmic, timeout, etc.).
     """
     patterns = [
+        # Both entry-point names — a process started before the rename still
+        # runs as `hermes ...` and must still be found and reaped.
+        "indagis dashboard",
         "hermes dashboard",
         "hermes_cli.main dashboard",
         "hermes_cli/main.py dashboard",
         # The headless backend (`hermes serve`) is the same long-lived server
         # under a different command name — the desktop app spawns it. Reap it
         # on update for the same frontend/backend-mismatch reason.
+        "indagis serve",
         "hermes serve",
         "hermes_cli.main serve",
         "hermes_cli/main.py serve",

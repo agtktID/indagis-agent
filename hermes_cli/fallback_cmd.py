@@ -159,7 +159,7 @@ def cmd_fallback_add(args) -> None:
 
     print()
     print("  Adding a fallback provider.  The picker below is the same one used by")
-    print("  `hermes model` — select the provider + model you want as a fallback.")
+    print("  `indagis model` — select the provider + model you want as a fallback.")
     print()
 
     try:

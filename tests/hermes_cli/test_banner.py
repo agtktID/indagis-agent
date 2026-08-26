@@ -52,7 +52,7 @@ def test_build_welcome_banner_title_falls_back_when_no_tag():
 
     raw = buf.getvalue()
     # Phase 4 / G14-Y: format_banner_version_label now says "Indagis Agent v…",
-    # not "Hermes Agent v…" — assertion updated to match the rebrand.
+    # not "Indagis Agent v…" — assertion updated to match the rebrand.
     assert "Indagis Agent v" in raw, "Version label missing from title"
     assert "\x1b]8;" not in raw, "OSC-8 hyperlink should not be emitted without a tag"
 

@@ -197,7 +197,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
                 "secrets.bitwarden.enabled is false.[/red]"
             )
             console.print(
-                "  Run `hermes secrets bitwarden setup` first, or omit "
+                "  Run `indagis secrets bitwarden setup` first, or omit "
                 "--from-bitwarden."
             )
             return 1
@@ -251,7 +251,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
         if loaded:
             console.print(
                 f"  [dim]Loaded {loaded} provider key name(s) from "
-                f"~/.hermes/.env for discovery.[/dim]"
+                f"~/.indagis/.env for discovery.[/dim]"
             )
 
     discovered = ip.discover_provider_mappings(
@@ -277,7 +277,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
         if _sys.stdin.isatty():
             console.print(
                 "[yellow]⚠[/yellow]  --rotate-tokens will invalidate proxy "
-                "tokens in every running Hermes sandbox.  They will start "
+                "tokens in every running Indagis sandbox.  They will start "
                 "401-ing against upstreams until restarted."
             )
             try:
@@ -632,7 +632,7 @@ def cmd_start(args: argparse.Namespace) -> int:
                 "secrets.bitwarden.project_id is empty.[/red]"
             )
             console.print(
-                "  Run `hermes secrets bitwarden setup` to configure the "
+                "  Run `indagis secrets bitwarden setup` to configure the "
                 "project, or switch back via `hermes egress setup "
                 "--no-bitwarden`."
             )

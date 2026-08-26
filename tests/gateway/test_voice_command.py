@@ -678,7 +678,7 @@ class TestVoiceChannelCommands:
         event = mock_adapter.handle_message.call_args[0][0]
         assert event.source.chat_id == "123"
         assert event.source.chat_type == "group"
-        assert event.source.chat_name == "Hermes Server / #general"
+        assert event.source.chat_name == "Indagis Server / #general"
         assert event.source.user_id == "42"
 
 

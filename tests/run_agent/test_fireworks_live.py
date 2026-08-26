@@ -31,7 +31,7 @@ def _resolve_runtime_client(provider="fireworks"):
     from agent.auxiliary_client import resolve_provider_client
 
     client, model = resolve_provider_client(provider)
-    assert client is not None, "Hermes failed to build a Fireworks client"
+    assert client is not None, "Indagis failed to build a Fireworks client"
     return client, model
 
 

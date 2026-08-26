@@ -99,7 +99,7 @@ class TestTranscriptWritePatience:
             holder.join(timeout=10.0)
         assert not holder.is_alive()
         text = str(excinfo.value)
-        assert "another Hermes process" in text
+        assert "another Indagis process" in text
         assert "healthy" in text
 
     def test_write_succeeds_immediately_when_uncontended(self, db):

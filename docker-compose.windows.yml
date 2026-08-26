@@ -11,24 +11,27 @@
 #
 services:
   gateway:
-    image: nousresearch/hermes-agent:latest
-    container_name: hermes
+    # Built from this checkout — there is no published Indagis image, and
+    # pulling nousresearch/hermes-agent would start upstream Hermes instead.
+    build: .
+    image: indagis-agent
+    container_name: indagis
     restart: unless-stopped
     volumes:
-      - ${USERPROFILE}/.hermes:/opt/data
+      - ${USERPROFILE}/.indagis:/opt/data
     environment:
       - HERMES_UID=10000
       - HERMES_GID=10000
     command: ["gateway", "run"]
 
   dashboard:
-    image: nousresearch/hermes-agent:latest
-    container_name: hermes-dashboard
+    image: indagis-agent
+    container_name: indagis-dashboard
     restart: unless-stopped
     depends_on:
       - gateway
     volumes:
-      - ${USERPROFILE}/.hermes:/opt/data
+      - ${USERPROFILE}/.indagis:/opt/data
     environment:
       - HERMES_UID=10000
       - HERMES_GID=10000

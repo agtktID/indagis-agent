@@ -119,7 +119,7 @@ def test_priority_4_existing_platform_legacy_default(monkeypatch, tmp_path, caps
     assert "Indagis Agent" in err, (
         f"Expected legacy-alias deprecation warning on stderr, got: {err!r}"
     )
-    assert ".hermes" in err, (
+    assert ".indagis" in err, (
         f"Expected warning to mention ~/.hermes, got: {err!r}"
     )
 

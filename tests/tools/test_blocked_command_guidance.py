@@ -47,7 +47,7 @@ class TestParserLimitRecovery:
         assert "RECOVERY" not in r["message"]
         assert "unconditional blocklist" in r["message"]
         # And nothing was saved for a genuine hardline block.
-        assert not (tmp_path / ".hermes" / "cache" / "blocked-scripts").exists()
+        assert not (tmp_path / ".indagis" / "cache" / "blocked-scripts").exists()
 
     def test_old_saved_payloads_cleaned(self, tmp_path, monkeypatch):
         monkeypatch.setenv("INDAGIS_HOME", str(tmp_path / ".hermes"))

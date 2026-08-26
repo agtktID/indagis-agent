@@ -68,7 +68,7 @@ class TestBuildLocalTranscribeKwargs:
         cfg = {"language": "en", "local": {"initial_prompt": "Hermes glossary"}}
         kwargs = build_local_transcribe_kwargs(cfg)
         assert kwargs["language"] == "en"
-        assert kwargs["initial_prompt"] == "Hermes glossary"
+        assert kwargs["initial_prompt"] == "Indagis glossary"
 
 
 class TestConfidenceGate:

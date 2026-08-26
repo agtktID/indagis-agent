@@ -31,13 +31,13 @@ class TestDoctorPlatformHints:
         hint = doctor._sqlite_upgrade_hint()
 
         assert "docker pull nousresearch/hermes-agent:latest" in hint
-        assert "recreate all Hermes containers" in hint
-        assert "hermes update" not in hint
+        assert "recreate all Indagis containers" in hint
+        assert "indagis update" not in hint
 
     def test_sqlite_upgrade_hint_keeps_git_runtime_repair(self):
         hint = doctor._sqlite_upgrade_hint("git")
 
-        assert "run `hermes update`" in hint
+        assert "run `indagis update`" in hint
 
 
 class TestProviderEnvDetection:
@@ -172,8 +172,14 @@ class TestHonchoDoctorConfigDetection:
     def test_reports_configured_when_enabled_with_api_key(self, monkeypatch):
         fake_config = SimpleNamespace(enabled=True, api_key="***")
 
+        # Patch the class object: monkeypatch's dotted-string form walks
+        # `plugins.memory` with getattr, and a re-import elsewhere detaches the
+        # `honcho` attribute while the child stays cached in sys.modules.
+        from plugins.memory.honcho.client import HonchoClientConfig
+
         monkeypatch.setattr(
-            "plugins.memory.honcho.client.HonchoClientConfig.from_global_config",
+            HonchoClientConfig,
+            "from_global_config",
             lambda: fake_config,
         )
 
