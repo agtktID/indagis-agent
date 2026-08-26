@@ -19,6 +19,7 @@
 Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many others](https://github.com/agtktID/indagis-agent/blob/main/website/docs/integrations/providers.md). Switch with `indagis model` — no code changes, no lock-in.
 
 <table>
+<tr><td><b>Authorization-gated investigations</b></td><td>Security work is tracked as a persisted <code>Investigation</code>: an objective, an authorized scope, evidence, findings and a timeline. Every recorded target is checked against that scope before it is written (fail-closed), with Markdown/JSON export.</td></tr>
 <tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
 <tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
 <tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
@@ -132,9 +133,28 @@ Inside the container the command is `indagis` (`hermes` stays as an alias).
 
 ## Getting Started
 
+### First run
+
+The installer sets up Python, Node and the agent itself, but Indagis still
+needs a model provider before it can answer anything. Either run the wizard:
+
+```bash
+indagis setup        # walks through provider, keys and platform wiring
+```
+
+…or pick a provider directly with `indagis model` (OpenRouter, OpenAI, an
+Anthropic key, or your own OpenAI-compatible endpoint). Configuration and
+data live under `~/.indagis`.
+
+If something looks wrong at any point, `indagis doctor` diagnoses it and
+`indagis doctor --fix` repairs what it can.
+
+### Everyday commands
+
 ```bash
 indagis              # Interactive CLI — start a conversation
 indagis model        # Choose your LLM provider and model
+indagis investigation # Create and track a scoped investigation
 indagis tools        # Configure which tools are enabled
 indagis config set   # Set individual config values
 indagis config get   # Print individual config values
