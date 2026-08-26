@@ -7,7 +7,7 @@ const config: Config = {
   tagline: 'The self-improving AI agent',
   favicon: 'img/favicon.ico',
 
-  url: 'https://github.com/agtktID/indagis-agent',
+  url: 'https://agtktid.github.io',
   baseUrl: '/docs/',
 
   organizationName: 'agtktID',
