@@ -36,7 +36,6 @@ whole-utterance stop command matches, so a real request like "stop the docker
 container" still goes through normally.
 
 
-
 ## Remote desktop (client capture)
 
 When the desktop app connects to a **remote** Hermes backend (for example a

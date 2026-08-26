@@ -7,13 +7,10 @@ sidebar_position: 7
 
 # Provider Routing
 
-When using [OpenRouter](https://openrouter.ai) or [Nous Portal](/integrations/nous-portal) as your LLM provider, Hermes Agent supports **provider routing** — fine-grained control over which underlying AI providers handle your requests and how they're prioritized.
+When using [OpenRouter](https://openrouter.ai) as your LLM provider, Hermes Agent supports **provider routing** — fine-grained control over which underlying AI providers handle your requests and how they're prioritized.
 
 OpenRouter routes requests to many providers (e.g., Anthropic, Google, AWS Bedrock, Together AI). Provider routing lets you optimize for cost, speed, quality, or enforce specific provider requirements.
 
-:::tip
-Traffic routed through Nous Portal respects the same provider preferences — and Portal subscribers get 10% off token-billed providers.
-:::
 
 ## Configuration
 
@@ -200,5 +197,5 @@ provider_routing:
 When no `provider_routing` section is configured (the default), the aggregator uses its own default routing logic, which generally balances cost and availability automatically.
 
 :::tip Provider Routing vs. Fallback Models
-Provider routing controls which **sub-providers behind OpenRouter or Nous Portal** handle your requests. For automatic failover to an entirely different provider when your primary model fails, see [Fallback Providers](/user-guide/features/fallback-providers).
+Provider routing controls which **sub-providers behind OpenRouter** handle your requests. For automatic failover to an entirely different provider when your primary model fails, see [Fallback Providers](/user-guide/features/fallback-providers).
 :::

@@ -497,7 +497,6 @@ For third-party plugins distributed via pip, declare the optional deps as `[proj
 When `security.allow_lazy_installs: false` is set globally, `ensure()` raises `FeatureUnavailable` immediately with a remediation hint — your plugin should catch it and degrade gracefully (return an error result, not crash the tool loop).
 
 
-
 ### Thread-safe lazy singletons
 
 Plugins often cache an expensive object — an SDK client, an HTTP session, a connection pool — in a module-level variable built on first use:
@@ -542,7 +541,6 @@ def reset_client():
 Both serialize concurrent first calls with double-checked locking and run the factory at most once. If the factory raises, nothing is cached and the next call retries. The honcho memory plugin (`plugins/memory/honcho/client.py`) is the reference consumer.
 
 > Rule of thumb: any time you write `global _something` followed by a `is None` check and a build, reach for one of these instead.
-
 
 
 ### Conditional tool availability

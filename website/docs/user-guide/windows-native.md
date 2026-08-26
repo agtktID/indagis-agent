@@ -78,9 +78,6 @@ Top-to-bottom, in order:
 9. **Adds `%LOCALAPPDATA%\hermes\hermes-agent\venv\Scripts` to User PATH and sets `HERMES_HOME=%LOCALAPPDATA%\hermes`** — exposes the `hermes` command (and points it at your data dir) after you open a new terminal.
 10. **Runs `hermes setup`** — the normal first-run wizard (model, provider, toolsets). Skip with `-SkipSetup`.
 
-:::tip Skip provider hunting on Windows
-On Windows, per-tool API key setup (Firecrawl, FAL, Browser Use, OpenAI TTS) is the highest-friction part of getting a useful agent. A [Nous Portal](/user-guide/features/tool-gateway) subscription covers the model **and** all of those tools through one OAuth login. After the installer finishes, run `hermes setup --portal` to wire everything up.
-:::
 
 ## Feature matrix
 
