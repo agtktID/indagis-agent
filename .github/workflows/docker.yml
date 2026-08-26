@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  IMAGE_NAME: nousresearch/hermes-agent
+  IMAGE_NAME: agtktid/indagis-agent
 
 jobs:
   # Build and test the image for each architecture. This job runs PR code,

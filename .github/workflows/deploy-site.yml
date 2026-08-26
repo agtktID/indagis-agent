@@ -146,14 +146,10 @@ jobs:
             echo "::warning::Could not use skills-index artifact from run $SKILLS_INDEX_RUN_ID; trying live index"
           fi
 
-          echo "Downloading currently live skills index"
-          if curl -fsSL --retry 3 --retry-delay 5 \
-            "https://hermes-agent.nousresearch.com/docs/api/skills-index.json" \
-            -o "$INDEX_PATH" && validate_index; then
-            exit 0
-          fi
-
-          echo "::warning::Live skills index unavailable or unhealthy; falling back to a fresh crawl"
+          # No live index is published for this fork yet, and falling back to
+          # the upstream project's index would deploy their skill data. Crawl
+          # ours instead.
+          echo "No live skills index configured; building a fresh one"
           rm -f "$INDEX_PATH"
           python3 scripts/build_skills_index.py
           validate_index
@@ -179,7 +175,7 @@ jobs:
           mkdir -p _site/docs
           cp -r website/build/* _site/docs/
           # llms.txt / llms-full.txt are also published at the site root
-          # (https://hermes-agent.nousresearch.com/llms.txt) because some
+          # (the published llms.txt) because some
           # agents and IDE plugins probe the classic root-level path rather
           # than /docs/llms.txt. Same file, two URLs, one source of truth.
           if [ -f website/build/llms.txt ]; then

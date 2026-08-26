@@ -92,9 +92,9 @@ Bundled skills (in `skills/`) ship with every Hermes install. They should be **b
 - Document handling, web research, common dev workflows, system administration
 - Used regularly by a wide range of people
 
-If your skill is official and useful but not universally needed (e.g., a paid service integration, a heavyweight dependency), put it in **`optional-skills/`** — it ships with the repo but isn't activated by default. Users can discover it via `hermes skills browse` (labeled "official") and install it with `hermes skills install` (no third-party warning, built-in trust).
+If your skill is official and useful but not universally needed (e.g., a paid service integration, a heavyweight dependency), put it in **`optional-skills/`** — it ships with the repo but isn't activated by default. Users can discover it via `indagis skills browse` (labeled "official") and install it with `indagis skills install` (no third-party warning, built-in trust).
 
-If your skill is specialized, community-contributed, or niche, it's better suited for a **Skills Hub** — upload it to a skills registry and share it in the [Nous Research Discord](https://discord.gg/NousResearch). Users can install it with `hermes skills install`.
+If your skill is specialized, community-contributed, or niche, it's better suited for a **Skills Hub** — upload it to a skills registry. Users can install it with `indagis skills install`.
 
 ---
 
@@ -106,7 +106,7 @@ Standalone memory plugins:
 
 - Implement the same `MemoryProvider` ABC (`agent/memory_provider.py`) — `sync_turn`, `prefetch`, `shutdown`, and optionally `post_setup(hermes_home, config)` for setup-wizard integration
 - Use the same discovery system — `discover_memory_providers()` picks them up from user/project plugin directories and pip entry points
-- Integrate with `hermes memory setup` via `post_setup()` — no need to touch core code
+- Integrate with `indagis memory setup` via `post_setup()` — no need to touch core code
 - Can register their own CLI subcommands via `register_cli(subparser)` in a `cli.py` file
 - Get all the same lifecycle hooks and config plumbing as in-tree providers
 
@@ -127,7 +127,6 @@ Publish these as a **standalone plugin repo** instead:
 - Implement the relevant ABC and use the existing plugin discovery path (`~/.hermes/plugins/`, project `.hermes/plugins/`, or a pip entry point) — see the plugin guides under [website/docs/developer-guide/](website/docs/developer-guide/)
 - Register lifecycle hooks (`pre_tool_call`, `post_tool_call`, `pre_llm_call`, `post_llm_call`, `on_session_start`, `on_session_end`), tools (`ctx.register_tool`), and CLI subcommands (`ctx.register_cli_command`) through the surface we already expose — no core changes needed
 - If your plugin needs a capability the framework doesn't expose, that's a feature request to **widen the generic plugin surface** (a new hook or `ctx` method) — never special-case your plugin in core
-- Promote it in the [Nous Research Discord](https://discord.gg/NousResearch) `#plugins-skills-and-skins` channel so users can find and install it
 
 A well-built third-party-product plugin can clear automated review and still be closed for this reason — it's a placement decision, not a verdict on the code. PRs that add such a directory under `plugins/` will be closed with a pointer to publish it as its own repo.
 
@@ -149,7 +148,7 @@ A well-built third-party-product plugin can clear automated review and still be 
 For most contributors, the best development bootstrap is the same path users
 take: run the standard installer, then work inside the repository it cloned.
 The installer creates the Hermes venv, wires the `hermes` command, stamps the
-install method for `hermes update`, and clones the full git project into
+install method for `indagis update`, and clones the full git project into
 `$HERMES_HOME/hermes-agent` (usually `~/.hermes/hermes-agent`). That keeps your
 development environment on the same layout the CLI, updater, lazy dependency
 installer, gateway, and docs assume.
@@ -581,7 +580,7 @@ prerequisites:
   commands: [curl, jq]            # Advisory CLI checks
 ```
 
-Gateway and messaging sessions never collect secrets in-band; they instruct the user to run `hermes setup` or update `~/.hermes/.env` locally.
+Gateway and messaging sessions never collect secrets in-band; they instruct the user to run `indagis setup` or update `~/.hermes/.env` locally.
 
 **When to declare required environment variables:**
 - The skill uses an API key or token that should be collected securely at load time
@@ -1020,7 +1019,7 @@ test(tools): add unit tests for file_operations
 ## Reporting Issues
 
 - Use [GitHub Issues](https://github.com/NousResearch/hermes-agent/issues)
-- Include: OS, Python version, Hermes version (`hermes version`), full error traceback
+- Include: OS, Python version, Hermes version (`indagis version`), full error traceback
 - Include steps to reproduce
 - Check existing issues before creating duplicates
 - For security vulnerabilities, please report privately
