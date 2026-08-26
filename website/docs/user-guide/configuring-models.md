@@ -11,11 +11,6 @@ Hermes uses two kinds of model slots:
 
 This page covers configuring both from the dashboard. If you prefer config files or the CLI, jump to [Alternative methods](#alternative-methods) at the bottom.
 
-:::tip Fastest path: Nous Portal
-[Nous Portal](/user-guide/features/tool-gateway) provides 300+ models under one subscription. On a fresh install, run `hermes setup --portal` to log in and set Nous as your provider in one command. Inspect what's wired up with `hermes portal info`.
-
-- Portal subscribers also get **10% off token-billed providers**.
-:::
 
 :::note `model:` schema — empty string vs. mapping
 On a brand-new install the bundled default config has `model: ""` (an empty string sentinel meaning "not configured yet"). The first time you run `hermes setup` or `hermes model`, that key is upgraded in-place to a mapping with `provider`, `default`, `base_url`, and `api_mode` sub-keys — the shape shown throughout this page and in [`profiles.md`](./profiles.md) / [`configuration.md`](./configuration.md). If you ever see an empty string in `config.yaml`, run `hermes model` (or click **Change** in the dashboard) and Hermes will write the dict form for you.

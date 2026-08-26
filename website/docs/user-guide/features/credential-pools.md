@@ -15,9 +15,6 @@ This is different from [fallback providers](./fallback-providers.md), which swit
 Provider-side prompt caches (Anthropic, OpenAI, OpenRouter) are scoped to the account/API key that made the request. When the pool rotates to a different key mid-session, the new key has no cached prefix for your conversation — the next request re-reads the full history at undiscounted input price, and rotating back later is another full re-read unless the earlier key's cache TTL is still alive. Rotation keeps your session running, which is the point, but on long conversations each rotation costs one full-price pass over the context.
 :::
 
-:::tip
-Credential pools are mainly for API-key providers (OpenRouter, Anthropic). A single [Nous Portal](/integrations/nous-portal) OAuth covers 300+ models, so most users don't need a pool when on Portal.
-:::
 
 ## How It Works
 

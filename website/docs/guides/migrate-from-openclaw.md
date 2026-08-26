@@ -12,9 +12,6 @@ description: "Complete guide to migrating your OpenClaw / Clawdbot setup to Herm
 Coming from **Claude Code** or **OpenAI Codex CLI** instead? Use [`hermes import-agent`](../user-guide/import-from-other-agents.md).
 :::
 
-:::tip
-If your OpenClaw setup was multi-provider, `hermes setup --portal` collapses it to one OAuth — 300+ models plus the Tool Gateway in a single login. See [Nous Portal](/integrations/nous-portal).
-:::
 
 ## Quick start
 

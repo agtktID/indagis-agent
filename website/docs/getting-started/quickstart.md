@@ -85,15 +85,6 @@ The single most important setup step. Use `hermes model` to walk through the cho
 hermes model
 ```
 
-:::tip Easiest path: Nous Portal
-One subscription covers 300+ models plus the [Tool Gateway](../user-guide/features/tool-gateway.md) (web search, image generation, TTS, cloud browser). On a fresh install:
-
-```bash
-hermes setup --portal
-```
-
-That logs you in, sets Nous as your provider, and turns on the Tool Gateway in one command.
-:::
 
 :::info Setup modes
 On a fresh install, `hermes setup` offers three modes:
