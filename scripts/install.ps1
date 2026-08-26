@@ -3593,8 +3593,8 @@ function Install-Desktop {
     # 3. Sanity-check the produced binary. Probe both arches so this works
     # on x64 and arm64 build machines.
     $exeCandidates = @(
-        "$desktopDir\release\win-unpacked\Hermes.exe",
-        "$desktopDir\release\win-arm64-unpacked\Hermes.exe"
+        "$desktopDir\release\win-unpacked\Indagis.exe",
+        "$desktopDir\release\win-arm64-unpacked\Indagis.exe"
     )
     $found = $false
     $desktopExe = $null
@@ -3607,7 +3607,7 @@ function Install-Desktop {
         }
     }
     if (-not $found) {
-        throw "Desktop build completed but no Hermes.exe was found under $desktopDir\release\*-unpacked\"
+        throw "Desktop build completed but no Indagis.exe was found under $desktopDir\release\*-unpacked\"
     }
 
     # 3b. The Hermes icon + identity are stamped onto Hermes.exe by the
@@ -3946,17 +3946,17 @@ function Write-Completion {
     Write-Host ""
     Write-Host "* Commands:" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "   hermes              " -NoNewline -ForegroundColor Green
+    Write-Host "   indagis             " -NoNewline -ForegroundColor Green
     Write-Host "Start chatting"
-    Write-Host "   hermes setup        " -NoNewline -ForegroundColor Green
+    Write-Host "   indagis setup       " -NoNewline -ForegroundColor Green
     Write-Host "Configure API keys & settings"
-    Write-Host "   hermes config       " -NoNewline -ForegroundColor Green
+    Write-Host "   indagis config      " -NoNewline -ForegroundColor Green
     Write-Host "View/edit configuration"
-    Write-Host "   hermes config edit  " -NoNewline -ForegroundColor Green
+    Write-Host "   indagis config edit " -NoNewline -ForegroundColor Green
     Write-Host "Open config in editor"
-    Write-Host "   hermes gateway      " -NoNewline -ForegroundColor Green
+    Write-Host "   indagis gateway     " -NoNewline -ForegroundColor Green
     Write-Host "Start messaging gateway (Telegram, Discord, etc.)"
-    Write-Host "   hermes update       " -NoNewline -ForegroundColor Green
+    Write-Host "   indagis update      " -NoNewline -ForegroundColor Green
     Write-Host "Update to latest version"
     Write-Host ""
     

@@ -93,7 +93,7 @@ Expand-Archive $zip "$env:TEMP\uv_x" -Force
 If attestation says "Verification succeeded" and the last line prints `True`, you're good.
 
 **To whitelist the Indagis install:**
-- **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\hermes\bin"`
+- **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\indagis\bin"`
 - **Bitdefender:** Add an exception in the Bitdefender console (Protection > Antivirus > Settings > Manage Exceptions)
 - Whitelist the **folder**, not the file hash — Indagis Agent inherits `uv` updates from the upstream release and the hash changes every version
 
