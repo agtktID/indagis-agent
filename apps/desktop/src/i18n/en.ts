@@ -736,7 +736,7 @@ export const en: Translations = {
       sshErrHostKey:
         'The host key has CHANGED since you last connected. Verify this is expected, then run ssh-keygen -R <host> and reconnect.',
       sshErrNotInstalled:
-        'Indagis is not installed on the remote host. Install it there (curl -fsSL https://indagis-agent.example.com/install.sh | sh) or set the Indagis path.',
+        'Indagis is not installed on the remote host. Install it there (curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.sh | sh) or set the Indagis path.',
       sshErrPlatform:
         'Unsupported remote platform. Indagis Desktop SSH mode supports Linux, macOS, and Windows remote hosts.',
       sshErrTimeout: 'SSH connection timed out. The host may be unreachable or asleep.',
