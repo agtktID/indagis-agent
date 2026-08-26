@@ -12,7 +12,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from hermes_cli.tools_config import (  # noqa: E402
     _CONFIG_ONLY_TOOLSETS,
