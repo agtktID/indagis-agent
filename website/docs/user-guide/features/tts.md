@@ -34,12 +34,12 @@ Convert text to speech with eleven providers:
 | Telegram | Voice bubble (plays inline) | Opus `.ogg` |
 | Discord | Voice bubble (Opus/OGG), falls back to file attachment | Opus/MP3 |
 | WhatsApp | Audio file attachment | MP3 |
-| CLI | Saved to `~/.hermes/audio_cache/` | MP3 |
+| CLI | Saved to `~/.indagis/audio_cache/` | MP3 |
 
 ### Configuration
 
 ```yaml
-# In ~/.hermes/config.yaml
+# In ~/.indagis/config.yaml
 tts:
   provider: "edge"              # "edge" | "elevenlabs" | "openai" | "minimax" | "mistral" | "gemini" | "xai" | "deepinfra" | "neutts" | "kittentts" | "piper"
   speed: 1.0                    # Global speed multiplier (provider-specific settings override this)
@@ -93,7 +93,7 @@ tts:
     clean_text: true                            # Expand numbers, currencies, units
   piper:
     voice: en_US-lessac-medium                  # voice name (auto-downloaded) OR absolute path to .onnx
-    # voices_dir: ''                            # default: ~/.hermes/cache/piper-voices/
+    # voices_dir: ''                            # default: ~/.indagis/cache/piper-voices/
     # use_cuda: false                           # requires onnxruntime-gpu
     # length_scale: 1.0                         # 2.0 = twice as slow
     # noise_scale: 0.667
@@ -122,7 +122,7 @@ tts:
   provider: gemini
   gemini:
     voice: Algieba
-    persona_prompt_file: ~/.hermes/tts/butler-voice.md
+    persona_prompt_file: ~/.indagis/tts/butler-voice.md
 ```
 
 ### Audio Tags (Gemini, xAI)
@@ -239,7 +239,7 @@ tts:
     voice: en_US-lessac-medium
 ```
 
-On the first TTS call for a voice that isn't cached locally, Hermes runs `python -m piper.download_voices <name>` and downloads the model (~20-90MB depending on quality tier) into `~/.hermes/cache/piper-voices/`. Subsequent calls reuse the cached model.
+On the first TTS call for a voice that isn't cached locally, Hermes runs `python -m piper.download_voices <name>` and downloads the model (~20-90MB depending on quality tier) into `~/.indagis/cache/piper-voices/`. Subsequent calls reuse the cached model.
 
 **Picking a voice.** The [full voice catalog](https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md) covers English, Spanish, French, German, Italian, Dutch, Portuguese, Russian, Polish, Turkish, Chinese, Arabic, Hindi, and more — each with `x_low` / `low` / `medium` / `high` quality tiers. Sample voices at [rhasspy.github.io/piper-samples](https://rhasspy.github.io/piper-samples/).
 
@@ -377,7 +377,7 @@ Built-ins always win, and command providers win over a same-name plugin — so p
 
 #### Minimal plugin
 
-Drop this in `~/.hermes/plugins/my-tts/`:
+Drop this in `~/.indagis/plugins/my-tts/`:
 
 `plugin.yaml`:
 ```yaml
@@ -454,7 +454,7 @@ Local transcription works out of the box when `faster-whisper` is installed. If 
 ### Configuration
 
 ```yaml
-# In ~/.hermes/config.yaml
+# In ~/.indagis/config.yaml
 stt:
   provider: "local"           # "local" | "groq" | "openai" | "mistral" | "xai" | "elevenlabs" | "deepinfra"
   language: "en"              # Global language hint applied to every provider unless a per-provider language overrides it; set "" to restore auto-detect
@@ -488,7 +488,7 @@ stt:
 
 **OpenAI API** — Accepts `VOICE_TOOLS_OPENAI_KEY` first and falls back to `OPENAI_API_KEY`. Supports `whisper-1`, `gpt-4o-mini-transcribe`, `gpt-4o-transcribe`, and `gpt-transcribe`.
 
-**Mistral API (Voxtral Transcribe)** — Requires `MISTRAL_API_KEY`. Uses Mistral's [Voxtral Transcribe](https://docs.mistral.ai/capabilities/audio/speech_to_text/) models. Supports 13 languages, speaker diarization, and word-level timestamps. Install with `cd ~/.hermes/hermes-agent && uv pip install -e ".[mistral]"`.
+**Mistral API (Voxtral Transcribe)** — Requires `MISTRAL_API_KEY`. Uses Mistral's [Voxtral Transcribe](https://docs.mistral.ai/capabilities/audio/speech_to_text/) models. Supports 13 languages, speaker diarization, and word-level timestamps. Install with `cd ~/.indagis/hermes-agent && uv pip install -e ".[mistral]"`.
 
 **xAI Grok STT** — Requires `XAI_API_KEY`. Posts to `https://api.x.ai/v1/stt` as multipart/form-data. Good choice if you're already using xAI for chat or TTS and want one API key for everything. Auto-detection order puts it after Groq — explicitly set `stt.provider: xai` to force it.
 
@@ -646,7 +646,7 @@ The dispatcher forwards `model` and `language` from this section; everything els
 
 #### Minimal plugin
 
-Drop this in `~/.hermes/plugins/my-stt/`:
+Drop this in `~/.indagis/plugins/my-stt/`:
 
 `plugin.yaml`:
 ```yaml

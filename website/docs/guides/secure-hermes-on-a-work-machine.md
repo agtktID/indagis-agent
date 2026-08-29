@@ -70,7 +70,7 @@ export HERMES_WRITE_SAFE_ROOT=/path/to/project:/home/you/.hermes
 Sensitive paths inside the safe root are still blocked — pointing it at `$HOME` does not allow writing `~/.ssh/id_rsa`.
 
 :::caution
-Don't add this to `~/.hermes/.env` casually. If you set it to a project directory only, the agent cannot write to `~/.hermes/cron/jobs.json`, profile skills, or other Hermes state outside that prefix. Include your Hermes home as a second root, as above.
+Don't add this to `~/.indagis/.env` casually. If you set it to a project directory only, the agent cannot write to `~/.indagis/cron/jobs.json`, profile skills, or other Hermes state outside that prefix. Include your Hermes home as a second root, as above.
 :::
 
 ### Move command execution off the host
@@ -92,14 +92,14 @@ terminal:
 
 Every Docker container runs with hardened settings — all Linux capabilities dropped (with a minimal add-back set), `no-new-privileges`, a process-count limit, and size-limited tmpfs mounts. With a container backend, destructive commands inside the container can't harm the host, which is why dangerous-command checks are skipped there.
 
-For `ssh`, set `terminal.backend: ssh` in `config.yaml` and provide host details via `TERMINAL_SSH_HOST`, `TERMINAL_SSH_USER`, and `TERMINAL_SSH_KEY` in `~/.hermes/.env`. See [Network Isolation](/user-guide/security#network-isolation).
+For `ssh`, set `terminal.backend: ssh` in `config.yaml` and provide host details via `TERMINAL_SSH_HOST`, `TERMINAL_SSH_USER`, and `TERMINAL_SSH_KEY` in `~/.indagis/.env`. See [Network Isolation](/user-guide/security#network-isolation).
 
 ### If messaging is on: allowlists and pairing
 
 Running the [gateway](/user-guide/security#user-authorization-gateway) on this machine? The default is already deny: if no allowlists are configured and `GATEWAY_ALLOW_ALL_USERS` is not set, **all users are denied**. Keep it explicit:
 
 ```bash
-# ~/.hermes/.env
+# ~/.indagis/.env
 TELEGRAM_ALLOWED_USERS=123456789
 GATEWAY_ALLOWED_USERS=123456789
 ```
@@ -108,7 +108,7 @@ Or use DM pairing instead of hardcoding IDs: unknown users receive a one-time pa
 
 ## The Undo Layer: Checkpoints and `/rollback`
 
-Approval gates prevent damage; [checkpoints](/user-guide/checkpoints-and-rollback) reverse it. When enabled, Hermes automatically snapshots your project before destructive operations — `write_file`, `patch`, and destructive terminal commands like `rm`, `mv`, `sed -i`, and `git reset` — into a shadow git store under `~/.hermes/checkpoints/store/`. Your real project `.git` is never touched.
+Approval gates prevent damage; [checkpoints](/user-guide/checkpoints-and-rollback) reverse it. When enabled, Hermes automatically snapshots your project before destructive operations — `write_file`, `patch`, and destructive terminal commands like `rm`, `mv`, `sed -i`, and `git reset` — into a shadow git store under `~/.indagis/checkpoints/store/`. Your real project `.git` is never touched.
 
 Checkpoints are opt-in. Enable per-session:
 
@@ -146,7 +146,7 @@ The same applies to the file-write guards: they apply to `write_file` and `patch
 
 ## A Cautious Starting Config
 
-Everything above, assembled. Adjust to taste in `~/.hermes/config.yaml`:
+Everything above, assembled. Adjust to taste in `~/.indagis/config.yaml`:
 
 ```yaml
 approvals:
@@ -168,7 +168,7 @@ terminal:
   docker_forward_env: []        # No host secrets inside the container
 ```
 
-And in `~/.hermes/.env`, if you want the write sandbox:
+And in `~/.indagis/.env`, if you want the write sandbox:
 
 ```bash
 HERMES_WRITE_SAFE_ROOT=/path/to/project:/home/you/.hermes

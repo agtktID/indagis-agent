@@ -23,11 +23,11 @@ hermes import-agent claude-code --overwrite --yes  # replace conflicts, skip pro
 
 | Claude Code | Hermes |
 |---|---|
-| `CLAUDE.md` (global instructions) | Memory entries in `~/.hermes/memories/MEMORY.md` |
+| `CLAUDE.md` (global instructions) | Memory entries in `~/.indagis/memories/MEMORY.md` |
 | `settings.json` → `permissions.allow` (`Bash(...)` rules) | `command_allowlist` in `config.yaml` |
 | `settings.json` → `permissions.deny` (`Bash(...)` rules) | `approvals.deny` in `config.yaml` |
 | `mcpServers` (from `~/.claude.json` and `settings.json`) | `mcp_servers` in `config.yaml` |
-| `skills/<name>/` (dirs with `SKILL.md`) | `~/.hermes/skills/claude-code-imports/<name>/` |
+| `skills/<name>/` (dirs with `SKILL.md`) | `~/.indagis/skills/claude-code-imports/<name>/` |
 | `commands/*.md` (slash commands) | Skipped with a note — convert them into skills |
 
 Claude's `Bash(npm run test:*)` prefix rules become `npm run test*` globs. Non-`Bash` permission rules (`Read(...)`, `WebFetch`, ...) gate Claude-specific tools and are reported as unmapped rather than imported.
@@ -36,14 +36,14 @@ Claude's `Bash(npm run test:*)` prefix rules become `npm run test*` globs. Non-`
 
 | Codex CLI | Hermes |
 |---|---|
-| `AGENTS.md` (global instructions) | Memory entries in `~/.hermes/memories/MEMORY.md` |
+| `AGENTS.md` (global instructions) | Memory entries in `~/.indagis/memories/MEMORY.md` |
 | `config.toml` → `[mcp_servers.*]` | `mcp_servers` in `config.yaml` |
-| `memories/*.md` | Memory entries in `~/.hermes/memories/MEMORY.md` |
-| `skills/<name>/` (dirs with `SKILL.md`) | `~/.hermes/skills/codex-imports/<name>/` |
+| `memories/*.md` | Memory entries in `~/.indagis/memories/MEMORY.md` |
+| `skills/<name>/` (dirs with `SKILL.md`) | `~/.indagis/skills/codex-imports/<name>/` |
 
 ## What is never imported
 
-**API keys and credentials.** Credential files (`~/.claude/.credentials.json`, `~/.codex/auth.json`) are never read, and MCP server environment variables or headers with secret-looking names (`*_TOKEN`, `*_API_KEY`, `Authorization`, ...) are stripped and listed in the report so you can re-add them deliberately. Run `hermes setup` to configure providers, or add secrets to `~/.hermes/.env`.
+**API keys and credentials.** Credential files (`~/.claude/.credentials.json`, `~/.codex/auth.json`) are never read, and MCP server environment variables or headers with secret-looking names (`*_TOKEN`, `*_API_KEY`, `Authorization`, ...) are stripped and listed in the report so you can re-add them deliberately. Run `hermes setup` to configure providers, or add secrets to `~/.indagis/.env`.
 
 ## Behavior notes
 

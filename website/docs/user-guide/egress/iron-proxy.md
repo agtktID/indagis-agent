@@ -8,9 +8,9 @@ This release wires the egress proxy into the Docker backend only. Modal, Daytona
 
 ## What it is
 
-- A managed `iron-proxy` subprocess on the host, lazy-installed into `~/.hermes/bin/iron-proxy`
-- A local CA at `~/.hermes/proxy/ca.crt` that the sandbox trusts so iron-proxy can MITM TLS and rewrite headers
-- A `proxy.yaml` config at `~/.hermes/proxy/proxy.yaml` listing the upstream hosts you allow and the secrets-transform mapping
+- A managed `iron-proxy` subprocess on the host, lazy-installed into `~/.indagis/bin/iron-proxy`
+- A local CA at `~/.indagis/proxy/ca.crt` that the sandbox trusts so iron-proxy can MITM TLS and rewrite headers
+- A `proxy.yaml` config at `~/.indagis/proxy/proxy.yaml` listing the upstream hosts you allow and the secrets-transform mapping
 - A `mappings.json` recording which proxy token corresponds to which real env var
 
 The sandbox gets `HTTPS_PROXY=http://host.docker.internal:9090`, `HTTP_PROXY=http://host.docker.internal:9091`, and standard provider env vars such as `OPENROUTER_API_KEY` set to opaque proxy tokens. Matching `HERMES_PROXY_TOKEN_<ENV_NAME>` aliases are also exported for diagnostics. Existing provider SDKs read the usual env names, send the proxy token in `Authorization`, and iron-proxy's `secrets` transform substitutes the real value sourced from the host-side daemon environment.
@@ -38,13 +38,13 @@ hermes egress start
 hermes egress status
 ```
 
-`hermes egress setup` discovers provider keys from your environment. If your keys live only in `~/.hermes/.env` (not exported into your shell), setup reads that file automatically — you don't have to `export` them first.
+`hermes egress setup` discovers provider keys from your environment. If your keys live only in `~/.indagis/.env` (not exported into your shell), setup reads that file automatically — you don't have to `export` them first.
 
 When you re-run `setup` later (new allowlist host, rotated tokens, switched credential source), it stops the running daemon because its config is held in memory, then **offers to restart it for you** so the change takes effect immediately. On a tty it asks; pass `--restart` to always restart or `--no-restart` to leave it down. To apply changes any other time, `hermes egress restart` is the one-command stop-then-start.
 
 Once running, the Docker terminal backend automatically:
 
-- Mounts `~/.hermes/proxy/ca.crt` into the sandbox at `/etc/ssl/certs/hermes-egress-ca.crt`
+- Mounts `~/.indagis/proxy/ca.crt` into the sandbox at `/etc/ssl/certs/hermes-egress-ca.crt`
 - Sets `HTTPS_PROXY`, `HTTP_PROXY`, `REQUESTS_CA_BUNDLE`, `SSL_CERT_FILE`, `CURL_CA_BUNDLE`, `NODE_EXTRA_CA_CERTS` to make every common HTTP runtime route through the proxy and trust the CA
 - Sets `NODE_OPTIONS=--use-openssl-ca` (appended to whatever you already have in `docker_env.NODE_OPTIONS`) so Node.js routes through the OpenSSL store the other CA-bundle vars control — see [Node.js asymmetric CA caveat](#nodejs-asymmetric-ca-caveat) below for the residual gap
 - Adds `--add-host=host.docker.internal:host-gateway` so the sandbox can reach the host-side proxy on Linux (Docker Desktop handles this automatically on macOS/Windows)
@@ -52,7 +52,7 @@ Once running, the Docker terminal backend automatically:
 
 ## Configuration
 
-The full config lives in `~/.hermes/config.yaml` under the `proxy:` section. Defaults are documented inline; everything is optional.
+The full config lives in `~/.indagis/config.yaml` under the `proxy:` section. Defaults are documented inline; everything is optional.
 
 ```yaml
 proxy:
@@ -67,7 +67,7 @@ proxy:
   auto_install: true
 
   # Where iron-proxy looks up the real upstream secrets at egress time.
-  #   env       — process env (default). Whatever is in your ~/.hermes/.env
+  #   env       — process env (default). Whatever is in your ~/.indagis/.env
   #               at proxy-start time is the source of truth.
   #   bitwarden — refetch from Bitwarden Secrets Manager on each proxy
   #               restart. Rotation in the BW web app propagates without
@@ -264,7 +264,7 @@ Type 'rotate' to confirm:
 Non-tty invocations (CI, scripts) skip the prompt — the flag is treated as deliberate. Before any overwrite the current `mappings.json` is copied to a timestamped sibling so manual recovery is possible:
 
 ```
-backup: ~/.hermes/proxy/mappings.json.rotated-20260524T143012
+backup: ~/.indagis/proxy/mappings.json.rotated-20260524T143012
 ```
 
 `hermes egress setup` stops a running daemon when it rewrites config or token mappings, because the daemon keeps the old YAML in memory. After `--rotate-tokens`:
@@ -277,11 +277,11 @@ Containers already running hold the old tokens and will need to be restarted to 
 
 ## State directory layout
 
-Everything iron-proxy maintains lives in `~/.hermes/proxy/`:
+Everything iron-proxy maintains lives in `~/.indagis/proxy/`:
 
 | Path | Mode | Purpose |
 |---|---|---|
-| `~/.hermes/proxy/` (dir) | `0o700` | Owned + traversable by you only |
+| `~/.indagis/proxy/` (dir) | `0o700` | Owned + traversable by you only |
 | `ca.crt` | `0o644` | Public CA cert distributed into sandboxes |
 | `ca.key` | `0o600` | CA signing key — never leaves the host |
 | `proxy.yaml` | `0o600` | iron-proxy config; rewritten every `setup` |
@@ -296,9 +296,9 @@ The CA private key is the most sensitive file. It's created with `0o600` from th
 
 ### Logging on iron-proxy v0.39
 
-On the currently pinned binary version (**v0.39.0**) iron-proxy writes ALL output — daemon-level diagnostics AND per-request records — to **`~/.hermes/proxy/iron-proxy.log`**. v0.39's `config.Log` struct doesn't have a separate `audit_path` field, so we can't route per-request records to a dedicated stream there.
+On the currently pinned binary version (**v0.39.0**) iron-proxy writes ALL output — daemon-level diagnostics AND per-request records — to **`~/.indagis/proxy/iron-proxy.log`**. v0.39's `config.Log` struct doesn't have a separate `audit_path` field, so we can't route per-request records to a dedicated stream there.
 
-We still pre-create `~/.hermes/proxy/audit.log` at `0o600` with `O_NOFOLLOW` because:
+We still pre-create `~/.indagis/proxy/audit.log` at `0o600` with `O_NOFOLLOW` because:
 
 1. It reserves the path for the future version bump: when the pinned version moves to one that supports `log.audit_path`, per-request records will start flowing there without operator-side reconfiguration. **Until then the file stays at 0 bytes — do not point monitoring, alerting, or forensics tooling at it yet.** Use `iron-proxy.log` for everything today.
 2. The 0o600-from-first-byte guarantee defends against the upstream-fix-day where v0.40+ creates the file under its default umask if it doesn't already exist.
@@ -325,8 +325,8 @@ Both files are appended to across restarts. Rotate them with logrotate if you ca
                                        │
                                        │ daemon + per-request log (combined on v0.39)
                                        ▼
-                              ~/.hermes/proxy/iron-proxy.log
-                              (~/.hermes/proxy/audit.log reserved for v0.40+ split stream)
+                              ~/.indagis/proxy/iron-proxy.log
+                              (~/.indagis/proxy/audit.log reserved for v0.40+ split stream)
 ```
 
 1. Sandbox makes an HTTPS request, e.g. `POST https://openrouter.ai/v1/chat/completions` with `Authorization: Bearer hermes-proxy-openrouter-…` (the proxy token, not the real key).
@@ -335,7 +335,7 @@ Both files are appended to across restarts. Rotate them with logrotate if you ca
 4. iron-proxy mints a leaf cert signed by our CA for `openrouter.ai`, terminates the TLS connection, inspects the request.
 5. The `secrets` transform matches the proxy-token string in the `Authorization` header and substitutes the real `OPENROUTER_API_KEY` value, sourced from iron-proxy's own environment.
 6. Request is re-encrypted and forwarded to OpenRouter.
-7. The request is logged to `~/.hermes/proxy/iron-proxy.log` on v0.39. When the pinned binary version supports the split stream (v0.40+), per-request records will flow to `~/.hermes/proxy/audit.log` and daemon-level diagnostics will stay in `iron-proxy.log`. See [Logging on iron-proxy v0.39](#logging-on-iron-proxy-v039).
+7. The request is logged to `~/.indagis/proxy/iron-proxy.log` on v0.39. When the pinned binary version supports the split stream (v0.40+), per-request records will flow to `~/.indagis/proxy/audit.log` and daemon-level diagnostics will stay in `iron-proxy.log`. See [Logging on iron-proxy v0.39](#logging-on-iron-proxy-v039).
 
 A request to a non-allowlisted host (e.g. `https://attacker.example.com/leak?key=...`) is rejected with HTTP 403 before any bytes leave the host. The denial is recorded in `iron-proxy.log` with the upstream host and the source sandbox.
 
@@ -345,7 +345,7 @@ When the Docker backend starts a container with `proxy.enabled: true` and the da
 
 | Arg | Purpose |
 |---|---|
-| `-v ~/.hermes/proxy/ca.crt:/etc/ssl/certs/hermes-egress-ca.crt:ro` | Read-only mount of the CA |
+| `-v ~/.indagis/proxy/ca.crt:/etc/ssl/certs/hermes-egress-ca.crt:ro` | Read-only mount of the CA |
 | `-e HTTPS_PROXY=http://host.docker.internal:9090` | Python httpx / curl / go default transport / Node fetch |
 | `-e HTTP_PROXY=http://host.docker.internal:9091` | curl + wget for plain HTTP — the plain-HTTP forward listener lives on `tunnel_port + 1` |
 | `-e NO_PROXY=127.0.0.1,localhost,::1` | Loopback dev servers inside the sandbox bypass the proxy |
@@ -395,7 +395,7 @@ The daemon's pidfile is written with `O_EXCL` + `O_NOFOLLOW` + ownership check. 
 Beyond that, every `start_proxy` plants a fresh random nonce in two places:
 
 - `HERMES_IRON_PROXY_NONCE=<nonce>` in the daemon's env
-- `~/.hermes/proxy/iron-proxy.nonce` (0o600 sibling of the pidfile)
+- `~/.indagis/proxy/iron-proxy.nonce` (0o600 sibling of the pidfile)
 
 When `hermes egress stop` (or any other `_pid_alive` check) wants to confirm a PID still refers to *our* daemon — not an unrelated process that was assigned the same PID after iron-proxy crashed — it reads `/proc/<pid>/environ` and looks for the nonce. The on-disk copy is what makes this work across CLI invocations (the in-memory `_proxy_nonce` is per-process and resets on every `hermes` invocation).
 
@@ -414,7 +414,7 @@ If the nonce check fails, the code falls back to matching `argv[0]` basename aga
 
 **What it does NOT protect against:**
 
-- A compromised host process. If the agent process itself is compromised, real keys in the host's `~/.hermes/.env` are exposed regardless. This is a defense-in-depth feature for *sandbox* compromise, not host compromise.
+- A compromised host process. If the agent process itself is compromised, real keys in the host's `~/.indagis/.env` are exposed regardless. This is a defense-in-depth feature for *sandbox* compromise, not host compromise.
 - **Loss of the trusted-proxy boundary itself.** The token-swap guarantee assumes the sandbox trusts the mounted CA cert (`/etc/ssl/certs/hermes-egress-ca.crt`) and that traffic actually reaches *our* iron-proxy. If the CA private key is stolen, or sandbox egress is redirected to attacker-controlled proxy infrastructure, an adversary-in-the-middle can present a valid leaf cert and the proxy tokens are no longer a meaningful boundary (cf. [MITRE ATT&CK T1588.004](https://attack.mitre.org/techniques/T1588/004/) — obtained TLS certificate material enabling AiTM). Protect the CA key (it's `0600`, host-only) and the proxy endpoint accordingly.
 - Sandbox processes that bypass `HTTPS_PROXY` by using a raw socket. The proxy can't intercept what doesn't route to it. Node.js is partially mitigated via `NODE_OPTIONS=--use-openssl-ca` (see caveat above).
 - Credential files explicitly mounted into Docker (`terminal.credential_files` or skill-registered mounts). Egress protects provider env vars; it does not inspect arbitrary mounted files. Do not mount real provider credentials into an enforced egress sandbox.
@@ -448,7 +448,7 @@ export BWS_ACCESS_TOKEN=…   # one-shot
 hermes egress start
 ```
 
-Or move it into `~/.hermes/.env`. Or switch back to env mode:
+Or move it into `~/.indagis/.env`. Or switch back to env mode:
 
 ```bash
 hermes egress setup --no-bitwarden
@@ -456,15 +456,15 @@ hermes egress setup --no-bitwarden
 
 ### "iron-proxy exited immediately"
 
-Look at the last 20 lines of `~/.hermes/proxy/iron-proxy.log`. Common causes:
+Look at the last 20 lines of `~/.indagis/proxy/iron-proxy.log`. Common causes:
 
 - Port already in use → change `proxy.tunnel_port` or kill whatever else owns 9090
 - Invalid `proxy.yaml` → run `hermes egress setup` to regenerate
-- CA cert / key permissions wrong → `chmod 0o600 ~/.hermes/proxy/ca.key`
+- CA cert / key permissions wrong → `chmod 0o600 ~/.indagis/proxy/ca.key`
 
 ### "iron-proxy did not bind \<bind-host\>:9090 within 5s"
 
-The daemon started but never bound the listener. Usually means the binary is wedged or doing something expensive at startup. Check `~/.hermes/proxy/iron-proxy.log`. The orphan process is killed automatically and the pidfile cleaned up so you can just retry `hermes egress start`.
+The daemon started but never bound the listener. Usually means the binary is wedged or doing something expensive at startup. Check `~/.indagis/proxy/iron-proxy.log`. The orphan process is killed automatically and the pidfile cleaned up so you can just retry `hermes egress start`.
 
 ### Sandbox times out connecting to the proxy (Linux)
 
@@ -531,25 +531,25 @@ If `hermes egress stop` says "iron-proxy was not running" but you can still see 
 
 ```bash
 pkill -TERM iron-proxy
-rm -f ~/.hermes/proxy/iron-proxy.pid ~/.hermes/proxy/iron-proxy.nonce
+rm -f ~/.indagis/proxy/iron-proxy.pid ~/.indagis/proxy/iron-proxy.nonce
 hermes egress start
 ```
 
 ### Inspecting per-request behavior
 
-On the pinned binary version (**v0.39**) both daemon-level events and per-request records land in `~/.hermes/proxy/iron-proxy.log`. The format is line-delimited JSON. Grep for a specific upstream:
+On the pinned binary version (**v0.39**) both daemon-level events and per-request records land in `~/.indagis/proxy/iron-proxy.log`. The format is line-delimited JSON. Grep for a specific upstream:
 
 ```bash
-grep '"upstream":"openrouter.ai"' ~/.hermes/proxy/iron-proxy.log | tail -20
+grep '"upstream":"openrouter.ai"' ~/.indagis/proxy/iron-proxy.log | tail -20
 ```
 
 Or watch in real-time:
 
 ```bash
-tail -f ~/.hermes/proxy/iron-proxy.log | jq
+tail -f ~/.indagis/proxy/iron-proxy.log | jq
 ```
 
-When the pinned version moves to v0.40+ (which adds `log.audit_path`), per-request records will move to `~/.hermes/proxy/audit.log` and `iron-proxy.log` will hold only daemon-level events. Until that bump, `audit.log` is an empty placeholder (pre-created at `0o600` so the future daemon inherits tight permissions) — wire your logrotate / monitoring tooling to `iron-proxy.log` today and plan to add `audit.log` after the version bump.
+When the pinned version moves to v0.40+ (which adds `log.audit_path`), per-request records will move to `~/.indagis/proxy/audit.log` and `iron-proxy.log` will hold only daemon-level events. Until that bump, `audit.log` is an empty placeholder (pre-created at `0o600` so the future daemon inherits tight permissions) — wire your logrotate / monitoring tooling to `iron-proxy.log` today and plan to add `audit.log` after the version bump.
 
 ## Limitations (v1)
 

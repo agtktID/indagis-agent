@@ -80,7 +80,7 @@ mcp_servers:
       GITHUB_PERSONAL_ACCESS_TOKEN: "${env:GITHUB_TOKEN}"   # same as "${GITHUB_TOKEN}"
 ```
 
-Values resolve from the active profile's secret scope (falling back to the process environment), so put the secret in `~/.hermes/.env`. An unset variable keeps its literal placeholder.
+Values resolve from the active profile's secret scope (falling back to the process environment), so put the secret in `~/.indagis/.env`. An unset variable keeps its literal placeholder.
 
 ## `tools` policy keys
 
@@ -309,6 +309,6 @@ mcp_servers:
 Behavior:
 - Hermes uses the MCP SDK's OAuth 2.1 PKCE flow (metadata discovery, dynamic client registration, token exchange, and refresh)
 - On first connect, a browser window opens for authorization
-- Tokens are persisted to `~/.hermes/mcp-tokens/<server>.json` and reused across sessions
+- Tokens are persisted to `~/.indagis/mcp-tokens/<server>.json` and reused across sessions
 - Token refresh is automatic; re-authorization only happens when refresh fails
 - Only applies to HTTP/StreamableHTTP transport (`url`-based servers)

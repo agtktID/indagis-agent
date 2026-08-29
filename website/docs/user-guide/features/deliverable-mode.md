@@ -66,8 +66,8 @@ messaging platforms.
 
 **Project-level:** add the bias to `AGENTS.md` / `CLAUDE.md` /
 `.cursorrules` in a project the agent works from, to your global
-persona in `~/.hermes/SOUL.md`, or as a named preset under
-`agent.personalities` in `~/.hermes/config.yaml` (switchable per session
+persona in `~/.indagis/SOUL.md`, or as a named preset under
+`agent.personalities` in `~/.indagis/config.yaml` (switchable per session
 via `/personality`).
 
 The mechanic the agent has to use is simple: render the file to an
@@ -115,7 +115,7 @@ community servers for most popular tools — install whichever you need:
 | **Snowflake / BigQuery** | SQL against data warehouses |
 | **Google Drive** | File search, contents, share management |
 
-Install MCP servers via `~/.hermes/config.yaml` under the `mcp_servers`
+Install MCP servers via `~/.indagis/config.yaml` under the `mcp_servers`
 section. See [MCP integration](./mcp.md) for the full setup guide.
 
 ## Comparison to Perplexity Computer in Slack

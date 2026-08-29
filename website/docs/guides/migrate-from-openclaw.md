@@ -50,10 +50,10 @@ Reads from `~/.openclaw/` by default. Legacy `~/.clawdbot/` or `~/.moltbot/` dir
 
 | What | OpenClaw source | Hermes destination | Notes |
 |------|----------------|-------------------|-------|
-| Persona | `workspace/SOUL.md` | `~/.hermes/SOUL.md` | Direct copy |
+| Persona | `workspace/SOUL.md` | `~/.indagis/SOUL.md` | Direct copy |
 | Workspace instructions | `workspace/AGENTS.md` | `AGENTS.md` in `--workspace-target` | Requires `--workspace-target` flag |
-| Long-term memory | `workspace/MEMORY.md` | `~/.hermes/memories/MEMORY.md` | Parsed into entries, merged with existing, deduped. Uses `§` delimiter. |
-| User profile | `workspace/USER.md` | `~/.hermes/memories/USER.md` | Same entry-merge logic as memory. |
+| Long-term memory | `workspace/MEMORY.md` | `~/.indagis/memories/MEMORY.md` | Parsed into entries, merged with existing, deduped. Uses `§` delimiter. |
+| User profile | `workspace/USER.md` | `~/.indagis/memories/USER.md` | Same entry-merge logic as memory. |
 | Daily memory files | `workspace/memory/*.md` | `~/.hermes/memories/MEMORY.md` | All daily files merged into main memory. |
 
 Workspace files are also checked at `workspace.default/` and `workspace-main/` as fallback paths (OpenClaw renamed `workspace/` to `workspace-main/` in recent versions, and uses `workspace-{agentId}` for multi-agent setups).
@@ -62,9 +62,9 @@ Workspace files are also checked at `workspace.default/` and `workspace-main/` a
 
 | Source | OpenClaw location | Hermes destination |
 |--------|------------------|-------------------|
-| Workspace skills | `workspace/skills/` | `~/.hermes/skills/openclaw-imports/` |
-| Managed/shared skills | `~/.openclaw/skills/` | `~/.hermes/skills/openclaw-imports/` |
-| Personal cross-project | `~/.agents/skills/` | `~/.hermes/skills/openclaw-imports/` |
+| Workspace skills | `workspace/skills/` | `~/.indagis/skills/openclaw-imports/` |
+| Managed/shared skills | `~/.openclaw/skills/` | `~/.indagis/skills/openclaw-imports/` |
+| Personal cross-project | `~/.agents/skills/` | `~/.indagis/skills/openclaw-imports/` |
 | Project-level shared | `workspace/.agents/skills/` | `~/.hermes/skills/openclaw-imports/` |
 
 Skill conflicts are handled by `--skill-conflict`: `skip` leaves the existing Hermes skill, `overwrite` replaces it, `rename` creates a `-imported` copy.

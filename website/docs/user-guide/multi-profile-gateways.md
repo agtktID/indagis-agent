@@ -89,7 +89,7 @@ hermes config set gateway.multiplex_profiles true
 hermes gateway restart
 ```
 
-Equivalently, in the default profile's `~/.hermes/config.yaml`:
+Equivalently, in the default profile's `~/.indagis/config.yaml`:
 
 ```yaml
 gateway:
@@ -162,7 +162,7 @@ Authentication follows the profile named in the URL. Unprefixed endpoints keep
 using the default listener's existing credentials.
 
 - `/p/coder/...` API-server requests must use `API_SERVER_KEY` from
-  `~/.hermes/profiles/coder/.env`; the default listener key is rejected.
+  `~/.indagis/profiles/coder/.env`; the default listener key is rejected.
 - A webhook route that targets `coder` must declare `profile: coder` beside
   its existing route-specific `secret` in the default profile's
   `config.yaml`. That secret is then accepted only at
@@ -356,18 +356,18 @@ Each profile writes to its own log files:
 
 ```bash
 # Default profile
-tail -f ~/.hermes/logs/gateway.log
-tail -f ~/.hermes/logs/gateway.error.log
+tail -f ~/.indagis/logs/gateway.log
+tail -f ~/.indagis/logs/gateway.error.log
 
 # Named profile
-tail -f ~/.hermes/profiles/<name>/logs/gateway.log
-tail -f ~/.hermes/profiles/<name>/logs/gateway.error.log
+tail -f ~/.indagis/profiles/<name>/logs/gateway.log
+tail -f ~/.indagis/profiles/<name>/logs/gateway.error.log
 ```
 
 Stream every profile's log simultaneously:
 
 ```bash
-tail -f ~/.hermes/logs/gateway.log ~/.hermes/profiles/*/logs/gateway.log
+tail -f ~/.indagis/logs/gateway.log ~/.indagis/profiles/*/logs/gateway.log
 ```
 
 The CLI also has a structured log viewer:
@@ -392,13 +392,13 @@ systemctl --user list-units 'hermes-gateway-*'   # Linux — units
 Every profile keeps its config inside its own directory:
 
 ```
-~/.hermes/profiles/<name>/
+~/.indagis/profiles/<name>/
 ├── .env              # API keys, bot tokens (chmod 600)
 ├── config.yaml       # model, provider, toolsets, gateway settings
 └── SOUL.md           # personality / system prompt
 ```
 
-The default profile uses `~/.hermes/` directly with the same three files.
+The default profile uses `~/.indagis/` directly with the same three files.
 
 Edit them with any editor or via the CLI:
 
@@ -427,7 +427,7 @@ to sleep when idle. Two patterns:
 ```bash
 caffeinate -dis                    # block display, idle, and system sleep
 caffeinate -dis -t 28800           # same, auto-exit after 8 hours
-caffeinate -i -w $(cat ~/.hermes/gateway.pid) &   # awake while default gateway runs
+caffeinate -i -w $(cat ~/.indagis/gateway.pid) &   # awake while default gateway runs
 
 # Persistent: run in background and forget
 nohup caffeinate -dis >/dev/null 2>&1 &
@@ -479,7 +479,7 @@ To audit:
 
 ```bash
 grep -H 'TELEGRAM_BOT_TOKEN\|DISCORD_BOT_TOKEN' \
-     ~/.hermes/.env ~/.hermes/profiles/*/.env
+     ~/.indagis/.env ~/.indagis/profiles/*/.env
 ```
 
 ## Updating the code
@@ -510,7 +510,7 @@ If a profile's gateway shows `not running` but a process is still alive:
 
 ```bash
 ps -ef | grep "hermes_cli.*-p <profile>"
-cat ~/.hermes/profiles/<profile>/gateway.pid
+cat ~/.indagis/profiles/<profile>/gateway.pid
 kill -TERM <pid>          # graceful
 kill -KILL <pid>          # if that fails after a few seconds
 <profile> gateway start

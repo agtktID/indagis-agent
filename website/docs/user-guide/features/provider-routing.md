@@ -14,7 +14,7 @@ OpenRouter routes requests to many providers (e.g., Anthropic, Google, AWS Bedro
 
 ## Configuration
 
-Add a `provider_routing` section to your `~/.hermes/config.yaml`:
+Add a `provider_routing` section to your `~/.indagis/config.yaml`:
 
 ```yaml
 provider_routing:
@@ -166,7 +166,7 @@ provider_routing:
 
 Provider routing preferences are passed to OpenRouter or Nous Portal on agent chat requests and iteration-limit summaries via the `extra_body.provider` field. (`extra_body` is the OpenAI Python SDK argument; it becomes the top-level `provider` object in the JSON request.) Auxiliary tasks such as compression and title generation are configured independently under `auxiliary.<task>.extra_body`.
 
-- **CLI mode** — configured in `~/.hermes/config.yaml`, loaded at startup
+- **CLI mode** — configured in `~/.indagis/config.yaml`, loaded at startup
 - **Gateway mode** — same config file, loaded when the gateway starts
 
 The routing config is read from `config.yaml` and passed as parameters when creating the `AIAgent`:

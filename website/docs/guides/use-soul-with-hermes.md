@@ -44,13 +44,13 @@ A good rule:
 Hermes now uses only the global SOUL file for the current instance:
 
 ```text
-~/.hermes/SOUL.md
+~/.indagis/SOUL.md
 ```
 
 If you run Hermes with a custom home directory, it becomes:
 
 ```text
-$HERMES_HOME/SOUL.md
+$INDAGIS_HOME/SOUL.md
 ```
 
 ## First-run behavior
@@ -65,7 +65,7 @@ Important:
 
 ## How Hermes uses it
 
-When Hermes starts a session, it reads `SOUL.md` from `HERMES_HOME`, scans it for prompt-injection patterns, truncates it if needed, and uses it as the **agent identity** — slot #1 in the system prompt. This means SOUL.md completely replaces the built-in default identity text.
+When Hermes starts a session, it reads `SOUL.md` from `INDAGIS_HOME`, scans it for prompt-injection patterns, truncates it if needed, and uses it as the **agent identity** — slot #1 in the system prompt. This means SOUL.md completely replaces the built-in default identity text.
 
 If SOUL.md is missing, empty, or cannot be loaded, Hermes falls back to a built-in default identity.
 
@@ -212,13 +212,13 @@ This is the most common mistake.
 ## How to edit it
 
 ```bash
-nano ~/.hermes/SOUL.md
+nano ~/.indagis/SOUL.md
 ```
 
 or
 
 ```bash
-vim ~/.hermes/SOUL.md
+vim ~/.indagis/SOUL.md
 ```
 
 Then restart Hermes or start a new session.
@@ -238,7 +238,7 @@ That iterative approach works better than trying to design the perfect personali
 ### I edited SOUL.md but Hermes still sounds the same
 
 Check:
-- you edited `~/.hermes/SOUL.md` or `$HERMES_HOME/SOUL.md`
+- you edited `~/.indagis/SOUL.md` or `$INDAGIS_HOME/SOUL.md`
 - not some repo-local `SOUL.md`
 - the file is not empty
 - your session was restarted after the edit

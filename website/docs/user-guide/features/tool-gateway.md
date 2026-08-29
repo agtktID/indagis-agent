@@ -158,7 +158,7 @@ web:
 
 ### Self-hosted gateway (advanced)
 
-Running your own Nous-compatible gateway? Override endpoints in `~/.hermes/.env`:
+Running your own Nous-compatible gateway? Override endpoints in `~/.indagis/.env`:
 
 ```bash
 TOOL_GATEWAY_DOMAIN=your-domain.example.com

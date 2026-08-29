@@ -126,7 +126,7 @@ Start a line with `!` to run it as a shell command instead of sending it to the 
 - **Zero cost.** The model is never invoked — no API call, no tokens, no latency.
 - **Nothing enters the conversation.** The command and its output are not added to history, so your context stays clean and the prompt cache is untouched.
 - **Runs where the agent's `terminal` tool runs.** Uses the session working directory, so `!pwd` matches what the agent would see.
-- **Approvals still apply.** A dangerous command (`rm -rf`, writes to `~/.hermes/config.yaml`, etc.) goes through the same approval prompt the agent's `terminal` tool uses. `!` is a cost/latency shortcut, not a security bypass.
+- **Approvals still apply.** A dangerous command (`rm -rf`, writes to `~/.indagis/config.yaml`, etc.) goes through the same approval prompt the agent's `terminal` tool uses. `!` is a cost/latency shortcut, not a security bypass.
 - **Non-zero exits are shown.** A failing command prints `! exited <code>` after its output.
 - `!` on its own prints a one-line usage reminder.
 
@@ -169,7 +169,7 @@ Commands are case-insensitive — `/HELP` works the same as `/help`. Installed s
 You can define custom commands that run shell commands instantly without invoking the LLM. These work in both the CLI and messaging platforms (Telegram, Discord, etc.).
 
 ```yaml
-# ~/.hermes/config.yaml
+# ~/.indagis/config.yaml
 quick_commands:
   status:
     type: exec
@@ -197,7 +197,7 @@ Hermes loads each named skill into the session prompt before the first turn. The
 
 ## Skill Slash Commands
 
-Every installed skill in `~/.hermes/skills/` is automatically registered as a slash command. The skill name becomes the command:
+Every installed skill in `~/.indagis/skills/` is automatically registered as a slash command. The skill name becomes the command:
 
 ```
 /gif-search funny cats
@@ -222,7 +222,7 @@ Built-in personalities include: `helpful`, `concise`, `technical`, `creative`, `
 
 To go back to the default (no overlay), use `/personality none` — `default` and `neutral` work too.
 
-You can also define custom personalities in `~/.hermes/config.yaml`:
+You can also define custom personalities in `~/.indagis/config.yaml`:
 
 ```yaml
 personalities:
@@ -282,7 +282,7 @@ The `display.busy_input_mode` config key controls what happens when you press En
 | `"steer"` | Your message is injected into the current run via `/steer`, arriving at the agent after the next tool call — no interrupt, no new turn |
 
 ```yaml
-# ~/.hermes/config.yaml
+# ~/.indagis/config.yaml
 display:
   busy_input_mode: "steer"   # or "queue" or "interrupt" (default)
 ```
@@ -339,7 +339,7 @@ Cycle through display modes with `/verbose`: `off → new → all → verbose`. 
 The `display.tool_preview_length` config key controls the maximum number of characters shown in tool call preview lines (e.g. file paths, terminal commands). The default is `0`, which means no limit — full paths and commands are shown.
 
 ```yaml
-# ~/.hermes/config.yaml
+# ~/.indagis/config.yaml
 display:
   tool_preview_length: 80   # Truncate tool previews to 80 chars (0 = no limit)
 ```
@@ -378,7 +378,7 @@ Use `/title My Session Name` inside a chat to name the current session, or `herm
 
 ### Session Storage
 
-CLI sessions are stored in Hermes's SQLite state database under `~/.hermes/state.db`. The database keeps:
+CLI sessions are stored in Hermes's SQLite state database under `~/.indagis/state.db`. The database keeps:
 
 - session metadata (ID, title, timestamps, token counters)
 - message history
@@ -392,7 +392,7 @@ Some messaging adapters also keep per-platform transcript files alongside the da
 Long conversations are automatically summarized when approaching context limits:
 
 ```yaml
-# In ~/.hermes/config.yaml
+# In ~/.indagis/config.yaml
 compression:
   enabled: true
   threshold: 0.50    # Compress at 50% of context limit by default

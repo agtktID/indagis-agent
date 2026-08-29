@@ -56,7 +56,7 @@ If you're just running the Hermes Agent and want to use Docker, see `website/doc
 │   │   └── skills_sync.py
 │   └── 02-reconcile-profiles          ← hermes_cli.container_boot
 │       ├── chown /run/service (hermes-writable for runtime register)
-│       └── walk $HERMES_HOME/profiles/<name>/gateway_state.json
+│       └── walk $INDAGIS_HOME/profiles/<name>/gateway_state.json
 │           → recreate /run/service/gateway-<name>/
 │           → auto-start only those with prior_state == "running"
 │
@@ -69,7 +69,7 @@ If you're just running the Hermes Agent and want to use Docker, see `website/doc
 │   │   ├── type        ("longrun")
 │   │   ├── run         ("#!/command/with-contenv sh ... exec s6-setuidgid hermes hermes -p coder gateway run")
 │   │   ├── down        (marker — present means "registered but don't auto-start")
-│   │   └── log/run     (s6-log → $HERMES_HOME/logs/gateways/coder/current)
+│   │   └── log/run     (s6-log → $INDAGIS_HOME/logs/gateways/coder/current)
 │   └── ...
 │
 └── CMD ("main program")               ← /opt/hermes/docker/main-wrapper.sh
@@ -169,11 +169,11 @@ The harness lives in `tests/docker/` and skips when Docker isn't available. The 
 
 ### Profile directory ownership
 
-The cont-init reconciler runs as hermes (`s6-setuidgid hermes` in `02-reconcile-profiles`). If a profile dir ends up root-owned (e.g. because `docker exec <c> hermes profile create …` ran as root by default), the reconciler can't read SOUL.md and fails with `PermissionError`. Mitigation: `stage2-hook.sh` chowns `$HERMES_HOME/profiles` to hermes on **every** boot, idempotently. Don't remove that block.
+The cont-init reconciler runs as hermes (`s6-setuidgid hermes` in `02-reconcile-profiles`). If a profile dir ends up root-owned (e.g. because `docker exec <c> hermes profile create …` ran as root by default), the reconciler can't read SOUL.md and fails with `PermissionError`. Mitigation: `stage2-hook.sh` chowns `$INDAGIS_HOME/profiles` to hermes on **every** boot, idempotently. Don't remove that block.
 
 ### Files written by `docker exec` are root-owned
 
-`docker exec` defaults to root. Either pass `--user hermes` or rely on the stage2 chown sweep next reboot. Don't write files under `$HERMES_HOME/profiles/<name>/` as root manually — the next reconcile pass will sweep them but in-flight operations may hit perm errors.
+`docker exec` defaults to root. Either pass `--user hermes` or rely on the stage2 chown sweep next reboot. Don't write files under `$INDAGIS_HOME/profiles/<name>/` as root manually — the next reconcile pass will sweep them but in-flight operations may hit perm errors.
 
 ### Service slot exists but s6-svstat says "s6-supervise not running"
 

@@ -18,7 +18,7 @@ When you want multiple agents on the **same machine**, prefer [delegation](../fe
 hermes gateway setup      # pick A2A
 ```
 
-Or in `~/.hermes/config.yaml`:
+Or in `~/.indagis/config.yaml`:
 
 ```yaml
 gateway:
@@ -77,7 +77,7 @@ Secure by default; every widening step is explicit:
 - **Per-peer tokens** — `A2A_PEER_TOKENS="alice:tok1,bob:tok2"` gives each peer its own credential; the authenticated name drives rate limiting, trust, and audit.
 - **Prompt-injection filtering** — inbound text is filtered and framed as untrusted peer input. Remote peers cannot invoke operator slash commands.
 - **Outbound redaction** — credential-shaped strings (API keys, JWTs, tokens) are scrubbed from replies.
-- **Audit log** — every exchange appends to `~/.hermes/a2a_audit.jsonl`.
+- **Audit log** — every exchange appends to `~/.indagis/a2a_audit.jsonl`.
 - **Anti-loop** — per-context turn caps stop two agents ping-ponging forever.
 
 ## Configuration reference

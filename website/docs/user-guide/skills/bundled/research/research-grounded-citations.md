@@ -67,13 +67,13 @@ None beyond the standard toolset. `scripts/sources.py` is stdlib-only Python 3.
 Retrieval comes from whatever is configured: `web_search`, `web_extract`,
 `browser_navigate`, or `terminal` (curl, CLIs).
 
-Ledger location: `$HERMES_HOME/cache/citations/ledger.json` (profile-aware).
+Ledger location: `$INDAGIS_HOME/cache/citations/ledger.json` (profile-aware).
 Override per task with `--ledger <path>` or `HERMES_CITATION_LEDGER`.
 
 ## How to Run
 
 ```bash
-S=~/.hermes/skills/research/grounded-citations/scripts/sources.py
+S=~/.indagis/skills/research/grounded-citations/scripts/sources.py
 
 python3 "$S" reset                                  # start a clean ledger
 python3 "$S" add https://example.com/a --title "A"  # prints: [1]

@@ -83,21 +83,21 @@ hermes proxy                   # OpenAI-compatible local proxy backed by your OA
 ## Key Paths
 
 ```
-~/.hermes/config.yaml       Main configuration (settings — never secrets)
-~/.hermes/.env              API keys and secrets ONLY (under $HERMES_HOME if set)
-$HERMES_HOME/skills/        Installed skills
-~/.hermes/skins/            Custom themes (see references/themes.md)
-~/.hermes/desktop-plugins/  Desktop app UI plugins (see references/desktop-plugins.md)
-~/.hermes/tui-widgets/      TUI widget apps (see references/tui-widgets.md)
-~/.hermes/pets/             Installed pet mascots (see references/petdex.md)
-~/.hermes/state.db          Canonical session store (SQLite + FTS5)
-~/.hermes/sessions/         Gateway routing index, request dumps, *.jsonl transcripts
-~/.hermes/logs/             Gateway and error logs
-~/.hermes/auth.json         OAuth tokens and credential pools
-~/.hermes/hermes-agent/     Source code (if git-installed)
+~/.indagis/config.yaml       Main configuration (settings — never secrets)
+~/.indagis/.env              API keys and secrets ONLY (under $INDAGIS_HOME if set)
+$INDAGIS_HOME/skills/        Installed skills
+~/.indagis/skins/            Custom themes (see references/themes.md)
+~/.indagis/desktop-plugins/  Desktop app UI plugins (see references/desktop-plugins.md)
+~/.indagis/tui-widgets/      TUI widget apps (see references/tui-widgets.md)
+~/.indagis/pets/             Installed pet mascots (see references/petdex.md)
+~/.indagis/state.db          Canonical session store (SQLite + FTS5)
+~/.indagis/sessions/         Gateway routing index, request dumps, *.jsonl transcripts
+~/.indagis/logs/             Gateway and error logs
+~/.indagis/auth.json         OAuth tokens and credential pools
+~/.indagis/hermes-agent/     Source code (if git-installed)
 ```
 
-Profiles use `~/.hermes/profiles/<name>/` with the same layout. When a profile is active, resolve the real home from `$HERMES_HOME` — never hardcode `~/.hermes`.
+Profiles use `~/.indagis/profiles/<name>/` with the same layout. When a profile is active, resolve the real home from `$INDAGIS_HOME` — never hardcode `~/.indagis`.
 
 ## Routing Table — load the reference for the task
 
@@ -217,5 +217,5 @@ terminal(command="tmux new-session -d -s resumed 'hermes --resume 20260225_14305
 - **Never break prompt caching** — don't change past context, toolsets, or the system prompt mid-conversation. The only exception is context compression.
 - **Message role alternation** — never two assistant or two user messages in a row; only `tool` results can repeat.
 - **Secrets in `.env`, settings in `config.yaml`** — never tell a user to put a non-credential setting in `.env`.
-- **Profile-safe paths** — `get_hermes_home()` in code, `$HERMES_HOME` when resolving paths in a session.
+- **Profile-safe paths** — `get_hermes_home()` in code, `$INDAGIS_HOME` when resolving paths in a session.
 - **Never hand-edit `config.yaml` for the user** — use `hermes config set KEY VAL`; a stray indent can corrupt the file and break the live gateway.

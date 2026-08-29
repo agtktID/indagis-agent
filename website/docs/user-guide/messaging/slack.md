@@ -204,7 +204,7 @@ Member IDs look like `U01ABC2DEF3`. You need your own Member ID at minimum.
 
 ## Step 8: Configure Hermes
 
-Add the following to your `~/.hermes/.env` file:
+Add the following to your `~/.indagis/.env` file:
 
 ```bash
 # Required
@@ -294,7 +294,7 @@ Then in Slack:
 1. Open [https://api.slack.com/apps](https://api.slack.com/apps) →
    your Hermes app
 2. **Features → App Manifest → Edit**
-3. Paste the new contents of `~/.hermes/slack-manifest.json`
+3. Paste the new contents of `~/.indagis/slack-manifest.json`
 4. **Save**. Slack will prompt to reinstall the app if scopes or slash
    commands changed.
 
@@ -386,7 +386,7 @@ In channels, always @mention the bot to start a conversation. Once the bot is ac
 
 ## Configuration Options
 
-Beyond the required environment variables from Step 8, you can customize Slack bot behavior through `~/.hermes/config.yaml`.
+Beyond the required environment variables from Step 8, you can customize Slack bot behavior through `~/.indagis/config.yaml`.
 
 ### Thread & Reply Behavior
 
@@ -839,7 +839,7 @@ SLACK_BOT_TOKEN=xoxb-workspace1-token,xoxb-workspace2-token,xoxb-workspace3-toke
 SLACK_APP_TOKEN=xapp-your-app-token
 ```
 
-Or in `~/.hermes/config.yaml`:
+Or in `~/.indagis/config.yaml`:
 
 ```yaml
 platforms:
@@ -852,7 +852,7 @@ platforms:
 In addition to tokens in the environment or config, Hermes also loads tokens from an **OAuth token file** at:
 
 ```
-~/.hermes/slack_tokens.json
+~/.indagis/slack_tokens.json
 ```
 
 This file is a JSON object mapping team IDs to token entries:
@@ -971,7 +971,7 @@ the gateway will **deny all messages** by default as a safety measure. Never sha
 treat them like passwords.
 :::
 
-- Tokens should be stored in `~/.hermes/.env` (file permissions `600`)
+- Tokens should be stored in `~/.indagis/.env` (file permissions `600`)
 - Rotate tokens periodically via the Slack app settings
 - Audit who has access to your Hermes config directory
 - Socket Mode means no public endpoint is exposed — one less attack surface

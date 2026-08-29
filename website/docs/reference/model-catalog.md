@@ -64,7 +64,7 @@ Field notes:
 | Network failure, no cache | Silent fallback to in-repo snapshot |
 | Manifest fails schema validation | Treated as unreachable |
 
-Cache location: `~/.hermes/cache/model_catalog.json`.
+Cache location: `~/.indagis/cache/model_catalog.json`.
 
 ## Config
 

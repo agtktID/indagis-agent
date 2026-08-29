@@ -25,7 +25,7 @@ Hermes Agent works with any OpenAI-compatible API. Supported providers include:
 - **MiniMax** — global and China endpoints
 - **Local models** — via [Ollama](https://ollama.com/), [vLLM](https://docs.vllm.ai/), [llama.cpp](https://github.com/ggerganov/llama.cpp), [SGLang](https://github.com/sgl-project/sglang), or any OpenAI-compatible server
 
-Set your provider with `hermes model` or by editing `~/.hermes/.env`. See the [Environment Variables](./environment-variables.md) reference for all provider keys.
+Set your provider with `hermes model` or by editing `~/.indagis/.env`. See the [Environment Variables](./environment-variables.md) reference for all provider keys.
 
 ### Does it work on Windows/Android/Termux/my plataform??
 See **[Platform Support](../getting-started/platform-support.md)** for the full platform availability matrix.
@@ -50,7 +50,7 @@ See:
 
 ### Is my data sent anywhere?
 
-API calls go **only to the LLM provider you configure** (e.g., OpenRouter, your local Ollama instance). Hermes Agent does not collect telemetry, usage data, or analytics. Your conversations, memory, and skills are stored locally in `~/.hermes/`.
+API calls go **only to the LLM provider you configure** (e.g., OpenRouter, your local Ollama instance). Hermes Agent does not collect telemetry, usage data, or analytics. Your conversations, memory, and skills are stored locally in `~/.indagis/`.
 
 ### Can I use it offline / with local models?
 
@@ -162,7 +162,7 @@ The installer handles this automatically — if you see this error during manual
 
 **Cause:** Hermes builds a per-session environment snapshot by running `bash -l` once at startup. A bash login shell reads `/etc/profile`, `~/.bash_profile`, and `~/.profile`, but **does not source `~/.bashrc`** — so tools that install themselves there (`nvm`, `asdf`, `pyenv`, `cargo`, custom `PATH` exports) stay invisible to the snapshot. This most commonly happens when Hermes runs under systemd or in a minimal shell where nothing has pre-loaded the interactive shell profile.
 
-**Solution:** Hermes auto-sources `~/.bashrc` by default. If that's not enough — e.g. you're a zsh user whose PATH lives in `~/.zshrc`, or you init `nvm` from a standalone file — list the extra files to source in `~/.hermes/config.yaml`:
+**Solution:** Hermes auto-sources `~/.bashrc` by default. If that's not enough — e.g. you're a zsh user whose PATH lives in `~/.zshrc`, or you init `nvm` from a standalone file — list the extra files to source in `~/.indagis/config.yaml`:
 
 ```yaml
 terminal:
@@ -255,7 +255,7 @@ hermes config set OPENROUTER_API_KEY sk-or-v1-xxxxxxxxxxxx
 ```
 
 :::warning
-Make sure the key matches the provider. An OpenAI key won't work with OpenRouter and vice versa. Check `~/.hermes/.env` for conflicting entries.
+Make sure the key matches the provider. An OpenAI key won't work with OpenRouter and vice versa. Check `~/.indagis/.env` for conflicting entries.
 :::
 
 #### Model not available / model not found
@@ -306,7 +306,7 @@ Look at the CLI startup line — it shows the detected context length (e.g., `�
 To fix context detection, set it explicitly:
 
 ```yaml
-# In ~/.hermes/config.yaml
+# In ~/.indagis/config.yaml
 model:
   default: your-model-name
   context_length: 131072  # your model's actual context window
@@ -386,7 +386,7 @@ hermes gateway status
 hermes gateway start
 
 # Check logs for errors
-cat ~/.hermes/logs/gateway.log | tail -50
+cat ~/.indagis/logs/gateway.log | tail -50
 ```
 
 #### Messages not delivering
@@ -395,7 +395,7 @@ cat ~/.hermes/logs/gateway.log | tail -50
 
 **Solution:**
 - Verify your bot token is valid with `hermes gateway setup`
-- Check gateway logs: `cat ~/.hermes/logs/gateway.log | tail -50`
+- Check gateway logs: `cat ~/.indagis/logs/gateway.log | tail -50`
 - For webhook-based platforms (Slack, WhatsApp), ensure your server is publicly accessible
 
 #### Allowlist confusion — who can talk to the bot?
@@ -410,7 +410,7 @@ cat ~/.hermes/logs/gateway.log | tail -50
 | **DM pairing** | First user to message in DM claims exclusive access |
 | **Open** | Anyone can interact (not recommended for production) |
 
-Configure in `~/.hermes/config.yaml` under your gateway's settings. See the [Messaging docs](../user-guide/messaging/index.md).
+Configure in `~/.indagis/config.yaml` under your gateway's settings. See the [Messaging docs](../user-guide/messaging/index.md).
 
 #### Gateway won't start
 
@@ -419,7 +419,7 @@ Configure in `~/.hermes/config.yaml` under your gateway's settings. See the [Mes
 **Solution:**
 ```bash
 # Install core messaging gateway dependencies
-cd ~/.hermes/hermes-agent && uv pip install -e ".[messaging]"  # Telegram, Discord, Slack, and shared gateway deps
+cd ~/.indagis/hermes-agent && uv pip install -e ".[messaging]"  # Telegram, Discord, Slack, and shared gateway deps
 
 # Check for port conflicts
 lsof -i :8080
@@ -443,7 +443,7 @@ tmux new -s hermes 'hermes gateway run'
 # Reattach later: tmux attach -t hermes
 
 # Option 3: Background via nohup
-nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &
+nohup hermes gateway run > ~/.indagis/logs/gateway.log 2>&1 &
 ```
 
 If you want to try systemd anyway, make sure it's enabled:
@@ -545,7 +545,7 @@ hermes chat --continue
 **Solution:**
 ```bash
 # Ensure MCP dependencies are installed (already included in standard install)
-cd ~/.hermes/hermes-agent && uv pip install -e ".[mcp]"
+cd ~/.indagis/hermes-agent && uv pip install -e ".[mcp]"
 
 # For npm-based servers, ensure Node.js is available
 node --version
@@ -555,7 +555,7 @@ npx --version
 npx -y @modelcontextprotocol/server-filesystem /tmp
 ```
 
-Verify your `~/.hermes/config.yaml` MCP configuration:
+Verify your `~/.indagis/config.yaml` MCP configuration:
 ```yaml
 mcp_servers:
   filesystem:
@@ -606,7 +606,7 @@ If an MCP server crashes mid-request, Hermes will report a timeout. Check the se
 
 ### How do profiles differ from just setting HERMES_HOME?
 
-Profiles are a managed layer on top of `HERMES_HOME`. You *could* manually set `HERMES_HOME=/some/path` before every command, but profiles handle all the plumbing for you: creating the directory structure, generating shell aliases (`hermes-work`), tracking the active profile in `~/.hermes/active_profile`, and syncing skill updates across all profiles automatically. They also integrate with tab completion so you don't have to remember paths.
+Profiles are a managed layer on top of `INDAGIS_HOME`. You *could* manually set `HERMES_HOME=/some/path` before every command, but profiles handle all the plumbing for you: creating the directory structure, generating shell aliases (`hermes-work`), tracking the active profile in `~/.indagis/active_profile`, and syncing skill updates across all profiles automatically. They also integrate with tab completion so you don't have to remember paths.
 
 ### Can two profiles share the same bot token?
 
@@ -625,7 +625,7 @@ This isolation is also the reason to never run two agents against the *same* pro
 
 ### How many profiles can I run?
 
-There is no hard limit. Each profile is just a directory under `~/.hermes/profiles/`. The practical limit depends on your disk space and how many concurrent gateways your system can handle (each gateway is a lightweight Python process). Running dozens of profiles is fine; each idle profile uses no resources.
+There is no hard limit. Each profile is just a directory under `~/.indagis/profiles/`. The practical limit depends on your disk space and how many concurrent gateways your system can handle (each gateway is a lightweight Python process). Running dozens of profiles is fine; each idle profile uses no resources.
 
 ---
 
@@ -635,7 +635,7 @@ There is no hard limit. Each profile is just a directory under `~/.hermes/profil
 
 **Scenario:** You use GPT-5.4 as your daily driver, but Gemini or Grok writes better social media content. Manually switching models every time is tedious.
 
-**Solution: Delegation config.** Hermes can route subagents to a different model automatically. Set this in `~/.hermes/config.yaml`:
+**Solution: Delegation config.** Hermes can route subagents to a different model automatically. Set this in `~/.indagis/config.yaml`:
 
 ```yaml
 delegation:
@@ -752,7 +752,7 @@ Skills with very long descriptions are truncated to 40 characters in the Telegra
    ```bash
    hermes backup
    ```
-   This creates a zip of your entire `~/.hermes/` directory — config, API keys, memories, skills, sessions, and profiles — saved to your home directory as `~/hermes-backup-<timestamp>.zip`.
+   This creates a zip of your entire `~/.indagis/` directory — config, API keys, memories, skills, sessions, and profiles — saved to your home directory as `~/hermes-backup-<timestamp>.zip`.
 
 3. Copy the zip to the new machine and import it:
    ```bash
@@ -791,7 +791,7 @@ The imported profile will have all config, memories, sessions, and skills from t
 
 **Manual fallback (rsync):** If you prefer to copy files directly, exclude the code repo:
 ```bash
-rsync -av --exclude='hermes-agent' ~/.hermes/ newmachine:~/.hermes/
+rsync -av --exclude='hermes-agent' ~/.indagis/ newmachine:~/.indagis/
 ```
 
 :::tip
