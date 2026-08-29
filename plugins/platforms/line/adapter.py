@@ -1697,7 +1697,7 @@ def interactive_setup() -> None:
     try:
         from hermes_cli.config import get_env_value as _get_env, save_env_value as _set_env
     except ImportError:
-        print("hermes_cli.config not available; set LINE_* vars manually in ~/.hermes/.env")
+        print("hermes_cli.config not available; set LINE_* vars manually in ~/.indagis/.env")
         return
 
     def _prompt(var: str, prompt: str, *, secret: bool = False) -> None:

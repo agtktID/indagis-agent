@@ -93,7 +93,7 @@ async def test_create_handoff_thread_routes_thread_create():
 async def test_rename_thread_carries_the_no_clobber_guard():
     adapter, stub = _adapter()
     ok = await adapter.rename_thread(
-        "th1", "Fix the build", only_if_current_name="Hermes"
+        "th1", "Fix the build", only_if_current_name="Indagis"
     )
     assert ok is True
     action = stub.sent[-1]

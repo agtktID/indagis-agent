@@ -656,7 +656,7 @@ class TestVoiceChannelCommands:
 
         bound_source = SessionSource(
             chat_id="123",
-            chat_name="Hermes Server / #general",
+            chat_name="Indagis Server / #general",
             chat_type="group",
             user_id="user1",
             user_name="user1",

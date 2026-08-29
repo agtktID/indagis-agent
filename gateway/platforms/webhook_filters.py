@@ -36,10 +36,11 @@ def _resolve_profile_path(path_value: Any) -> Optional[Path]:
     from hermes_constants import get_indagis_home
 
     hermes_home = get_indagis_home()
-    if raw == "~/.indagis":
-        return hermes_home
-    if raw.startswith("~/.indagis/"):
-        return hermes_home / raw.removeprefix("~/.indagis/")
+    for legacy_prefix in ("~/.indagis", "~/.hermes"):
+        if raw == legacy_prefix:
+            return hermes_home
+        if raw.startswith(legacy_prefix + "/"):
+            return hermes_home / raw.removeprefix(legacy_prefix + "/")
     path = Path(raw).expanduser()
     if path.is_absolute():
         return path
@@ -54,7 +55,7 @@ def _resolve_script_path(script_value: Any) -> tuple[Optional[Path], Optional[st
 
     scripts_root = (get_indagis_home() / "scripts").resolve()
     raw_text = os.path.expandvars(script_value.strip())
-    if raw_text == "~/.indagis" or raw_text.startswith("~/.indagis/"):
+    if raw_text in ("~/.indagis", "~/.hermes") or raw_text.startswith(("~/.indagis/", "~/.hermes/")):
         mapped = _resolve_profile_path(raw_text)
         candidate = mapped.resolve() if mapped is not None else scripts_root
     else:

@@ -1395,7 +1395,7 @@ class TestHydrateBotIdentity(unittest.TestCase):
             {
                 "code": 0,
                 "bot": {
-                    "bot_name": "Hermes Bot",
+                    "bot_name": "Indagis Bot",
                     "open_id": "ou_hermes_hydrated",
                 },
             }
@@ -1412,7 +1412,7 @@ class TestHydrateBotIdentity(unittest.TestCase):
         os.environ,
         {
             "FEISHU_BOT_OPEN_ID": "ou_env",
-            "FEISHU_BOT_NAME": "Env Hermes",
+            "FEISHU_BOT_NAME": "Env Indagis",
         },
         clear=True,
     )
@@ -1423,7 +1423,7 @@ class TestHydrateBotIdentity(unittest.TestCase):
             {
                 "code": 0,
                 "bot": {
-                    "bot_name": "Hydrated Hermes",
+                    "bot_name": "Hydrated Indagis",
                     "open_id": "ou_hydrated",
                 },
             }
@@ -1918,7 +1918,7 @@ class TestFeishuMentionMap(unittest.TestCase):
         mention = SimpleNamespace(
             key="@_user_1",
             id=SimpleNamespace(open_id="ou_bot", user_id=""),
-            name="Hermes",
+            name="Indagis",
         )
         ref = _build_mentions_map([mention], _FeishuBotIdentity(open_id="ou_bot"))["@_user_1"]
         self.assertTrue(ref.is_self)

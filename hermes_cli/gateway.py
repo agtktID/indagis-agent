@@ -6615,7 +6615,7 @@ def gateway_setup():
                 print_info("  Termux does not use systemd/launchd services.")
                 print_info("  Run in foreground: hermes gateway run")
                 print_info(
-                    f"  Or start it manually in the background (best effort): nohup hermes gateway run >{_dhh()}/logs/gateway.log 2>&1 &"
+                    f"  Or start it manually in the background (best effort): nohup indagis gateway run >{_dhh()}/logs/gateway.log 2>&1 &"
                 )
             else:
                 print_info("  Service install not supported on this platform.")
@@ -6967,7 +6967,7 @@ def _gateway_command_inner(args):
                 "  tmux new -s hermes 'indagis gateway run'         # persistent via tmux"
             )
             print(
-                "  nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background"
+                "  nohup indagis gateway run > ~/.indagis/logs/gateway.log 2>&1 &  # background"
             )
             sys.exit(1)
         elif is_container():
@@ -7086,7 +7086,7 @@ def _gateway_command_inner(args):
                 "  tmux new -s hermes 'indagis gateway run'         # persistent via tmux"
             )
             print(
-                "  nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background"
+                "  nohup indagis gateway run > ~/.indagis/logs/gateway.log 2>&1 &  # background"
             )
             print()
             print(
@@ -7434,14 +7434,14 @@ def _gateway_command_inner(args):
                 print("  indagis gateway run      # Run in foreground")
                 if is_termux():
                     print(
-                        "  nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # Best-effort background start"
+                        "  nohup indagis gateway run > ~/.indagis/logs/gateway.log 2>&1 &  # Best-effort background start"
                     )
                 elif is_wsl():
                     print(
                         "  tmux new -s hermes 'indagis gateway run'         # persistent via tmux"
                     )
                     print(
-                        "  nohup hermes gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background"
+                        "  nohup indagis gateway run > ~/.indagis/logs/gateway.log 2>&1 &  # background"
                     )
                 elif is_windows():
                     print(
