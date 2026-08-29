@@ -300,7 +300,7 @@ class TestHistoryDisplay:
             },
             {
                 "id": "20260401_201329_d85961",
-                "title": "Checking Running Hermes Agent",
+                "title": "Checking Running Indagis Agent",
                 "preview": "check running gateways for hermes agent",
                 "last_active": 0,
             },
@@ -330,7 +330,7 @@ class TestHistoryDisplay:
         cli._session_db.list_sessions_rich.return_value = [
             {
                 "id": "20260401_201329_d85961",
-                "title": "Checking Running Hermes Agent",
+                "title": "Checking Running Indagis Agent",
                 "preview": "check running gateways for hermes agent",
                 "last_active": 0,
             },

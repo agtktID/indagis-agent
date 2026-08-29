@@ -1854,7 +1854,7 @@ class TestTruncateToolCallArgsJson:
         import json as _json
         shrink = self._helper()
         original = _json.dumps({
-            "path": "~/.hermes/skills/shopping/browser-setup-notes.md",
+            "path": "~/.indagis/skills/shopping/browser-setup-notes.md",
             "content": "# Shopping Browser Setup Notes\n\n" + "abc " * 400,
         })
         assert len(original) > 500
@@ -1900,7 +1900,7 @@ class TestTruncateToolCallArgsJson:
             )
         huge_content = "# Shopping Browser Setup Notes\n\n## Overview\n" + "x " * 400
         args_payload = _json.dumps({
-            "path": "~/.hermes/skills/shopping/browser-setup-notes.md",
+            "path": "~/.indagis/skills/shopping/browser-setup-notes.md",
             "content": huge_content,
         })
         assert len(args_payload) > 500  # triggers the Pass-3 shrink

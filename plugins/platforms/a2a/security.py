@@ -350,7 +350,7 @@ def _audit_path() -> Path:
         from hermes_constants import get_indagis_home
         base = Path(get_indagis_home())
     except Exception:
-        base = Path(os.path.expanduser("~/.hermes"))
+        base = Path(os.path.expanduser("~/.indagis"))
     return base / "a2a_audit.jsonl"
 
 

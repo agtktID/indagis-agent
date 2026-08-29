@@ -253,7 +253,7 @@ def test_render_run_script_uses_replace_to_take_over_stale_holder() -> None:
     """
     default_text = S6ServiceManager._render_run_script("default", {})
     # Root profile: bare `hermes gateway run --replace` (no -p flag).
-    assert "hermes gateway run --replace" in default_text
+    assert "indagis gateway run --replace" in default_text
     assert "hermes -p default" not in default_text
     # Every exec line that launches the gateway must carry --replace, so
     # neither the non-root nor the privilege-drop branch can spin.

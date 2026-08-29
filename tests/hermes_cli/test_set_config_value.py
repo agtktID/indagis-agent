@@ -459,7 +459,7 @@ class TestSchemaValidation:
 
     def test_desktop_macos_signing_identity_is_accepted(self, _isolated_hermes_home, capsys):
         """The documented TCC signing identity setting is part of the schema."""
-        set_config_value("desktop.macos_signing_identity", "Hermes Local Signing")
+        set_config_value("desktop.macos_signing_identity", "Indagis Local Signing")
         import yaml
         saved = yaml.safe_load(_read_config(_isolated_hermes_home))
         assert saved["desktop"]["macos_signing_identity"] == "Indagis Local Signing"

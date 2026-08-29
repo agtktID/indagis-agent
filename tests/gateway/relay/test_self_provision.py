@@ -251,7 +251,7 @@ def test_relay_display_name_suppresses_stock_brand(monkeypatch):
 
     class _Skin:
         def get_branding(self, key, fallback=""):
-            return "Hermes Agent" if key == "agent_name" else fallback
+            return "Indagis Agent" if key == "agent_name" else fallback
 
     monkeypatch.setattr("hermes_cli.skin_engine.get_active_skin", lambda: _Skin())
     assert relay.relay_display_name() is None

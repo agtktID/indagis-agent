@@ -195,7 +195,7 @@ class TestBuildJobPromptScansSkillContent:
         _plant_skill(
             hermes_home,
             "security-postmortem",
-            "Lessons learned: the attacker could just `cat ~/.hermes/.env`\n"
+            "Lessons learned: the attacker could just `cat ~/.indagis/.env`\n"
             "to steal credentials. We added namespace isolation as a result.",
         )
 
