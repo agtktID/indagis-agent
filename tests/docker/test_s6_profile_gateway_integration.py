@@ -24,7 +24,7 @@ from tests.docker.conftest import docker_exec, start_container
 
 _REGISTER_SCRIPT = """
 import sys
-sys.path.insert(0, "/opt/hermes")
+sys.path.insert(0, "/opt/indagis")
 from hermes_cli.service_manager import S6ServiceManager
 S6ServiceManager().register_profile_gateway("phase3test")
 # Don't worry about whether the gateway actually starts — we only care
@@ -35,7 +35,7 @@ print("REGISTERED")
 
 _UNREGISTER_SCRIPT = """
 import sys
-sys.path.insert(0, "/opt/hermes")
+sys.path.insert(0, "/opt/indagis")
 from hermes_cli.service_manager import S6ServiceManager
 S6ServiceManager().unregister_profile_gateway("phase3test")
 print("UNREGISTERED")

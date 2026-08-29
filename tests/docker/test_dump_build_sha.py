@@ -3,7 +3,7 @@
 Background: ``.dockerignore`` excludes ``.git``, so ``git rev-parse HEAD``
 fails inside the published image and ``hermes dump`` used to report
 ``version: ... [(unknown)]``.  The Dockerfile now writes the build-time
-``$HERMES_GIT_SHA`` build-arg to ``/opt/hermes/.hermes_build_sha`` and
+``$HERMES_GIT_SHA`` build-arg to ``/opt/indagis/.hermes_build_sha`` and
 ``hermes_cli/build_info.py`` reads it as a fallback.
 
 CI (``.github/workflows/docker.yml``) always sets the build-arg
@@ -13,7 +13,7 @@ is absent and ``hermes dump`` correctly falls back to ``(unknown)``.
 
 This test handles both cases:
 
-* If ``/opt/hermes/.hermes_build_sha`` exists in the image, assert that
+* If ``/opt/indagis/.hermes_build_sha`` exists in the image, assert that
   ``hermes dump`` surfaces its content as the version SHA (not
   ``(unknown)``).
 * If the file is absent, assert the legacy behaviour (``(unknown)``)
@@ -51,11 +51,11 @@ def _run_dump(image: str) -> str:
 
 
 def _read_baked_sha_from_image(image: str) -> str | None:
-    """Return the ``/opt/hermes/.hermes_build_sha`` content, or None if absent."""
+    """Return the ``/opt/indagis/.hermes_build_sha`` content, or None if absent."""
     r = subprocess.run(
         [
             "docker", "run", "--rm", "--entrypoint", "cat", image,
-            "/opt/hermes/.hermes_build_sha",
+            "/opt/indagis/.hermes_build_sha",
         ],
         capture_output=True, text=True, timeout=30,
     )

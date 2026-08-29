@@ -30,7 +30,7 @@ def test_config_migration_runs_on_boot(
     # Verify the migration script exists in the image
     r = docker_exec_sh(
         container_name,
-        "test -f /opt/hermes/scripts/docker_config_migrate.py && "
+        "test -f /opt/indagis/scripts/docker_config_migrate.py && "
         "echo SCRIPT_EXISTS || echo SCRIPT_MISSING",
         timeout=10,
     )
