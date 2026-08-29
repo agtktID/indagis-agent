@@ -76,13 +76,13 @@ The setup, in order:
 6. **Runs `npm install`** inside the plugin's sidecar directory. On
    read-only / immutable install trees (hosted Docker images, Podman,
    Nix) the sidecar automatically falls back to a writable mirror under
-   `~/.hermes/photon/sidecar`; set `PHOTON_SIDECAR_DIR` to pin an
+   `~/.indagis/photon/sidecar`; set `PHOTON_SIDECAR_DIR` to pin an
    explicit location.
 
-Runtime credentials are written to `~/.hermes/.env`
+Runtime credentials are written to `~/.indagis/.env`
 (`PHOTON_PROJECT_ID` = the Spectrum project id, `PHOTON_PROJECT_SECRET`),
 the same place every other channel keeps its token. Management metadata
-(device token, dashboard project id) lives in `~/.hermes/auth.json` under
+(device token, dashboard project id) lives in `~/.indagis/auth.json` under
 `credential_pool.photon` / `credential_pool.photon_project`.
 
 ## Authorizing users
@@ -99,13 +99,13 @@ hermes pairing approve photon <CODE>
 
 Use `hermes pairing list` to see pending codes and approved users.
 
-**Pre-authorize specific numbers** (in `~/.hermes/.env`):
+**Pre-authorize specific numbers** (in `~/.indagis/.env`):
 
 ```bash
 PHOTON_ALLOWED_USERS=+15551234567,+15559876543
 ```
 
-**Open access** (dev only, in `~/.hermes/.env`):
+**Open access** (dev only, in `~/.indagis/.env`):
 
 ```bash
 PHOTON_ALLOW_ALL_USERS=true

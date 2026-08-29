@@ -60,7 +60,7 @@ hermes gateway enroll \
 What it does:
 
 1. Resolves a fresh Nous Portal access token from your existing login
-   (`~/.hermes/auth.json`) — this proves which Nous org (tenant) you own. If
+   (`~/.indagis/auth.json`) — this proves which Nous org (tenant) you own. If
    `gateway.idp.token_url` is configured, a generic OAuth2 client-credentials
    token from your own IdP is used instead (the air-gapped / self-hosted-IdP
    path, no Nous Portal involved).
@@ -69,7 +69,7 @@ What it does:
 3. The connector verifies the token (signature, single-use, tenant match),
    mints a per-gateway secret plus a per-tenant delivery key, and returns them
    once.
-4. Persists the credentials into `~/.hermes/.env`:
+4. Persists the credentials into `~/.indagis/.env`:
    `GATEWAY_RELAY_ID`, `GATEWAY_RELAY_SECRET`, `GATEWAY_RELAY_DELIVERY_KEY`
    (plus `GATEWAY_RELAY_URL` / `GATEWAY_RELAY_WAKE_URL` when supplied).
 
@@ -97,7 +97,7 @@ separate feature flag. Deployments that don't set it are unaffected.
 
 | Setting | Where | Meaning |
 |---------|-------|---------|
-| `GATEWAY_RELAY_URL` | env (`~/.hermes/.env`) | Connector relay WebSocket URL. Presence enables the relay platform. |
+| `GATEWAY_RELAY_URL` | env (`~/.indagis/.env`) | Connector relay WebSocket URL. Presence enables the relay platform. |
 | `gateway.relay_url` | `config.yaml` | Same as above, config-file form (env takes precedence). |
 | `GATEWAY_RELAY_ID` | env | This gateway instance's id (written by `enroll`). |
 | `GATEWAY_RELAY_SECRET` | env | Per-gateway secret authenticating the WebSocket upgrade (written by `enroll`). |

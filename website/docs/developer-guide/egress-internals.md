@@ -71,8 +71,8 @@ hermes egress install
        tarfile.extract(..., filter="data") on Python 3.12+ (PEP 706);
          falls back to plain extract on older Python with member-name
          sanitisation via _pick_tar_member.
-       Stage into ~/.hermes/bin/.iron-proxy_XXXX, chmod 755, os.replace
-         to ~/.hermes/bin/iron-proxy (atomic).
+       Stage into ~/.indagis/bin/.iron-proxy_XXXX, chmod 755, os.replace
+         to ~/.indagis/bin/iron-proxy (atomic).
        _VERSION_CACHE.pop(target) so a forced reinstall re-probes
          --version on next call.
 
@@ -148,7 +148,7 @@ These are the load-bearing properties.  If you touch the module, you must preser
 
 | Path | Mode | Test |
 |---|---|---|
-| `~/.hermes/proxy/` (dir) | `0o700` | `test_proxy_state_dir_is_0o700` |
+| `~/.indagis/proxy/` (dir) | `0o700` | `test_proxy_state_dir_is_0o700` |
 | `ca.key` | `0o600` | `test_ca_key_created_with_0o600` |
 | `ca.crt` | `0o644` | (implicit; chmod call in `ensure_ca_cert`) |
 | `proxy.yaml` | `0o600` | (chmod after atomic rename in `write_proxy_config`) |
@@ -291,7 +291,7 @@ The Docker implementation is ~150 lines; expect similar volume for Modal / Dayto
 
 ### Subscribing to per-request audit events
 
-iron-proxy writes line-delimited JSON to `~/.hermes/proxy/iron-proxy.log` on the currently pinned v0.39 (daemon + per-request records combined; see "Logging on iron-proxy v0.39" in the user guide).  A plugin / external watcher can tail that file and react to allowlist denials, secret swaps, or upstream errors.  When the pinned version is bumped to one that supports `log.audit_path`, the per-request stream moves to `audit.log` and watchers wired to that path go live without operator action.  The schema is documented at [docs.iron.sh/audit](https://docs.iron.sh/audit) (link).
+iron-proxy writes line-delimited JSON to `~/.indagis/proxy/iron-proxy.log` on the currently pinned v0.39 (daemon + per-request records combined; see "Logging on iron-proxy v0.39" in the user guide).  A plugin / external watcher can tail that file and react to allowlist denials, secret swaps, or upstream errors.  When the pinned version is bumped to one that supports `log.audit_path`, the per-request stream moves to `audit.log` and watchers wired to that path go live without operator action.  The schema is documented at [docs.iron.sh/audit](https://docs.iron.sh/audit) (link).
 
 ## Testing
 

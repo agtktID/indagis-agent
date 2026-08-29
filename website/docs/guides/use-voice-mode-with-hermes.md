@@ -58,19 +58,19 @@ If that is not solid yet, fix text mode first.
 ### CLI microphone + playback
 
 ```bash
-cd ~/.hermes/hermes-agent && uv pip install -e ".[voice]"
+cd ~/.indagis/hermes-agent && uv pip install -e ".[voice]"
 ```
 
 ### Messaging platforms
 
 ```bash
-cd ~/.hermes/hermes-agent && uv pip install -e ".[messaging]"
+cd ~/.indagis/hermes-agent && uv pip install -e ".[messaging]"
 ```
 
 ### Premium ElevenLabs TTS
 
 ```bash
-cd ~/.hermes/hermes-agent && uv pip install -e ".[tts-premium]"
+cd ~/.indagis/hermes-agent && uv pip install -e ".[tts-premium]"
 ```
 
 ### Local NeuTTS (optional)
@@ -82,7 +82,7 @@ python -m pip install -U neutts[all]
 ### Everything
 
 ```bash
-cd ~/.hermes/hermes-agent && uv pip install -e ".[all]"
+cd ~/.indagis/hermes-agent && uv pip install -e ".[all]"
 ```
 
 ## Step 3: install system dependencies
@@ -121,7 +121,7 @@ This is usually the best place to start.
 
 ### Environment file example
 
-Add to `~/.hermes/.env`:
+Add to `~/.indagis/.env`:
 
 ```bash
 # Cloud STT options (local needs no key)

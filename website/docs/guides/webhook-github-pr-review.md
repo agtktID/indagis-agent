@@ -36,7 +36,7 @@ Webhook payloads contain attacker-controlled data — PR titles, commit messages
 
 ## Step 1 — Enable the webhook platform
 
-Add the following to your `~/.hermes/config.yaml`:
+Add the following to your `~/.indagis/config.yaml`:
 
 ```yaml
 platforms:

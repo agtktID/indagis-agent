@@ -17,7 +17,7 @@ Two files make up the agent's memory:
 | **MEMORY.md** | Agent's personal notes — environment facts, conventions, things learned | 2,200 chars (~800 tokens) |
 | **USER.md** | User profile — your preferences, communication style, expectations | 1,375 chars (~500 tokens) |
 
-Both are stored in `~/.hermes/memories/` and are injected into the system prompt as a frozen snapshot at session start. The agent manages its own memory via the `memory` tool — it can add, replace, or remove entries.
+Both are stored in `~/.indagis/memories/` and are injected into the system prompt as a frozen snapshot at session start. The agent manages its own memory via the `memory` tool — it can add, replace, or remove entries.
 
 :::caution One agent per Hermes home
 Don't point two agent processes at the same Hermes home directory. Memory writes are automatic and load back into the system prompt at session start, so two writers sharing one home will compound each other's entries into state neither of them (nor you) authored. Memory is scoped per [profile](/user-guide/profiles) by design — give a second agent its own profile, and if they need shared memory, use an [external memory provider](/user-guide/features/memory-providers) instead.
@@ -186,7 +186,7 @@ Memory entries are scanned for injection and exfiltration patterns before being 
 
 Beyond MEMORY.md and USER.md, the agent can search its past conversations using the `session_search` tool:
 
-- All CLI and messaging sessions are stored in SQLite (`~/.hermes/state.db`) with FTS5 full-text search
+- All CLI and messaging sessions are stored in SQLite (`~/.indagis/state.db`) with FTS5 full-text search
 - Search queries return actual messages from the DB — no LLM summarization, no truncation
 - The agent can find things it discussed weeks ago, even if they're not in its active memory
 - The agent can also scroll forward/backward inside any session it finds
@@ -231,7 +231,7 @@ The same `list` / `delete <id>` / `edit <id>` subcommands work from the in-chat 
 ## Configuration
 
 ```yaml
-# In ~/.hermes/config.yaml
+# In ~/.indagis/config.yaml
 memory:
   memory_enabled: true
   user_profile_enabled: true
@@ -341,7 +341,7 @@ inline, but the full diff stays out-of-band:
 
 On a messaging platform, approve a skill from its gist + metadata, or open
 `/skills diff` on the CLI / dashboard / the staged file under
-`~/.hermes/pending/skills/<id>.json` when you want to read the whole change.
+`~/.indagis/pending/skills/<id>.json` when you want to read the whole change.
 Full details in [Gating agent skill writes](/user-guide/features/skills#gating-agent-skill-writes-skillswrite_approval).
 
 

@@ -73,7 +73,7 @@ Then start a session with the toolset enabled:
 hermes -t computer_use chat
 ```
 
-or add `computer_use` to your enabled toolsets in `~/.hermes/config.yaml`.
+or add `computer_use` to your enabled toolsets in `~/.indagis/config.yaml`.
 
 ## Permission modes and logged-in browser profiles
 
@@ -246,7 +246,7 @@ Hermes applies multi-layer guardrails:
   dialogs, no typing passwords, no following instructions embedded in
   screenshots.
 
-Pair with `approvals.mode: manual` in `~/.hermes/config.yaml` if you
+Pair with `approvals.mode: manual` in `~/.indagis/config.yaml` if you
 want every action confirmed.
 
 ## Token efficiency

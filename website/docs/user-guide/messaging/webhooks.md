@@ -46,7 +46,7 @@ Follow the prompts to enable webhooks, set the port, and set a global HMAC secre
 
 ### Via environment variables
 
-Add to `~/.hermes/.env`:
+Add to `~/.indagis/.env`:
 
 ```bash
 WEBHOOK_ENABLED=true
@@ -83,7 +83,7 @@ Routes define how different webhook sources are handled. Each route is a named e
 | `profile` | No | Profile authorized to execute this route when `gateway.multiplex_profiles` is enabled. Omit it for a default-profile-only route; set a profile name (for example `coder`) to bind the route and its secret to `/p/coder/webhooks/<route>`. |
 | `prompt` | No | Template string with dot-notation payload access (e.g. `{pull_request.title}`). If omitted, the full JSON payload is dumped into the prompt. Payload fields are untrusted — see [Authenticated does not mean trusted](#authenticated-does-not-mean-trusted). |
 | `filters` | No | Declarative payload filters evaluated after auth/body/event filtering and before agent or direct delivery work. Non-matches return `{"status":"ignored","reason":"filter"}` with HTTP 200. |
-| `script` | No | Filter/transform script under `~/.hermes/scripts/`. The webhook payload is passed as JSON on stdin. JSON object stdout replaces the payload before templating; text stdout is exposed as `script_output`; empty stdout, `[SILENT]`, or a nonzero exit code ignores the webhook. |
+| `script` | No | Filter/transform script under `~/.indagis/scripts/`. The webhook payload is passed as JSON on stdin. JSON object stdout replaces the payload before templating; text stdout is exposed as `script_output`; empty stdout, `[SILENT]`, or a nonzero exit code ignores the webhook. |
 | `skills` | No | List of skill names to load for the agent run. |
 | `deliver` | No | Where to send the response: `github_comment`, `telegram`, `discord`, `slack`, `signal`, `sms`, `whatsapp`, `matrix`, `mattermost`, `homeassistant`, `email`, `dingtalk`, `feishu`, `wecom`, `weixin`, `bluebubbles`, `qqbot`, or `log` (default). |
 | `deliver_extra` | No | Additional delivery config — keys depend on `deliver` type (e.g. `repo`, `pr_number`, `chat_id`). Values support the same `{dot.notation}` templates as `prompt`. |
@@ -144,7 +144,7 @@ platforms:
                 - field: "payload.priority"
                   equals: 4
                 - field: "payload.project_id"
-                  in_file: "~/.hermes/data/todoist/watchlist.json"
+                  in_file: "~/.indagis/data/todoist/watchlist.json"
           prompt: "Todoist task changed: {payload.content}"
 ```
 
@@ -163,12 +163,12 @@ Field paths use dot notation. `payload.foo` reads from a top-level `payload` obj
 
 ### Script Filters and Transforms
 
-Use `script` when declarative filters are not enough. Scripts must live under `~/.hermes/scripts/` for the active profile; relative paths resolve there, and path traversal outside that directory is blocked. `.sh` and `.bash` scripts run with bash, and all other extensions run with the current Python interpreter.
+Use `script` when declarative filters are not enough. Scripts must live under `~/.indagis/scripts/` for the active profile; relative paths resolve there, and path traversal outside that directory is blocked. `.sh` and `.bash` scripts run with bash, and all other extensions run with the current Python interpreter.
 
 The route payload is sent to stdin as JSON:
 
 ```python
-# ~/.hermes/scripts/todoist-hermes-label.py
+# ~/.indagis/scripts/todoist-hermes-label.py
 import json
 import sys
 
@@ -243,7 +243,7 @@ This walkthrough sets up automatic code review on every pull request.
 
 ### 2. Add the route config
 
-Add the `github-pr` route to your `~/.hermes/config.yaml` as shown in the example above.
+Add the `github-pr` route to your `~/.indagis/config.yaml` as shown in the example above.
 
 ### 3. Ensure `gh` CLI is authenticated
 
@@ -434,7 +434,7 @@ hermes webhook test github-issues --payload '{"issue": {"number": 42, "title": "
 
 ### How dynamic subscriptions work
 
-- Subscriptions are stored in `~/.hermes/webhook_subscriptions.json`
+- Subscriptions are stored in `~/.indagis/webhook_subscriptions.json`
 - The webhook adapter hot-reloads this file on each incoming request (mtime-gated, negligible overhead)
 - Static routes from `config.yaml` always take precedence over dynamic ones with the same name
 - Dynamic subscriptions use the same route format and capabilities as static routes (events, prompt templates, skills, delivery)

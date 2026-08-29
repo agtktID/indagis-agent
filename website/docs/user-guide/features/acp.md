@@ -40,7 +40,7 @@ It intentionally excludes things that do not fit typical editor UX, such as mess
 Install Hermes normally, then add the ACP extra from the install checkout:
 
 ```bash
-cd ~/.hermes/hermes-agent && uv pip install -e '.[acp]'
+cd ~/.indagis/hermes-agent && uv pip install -e '.[acp]'
 ```
 
 This installs the `agent-client-protocol` dependency and enables:
@@ -89,7 +89,7 @@ This is the standalone command. The terminal-auth flow (`hermes acp --setup`) al
 
 What it does:
 
-- Installs Node.js 26 into `~/.hermes/node/` if missing
+- Installs Node.js 26 into `~/.indagis/node/` if missing
 - `npm install -g agent-browser @askjo/camofox-browser` into that prefix (no sudo needed — `npm`'s `--prefix` points at the user-writable Hermes-managed Node)
 - Installs Playwright Chromium, or uses a detected system Chrome/Chromium when available
 
@@ -217,7 +217,7 @@ Configure Hermes as a custom agent server in Zed settings:
 
 Prerequisites:
 
-- Configure Hermes provider credentials first with `hermes model`, or set them in `~/.hermes/.env` / `~/.hermes/config.yaml`.
+- Configure Hermes provider credentials first with `hermes model`, or set them in `~/.indagis/.env` / `~/.indagis/config.yaml`.
 
 ### JetBrains
 
@@ -282,10 +282,10 @@ command from everyone else.
 
 ACP mode uses the same Hermes configuration as the CLI:
 
-- `~/.hermes/.env`
-- `~/.hermes/config.yaml`
-- `~/.hermes/skills/`
-- `~/.hermes/state.db`
+- `~/.indagis/.env`
+- `~/.indagis/config.yaml`
+- `~/.indagis/skills/`
+- `~/.indagis/state.db`
 
 Provider resolution uses Hermes' normal runtime resolver, so ACP inherits the currently configured provider and credentials. Hermes also advertises a terminal auth method (`--setup`) for first-run ACP clients; this opens Hermes' interactive model/provider setup.
 
@@ -367,7 +367,7 @@ Check:
 
 - For manual/local development, verify the host command points to `hermes acp`.
 - Hermes is installed and on your PATH.
-- The ACP extra is installed (`cd ~/.hermes/hermes-agent && uv pip install -e '.[acp]'`).
+- The ACP extra is installed (`cd ~/.indagis/hermes-agent && uv pip install -e '.[acp]'`).
 
 ### ACP starts but immediately errors
 
@@ -388,7 +388,7 @@ ACP mode uses Hermes' existing provider setup. Configure credentials with:
 hermes model
 ```
 
-or by editing `~/.hermes/.env`. The terminal auth flow (`hermes acp --setup`) can also trigger the interactive provider/model setup.
+or by editing `~/.indagis/.env`. The terminal auth flow (`hermes acp --setup`) can also trigger the interactive provider/model setup.
 
 ## See also
 

@@ -24,7 +24,7 @@ Vertex has **no static API key** for the standard endpoint. Every request needs 
 
 ```bash
 # Option A — service account JSON (recommended for servers / gateways)
-echo "VERTEX_CREDENTIALS_PATH=/path/to/service-account.json" >> ~/.hermes/.env
+echo "VERTEX_CREDENTIALS_PATH=/path/to/service-account.json" >> ~/.indagis/.env
 
 # Option B — Application Default Credentials (good for local dev)
 gcloud auth application-default login
@@ -44,10 +44,10 @@ hermes chat
 
 Vertex splits its settings by sensitivity:
 
-- The **credential path** is a pointer to a secret and lives in `~/.hermes/.env`.
-- **Project ID and region** are non-secret routing settings and live in `~/.hermes/config.yaml`.
+- The **credential path** is a pointer to a secret and lives in `~/.indagis/.env`.
+- **Project ID and region** are non-secret routing settings and live in `~/.indagis/config.yaml`.
 
-`~/.hermes/.env`:
+`~/.indagis/.env`:
 
 ```bash
 # One of these (checked in this order); omit both to use ADC:
@@ -55,7 +55,7 @@ VERTEX_CREDENTIALS_PATH=/path/to/service-account.json
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
 ```
 
-`~/.hermes/config.yaml`:
+`~/.indagis/config.yaml`:
 
 ```yaml
 model:
@@ -124,7 +124,7 @@ The doctor reports whether Vertex credentials can be resolved (service-account p
 
 ### "Vertex AI credentials could not be resolved"
 
-Hermes found neither a service-account JSON nor working ADC. Either set `VERTEX_CREDENTIALS_PATH` in `~/.hermes/.env`, or run `gcloud auth application-default login`. If your project isn't embedded in the credentials, set `vertex.project_id` in `config.yaml`.
+Hermes found neither a service-account JSON nor working ADC. Either set `VERTEX_CREDENTIALS_PATH` in `~/.indagis/.env`, or run `gcloud auth application-default login`. If your project isn't embedded in the credentials, set `vertex.project_id` in `config.yaml`.
 
 ### `google-auth` not installed
 

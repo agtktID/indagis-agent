@@ -26,7 +26,7 @@ The `mcpServers` block in your `~/.claude.json` maps to `mcp_servers` in Hermes'
 
 1. MCP support ships with the standard install — no extra step needed.
 
-2. Add an MCP server to `~/.hermes/config.yaml`:
+2. Add an MCP server to `~/.indagis/config.yaml`:
 
 ```yaml
 mcp_servers:
@@ -80,7 +80,7 @@ merging a PR.
 Catalog entries can require:
 
 - **API key** — Hermes prompts at install time and writes the value to
-  `~/.hermes/.env`. Non-secret values (base URLs) go to the same file.
+  `~/.indagis/.env`. Non-secret values (base URLs) go to the same file.
 - **OAuth** (remote MCP) — written as `auth: oauth` in your config; the MCP
   client opens a browser on first connection.
 - **OAuth** (third-party provider like Google/GitHub) — Hermes points you at
@@ -150,7 +150,7 @@ to install the latest Hermes when you see that.
 
 Inside an entry's `transport.command`, `transport.args`, `transport.url`,
 and `headers`, `${VAR}` placeholders are resolved at server-connect time
-from environment variables (which include everything in `~/.hermes/.env`).
+from environment variables (which include everything in `~/.indagis/.env`).
 This is useful when a catalog entry wants to reference a value the user
 configured elsewhere — e.g. `${HOME}/foo` or `${MY_PROVIDER_TOKEN}`.
 
@@ -237,7 +237,7 @@ mcp_servers:
     auth: oauth
 ```
 
-On first connect, Hermes prints an authorize URL, opens your browser when possible, and waits for the OAuth callback on a local loopback port. Tokens are cached at `~/.hermes/mcp-tokens/<server>.json` with 0o600 perms; subsequent runs reuse them silently until refresh fails.
+On first connect, Hermes prints an authorize URL, opens your browser when possible, and waits for the OAuth callback on a local loopback port. Tokens are cached at `~/.indagis/mcp-tokens/<server>.json` with 0o600 perms; subsequent runs reuse them silently until refresh fails.
 
 **Remote / headless hosts.** When Hermes runs on a different machine than your browser, the loopback callback can't reach your laptop. Two ways to complete the flow:
 
@@ -275,7 +275,7 @@ mcp_servers:
 
 Then run `hermes mcp login googledrive` — with the pre-registered client, Hermes skips registration and runs the normal browser authorization flow.
 
-**Pitfall — config auto-reload race.** When you edit `~/.hermes/config.yaml` from inside a running Hermes session, the CLI auto-reloads MCP connections with a 30s timeout. That's not enough for an interactive OAuth flow. Add the entry, then run `hermes mcp login <server>` from a fresh terminal — it waits the full 5 minutes for you to complete auth.
+**Pitfall — config auto-reload race.** When you edit `~/.indagis/config.yaml` from inside a running Hermes session, the CLI auto-reloads MCP connections with a 30s timeout. That's not enough for an interactive OAuth flow. Add the entry, then run `hermes mcp login <server>` from a fresh terminal — it waits the full 5 minutes for you to complete auth.
 
 ## mTLS / client certificates
 
@@ -314,7 +314,7 @@ You can also keep the cert and key fully separate via `client_cert` (combined PE
 
 ## Basic configuration reference
 
-Hermes reads MCP config from `~/.hermes/config.yaml` under `mcp_servers`.
+Hermes reads MCP config from `~/.indagis/config.yaml` under `mcp_servers`.
 
 ### Common keys
 
@@ -669,7 +669,7 @@ Check:
 
 ```bash
 # Verify MCP deps are installed (already included in standard install)
-cd ~/.hermes/hermes-agent && uv pip install -e ".[mcp]"
+cd ~/.indagis/hermes-agent && uv pip install -e ".[mcp]"
 
 node --version
 npx --version

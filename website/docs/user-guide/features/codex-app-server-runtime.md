@@ -188,7 +188,7 @@ To check current state without changing anything:
 /codex-runtime
 ```
 
-You can also set it manually in `~/.hermes/config.yaml`:
+You can also set it manually in `~/.indagis/config.yaml`:
 ```yaml
 model:
   openai_runtime: codex_app_server   # default is "auto" (= Hermes runtime)
@@ -262,7 +262,7 @@ When this runtime is on with the `openai-codex` provider, **auxiliary tasks (tit
 
 This isn't specific to `codex_app_server` — it's true for the existing `codex_responses` path too — but it's more visible here because you're explicitly opting in for the subscription billing.
 
-To route specific aux tasks to a cheaper / different model, set explicit overrides in `~/.hermes/config.yaml`:
+To route specific aux tasks to a cheaper / different model, set explicit overrides in `~/.indagis/config.yaml`:
 
 ```yaml
 auxiliary:
@@ -309,11 +309,11 @@ Anything you add **inside** the managed block will get clobbered on the next mig
 
 By default, Hermes points the codex subprocess at `~/.codex/` regardless of which Hermes profile is active. This means `hermes -p work` and `hermes -p personal` share the same Codex auth, plugins, and config. For most users this is the right behavior — it matches what running `codex` CLI directly would do.
 
-If you want per-profile Codex isolation (separate auth, separate installed plugins, separate config), set `CODEX_HOME` explicitly per profile. The cleanest way is to point at a directory under your `HERMES_HOME`:
+If you want per-profile Codex isolation (separate auth, separate installed plugins, separate config), set `CODEX_HOME` explicitly per profile. The cleanest way is to point at a directory under your `INDAGIS_HOME`:
 
 ```bash
 # Inside the work profile, you might wrap hermes:
-CODEX_HOME=~/.hermes/profiles/work/codex hermes chat
+CODEX_HOME=~/.indagis/profiles/work/codex hermes chat
 ```
 
 You'll need to re-run `codex login` once with that `CODEX_HOME` set so the OAuth tokens land in the profile-scoped location. After that, `hermes -p work` will operate on isolated Codex state.

@@ -15,7 +15,7 @@ Your agent handles requests with its full toolset (terminal, file operations, we
 
 ### 1. Enable the API server
 
-Add to `~/.hermes/.env`:
+Add to `~/.indagis/.env`:
 
 ```bash
 API_SERVER_ENABLED=true
@@ -522,7 +522,7 @@ profile through a `/p/<profile>/` URL prefix — and **authentication is bound
 to the routed profile**:
 
 - Requests to `/p/<profile>/v1/...` must present that profile's own
-  `API_SERVER_KEY` (from `~/.hermes/profiles/<profile>/.env`). The default
+  `API_SERVER_KEY` (from `~/.indagis/profiles/<profile>/.env`). The default
   listener's key is rejected on named-profile prefixes.
 - Unprefixed routes and `/p/default/...` keep using the default profile's key.
 - A named profile with no `API_SERVER_KEY` of its own fails closed — its
@@ -554,7 +554,7 @@ The API server gives full access to hermes-agent's toolset, **including terminal
 
 ### config.yaml
 
-The same settings can live in `~/.hermes/config.yaml` under a nested `gateway.api_server:` section:
+The same settings can live in `~/.indagis/config.yaml` under a nested `gateway.api_server:` section:
 
 ```yaml
 gateway:
@@ -626,13 +626,13 @@ hermes profile create bob
 
 # Configure each profile's API server on a different port. API_SERVER_* are env
 # vars (not config.yaml keys), so write them to each profile's .env:
-cat >> ~/.hermes/profiles/alice/.env <<EOF
+cat >> ~/.indagis/profiles/alice/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8643
 API_SERVER_KEY=alice-secret
 EOF
 
-cat >> ~/.hermes/profiles/bob/.env <<EOF
+cat >> ~/.indagis/profiles/bob/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8644
 API_SERVER_KEY=bob-secret

@@ -53,7 +53,7 @@ Use `/compress` regularly during long sessions rather than waiting for problems,
 **What it means:** Hermes may have auto-detected the wrong context length for your model. Set it explicitly:
 
 ```yaml
-# In ~/.hermes/config.yaml
+# In ~/.indagis/config.yaml
 model:
   default: your-model-name
   context_length: 131072  # your model's actual context window
@@ -107,7 +107,7 @@ You can also help directly: say "remember this for next time" after a productive
 **Check:**
 
 - `/skills` — browse installed skills (a skill the agent relied on may have been removed).
-- `/reload-skills` — re-scan `~/.hermes/skills/` for newly installed or removed skills.
+- `/reload-skills` — re-scan `~/.indagis/skills/` for newly installed or removed skills.
 - `/tools list` — see available tools; a tool disabled earlier with `/tools disable` stays out of the agent's toolset for the session.
 - `/context all` — per-skill and per-toolset cost listing, which doubles as an inventory of what's actually loaded.
 

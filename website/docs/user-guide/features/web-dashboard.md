@@ -66,7 +66,7 @@ profile (the pre-unification behavior — useful if you deliberately expose
 different profiles' dashboards with different auth).
 
 The **Chat** tab follows the switcher too: a scoped chat spawns its PTY
-child with the selected profile's `HERMES_HOME`, so the conversation runs
+child with the selected profile's `INDAGIS_HOME`, so the conversation runs
 with that profile's model, skills, memory, and session history. Switching
 profiles starts a fresh terminal session.
 
@@ -80,10 +80,10 @@ across profiles with its own filter).
 The default `hermes-agent` install does not ship the HTTP stack or PTY helper — those are optional extras. The **web dashboard** needs FastAPI and Uvicorn (`web` extra). The **Chat** tab also needs `ptyprocess` to spawn the embedded TUI behind a pseudo-terminal (`pty` extra on POSIX). Install both with:
 
 ```bash
-cd ~/.hermes/hermes-agent && uv pip install -e ".[web,pty]"
+cd ~/.indagis/hermes-agent && uv pip install -e ".[web,pty]"
 ```
 
-The `web` extra pulls in FastAPI/Uvicorn; `pty` pulls in `ptyprocess` (POSIX) or `pywinpty` (native Windows — note that the embedded TUI itself still requires WSL). `cd ~/.hermes/hermes-agent && uv pip install -e ".[all]"` includes both extras and is the easiest path if you also want messaging/voice/etc.
+The `web` extra pulls in FastAPI/Uvicorn; `pty` pulls in `ptyprocess` (POSIX) or `pywinpty` (native Windows — note that the embedded TUI itself still requires WSL). `cd ~/.indagis/hermes-agent && uv pip install -e ".[all]"` includes both extras and is the easiest path if you also want messaging/voice/etc.
 
 When you run `hermes dashboard` without the dependencies, it will tell you what to install. If the frontend hasn't been built yet and `npm` is available, it builds automatically on first launch.
 
@@ -121,7 +121,7 @@ The **Chat** tab embeds the full Hermes TUI (the same interface you get from `he
 **Prerequisites:**
 
 - Node.js (same requirement as `hermes --tui`; the TUI bundle is built on first launch)
-- `ptyprocess` — installed by the `pty` extra (`cd ~/.hermes/hermes-agent && uv pip install -e ".[web,pty]"`, or `[all]` covers both)
+- `ptyprocess` — installed by the `pty` extra (`cd ~/.indagis/hermes-agent && uv pip install -e ".[web,pty]"`, or `[all]` covers both)
 - POSIX kernel (Linux, macOS, or WSL2).  The `/chat` terminal pane specifically needs a POSIX PTY — native Windows Python has no equivalent, so on a native Windows install the rest of the dashboard (sessions, jobs, metrics, config editor) works but the `/chat` tab will show a banner telling you to use WSL2 for that feature.
 
 Close the browser tab and the PTY is reaped cleanly on the server. Re-opening spawns a fresh session.
@@ -152,7 +152,7 @@ ExecStart=/path/to/venv/bin/python -m hermes_cli.main dashboard \
     --host 0.0.0.0 --port 9119 --no-open
 ```
 
-with `~/.hermes/.env` containing:
+with `~/.indagis/.env` containing:
 
 ```bash
 HERMES_DASHBOARD_BASIC_AUTH_USERNAME=admin
@@ -285,7 +285,7 @@ Create and manage [profiles](../profiles.md) — isolated Hermes instances with 
 
 ### Skills
 
-Browse, search, and toggle installed skills and toolsets, and install new ones from the hub. Skills are loaded from `~/.hermes/skills/` and grouped by category.
+Browse, search, and toggle installed skills and toolsets, and install new ones from the hub. Skills are loaded from `~/.indagis/skills/` and grouped by category.
 
 - **Search** — filter installed skills and toolsets by name, description, or category
 - **Category filter** — click category pills to narrow the list (e.g. MLOps, MCP, Red Teaming, AI)
@@ -351,7 +351,7 @@ the API server and webhook endpoints) with its live connection status.
 - **Configure** — open a per-platform form with exactly the fields that channel needs (bot token, app token, server URL, allowlist, etc.). Secrets render as password inputs and are stored redacted; leaving a field blank keeps the existing value. Required fields are marked and validated. A "Setup guide" link points to the platform's credential docs.
 - **Enable / disable** — toggle a channel on or off. The credential stays on disk; only the active state changes.
 - **Test** — check whether the channel is configured, enabled, and reporting a live connection from the gateway.
-- **Restart gateway** — credentials are written to `~/.hermes/.env` and the enabled flag to `config.yaml`; the gateway connects each enabled channel on its next restart, which you can trigger right from the page.
+- **Restart gateway** — credentials are written to `~/.indagis/.env` and the enabled flag to `config.yaml`; the gateway connects each enabled channel on its next restart, which you can trigger right from the page.
 
 ![Channels admin page — every messaging platform with status, enable toggles, and per-platform setup forms](/img/dashboard/admin-channels.png)
 
@@ -392,7 +392,7 @@ You → /reload
   Reloaded .env (3 var(s) updated)
 ```
 
-This re-reads `~/.hermes/.env` into the running process's environment. Useful when you've added a new provider key via the dashboard and want to use it immediately.
+This re-reads `~/.indagis/.env` into the running process's environment. Useful when you've added a new provider key via the dashboard and want to use it immediately.
 
 ## REST API
 
@@ -403,7 +403,7 @@ The management endpoint families — `/api/config`, `/api/env`, `/api/skills`,
 `/api/tools/toolsets`, `/api/mcp`, and `/api/model/{info,options,auxiliary,set}` —
 accept an optional `?profile=<name>` query parameter (or `"profile"` in the
 JSON body for writes) that scopes the read/write to that profile's
-`HERMES_HOME`. Omitted = the dashboard's own profile. Unknown profile names
+`INDAGIS_HOME`. Omitted = the dashboard's own profile. Unknown profile names
 return `404`. The `/api/pty` WebSocket accepts the same parameter to spawn
 a chat under the selected profile.
 :::
@@ -592,12 +592,12 @@ Because every login is verified against Nous Portal and protected by your Nous a
 
 To use the Nous provider you need an OAuth client ID (shape `agent:{id}`). There are two ways to get one:
 
-- **CLI — `hermes dashboard register`.** Run it on the host where the dashboard lives. It resolves your existing Nous login (run `hermes setup` first if you're not logged in), registers a self-hosted OAuth client with the Portal, and writes `HERMES_DASHBOARD_OAUTH_CLIENT_ID` into `~/.hermes/.env` for you. Optional flags: `--name` (a human-readable label, otherwise auto-generated) and `--redirect-uri` (a public HTTPS callback URL for an internet-facing host).
+- **CLI — `hermes dashboard register`.** Run it on the host where the dashboard lives. It resolves your existing Nous login (run `hermes setup` first if you're not logged in), registers a self-hosted OAuth client with the Portal, and writes `HERMES_DASHBOARD_OAUTH_CLIENT_ID` into `~/.indagis/.env` for you. Optional flags: `--name` (a human-readable label, otherwise auto-generated) and `--redirect-uri` (a public HTTPS callback URL for an internet-facing host).
 
   ```bash
   hermes dashboard register
   # ✓ Registered dashboard "swift_falcon"
-  # …writes HERMES_DASHBOARD_OAUTH_CLIENT_ID to ~/.hermes/.env
+  # …writes HERMES_DASHBOARD_OAUTH_CLIENT_ID to ~/.indagis/.env
   ```
 
 - **GUI — the Local Dashboards page.** Open [`/local-dashboards`](https://portal.nousresearch.com/local-dashboards) in the Nous Portal to register, name, manage, and revoke self-hosted dashboards from the browser. Copy the resulting `agent:{id}` client ID into `HERMES_DASHBOARD_OAUTH_CLIENT_ID` (env) or `dashboard.oauth.client_id` (config.yaml). This is also where you revoke a dashboard registered via the CLI.
@@ -620,7 +620,7 @@ dashboard:
 |---------|-----------|--------|----------------|
 | `HERMES_DASHBOARD_OAUTH_CLIENT_ID` | `dashboard.oauth.client_id` | `agent:{instance_id}` | `hermes dashboard register` |
 
-Per the Hermes Agent convention (`~/.hermes/.env` is for API keys / secrets only), **`config.yaml` is the recommended place to set these values** for local dev, on-prem, and any deployment you control directly. The environment-variable path exists so a hosting platform's secret injection can push per-deploy `client_id`s without anyone having to edit `config.yaml` inside the image — that's its primary purpose.
+Per the Hermes Agent convention (`~/.indagis/.env` is for API keys / secrets only), **`config.yaml` is the recommended place to set these values** for local dev, on-prem, and any deployment you control directly. The environment-variable path exists so a hosting platform's secret injection can push per-deploy `client_id`s without anyone having to edit `config.yaml` inside the image — that's its primary purpose.
 
 Empty environment values are treated as unset, so a provisioned-but-not-populated platform secret can't accidentally shadow a valid `config.yaml` entry.
 
@@ -646,13 +646,13 @@ There is no unauthenticated public-bind option — to keep it local, bind
 
 From a logged-in Hermes install to a Nous-gated dashboard in three steps.
 
-**1. Log in and register the dashboard.** `hermes dashboard register` uses your existing Nous login to provision an OAuth client and writes `HERMES_DASHBOARD_OAUTH_CLIENT_ID` into `~/.hermes/.env` for you:
+**1. Log in and register the dashboard.** `hermes dashboard register` uses your existing Nous login to provision an OAuth client and writes `HERMES_DASHBOARD_OAUTH_CLIENT_ID` into `~/.indagis/.env` for you:
 
 ```bash
 hermes setup            # if you're not already logged into Nous Portal
 hermes dashboard register
 # ✓ Registered dashboard "swift_falcon"
-# …writes HERMES_DASHBOARD_OAUTH_CLIENT_ID to ~/.hermes/.env
+# …writes HERMES_DASHBOARD_OAUTH_CLIENT_ID to ~/.indagis/.env
 ```
 
 **2. Run the dashboard on a reachable address.** A non-loopback bind engages the OAuth gate, and the `client_id` just written activates the `nous` provider:
@@ -720,18 +720,18 @@ The `/auth/password-login` endpoint is rate-limited per client IP (default 10 at
 
 From nothing to a password-gated dashboard on a trusted network in three steps.
 
-**1. Set credentials in `~/.hermes/.env`.** Hash the password so no plaintext sits at rest, and set a stable signing secret so sessions survive restarts:
+**1. Set credentials in `~/.indagis/.env`.** Hash the password so no plaintext sits at rest, and set a stable signing secret so sessions survive restarts:
 
 ```bash
 # Compute a scrypt hash of your chosen password:
 HASH=$(python -c "from plugins.dashboard_auth.basic import hash_password; print(hash_password('choose-a-strong-password'))")
 
-cat >> ~/.hermes/.env <<EOF
+cat >> ~/.indagis/.env <<EOF
 HERMES_DASHBOARD_BASIC_AUTH_USERNAME=admin
 HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH=$HASH
 HERMES_DASHBOARD_BASIC_AUTH_SECRET=$(openssl rand -base64 32)
 EOF
-chmod 600 ~/.hermes/.env
+chmod 600 ~/.indagis/.env
 ```
 
 **2. Run the dashboard on a reachable address.** A non-loopback bind engages the gate, and the username + hash activate the `basic` provider:
@@ -934,14 +934,14 @@ The sidebar widget shows `Logged in as <user_id…> via nous` with a logout icon
 
 ### Audit log
 
-Every login start, success, failure, and session-verify failure is written as a JSON line to `$HERMES_HOME/logs/dashboard-auth.log`. Sensitive fields (`access_token`, `refresh_token`, `code`, `code_verifier`, `state`, `Authorization` header) are redacted before logging.
+Every login start, success, failure, and session-verify failure is written as a JSON line to `$INDAGIS_HOME/logs/dashboard-auth.log`. Sensitive fields (`access_token`, `refresh_token`, `code`, `code_verifier`, `state`, `Authorization` header) are redacted before logging.
 
 ### Custom providers
 
 To plug a non-Nous OAuth provider (e.g. Google, GitHub, custom OIDC), create a plugin that registers a `DashboardAuthProvider`:
 
 ```python
-# ~/.hermes/plugins/dashboard-auth-myidp/__init__.py
+# ~/.indagis/plugins/dashboard-auth-myidp/__init__.py
 from hermes_cli.dashboard_auth import DashboardAuthProvider, Session, LoginStart
 
 class MyIdPProvider(DashboardAuthProvider):
@@ -1003,14 +1003,14 @@ The recipe below uses the username/password path because it's the quickest to st
 ### On the backend (the remote machine)
 
 ```bash
-# 1. Set the dashboard login credentials in ~/.hermes/.env (secrets file, 0600).
-cat >> ~/.hermes/.env <<'EOF'
+# 1. Set the dashboard login credentials in ~/.indagis/.env (secrets file, 0600).
+cat >> ~/.indagis/.env <<'EOF'
 HERMES_DASHBOARD_BASIC_AUTH_USERNAME=admin
 HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=choose-a-strong-password
 # Recommended: a stable signing secret so sessions survive restarts.
 HERMES_DASHBOARD_BASIC_AUTH_SECRET=$(openssl rand -base64 32)
 EOF
-chmod 600 ~/.hermes/.env
+chmod 600 ~/.indagis/.env
 
 # 2. Run the dashboard bound to a reachable address. The non-loopback bind
 #    engages the auth gate; the username/password provider handles login.
@@ -1019,7 +1019,7 @@ hermes dashboard --no-open --host 0.0.0.0 --port 9119
 
 Prefer no plaintext at rest? Use `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` with a scrypt hash instead — see [Username/password provider](#usernamepassword-provider-no-oauth-idp) for the full surface.
 
-If you run the dashboard as a systemd service, `~/.hermes/.env` is picked up automatically when the unit has `EnvironmentFile=%h/.hermes/.env`, so the credentials are in the environment at boot.
+If you run the dashboard as a systemd service, `~/.indagis/.env` is picked up automatically when the unit has `EnvironmentFile=%h/.hermes/.env`, so the credentials are in the environment at boot.
 
 :::warning
 The dashboard reads and writes your `.env` (API keys, secrets) and can run agent commands. The **username/password** setup shown here is for a trusted network — never expose a password-protected dashboard directly to the open internet. Put it behind a VPN. [Tailscale](https://tailscale.com/) is the clean option: bind to the machine's tailscale IP (`--host <tailscale-ip>`) and use `http://<tailscale-ip>:9119` as the Remote URL. Only devices on your tailnet can reach it. To reach a backend over the public internet, use the **OAuth (Nous Portal)** provider instead.
