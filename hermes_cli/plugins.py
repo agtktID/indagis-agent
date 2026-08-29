@@ -7,8 +7,8 @@ Discovers, loads, and manages plugins from four sources:
 1. **Bundled plugins** – ``<repo>/plugins/<name>/`` (shipped with hermes-agent;
    ``memory/`` and ``context_engine/`` subdirs are excluded — they have their
    own discovery paths)
-2. **User plugins**   – ``~/.hermes/plugins/<name>/``
-3. **Project plugins** – ``./.hermes/plugins/<name>/`` (opt-in via
+2. **User plugins**   – ``~/.indagis/plugins/<name>/`` (or the legacy ``~/.hermes/plugins/``)
+3. **Project plugins** – ``./.indagis/plugins/<name>/`` (or the legacy ``./.hermes/plugins/``) (opt-in via
    ``HERMES_ENABLE_PROJECT_PLUGINS``)
 4. **Pip plugins**     – packages that expose the ``hermes_agent.plugins``
    entry-point group.
@@ -1368,23 +1368,25 @@ class PluginManager:
         logger.debug("  bundled/platforms: %d manifest(s)", len(bundled_platforms))
         manifests.extend(bundled_platforms)
 
-        # 2. User plugins (~/.hermes/plugins/)
+        # 2. User plugins (~/.indagis/plugins/, or the legacy ~/.hermes/plugins/
+        #    if that's what this install's INDAGIS_HOME resolves to)
         user_dir = get_indagis_home() / "plugins"
         logger.debug("Scanning user plugins: %s", user_dir)
         user_manifests = self._scan_directory(user_dir, source="user")
         logger.debug("  user: %d manifest(s)", len(user_manifests))
         manifests.extend(user_manifests)
 
-        # 3. Project plugins (./.hermes/plugins/)
-        if _env_enabled("HERMES_ENABLE_PROJECT_PLUGINS"):
-            project_dir = Path.cwd() / ".hermes" / "plugins"
-            logger.debug("Scanning project plugins: %s", project_dir)
-            project_manifests = self._scan_directory(project_dir, source="project")
-            logger.debug("  project: %d manifest(s)", len(project_manifests))
-            manifests.extend(project_manifests)
+        # 3. Project plugins (./.indagis/plugins/, or the legacy ./.hermes/plugins/)
+        if _env_enabled("INDAGIS_ENABLE_PROJECT_PLUGINS") or _env_enabled("HERMES_ENABLE_PROJECT_PLUGINS"):
+            for _dir_name in (".indagis", ".hermes"):
+                project_dir = Path.cwd() / _dir_name / "plugins"
+                logger.debug("Scanning project plugins: %s", project_dir)
+                project_manifests = self._scan_directory(project_dir, source="project")
+                logger.debug("  project (%s): %d manifest(s)", _dir_name, len(project_manifests))
+                manifests.extend(project_manifests)
         else:
             logger.debug(
-                "Project plugins disabled (set HERMES_ENABLE_PROJECT_PLUGINS=1 to enable)"
+                "Project plugins disabled (set INDAGIS_ENABLE_PROJECT_PLUGINS=1 to enable)"
             )
 
         # 4. Pip / entry-point plugins
