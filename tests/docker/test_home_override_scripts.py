@@ -46,7 +46,7 @@ def test_dashboard_service_resets_home(
         '  tr "\\0" "\\n" < /proc/$pid/environ | grep "^HOME="; '
         'else '
         '  grep -q "export HOME=/opt/data" '
-        '    /opt/hermes/docker/s6-rc.d/dashboard/run && '
+        '    /opt/indagis/docker/s6-rc.d/dashboard/run && '
         '  echo "HOME=/opt/data"; '
         'fi',
         timeout=15,

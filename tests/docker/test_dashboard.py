@@ -90,7 +90,7 @@ except urllib.error.HTTPError as h:
     # single bash string stays clean. The 'PY' delimiter is quoted to
     # disable shell expansion inside the heredoc body.
     probe = (
-        "/opt/hermes/.venv/bin/python - <<'PY'\n"
+        "/opt/indagis/.venv/bin/python - <<'PY'\n"
         f"{py_program}"
         "PY"
     )

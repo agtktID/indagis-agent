@@ -1,6 +1,6 @@
 """Regression tests for the docker-exec privilege-drop shim.
 
-The shim (docker/hermes-exec-shim.sh, installed at /opt/hermes/bin/hermes)
+The shim (docker/hermes-exec-shim.sh, installed at /opt/indagis/bin/hermes)
 exists to prevent the auth.json ownership-mismatch bug where
 `docker exec <c> hermes login` would write /opt/data/auth.json as
 root:root mode 0600, leaving the supervised gateway (UID 10000) unable
@@ -155,7 +155,7 @@ def test_shim_drops_root_to_hermes_uid(sleep_container: str) -> None:
 def test_main_cmd_path_unaffected(built_image: str) -> None:
     """The CMD path (docker run <image> <args>) must still work.
 
-    The shim sits at /opt/hermes/bin earliest on PATH; main-wrapper.sh
+    The shim sits at /opt/indagis/bin earliest on PATH; main-wrapper.sh
     invokes `s6-setuidgid hermes hermes <args>` which resolves `hermes`
     through PATH. With the shim in the way, this could regress if the
     shim recurses or interferes with TTY/exit-code propagation.
