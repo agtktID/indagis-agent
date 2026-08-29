@@ -267,12 +267,12 @@ _HERMES_SUBCOMMANDS = frozenset({
 def _get_profiles_root() -> Path:
     """Return the directory where named profiles are stored.
 
-    Anchored to the hermes root, NOT to the current INDAGIS_HOME
+    Anchored to the default Indagis root, NOT to the current INDAGIS_HOME
     (which may itself be a profile).  This ensures ``coder profile list``
     can see all profiles.
 
     In Docker/custom deployments where INDAGIS_HOME points outside
-    ``~/.hermes``, profiles live under ``INDAGIS_HOME/profiles/`` so
+    ``~/.indagis``, profiles live under ``INDAGIS_HOME/profiles/`` so
     they persist on the mounted volume.
     """
     return _get_default_hermes_home() / "profiles"
@@ -281,8 +281,9 @@ def _get_profiles_root() -> Path:
 def _get_default_hermes_home() -> Path:
     """Return the default (pre-profile) INDAGIS_HOME path.
 
-    In standard deployments this is ``~/.hermes``.
-    In Docker/custom deployments where INDAGIS_HOME is outside ``~/.hermes``
+    In standard deployments this is ``~/.indagis`` (or the legacy ``~/.hermes``
+    if that is what an existing install resolves to).
+    In Docker/custom deployments where INDAGIS_HOME is outside ``~/.indagis``
     (e.g. ``/opt/data``), returns INDAGIS_HOME directly.
     """
     from hermes_constants import get_default_indagis_root
