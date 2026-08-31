@@ -79,7 +79,7 @@ HERMES_OVERLAYS: Dict[str, HermesOverlay] = {
         transport="openai_chat",
         auth_type="oauth_external",
         base_url_override="https://portal.qwen.ai/v1",
-        base_url_env_var="HERMES_QWEN_BASE_URL",
+        base_url_env_var="INDAGIS_QWEN_BASE_URL",
     ),
     "lmstudio": HermesOverlay(
         transport="openai_chat",
