@@ -138,6 +138,34 @@ def test_resolve_qwen_runtime_credentials_missing_access_token(qwen_env):
     assert exc.value.code == "qwen_access_token_missing"
 
 
+def test_resolve_qwen_runtime_credentials_indagis_base_url_override(qwen_env, monkeypatch):
+    monkeypatch.setenv("INDAGIS_QWEN_BASE_URL", "https://indagis.example/v1")
+    tokens = _make_qwen_tokens(access_token="fresh-at")
+    _write_qwen_creds(qwen_env, tokens)
+
+    creds = resolve_qwen_runtime_credentials(refresh_if_expiring=False)
+    assert creds["base_url"] == "https://indagis.example/v1"
+
+
+def test_resolve_qwen_runtime_credentials_hermes_base_url_still_works(qwen_env, monkeypatch):
+    monkeypatch.setenv("HERMES_QWEN_BASE_URL", "https://hermes-legacy.example/v1")
+    tokens = _make_qwen_tokens(access_token="fresh-at")
+    _write_qwen_creds(qwen_env, tokens)
+
+    creds = resolve_qwen_runtime_credentials(refresh_if_expiring=False)
+    assert creds["base_url"] == "https://hermes-legacy.example/v1"
+
+
+def test_resolve_qwen_runtime_credentials_indagis_base_url_takes_precedence(qwen_env, monkeypatch):
+    monkeypatch.setenv("INDAGIS_QWEN_BASE_URL", "https://indagis.example/v1")
+    monkeypatch.setenv("HERMES_QWEN_BASE_URL", "https://hermes-legacy.example/v1")
+    tokens = _make_qwen_tokens(access_token="fresh-at")
+    _write_qwen_creds(qwen_env, tokens)
+
+    creds = resolve_qwen_runtime_credentials(refresh_if_expiring=False)
+    assert creds["base_url"] == "https://indagis.example/v1"
+
+
 # ---------------------------------------------------------------------------
 # get_qwen_auth_status
 # ---------------------------------------------------------------------------
