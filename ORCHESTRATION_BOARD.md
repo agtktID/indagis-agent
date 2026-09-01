@@ -70,5 +70,12 @@ Source of truth: live via SendMessage check-ins with each peer session (no autom
 - Acceptance: every site uses get_indagis_home()/get_process_indagis_home() (matching the pattern already correct elsewhere in the same files); no literal `~/.hermes` construction remains outside the intentional legacy-fallback ladder in hermes_constants.py; CONTRIBUTING.md matches README.md's already-correct convention
 - Merge gate: tests pass, no push without user confirmation in that session's own conversation
 
+### card-010 — CI infra bug: "Deny unrelated histories"/"Check contributors" blocked every PR
+- Owner: agent-orchestrator-9262fa-c4 (this session)
+- Discovery: while checking why PR #28/#29 both failed "All required checks pass" despite unrelated content, found `history-check.yml`/`contributor-check.yml` hardcoded `git merge-base origin/feat/rebranding HEAD` — `feat/rebranding` no longer exists on origin, so the check always failed, on every PR, regardless of content. A prior fix (PR #21, commit c1fccc9d3) existed but landed on branch `test-orphan` instead of `main`, so it never took effect.
+- State: **Review** — fix reapplied on branch `fix/history-check-base-ref-stale-branch`, PR #30 opened
+- Separate, still-open issue (not fixed, repo settings not code): OSV scan step fails with "Code scanning is not enabled for this repository" — needs Settings -> Security -> Code security and analysis, not a PR.
+- Merge gate: user reviews and merges PR #30; once merged, PR #28/#29 should be re-run to confirm they go green without any change to their own content.
+
 ## Standing rule for all owners
 No push to origin/main and no merge without explicit user confirmation in that owner's own conversation. Report to the orchestrator (agent-orchestrator-9262fa-c4) before starting new work outside your current card's scope, so it can be logged here and checked for file overlap with other active cards.
