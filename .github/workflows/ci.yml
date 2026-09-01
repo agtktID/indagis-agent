@@ -124,12 +124,16 @@ jobs:
     needs: detect
     if: needs.detect.outputs.event_name == 'pull_request'
     uses: ./.github/workflows/history-check.yml
+    with:
+      base-ref: ${{ github.event.pull_request.base.ref }}
 
   contributor-check:
     name: Check contributors
     needs: detect
     if: needs.detect.outputs.python == 'true'
     uses: ./.github/workflows/contributor-check.yml
+    with:
+      base-ref: ${{ github.event.pull_request.base.ref }}
 
   uv-lockfile:
     name: Check uv.lock
