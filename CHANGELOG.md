@@ -389,6 +389,60 @@ Telegram bot name, web server title). Presentation only — no logic.
 
 ---
 
+## Phase 5 — Desktop/Tauri technical identity (partial)
+
+**Status:** DONE (this item only). Commit `f23c321f4` on `claude/cool-davinci-2f963a`, PR #27.
+
+**Scope:** Closes the macOS bundle identifier item that Phase 4's
+`reports/proposition-compat-contract-update.md` (brief 2026-08-08, point 4)
+explicitly marked "proposed, pending decision — not in this tranche". The
+`Labscreatis → agtktID` GitHub org rename (`d0b1b57ae`, 2026-08-17) had left
+the README's candidate name (`com.labscreatis.indagis.desktop`) stale
+without resolving the underlying decision; this phase resolves it.
+
+**What changed (7 files):**
+
+| File | Change |
+|---|---|
+| `apps/desktop/package.json` | `appId`: `com.nousresearch.hermes` → `com.indagis.agent`; deep-link protocol scheme: `hermes` → `indagis`; `author`/Linux `maintainer`: `Nous Research` → `Indagis` |
+| `apps/desktop/electron/main.ts` | `setAppUserModelId()` (Windows AUMID) synced to the new `appId`; `HERMES_PROTOCOL` constant value → `indagis`; macOS About-panel `copyright` → `Indagis` (2 call sites) |
+| `apps/desktop/electron/update-remote.ts` | `OFFICIAL_REPO_HTTPS_URL` / `OFFICIAL_REPO_CANONICAL` (passive update-check helper): `NousResearch/hermes-agent` → `agtktID/indagis-agent` — the packaged app's auto-updater was validating against the wrong upstream repo |
+| `apps/desktop/electron/update-remote.test.ts` | fixtures realigned; 6/6 pass |
+| `apps/desktop/src/app/contrib/hooks/use-desktop-integrations.ts` | comment only |
+| `apps/bootstrap-installer/src-tauri/tauri.conf.json` | `identifier`: `com.nousresearch.hermes.setup` → `com.indagis.agent.setup`; `publisher`/`copyright`: `Nous Research` → `Indagis` |
+| `apps/bootstrap-installer/src-tauri/Cargo.toml` | `authors`: `Nous Research <info@nousresearch.com>` → `Indagis` |
+
+**Deliberately NOT touched (still out of scope, per the existing
+Compat-contract policy):** `HERMES_DESKTOP_*` env vars, the `hermes:*`
+internal IPC channel prefix, `HERMES_HOME`/`~/.hermes` path resolution,
+the `.hermes-bootstrap-complete` marker filename, the `hermes serve`
+subprocess label, and the upstream `NousResearch/hermes-agent` /
+`portal.nousresearch.com` URLs (real functional attribution/OAuth
+dependency, being arbitrated separately as of this writing).
+
+**Also closed in the same session, unrelated to branding:**
+- `apps/desktop/package.json` — `electron` devDependency was `^40.10.6`
+  (a range) while `build.electronVersion` still read `40.10.2`; the CVE-fix
+  commit `e075ec961` (`bump electron... to close 7 CVEs`) had bumped the
+  dependency but never synced `electronVersion` or removed the range.
+  `desktop-electron-pin.test.ts` (a dedicated regression guard, see its
+  docstring for the Windows install failure it prevents) caught this;
+  fixed by pinning both to the exact, already-CVE-patched `40.10.6`.
+- `pyproject.toml` — `authors = [{ name = "Nous Research" }]` → `Indagis` in this branch's commit; superseded on merge by `agtktID`, already shipped independently on `main` (commit `ed7b9663a`) by another session before this branch merged — see "Coordination" note below.
+
+**Verification:** `vitest run --project electron` — `update-remote.test.ts`
+(6/6), `desktop-electron-pin.test.ts` (3/3, previously failing),
+`windows-sandbox-fallback.test.ts` + `update-relaunch.test.ts` (unchanged,
+pass). `package.json`/`tauri.conf.json` reparse as valid JSON, `Cargo.toml`
+and `pyproject.toml` as valid TOML. Full report: `.verify/20260901-152621/`.
+NOT verified: a real signed electron-builder/Tauri build, or OS-level
+`indagis://` protocol registration (no macOS/Windows signing environment
+in this sandbox).
+
+**Rollback:** `git revert f23c321f4`.
+
+---
+
 ## Decision log
 
 Decisions taken during the rebranding that diverged from one or more
