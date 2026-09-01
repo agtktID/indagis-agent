@@ -165,7 +165,7 @@ Azure client secrets have a hard expiry. Before yours expires:
 
 1. Create a second client secret in step 2 without deleting the first one.
 2. Update `MSGRAPH_CLIENT_SECRET` in `~/.indagis/.env` with the new value.
-3. Restart the gateway so the new secret is picked up: `hermes gateway restart`.
+3. Restart the gateway so the new secret is picked up: `indagis gateway restart`.
 4. Verify with the smoke test above.
 5. Delete the old secret from the Azure portal.
 

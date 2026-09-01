@@ -14,7 +14,7 @@ Curate LLM training data: dedupe, filter, PII redaction.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/nemo-curator` |
+| Source | Optional — install with `indagis skills install official/mlops/nemo-curator` |
 | Path | `optional-skills/mlops/nemo-curator` |
 | Version | `1.0.1` |
 | Author | Orchestra Research |

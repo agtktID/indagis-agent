@@ -14,7 +14,7 @@ Zero-shot image classification and image-text search.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/clip` |
+| Source | Optional — install with `indagis skills install official/mlops/clip` |
 | Path | `optional-skills/mlops/clip` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

@@ -10,7 +10,7 @@ Run Hermes Agent as a [LINE](https://line.me/) bot via the official LINE Messagi
 
 LINE is the dominant messaging app in Japan, Taiwan, and Thailand. If your users live there, this is how they reach you.
 
-> Run `hermes gateway setup` and pick **LINE** for a guided walk-through.
+> Run `indagis gateway setup` and pick **LINE** for a guided walk-through.
 
 ## How the bot responds
 
@@ -100,7 +100,7 @@ Back in the LINE console:
 ## Step 5: Run the gateway
 
 ```bash
-hermes gateway
+indagis gateway
 ```
 
 The agent log shows:

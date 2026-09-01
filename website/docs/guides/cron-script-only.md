@@ -97,7 +97,7 @@ The agent can pause, resume, edit, and remove jobs the same way it creates them:
 >
 > **Hermes:** *(calls `cronjob(action='pause', job_id='abc123')`)*
 >
-> Paused. Resume with "turn it back on" or via `hermes cron resume abc123`.
+> Paused. Resume with "turn it back on" or via `indagis cron resume abc123`.
 
 > **You:** change it to every 15 minutes
 >
@@ -123,15 +123,15 @@ EOF
 chmod +x ~/.indagis/scripts/memory-watchdog.sh
 
 # 2. Schedule it
-hermes cron create "every 5m" \
+indagis cron create "every 5m" \
   --no-agent \
   --script memory-watchdog.sh \
   --deliver telegram \
   --name "memory-watchdog"
 
 # 3. Verify
-hermes cron list
-hermes cron run <job_id>    # fire it once to test
+indagis cron list
+indagis cron run <job_id>    # fire it once to test
 ```
 
 That's the whole thing. No prompt, no skill, no model.
@@ -167,10 +167,10 @@ We intentionally do NOT honour `#!/...` shebangs — keeping the interpreter set
 Same as all other cron jobs:
 
 ```bash
-hermes cron create "every 5m"        # interval
-hermes cron create "every 2h"
-hermes cron create "0 9 * * *"       # standard cron: 9am daily
-hermes cron create "30m"             # one-shot: run once in 30 minutes
+indagis cron create "every 5m"        # interval
+indagis cron create "every 2h"
+indagis cron create "0 9 * * *"       # standard cron: 9am daily
+indagis cron create "30m"             # one-shot: run once in 30 minutes
 ```
 
 See the [cron feature reference](/user-guide/features/cron) for the full syntax.
@@ -194,13 +194,13 @@ No running gateway is required at script-run time for bot-token platforms (Teleg
 ## Editing and Lifecycle
 
 ```bash
-hermes cron list                                    # see all jobs
-hermes cron pause <job_id>                          # stop firing, keep definition
-hermes cron resume <job_id>
-hermes cron edit <job_id> --schedule "every 10m"    # adjust cadence
-hermes cron edit <job_id> --agent                   # flip to LLM mode
-hermes cron edit <job_id> --no-agent --script …     # flip back
-hermes cron remove <job_id>                         # delete it
+indagis cron list                                    # see all jobs
+indagis cron pause <job_id>                          # stop firing, keep definition
+indagis cron resume <job_id>
+indagis cron edit <job_id> --schedule "every 10m"    # adjust cadence
+indagis cron edit <job_id> --agent                   # flip to LLM mode
+indagis cron edit <job_id> --no-agent --script …     # flip back
+indagis cron remove <job_id>                         # delete it
 ```
 
 Everything that works on LLM jobs (pause, resume, manual trigger, delivery target changes) works on no-agent jobs too.
@@ -220,7 +220,7 @@ df -h / /home 2>/dev/null | awk -v t="$THRESHOLD" '
 EOF
 chmod +x ~/.indagis/scripts/disk-alert.sh
 
-hermes cron create "*/15 * * * *" \
+indagis cron create "*/15 * * * *" \
   --no-agent \
   --script disk-alert.sh \
   --deliver telegram \

@@ -30,7 +30,7 @@ Selection is config-driven via `context.engine` in `config.yaml`. The resolution
 
 Plugin engines are **never auto-activated** — the user must explicitly set `context.engine` to the plugin's name. The default `"compressor"` always uses the built-in.
 
-Configure via `hermes plugins` → Provider Plugins → Context Engine, or edit `config.yaml` directly.
+Configure via `indagis plugins` → Provider Plugins → Context Engine, or edit `config.yaml` directly.
 
 For building a context engine plugin, see [Context Engine Plugins](/developer-guide/context-engine-plugin).
 
@@ -177,13 +177,13 @@ gpt-5.5 on any other provider keeps your global `threshold`. To opt back down to
 the global value:
 
 ```bash
-hermes config set compression.codex_gpt55_autoraise false
+indagis config set compression.codex_gpt55_autoraise false
 ```
 
 To keep the 85% autoraise but hide only the one-time notice:
 
 ```bash
-hermes config set compression.codex_gpt55_autoraise_notice false
+indagis config set compression.codex_gpt55_autoraise_notice false
 ```
 
 ### Codex app-server thread compaction

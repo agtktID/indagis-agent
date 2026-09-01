@@ -45,7 +45,7 @@ cd ~/.indagis/hermes-agent && uv pip install -e '.[acp]'
 
 This installs the `agent-client-protocol` dependency and enables:
 
-- `hermes acp`
+- `indagis acp`
 - `hermes-acp`
 - `python -m acp_adapter`
 
@@ -54,7 +54,7 @@ This installs the `agent-client-protocol` dependency and enables:
 Any of the following starts Hermes in ACP mode:
 
 ```bash
-hermes acp
+indagis acp
 ```
 
 ```bash
@@ -70,8 +70,8 @@ Hermes logs to stderr so stdout remains reserved for ACP JSON-RPC traffic.
 For non-interactive checks:
 
 ```bash
-hermes acp --version
-hermes acp --check
+indagis acp --version
+indagis acp --check
 ```
 
 ### Browser tools (optional)
@@ -81,11 +81,11 @@ Browser tools (`browser_navigate`, `browser_click`, etc.) depend on the
 wheel. Install them with:
 
 ```bash
-hermes acp --setup-browser           # interactive (prompts before ~400 MB download)
-hermes acp --setup-browser --yes     # accept the download non-interactively
+indagis acp --setup-browser           # interactive (prompts before ~400 MB download)
+indagis acp --setup-browser --yes     # accept the download non-interactively
 ```
 
-This is the standalone command. The terminal-auth flow (`hermes acp --setup`) also offers the browser bootstrap as a follow-up question after model selection, so most users never need to run `--setup-browser` directly.
+This is the standalone command. The terminal-auth flow (`indagis acp --setup`) also offers the browser bootstrap as a follow-up question after model selection, so most users never need to run `--setup-browser` directly.
 
 What it does:
 
@@ -117,7 +117,7 @@ spawns Hermes locally as a preset harness. The relay bridge is for joining Buzz
 
 Prerequisites:
 
-- Complete the ACP installation and `hermes acp --check` above.
+- Complete the ACP installation and `indagis acp --check` above.
 - Build `buzz-acp` and the `buzz` CLI from the
   [Buzz repository](https://github.com/block/buzz)
   (`cargo build --release -p buzz-acp`).
@@ -217,11 +217,11 @@ Configure Hermes as a custom agent server in Zed settings:
 
 Prerequisites:
 
-- Configure Hermes provider credentials first with `hermes model`, or set them in `~/.indagis/.env` / `~/.indagis/config.yaml`.
+- Configure Hermes provider credentials first with `indagis model`, or set them in `~/.indagis/.env` / `~/.indagis/config.yaml`.
 
 ### JetBrains
 
-Use an ACP-compatible plugin and point it at `hermes acp` or `hermes-acp`.
+Use an ACP-compatible plugin and point it at `indagis acp` or `hermes-acp`.
 
 ### Buzz Desktop
 
@@ -237,7 +237,7 @@ command -v hermes-acp || command -v hermes
 ```
 
 Recent installs write both `hermes` and `hermes-acp` launchers into
-`~/.local/bin`; running `hermes update` adds the `hermes-acp` launcher to
+`~/.local/bin`; running `indagis update` adds the `hermes-acp` launcher to
 older installs. As a manual fallback, configure Buzz's agent command as
 `hermes` with args `["acp"]`.
 
@@ -246,13 +246,13 @@ older installs. As a manual fallback, configure Buzz's agent command as
 Buzz Desktop (v0.5.1+) renders Hermes' full model menu in the agent's runtime
 settings. The list comes from Hermes itself over ACP: it shows every model
 from providers you have authenticated in Hermes (the same inventory behind
-`hermes model` and the `/model` command), so a model missing from the menu
+`indagis model` and the `/model` command), so a model missing from the menu
 means its provider has no credentials configured on the Hermes side.
 
 Entry IDs take the form `provider:model` (e.g. `openrouter:z-ai/glm-5.1`), or
 `custom:<name>:<model>` for custom OpenAI-compatible endpoints defined in
 `config.yaml`. Picking a model applies to that agent's session; it does not
-change your Hermes-wide default — use `hermes model` for that.
+change your Hermes-wide default — use `indagis model` for that.
 
 #### Keep Buzz agents owner-only
 
@@ -365,7 +365,7 @@ The ACP bridge maps these options onto Hermes' internal approval semantics — `
 
 Check:
 
-- For manual/local development, verify the host command points to `hermes acp`.
+- For manual/local development, verify the host command points to `indagis acp`.
 - Hermes is installed and on your PATH.
 - The ACP extra is installed (`cd ~/.indagis/hermes-agent && uv pip install -e '.[acp]'`).
 
@@ -374,10 +374,10 @@ Check:
 Try these checks:
 
 ```bash
-hermes acp --version
-hermes acp --check
-hermes doctor
-hermes status
+indagis acp --version
+indagis acp --check
+indagis doctor
+indagis status
 ```
 
 ### Missing credentials
@@ -385,10 +385,10 @@ hermes status
 ACP mode uses Hermes' existing provider setup. Configure credentials with:
 
 ```bash
-hermes model
+indagis model
 ```
 
-or by editing `~/.indagis/.env`. The terminal auth flow (`hermes acp --setup`) can also trigger the interactive provider/model setup.
+or by editing `~/.indagis/.env`. The terminal auth flow (`indagis acp --setup`) can also trigger the interactive provider/model setup.
 
 ## See also
 

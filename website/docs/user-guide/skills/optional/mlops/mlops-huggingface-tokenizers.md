@@ -14,7 +14,7 @@ Fast BPE/WordPiece tokenization and custom vocab training.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/huggingface-tokenizers` |
+| Source | Optional — install with `indagis skills install official/mlops/huggingface-tokenizers` |
 | Path | `optional-skills/mlops/huggingface-tokenizers` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

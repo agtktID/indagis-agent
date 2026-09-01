@@ -37,9 +37,9 @@ If you have a public endpoint available, check out [Automated GitHub PR Comments
 - **Hermes Agent installed** — see the [Installation guide](/getting-started/installation)
 - **Gateway running** for cron jobs:
   ```bash
-  hermes gateway install   # Install as a service
+  indagis gateway install   # Install as a service
   # or
-  hermes gateway           # Run in foreground
+  indagis gateway           # Run in foreground
   ```
 - **GitHub CLI (`gh`) installed and authenticated**:
   ```bash
@@ -167,7 +167,7 @@ These memories persist forever — the reviewer will enforce your conventions wi
 Now wire it all together. Create a cron job that runs every 2 hours:
 
 ```bash
-hermes cron create "0 */2 * * *" \
+indagis cron create "0 */2 * * *" \
   "Check for new open PRs and review them.
 
 Repos to monitor:
@@ -196,7 +196,7 @@ If no new PRs found, say: No new PRs to review." \
 Verify it's scheduled:
 
 ```bash
-hermes cron list
+indagis cron list
 ```
 
 ### Other useful schedules
@@ -215,7 +215,7 @@ hermes cron list
 Don't want to wait for the schedule? Trigger it manually:
 
 ```bash
-hermes cron run pr-review
+indagis cron run pr-review
 ```
 
 Or from within a chat session:
@@ -250,7 +250,7 @@ Make sure `gh` has a token with `repo` scope. Reviews are posted as whoever `gh`
 Create a Monday morning overview of all your repos:
 
 ```bash
-hermes cron create "0 9 * * 1" \
+indagis cron create "0 9 * * 1" \
   "Generate a weekly PR dashboard:
 - myorg/backend-api
 - myorg/frontend-app
@@ -285,8 +285,8 @@ The gateway runs in a minimal environment. Ensure `gh` is in the system PATH and
 
 ### Cron job doesn't run
 ```bash
-hermes gateway status    # Is the gateway running?
-hermes cron list         # Is the job enabled?
+indagis gateway status    # Is the gateway running?
+indagis cron list         # Is the job enabled?
 ```
 
 ### Rate limits

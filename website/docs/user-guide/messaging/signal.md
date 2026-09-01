@@ -83,7 +83,7 @@ curl http://127.0.0.1:8080/api/v1/check
 The easiest way:
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **Signal** from the platform menu. The wizard will:
@@ -114,9 +114,9 @@ SIGNAL_HOME_CHANNEL=+1234567890                  # Default delivery target for c
 Then start the gateway:
 
 ```bash
-hermes gateway              # Foreground
-hermes gateway install      # Install as a user service
-sudo hermes gateway install --system   # Linux only: boot-time system service
+indagis gateway              # Foreground
+indagis gateway install      # Install as a user service
+sudo indagis gateway install --system   # Linux only: boot-time system service
 ```
 
 ---
@@ -128,7 +128,7 @@ sudo hermes gateway install --system   # Linux only: boot-time system service
 DM access follows the same pattern as all other Hermes platforms:
 
 1. **`SIGNAL_ALLOWED_USERS` set** → only those users can message
-2. **No allowlist set** → unknown users get a DM pairing code (approve via `hermes pairing approve signal CODE`)
+2. **No allowlist set** → unknown users get a DM pairing code (approve via `indagis pairing approve signal CODE`)
 3. **`SIGNAL_ALLOW_ALL_USERS=true`** → anyone can message (use with caution)
 
 ### Group Access

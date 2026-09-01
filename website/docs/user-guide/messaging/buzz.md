@@ -6,7 +6,7 @@ Buzz renders markdown, so agent replies keep their formatting. Images are delive
 
 Inbound messages arrive over a persistent NIP-42-authenticated Nostr WebSocket subscription by default (near-instant delivery), with automatic fallback to CLI polling when the WebSocket can't be established. Outbound messages always go through the `buzz` CLI. Control it with `transport` / `BUZZ_TRANSPORT`: `auto` (default), `websocket` (require WS, fail otherwise), or `poll`. If your relay membership uses NIP-OA owner attestation, set `BUZZ_AUTH_TAG` to the four-string auth tag JSON.
 
-> Run `hermes gateway setup` and pick **Buzz** for a guided walk-through.
+> Run `indagis gateway setup` and pick **Buzz** for a guided walk-through.
 
 ## Prerequisites
 
@@ -110,10 +110,10 @@ Cron jobs and notifications (`deliver=buzz`) are delivered to the **home channel
 ## Run the gateway
 
 ```bash
-hermes gateway start
+indagis gateway start
 ```
 
-Check status with `hermes gateway status` — Buzz connection state is reported there, including for env-only setups.
+Check status with `indagis gateway status` — Buzz connection state is reported there, including for env-only setups.
 
 ## Notes and limitations
 

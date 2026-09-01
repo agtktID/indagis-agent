@@ -14,7 +14,7 @@ Serverless GPU cloud for ML jobs and model APIs.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/modal` |
+| Source | Optional — install with `indagis skills install official/mlops/modal` |
 | Path | `optional-skills/mlops/modal` |
 | Version | `1.0.1` |
 | Author | Orchestra Research |

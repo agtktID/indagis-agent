@@ -14,7 +14,7 @@ Knowledge comics (知识漫画): educational, biography, tutorial.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/creative/baoyu-comic` |
+| Source | Optional — install with `indagis skills install official/creative/baoyu-comic` |
 | Path | `optional-skills/creative/baoyu-comic` |
 | Version | `1.56.1` |
 | Author | 宝玉 (JimLiu) |

@@ -14,7 +14,7 @@ Article illustrations: type × style × palette consistency.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/creative/baoyu-article-illustrator` |
+| Source | Optional — install with `indagis skills install official/creative/baoyu-article-illustrator` |
 | Path | `optional-skills/creative/baoyu-article-illustrator` |
 | Version | `1.57.0` |
 | Author | 宝玉 (JimLiu) |

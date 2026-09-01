@@ -28,7 +28,7 @@ The QQ Bot adapter uses the [Official QQ Bot API](https://bot.q.qq.com/wiki/deve
 ### Interactive setup
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **QQ Bot** from the platform list and follow the prompts.

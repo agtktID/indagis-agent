@@ -34,7 +34,7 @@ The transport reuses the `anthropic_messages` adapter (MiniMax exposes an Anthro
 
 ```bash
 # Launch the provider and model picker
-hermes model
+indagis model
 # → Select "MiniMax (OAuth)" from the provider list
 # → Hermes opens your browser to the MiniMax authorization page
 # → Approve access in the browser
@@ -51,7 +51,7 @@ After the first login, credentials are stored under `~/.indagis/auth.json` and a
 You can trigger a login without going through the model picker:
 
 ```bash
-hermes auth add minimax-oauth
+indagis auth add minimax-oauth
 ```
 
 ### China region
@@ -67,7 +67,7 @@ echo 'MINIMAX_CN_API_KEY=your-key' >> ~/.indagis/.env
 On servers or containers where no browser is available:
 
 ```bash
-hermes auth add minimax-oauth --no-browser
+indagis auth add minimax-oauth --no-browser
 ```
 
 Hermes will print the verification URL and user code — open the URL on any device and enter the code when prompted.
@@ -87,7 +87,7 @@ Token refresh (standard OAuth `refresh_token` grant) runs automatically at each 
 ## Checking Login Status
 
 ```bash
-hermes doctor
+indagis doctor
 ```
 
 The `◆ Auth Providers` section will show:
@@ -105,7 +105,7 @@ or, if not logged in:
 ## Switching Models
 
 ```bash
-hermes model
+indagis model
 # → Select "MiniMax (OAuth)"
 # → Pick from the model list
 ```
@@ -113,8 +113,8 @@ hermes model
 Or set the model directly:
 
 ```bash
-hermes config set model.default MiniMax-M2.7
-hermes config set model.provider minimax-oauth
+indagis config set model.default MiniMax-M2.7
+indagis config set model.provider minimax-oauth
 ```
 
 ## Configuration Reference
@@ -140,10 +140,10 @@ model:
 All of the following resolve to `minimax-oauth`:
 
 ```bash
-hermes --provider minimax-oauth    # canonical
-hermes --provider minimax-portal   # alias
-hermes --provider minimax-global   # alias
-hermes --provider minimax_oauth    # alias (underscore form)
+indagis --provider minimax-oauth    # canonical
+indagis --provider minimax-portal   # alias
+indagis --provider minimax-global   # alias
+indagis --provider minimax_oauth    # alias (underscore form)
 ```
 
 ## Environment Variables
@@ -155,10 +155,10 @@ The `minimax-oauth` provider does **not** use `MINIMAX_API_KEY` or `MINIMAX_BASE
 | `MINIMAX_API_KEY` | Used by `minimax` provider only — ignored for `minimax-oauth` |
 | `MINIMAX_CN_API_KEY` | Used by `minimax-cn` provider only — ignored for `minimax-oauth` |
 
-To use `minimax-oauth` as the active provider, set `model.provider: minimax-oauth` in `config.yaml` (use `hermes setup` for the guided flow), or pass `--provider minimax-oauth` for a single invocation:
+To use `minimax-oauth` as the active provider, set `model.provider: minimax-oauth` in `config.yaml` (use `indagis setup` for the guided flow), or pass `--provider minimax-oauth` for a single invocation:
 
 ```bash
-hermes --provider minimax-oauth
+indagis --provider minimax-oauth
 ```
 
 ## Models
@@ -180,13 +180,13 @@ Hermes refreshes the token on every session start if it is within 60 seconds of 
 
 When the refresh failure is terminal (HTTP 4xx, `invalid_grant`, revoked grant, etc.), Hermes marks the refresh token as dead and quarantines it locally so it doesn't keep replaying the doomed exchange. The agent surfaces a single "re-authentication required" message and stays out of the way until you log in again.
 
-**Fix:** run `hermes auth add minimax-oauth` again to start a fresh login. The quarantine clears on the next successful exchange.
+**Fix:** run `indagis auth add minimax-oauth` again to start a fresh login. The quarantine clears on the next successful exchange.
 
 ### Authorization timed out
 
 The device-code flow has a finite expiry window. If you don't approve the login in time, Hermes raises a timeout error.
 
-**Fix:** re-run `hermes auth add minimax-oauth` (or `hermes model`). The flow starts fresh.
+**Fix:** re-run `indagis auth add minimax-oauth` (or `indagis model`). The flow starts fresh.
 
 ### State mismatch (possible CSRF)
 
@@ -199,7 +199,7 @@ Hermes detected that the `state` value returned by the authorization server does
 If `hermes` cannot open a browser window, use `--no-browser`:
 
 ```bash
-hermes auth add minimax-oauth --no-browser
+indagis auth add minimax-oauth --no-browser
 ```
 
 Hermes prints the URL and code. Open the URL on any device and complete the flow there.
@@ -208,14 +208,14 @@ Hermes prints the URL and code. Open the URL on any device and complete the flow
 
 The auth store has no credentials for `minimax-oauth`. You have not logged in yet, or the credential file was deleted.
 
-**Fix:** run `hermes model` and select MiniMax (OAuth), or run `hermes auth add minimax-oauth`.
+**Fix:** run `indagis model` and select MiniMax (OAuth), or run `indagis auth add minimax-oauth`.
 
 ## Logging Out
 
 To remove stored MiniMax OAuth credentials:
 
 ```bash
-hermes auth logout minimax-oauth
+indagis auth logout minimax-oauth
 ```
 
 ## See Also
@@ -223,4 +223,4 @@ hermes auth logout minimax-oauth
 - [AI Providers reference](../integrations/providers.md)
 - [Environment Variables](../reference/environment-variables.md)
 - [Configuration](../user-guide/configuration.md)
-- [hermes doctor](../reference/cli-commands.md)
+- [indagis doctor](../reference/cli-commands.md)

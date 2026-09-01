@@ -32,11 +32,11 @@ Tasks where the agent does one turn and stops don't need `/goal`. Tasks where *y
 | You want | Reach for |
 |---|---|
 | Keep iterating on one task in this chat until it's done | `/goal <text>` |
-| Many independent tasks, with dependencies, handoffs, or multiple profiles | [Kanban](./kanban) — `hermes kanban create …` |
+| Many independent tasks, with dependencies, handoffs, or multiple profiles | [Kanban](./kanban) — `indagis kanban create …` |
 | One card on the board that should keep iterating until its acceptance criteria are met | A kanban card with `--goal` |
 
 :::note
-If you want work on the board, put it there yourself (`hermes kanban create …`) — `/goal` won't do it for you. The reverse is also true: pausing, resuming, or clearing a goal in this chat never creates, claims, or moves a kanban card.
+If you want work on the board, put it there yourself (`indagis kanban create …`) — `/goal` won't do it for you. The reverse is also true: pausing, resuming, or clearing a goal in this chat never creates, claims, or moves a kanban card.
 :::
 
 ## Quick start

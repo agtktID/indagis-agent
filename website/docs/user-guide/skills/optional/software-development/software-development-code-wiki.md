@@ -14,7 +14,7 @@ Generate wiki docs + Mermaid diagrams for any codebase.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/software-development/code-wiki` |
+| Source | Optional — install with `indagis skills install official/software-development/code-wiki` |
 | Path | `optional-skills/software-development/code-wiki` |
 | Version | `0.1.0` |
 | Author | Teknium (teknium1), Hermes Agent |

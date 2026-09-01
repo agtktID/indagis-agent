@@ -23,7 +23,7 @@ The active provider is selected by `browser.cloud_provider` in `config.yaml`; th
 Hermes scans for browser backends in three places:
 
 1. **Bundled** — `<repo>/plugins/browser/<name>/` (auto-loaded with `kind: backend`)
-2. **User** — `~/.indagis/plugins/browser/<name>/` (opt-in via `plugins.enabled` or `hermes plugins enable <name>`)
+2. **User** — `~/.indagis/plugins/browser/<name>/` (opt-in via `plugins.enabled` or `indagis plugins enable <name>`)
 3. **Pip** — packages declaring a `hermes_agent.plugins` entry point
 
 Each plugin's `register(ctx)` calls `ctx.register_browser_provider(...)`, which puts the instance into the registry in `agent/browser_registry.py`.
@@ -74,12 +74,12 @@ class MyBackendProvider(BrowserProvider):
 
     @property
     def display_name(self) -> str:
-        return "My Backend"          # shown in `hermes tools`
+        return "My Backend"          # shown in `indagis tools`
 
     def is_available(self) -> bool:
         """Cheap check only — env var present, dep importable.
         NO network calls: runs at tool-registration time and on every
-        `hermes tools` paint."""
+        `indagis tools` paint."""
         return bool(os.environ.get("MY_BACKEND_API_KEY"))
 
     def create_session(self, task_id: str) -> dict:
@@ -111,7 +111,7 @@ class MyBackendProvider(BrowserProvider):
 
 An optional `external_call_id` key supports managed-gateway billing.
 
-### `get_setup_schema()` — the `hermes tools` picker row
+### `get_setup_schema()` — the `indagis tools` picker row
 
 Override this to appear as a first-class option in the Browser Automation picker with API-key prompts and an install hook:
 
@@ -130,7 +130,7 @@ def get_setup_schema(self) -> dict:
     }
 ```
 
-Per the project standard for tool backends: if a backend can't be selected and configured through `hermes tools`, it isn't done — "set this env var manually" is not an integration.
+Per the project standard for tool backends: if a backend can't be selected and configured through `indagis tools`, it isn't done — "set this env var manually" is not an integration.
 
 ## Users configure it
 
@@ -149,5 +149,5 @@ The three bundled providers under `plugins/browser/` are the canonical examples,
 - [ ] `is_available()` makes zero network calls
 - [ ] `create_session()` returns the full metadata contract (`bb_session_id` key name intact)
 - [ ] `close_session()` / `emergency_cleanup()` never raise
-- [ ] `get_setup_schema()` exposes your env vars so `hermes tools` can configure the backend
+- [ ] `get_setup_schema()` exposes your env vars so `indagis tools` can configure the backend
 - [ ] `plugin.yaml` declares `kind: backend` + `provides_browser_providers`

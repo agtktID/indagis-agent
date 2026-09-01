@@ -24,7 +24,7 @@ See also: [WeCom Callback](./wecom-callback.md) for inbound webhook setup.
 #### Recommended: Scan-to-Create (one command)
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **WeCom** and scan the QR code with your WeCom mobile app. Hermes will automatically create a bot application with the correct permissions and save the credentials.
@@ -43,7 +43,7 @@ If scan-to-create is not available, the wizard falls back to manual input:
 2. Navigate to **Applications** → **Create Application** → **AI Bot**
 3. Configure the bot name and description
 4. Copy the **Bot ID** and **Secret** from the credentials page
-5. Run `hermes gateway setup`, select **WeCom**, and enter the credentials when prompted
+5. Run `indagis gateway setup`, select **WeCom**, and enter the credentials when prompted
 
 :::warning
 Keep the Bot Secret private. Anyone with it can impersonate your bot.
@@ -54,7 +54,7 @@ Keep the Bot Secret private. Anyone with it can impersonate your bot.
 #### Option A: Interactive Setup (Recommended)
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **WeCom** and follow the prompts. The wizard will guide you through:
@@ -80,7 +80,7 @@ WECOM_HOME_CHANNEL=chat_id
 ### Step 3: Start the gateway
 
 ```bash
-hermes gateway
+indagis gateway
 ```
 
 ## Features

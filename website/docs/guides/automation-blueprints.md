@@ -16,8 +16,8 @@ For parameterized blueprints with forms instead of cron syntax, see the [Automat
 | Trigger | How | Tool |
 |---------|-----|------|
 | **Schedule** | Runs on a cadence (hourly, nightly, weekly) | `cronjob` tool or `/cron` slash command |
-| **GitHub Event** | Fires on PR opens, pushes, issues, CI results | Webhook platform (`hermes webhook subscribe`) |
-| **API Call** | External service POSTs JSON to your endpoint | Webhook platform (config.yaml routes or `hermes webhook subscribe`) |
+| **GitHub Event** | Fires on PR opens, pushes, issues, CI results | Webhook platform (`indagis webhook subscribe`) |
+| **API Call** | External service POSTs JSON to your endpoint | Webhook platform (config.yaml routes or `indagis webhook subscribe`) |
 
 All three support delivery to Telegram, Discord, Slack, SMS, email, GitHub comments, or local files.
 :::
@@ -33,7 +33,7 @@ Label, prioritize, and summarize new issues every night. Delivers a digest to yo
 **Trigger:** Schedule (nightly)
 
 ```bash
-hermes cron create "0 2 * * *" \
+indagis cron create "0 2 * * *" \
   "You are a project manager triaging the NousResearch/hermes-agent GitHub repo.
 
 1. Run: gh issue list --repo NousResearch/hermes-agent --state open --json number,title,labels,author,createdAt --limit 30
@@ -58,7 +58,7 @@ Review every pull request automatically when it's opened. Posts a review comment
 **Option A — Dynamic subscription (CLI):**
 
 ```bash
-hermes webhook subscribe github-pr-review \
+indagis webhook subscribe github-pr-review \
   --events "pull_request" \
   --prompt "Review this pull request:
 Repository: {repository.full_name}
@@ -115,7 +115,7 @@ Weekly scan of merged PRs to find API changes that need documentation updates.
 **Trigger:** Schedule (weekly)
 
 ```bash
-hermes cron create "0 9 * * 1" \
+indagis cron create "0 9 * * 1" \
   "Scan the NousResearch/hermes-agent repo for documentation drift.
 
 1. Run: gh pr list --repo NousResearch/hermes-agent --state merged --json number,title,files,mergedAt --limit 30
@@ -139,7 +139,7 @@ Daily scan for known vulnerabilities in project dependencies.
 **Trigger:** Schedule (daily)
 
 ```bash
-hermes cron create "0 6 * * *" \
+indagis cron create "0 6 * * *" \
   "Run a dependency security audit on the hermes-agent project.
 
 1. cd ~/.indagis/hermes-agent && source .venv/bin/activate
@@ -168,7 +168,7 @@ Trigger smoke tests after every deployment. Your CI/CD pipeline POSTs to the web
 **Trigger:** API call (webhook)
 
 ```bash
-hermes webhook subscribe deploy-verify \
+indagis webhook subscribe deploy-verify \
   --events "deployment" \
   --prompt "A deployment just completed:
 Service: {service}
@@ -202,7 +202,7 @@ Correlate monitoring alerts with recent changes to draft a response. Works with 
 **Trigger:** API call (webhook)
 
 ```bash
-hermes webhook subscribe alert-triage \
+indagis webhook subscribe alert-triage \
   --prompt "Monitoring alert received:
 Alert: {alert.name}
 Severity: {alert.severity}
@@ -259,7 +259,7 @@ else:
 ```
 
 ```bash
-hermes cron create "every 30m" \
+indagis cron create "every 30m" \
   "If the script reports OUTAGE DETECTED, summarize which services are down and suggest likely causes. If NO_ISSUES, respond with [SILENT]." \
   --script ~/.indagis/scripts/check-uptime.py \
   --name "Uptime monitor" \
@@ -277,7 +277,7 @@ Monitor competitor repos for interesting PRs, features, and architectural decisi
 **Trigger:** Schedule (daily)
 
 ```bash
-hermes cron create "0 8 * * *" \
+indagis cron create "0 8 * * *" \
   "Scout these AI agent repositories for notable activity in the last 24 hours:
 
 Repos to check:
@@ -310,7 +310,7 @@ Weekly roundup of AI/ML developments.
 **Trigger:** Schedule (weekly)
 
 ```bash
-hermes cron create "0 9 * * 1" \
+indagis cron create "0 9 * * 1" \
   "Generate a weekly AI news digest covering the past 7 days:
 
 1. Search the web for major AI announcements, model releases, and research breakthroughs
@@ -335,7 +335,7 @@ Daily arXiv scan that saves summaries to your note-taking system.
 **Trigger:** Schedule (daily)
 
 ```bash
-hermes cron create "0 8 * * *" \
+indagis cron create "0 8 * * *" \
   "Search arXiv for the 3 most interesting papers on 'language model reasoning' OR 'tool-use agents' from the past day. For each paper, create an Obsidian note with the title, authors, abstract summary, key contribution, and potential relevance to Hermes Agent development." \
   --skill arxiv --skill obsidian \
   --name "Paper digest" \
@@ -353,7 +353,7 @@ Automatically label and respond to new issues.
 **Trigger:** GitHub webhook
 
 ```bash
-hermes webhook subscribe github-issues \
+indagis webhook subscribe github-issues \
   --events "issues" \
   --prompt "New GitHub issue received:
 Repository: {repository.full_name}
@@ -415,7 +415,7 @@ When a PR merges in one repo, automatically port the equivalent change to anothe
 **Trigger:** GitHub webhook
 
 ```bash
-hermes webhook subscribe auto-port \
+indagis webhook subscribe auto-port \
   --events "pull_request" \
   --prompt "PR merged in the source repository:
 Repository: {repository.full_name}
@@ -447,7 +447,7 @@ Track payment events and get summaries of failures.
 **Trigger:** API call (webhook)
 
 ```bash
-hermes webhook subscribe stripe-payments \
+indagis webhook subscribe stripe-payments \
   --events "payment_intent.succeeded,payment_intent.payment_failed,charge.dispute.created" \
   --prompt "Stripe event received:
 Event type: {type}
@@ -477,7 +477,7 @@ Compile key business metrics every morning.
 **Trigger:** Schedule (daily)
 
 ```bash
-hermes cron create "0 8 * * *" \
+indagis cron create "0 8 * * *" \
   "Generate a morning business metrics summary.
 
 Search the web for:
@@ -502,7 +502,7 @@ Combine multiple skills for a comprehensive weekly security review.
 **Trigger:** Schedule (weekly)
 
 ```bash
-hermes cron create "0 3 * * 0" \
+indagis cron create "0 3 * * 0" \
   "Run a comprehensive security audit of the hermes-agent codebase.
 
 1. Check for dependency vulnerabilities (pip audit, npm audit)
@@ -528,7 +528,7 @@ Research, draft, and prepare content on a schedule.
 **Trigger:** Schedule (weekly)
 
 ```bash
-hermes cron create "0 10 * * 3" \
+indagis cron create "0 10 * * 3" \
   "Research and draft a technical blog post outline about a trending topic in AI agents.
 
 1. Search the web for the most discussed AI agent topics this week
