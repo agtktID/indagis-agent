@@ -38,7 +38,7 @@ export interface BotsPageOs {
 }
 
 function chatCommand(bot: Bot): string {
-  return bot.is_default ? 'hermes' : `hermes -p ${bot.name}`
+  return bot.is_default ? 'indagis' : `indagis -p ${bot.name}`
 }
 
 function BotRow({ bot, os }: { bot: Bot; os: BotsPageOs }) {
