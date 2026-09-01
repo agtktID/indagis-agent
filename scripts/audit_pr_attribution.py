@@ -58,21 +58,24 @@ def run(*args: str, check: bool = True) -> str:
 
 
 def default_base_ref() -> str:
-    """The remote's default branch (e.g. "main" or "test-orphan"), not hardcoded.
+    """The remote's current default branch, not hardcoded to "main".
 
-    A fork's default branch isn't guaranteed to be named "main" — this repo's
-    default branch is "test-orphan". Tries the cheap, offline
-    `origin/HEAD` symref first, falls back to a `git remote show` network
-    call, and finally to the literal "main" if both are unavailable.
+    Queries the remote directly with `git ls-remote --symref origin HEAD`
+    (a single lightweight network call) rather than trusting the local
+    `refs/remotes/origin/HEAD` symref, which is only set at clone/fetch
+    time and goes stale if the remote's default branch changes afterward —
+    confirmed on a real worktree in this repo, where the cached local
+    symref still pointed at a since-deleted branch while the remote's
+    actual default branch had moved to "main". Falls back to the local
+    symref if offline, and finally to the literal "main".
     """
+    ls_remote = run("git", "ls-remote", "--symref", "origin", "HEAD", check=False)
+    for line in ls_remote.splitlines():
+        if line.startswith("ref:") and line.endswith("\tHEAD"):
+            return line.split()[1].rsplit("/", 1)[-1]
     symref = run("git", "symbolic-ref", "refs/remotes/origin/HEAD", check=False)
     if symref:
         return symref.rsplit("/", 1)[-1]
-    shown = run("git", "remote", "show", "origin", check=False)
-    for line in shown.splitlines():
-        line = line.strip()
-        if line.startswith("HEAD branch:"):
-            return line.split(":", 1)[1].strip()
     return "main"
 
 
