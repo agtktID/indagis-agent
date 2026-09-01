@@ -96,7 +96,7 @@ You should see a JSON response with the model's reply.
 Run the Hermes setup wizard:
 
 ```bash
-hermes setup
+indagis setup
 ```
 
 When prompted for a provider, select **Custom Endpoint** and enter:
@@ -222,7 +222,7 @@ platforms:
 3. Start the gateway:
 
 ```bash
-hermes gateway
+indagis gateway
 ```
 
 Now message your bot on Telegram — it responds using your local model.
@@ -239,7 +239,7 @@ platforms:
     token: "YOUR_DISCORD_BOT_TOKEN"
 ```
 
-3. Start: `hermes gateway`
+3. Start: `indagis gateway`
 
 ## Step 8: Set Up Fallbacks (Optional)
 
@@ -284,7 +284,7 @@ What helps:
 
 - **Keep the model loaded** — Ollama unloads idle models after 5 minutes, adding a full reload before the next prefill. Set `OLLAMA_KEEP_ALIVE=24h` (see [Step 6](#keep-the-model-loaded)).
 - **Widen the API timeout** — set `HERMES_API_TIMEOUT=1800` in `~/.hermes/.env` (see [What You Need](#what-you-need)).
-- **Measure and trim the fixed prompt** — run `hermes prompt-size` for a byte breakdown of the system prompt and tool schemas, then disable unused toolsets with `hermes tools` and uninstall skills you don't need with `hermes skills`.
+- **Measure and trim the fixed prompt** — run `hermes prompt-size` for a byte breakdown of the system prompt and tool schemas, then disable unused toolsets with `indagis tools` and uninstall skills you don't need with `indagis skills`.
 - **Use GPU offloading** — even a partial offload gives a significant speedup (see [Step 6](#use-gpu-offloading-if-available)).
 
 ### Model doesn't follow tool calls

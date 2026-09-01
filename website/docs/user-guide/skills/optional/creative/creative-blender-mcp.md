@@ -14,7 +14,7 @@ Drive Blender via the catalog blender MCP, with bpy recipes.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/creative/blender-mcp` |
+| Source | Optional — install with `indagis skills install official/creative/blender-mcp` |
 | Path | `optional-skills/creative/blender-mcp` |
 | Version | `2.1.0` |
 | Author | alireza78a + kshitijk4poor + Hermes Agent |
@@ -44,7 +44,7 @@ connected.
 
 1. Install the MCP server from the Nous catalog (one-time):
 
-       hermes mcp install blender
+       indagis mcp install blender
 
    This configures the pinned `blender-mcp` stdio server with the curated
    tool set: `get_scene_info`, `get_object_info`, `get_viewport_screenshot`,
@@ -83,7 +83,7 @@ Deeper material lives in the reference files (load on demand):
 
 Optional asset-service tools (PolyHaven, Sketchfab, Hyper3D, Hunyuan3D) are
 disabled by default. If the user has enabled a service in the addon panel,
-opt into its tools with `hermes mcp configure blender`.
+opt into its tools with `indagis mcp configure blender`.
 
 ## Procedure
 
@@ -133,7 +133,7 @@ Render to file:
 ## Pitfalls
 
 - The blender MCP tools only exist if the server is installed and the session
-  started after install. If they're missing, run `hermes mcp install blender`
+  started after install. If they're missing, run `indagis mcp install blender`
   and start a new session.
 - The addon bridge must be (re)connected inside Blender each Blender session
   (N-panel > BlenderMCP > Connect). "Connection refused" from the tools means

@@ -14,7 +14,7 @@ List, auth, and call MCP servers/tools from the terminal.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mcp/mcporter` |
+| Source | Optional — install with `indagis skills install official/mcp/mcporter` |
 | Path | `optional-skills/mcp/mcporter` |
 | Version | `1.0.0` |
 | Author | community |

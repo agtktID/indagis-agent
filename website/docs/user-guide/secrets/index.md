@@ -26,7 +26,7 @@ secrets:
     project_id: "..."
 ```
 
-Every credential injected by a source is labelled with its origin — setup flows and `hermes model` show `(from Bitwarden)` next to detected keys so you always know where a value came from.
+Every credential injected by a source is labelled with its origin — setup flows and `indagis model` show `(from Bitwarden)` next to detected keys so you always know where a value came from.
 
 ## Profiles and shared vaults
 

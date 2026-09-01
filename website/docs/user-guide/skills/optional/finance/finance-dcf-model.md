@@ -14,7 +14,7 @@ Build discounted cash flow valuation workbooks in Excel.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/finance/dcf-model` |
+| Source | Optional — install with `indagis skills install official/finance/dcf-model` |
 | Path | `optional-skills/finance/dcf-model` |
 | Version | `1.0.0` |
 | Author | Anthropic (adapted by Nous Research) |

@@ -14,7 +14,7 @@ Clean training loops with built-in distributed support.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/pytorch-lightning` |
+| Source | Optional — install with `indagis skills install official/mlops/pytorch-lightning` |
 | Path | `optional-skills/mlops/pytorch-lightning` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

@@ -23,7 +23,7 @@ and hot-reloads every save.
 :::warning This is not the web-dashboard plugin SDK
 "Plugin" means several unrelated things across Hermes. This page is the **native
 desktop app** (`hermes desktop`) SDK — the `@hermes/plugin-sdk` module and
-`$INDAGIS_HOME/desktop-plugins/`. The **web dashboard** (`hermes dashboard`) has
+`$INDAGIS_HOME/desktop-plugins/`. The **web dashboard** (`indagis dashboard`) has
 its own, unrelated plugin system on `window.__HERMES_PLUGIN_SDK__` with a
 `manifest.json` — documented at
 [Extending the Dashboard](/user-guide/features/extending-the-dashboard). Python
@@ -636,7 +636,7 @@ human/developer reference; the skill is the working checklist.
 **My plugin doesn't appear.** Confirm the file is at
 `$INDAGIS_HOME/desktop-plugins/<id>/plugin.js` and the folder name matches the
 export `id`. Run ⌘K → **Reload desktop plugins**. Check the app for an error
-toast naming the failure, and tail `hermes logs gui -f`.
+toast naming the failure, and tail `indagis logs gui -f`.
 
 **"unsupported import" on load.** A disk plugin may only import
 `@hermes/plugin-sdk`, `react`, and `react/jsx-runtime`. Remove any other import.

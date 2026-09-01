@@ -14,7 +14,7 @@ Query and edit a SiYuan knowledge base via its API.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/productivity/siyuan` |
+| Source | Optional — install with `indagis skills install official/productivity/siyuan` |
 | Path | `optional-skills/productivity/siyuan` |
 | Version | `1.0.0` |
 | Author | FEUAZUR |

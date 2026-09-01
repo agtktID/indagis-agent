@@ -30,10 +30,10 @@ Before starting, make sure you have:
 - **Hermes Agent installed** — see the [Installation guide](/getting-started/installation)
 - **Gateway running** — the gateway daemon handles cron execution:
   ```bash
-  hermes gateway install   # Install as a user service
-  sudo hermes gateway install --system   # Linux servers: boot-time system service
+  indagis gateway install   # Install as a user service
+  sudo indagis gateway install --system   # Linux servers: boot-time system service
   # or
-  hermes gateway           # Run in foreground
+  indagis gateway           # Run in foreground
   ```
 - **Firecrawl API key** — set `FIRECRAWL_API_KEY` in your environment for web search
 - **Messaging configured** (optional but recommended) — [Telegram](/user-guide/messaging/telegram) or Discord set up with a home channel
@@ -212,7 +212,7 @@ In chat:
 
 Or from the terminal:
 ```bash
-hermes cron list
+indagis cron list
 ```
 
 You'll see output like:
@@ -243,15 +243,15 @@ Hermes will use `cronjob(action="list")` to find it and `cronjob(action="remove"
 Make sure the scheduler is actually running:
 
 ```bash
-hermes cron status
+indagis cron status
 ```
 
 If the gateway isn't running, your jobs won't execute. Install it as a background service for reliability:
 
 ```bash
-hermes gateway install
+indagis gateway install
 # or on Linux servers
-sudo hermes gateway install --system
+sudo indagis gateway install --system
 ```
 
 ## Going Further

@@ -97,7 +97,7 @@ To find yours:
 Run the guided setup command:
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **DingTalk** when prompted. The setup wizard can authorize via one of two paths:
@@ -161,13 +161,13 @@ gateway:
 Once configured, start the DingTalk gateway:
 
 ```bash
-hermes gateway
+indagis gateway
 ```
 
 The bot should connect to DingTalk's Stream Mode within a few seconds. Send it a message — either a DM or in a group where it's been added — to test.
 
 :::tip
-You can run `hermes gateway` in the background or as a systemd service for persistent operation. See the deployment docs for details.
+You can run `indagis gateway` in the background or as a systemd service for persistent operation. See the deployment docs for details.
 :::
 
 ## Features
@@ -255,7 +255,7 @@ pip install dingtalk-stream httpx
 
 **Cause**: The Hermes gateway isn't running, or it failed to connect.
 
-**Fix**: Check that `hermes gateway` is running. Look at the terminal output for error messages. Common issues: wrong credentials, app deactivated, `dingtalk-stream` or `httpx` not installed.
+**Fix**: Check that `indagis gateway` is running. Look at the terminal output for error messages. Common issues: wrong credentials, app deactivated, `dingtalk-stream` or `httpx` not installed.
 
 ### "No session_webhook available"
 

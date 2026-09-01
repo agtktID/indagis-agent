@@ -14,7 +14,7 @@ Pretrain LLMs at scale with PyTorch 4D parallelism.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/torchtitan` |
+| Source | Optional — install with `indagis skills install official/mlops/torchtitan` |
 | Path | `optional-skills/mlops/torchtitan` |
 | Version | `1.0.1` |
 | Author | Orchestra Research |

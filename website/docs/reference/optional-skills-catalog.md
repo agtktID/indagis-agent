@@ -1,7 +1,7 @@
 ---
 sidebar_position: 9
 title: "Optional Skills Catalog"
-description: "Official optional skills shipped with hermes-agent — install via hermes skills install official/<category>/<skill>"
+description: "Official optional skills shipped with hermes-agent — install via indagis skills install official/<category>/<skill>"
 ---
 
 # Optional Skills Catalog
@@ -9,14 +9,14 @@ description: "Official optional skills shipped with hermes-agent — install via
 Optional skills ship with hermes-agent under `optional-skills/` but are **not active by default**. Install them explicitly:
 
 ```bash
-hermes skills install official/<category>/<skill>
+indagis skills install official/<category>/<skill>
 ```
 
 For example:
 
 ```bash
-hermes skills install official/blockchain/solana
-hermes skills install official/mlops/flash-attention
+indagis skills install official/blockchain/solana
+indagis skills install official/mlops/flash-attention
 ```
 
 Each skill below links to a dedicated page with its full definition, setup, and usage.
@@ -24,7 +24,7 @@ Each skill below links to a dedicated page with its full definition, setup, and 
 To uninstall:
 
 ```bash
-hermes skills uninstall <skill-name>
+indagis skills uninstall <skill-name>
 ```
 
 ## autonomous-ai-agents

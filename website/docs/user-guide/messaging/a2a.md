@@ -15,7 +15,7 @@ When you want multiple agents on the **same machine**, prefer [delegation](../fe
 ## Enable
 
 ```bash
-hermes gateway setup      # pick A2A
+indagis gateway setup      # pick A2A
 ```
 
 Or in `~/.indagis/config.yaml`:
@@ -29,7 +29,7 @@ gateway:
         port: 9900
 ```
 
-The outbound client tools ship as the `a2a` toolset, **off by default** — enable it with `hermes tools`.
+The outbound client tools ship as the `a2a` toolset, **off by default** — enable it with `indagis tools`.
 
 ## Outbound: calling other agents
 

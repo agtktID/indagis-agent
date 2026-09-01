@@ -14,7 +14,7 @@ DSPy: declarative LM programs, auto-optimize prompts, RAG.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/dspy` |
+| Source | Optional — install with `indagis skills install official/mlops/dspy` |
 | Path | `optional-skills/mlops/research/dspy` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

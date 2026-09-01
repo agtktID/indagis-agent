@@ -14,7 +14,7 @@ Text-to-image generation, inpainting, and img2img.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/stable-diffusion` |
+| Source | Optional — install with `indagis skills install official/mlops/stable-diffusion` |
 | Path | `optional-skills/mlops/stable-diffusion` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

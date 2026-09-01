@@ -4,7 +4,7 @@ The IRC adapter connects Hermes to any IRC server and relays messages between an
 
 IRC is plain text: there is no voice, image, file, thread, reaction, typing, or streaming support — replies are sent as `PRIVMSG` lines, with long messages split to fit the IRC line limit.
 
-> Run `hermes gateway setup` and pick **IRC** for a guided walk-through.
+> Run `indagis gateway setup` and pick **IRC** for a guided walk-through.
 
 ## Prerequisites
 
@@ -67,10 +67,10 @@ Cron jobs and notifications are delivered to the **home channel** — `IRC_HOME_
 ## Run the gateway
 
 ```bash
-hermes gateway start
+indagis gateway start
 ```
 
-Check status with `hermes gateway status` — IRC connection state is reported there, including for env-only setups.
+Check status with `indagis gateway status` — IRC connection state is reported there, including for env-only setups.
 
 ## Notes
 

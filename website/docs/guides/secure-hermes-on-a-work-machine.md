@@ -104,7 +104,7 @@ TELEGRAM_ALLOWED_USERS=123456789
 GATEWAY_ALLOWED_USERS=123456789
 ```
 
-Or use DM pairing instead of hardcoding IDs: unknown users receive a one-time pairing code, and you approve them from the CLI with `hermes pairing approve <platform> <code>`. Never set `GATEWAY_ALLOW_ALL_USERS=true` on a machine you care about.
+Or use DM pairing instead of hardcoding IDs: unknown users receive a one-time pairing code, and you approve them from the CLI with `indagis pairing approve <platform> <code>`. Never set `GATEWAY_ALLOW_ALL_USERS=true` on a machine you care about.
 
 ## The Undo Layer: Checkpoints and `/rollback`
 
@@ -113,7 +113,7 @@ Approval gates prevent damage; [checkpoints](/user-guide/checkpoints-and-rollbac
 Checkpoints are opt-in. Enable per-session:
 
 ```bash
-hermes chat --checkpoints
+indagis chat --checkpoints
 ```
 
 Or globally:

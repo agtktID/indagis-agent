@@ -14,7 +14,7 @@ Reference-free preference alignment, simpler than DPO.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/simpo` |
+| Source | Optional — install with `indagis skills install official/mlops/simpo` |
 | Path | `optional-skills/mlops/simpo` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

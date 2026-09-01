@@ -14,7 +14,7 @@ Query Shopify Admin/Storefront GraphQL APIs via curl.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/productivity/shopify` |
+| Source | Optional — install with `indagis skills install official/productivity/shopify` |
 | Path | `optional-skills/productivity/shopify` |
 | Version | `1.0.0` |
 | Author | community |

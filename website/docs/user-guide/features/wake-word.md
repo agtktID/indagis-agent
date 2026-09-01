@@ -181,7 +181,7 @@ owns the listener and opens the new session when it fires:
 |-----------|----------|
 | `auto` (default) | All local surfaces are eligible; the first one to arm owns the listener. |
 | `cli` | Only the classic `hermes` CLI. |
-| `tui` | Only `hermes --tui`. |
+| `tui` | Only `indagis --tui`. |
 | `gui` | Only the desktop app. |
 
 The detector is on-device and single-mic, so only one surface listens at a time,
@@ -229,7 +229,7 @@ there, and starts hands-free voice:
 Set `wake_word.profile_routing: false` on the listener's profile to opt out
 and listen only for its own phrase. The CLI and TUI are single-profile
 processes: a wake phrase belonging to another profile prints the switch
-command (`hermes -p <profile>`) instead of routing.
+command (`indagis -p <profile>`) instead of routing.
 
 Names are matched acoustically by their English subword sounds: two-word
 phrases with distinct, 2+ syllable names work best. Very short names, heavy
@@ -291,7 +291,7 @@ PORCUPINE_ACCESS_KEY=your-key-here
   full provider list.
 - A TTS provider for speaking the reply (the default `edge-tts` works with no
   key). The wake flow is fully hands-free, so the toggle refuses to arm until
-  both STT and TTS are ready — `hermes tools` (Voice section) sets them up.
+  both STT and TTS are ready — `indagis tools` (Voice section) sets them up.
 - The wake engine deps (auto-installed, or `hermes-agent[wake]`).
 
 `/wake status` reports exactly what's missing if the listener won't start.
@@ -320,13 +320,13 @@ When it reports silence, set `wake_word.input_device` to the numeric index or an
 unambiguous name of the working PortAudio input, then toggle the wake word:
 
 ```bash
-hermes config set wake_word.input_device "Microphone Array"
+indagis config set wake_word.input_device "Microphone Array"
 ```
 
 Use `null` to return to the process default:
 
 ```bash
-hermes config set wake_word.input_device null
+indagis config set wake_word.input_device null
 ```
 
 ## Notes & limits
