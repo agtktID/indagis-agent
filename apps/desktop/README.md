@@ -191,7 +191,7 @@ rm "$HOME/.hermes/hermes-agent/.hermes-bootstrap-complete"
 # Rebuild a broken Python venv
 rm -rf "$HOME/.hermes/hermes-agent/venv"
 # Reset a stuck macOS microphone prompt (macOS only)
-tccutil reset Microphone com.nousresearch.hermes
+tccutil reset Microphone com.indagis.agent
 ```
 
 **Windows (PowerShell):**
@@ -274,7 +274,7 @@ Until then, the desktop, the installer, and the CLI all read both paths. **Do no
 The path migration is the only piece of the Phase 4 rebrand that ships in this window. The following identifiers remain unchanged and are explicitly **out of scope** for the Phase 5 installer fork:
 
 - **`HERMES_DESKTOP_*`** (Electron technical identifiers): all of `HERMES_DESKTOP_HERMES_ROOT`, `HERMES_DESKTOP_HERMES`, `HERMES_DESKTOP_DEV`, etc. read by the bundled Electron process to locate the runtime, find the dev sources, and bind single-instance locks. These are **internal to the desktop bundle**, not user-visible brand. See `apps/desktop/electron/main.ts` for the full list.
-- **macOS bundle identifier `com.nousresearch.hermes`** (Electron technical identifier): same category as `HERMES_DESKTOP_*`. Migration is **planned for Phase 5** when the installer is forked. The target bundle identifier is not yet committed; a candidate name (e.g. `com.labscreatis.indagis.desktop`) is under discussion but **proposed, pending decision**. (Not in this tranche; the bundle ID is a distinct Phase 5 item tracked separately.)
+- **macOS bundle identifier**: migrated from `com.nousresearch.hermes` to `com.indagis.agent` (see CHANGELOG.md "Phase 5 — Desktop/Tauri technical identity"). The deep-link protocol (`hermes://` → `indagis://`), the Windows AUMID, the macOS About-panel copyright, and the Tauri bootstrap-installer identifier moved together in the same change. `HERMES_DESKTOP_*` env vars and the internal IPC channel prefix (`hermes:*`) are unaffected — same category as the rest of this section, still out of scope.
 - **Filesystem paths** `packages/hermes-ink/` (TS package dir), `hermes_cli/` (Python module dir), the bootstrap marker `$INSTALL_DIR/.hermes-bootstrap-complete`: protected by cahier §3.2 ("modules internes Hermes conservés"). The marker **filename** stays `.hermes-bootstrap-complete` for the foreseeable future (the desktop app's `writeBootstrapMarker()` and `isBootstrapComplete()` read this exact name — see `apps/desktop/electron/main.ts`); only the **parent directory** (`$INSTALL_DIR/hermes-agent/` vs `$INSTALL_DIR/indagis-agent/`) is affected by the path-migration ladder in the next section, since `$INSTALL_DIR` itself follows the double-read resolution.
 - **The user-facing command name** is `indagis` (set by the G1.2 shell-completion rebrand); the upstream sub-command identity `hermes serve` is **preserved** as a backend module name (the Electron app still forks it from `hermes_cli.__main__`). Migration is logged for **Phase 5** and is documented above the "Connections, projects, and switching" section.
 
