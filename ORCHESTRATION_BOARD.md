@@ -57,8 +57,9 @@ Source of truth: live via SendMessage check-ins with each peer session (no autom
 
 ### card-008 — Phase 1a: wrong upstream repo/domain references (update_cmd.py, banner.py, auxiliary_client.py, dead hermes:// deep links)
 - Owner: assigned to magical-heisenberg-a0a501-3d
-- Scope: hermes_cli/update_cmd.py (OFFICIAL_REPO_URL, update-archive URL, reinstall URLs), hermes_cli/banner.py (_UPSTREAM_REPO_URL, _OFFICIAL_REPO_CANONICAL, _RELEASE_URL_BASE), agent/auxiliary_client.py (HTTP-Referer header, x2 sites), cron/blueprint_catalog.py:538 (blueprint_deeplink still emits hermes:// links) + plugins/memory/honcho/oauth_flow.py (check hermes:// OAuth callback)
+- Scope: hermes_cli/update_cmd.py (OFFICIAL_REPO_URL, update-archive URL, reinstall URLs), agent/auxiliary_client.py (HTTP-Referer header, x2 sites), cron/blueprint_catalog.py:538 (blueprint_deeplink still emits hermes:// links) + plugins/memory/honcho/oauth_flow.py (check hermes:// OAuth callback)
 - Explicitly OUT of scope (human decision pending): agent/anthropic_adapter.py inference-api.nousresearch.com hostname — do not touch
+- **CORRECTED**: hermes_cli/banner.py's upstream URLs (_UPSTREAM_REPO_URL, _OFFICIAL_REPO_CANONICAL, _RELEASE_URL_BASE) removed from scope — magical-heisenberg verified against CHANGELOG.md that these are explicitly documented as deliberately preserved (cahier §3.3 attribution rules), not a bug. Original audit misclassified this.
 - State: **Ready** — task sent, from ADR 0001 (accepted) / plan Phase 1
 - Acceptance: `indagis update` resolves to the correct repo/release infra (verify with a real dry-run, not just grep); no live outbound request carries the old domain; blueprint deep-links open in the rebranded desktop app
 - Merge gate: tests pass, no push without user confirmation in that session's own conversation
