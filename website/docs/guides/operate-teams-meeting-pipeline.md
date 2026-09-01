@@ -68,7 +68,7 @@ chmod +x ~/.indagis/scripts/maintain-teams-subscriptions.sh
 Then register a script-only cron job that runs every 12 hours (gives 6x headroom against the 72h expiry window):
 
 ```bash
-hermes cron create "0 */12 * * *" \
+indagis cron create "0 */12 * * *" \
   --name "teams-pipeline-maintain-subscriptions" \
   --no-agent \
   --script maintain-teams-subscriptions.sh \
@@ -78,8 +78,8 @@ hermes cron create "0 */12 * * *" \
 Verify it was registered and inspect the next run time:
 
 ```bash
-hermes cron list
-hermes cron status        # scheduler status
+indagis cron list
+indagis cron status        # scheduler status
 ```
 
 #### Option 2: systemd timer (recommended for Linux production deployments)

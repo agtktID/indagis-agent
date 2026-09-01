@@ -27,7 +27,7 @@ API_SERVER_KEY=change-me-local-dev
 ### 2. Start the gateway
 
 ```bash
-hermes gateway
+indagis gateway
 ```
 
 You'll see:
@@ -410,7 +410,7 @@ List all scheduled jobs.
 
 ### POST /api/jobs
 
-Create a new scheduled job. Body accepts the same shape as `hermes cron` — prompt, schedule, skills, provider override, delivery target.
+Create a new scheduled job. Body accepts the same shape as `indagis cron` — prompt, schedule, skills, provider override, delivery target.
 
 ### GET /api/jobs/\{job_id\}
 
@@ -621,8 +621,8 @@ To give multiple users their own isolated Hermes instance (separate config, memo
 
 ```bash
 # Create a profile per user
-hermes profile create alice
-hermes profile create bob
+indagis profile create alice
+indagis profile create bob
 
 # Configure each profile's API server on a different port. API_SERVER_* are env
 # vars (not config.yaml keys), so write them to each profile's .env:
@@ -639,8 +639,8 @@ API_SERVER_KEY=bob-secret
 EOF
 
 # Start each profile's gateway
-hermes -p alice gateway &
-hermes -p bob gateway &
+indagis -p alice gateway &
+indagis -p bob gateway &
 ```
 
 Each profile's API server automatically advertises the profile name as the model ID:

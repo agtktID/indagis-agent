@@ -38,7 +38,7 @@ Mode — all at once.
 
 1. Generate the manifest. New Slack apps must use Agent view:
    ```bash
-   hermes slack manifest --agent-view --write
+   indagis slack manifest --agent-view --write
    ```
    This writes `~/.hermes/slack-manifest.json` and prints paste-in
    instructions. Existing apps that still use Slack's legacy Assistant view
@@ -48,7 +48,7 @@ Mode — all at once.
    Markdown file, add `--long-description-file`:
 
    ```bash
-   hermes slack manifest --agent-view \
+   indagis slack manifest --agent-view \
      --long-description-file AGENTS.md --write
    ```
 
@@ -220,15 +220,15 @@ SLACK_HOME_CHANNEL_NAME=general              # Human-readable name for the home 
 Or run the interactive setup:
 
 ```bash
-hermes gateway setup    # Select Slack when prompted
+indagis gateway setup    # Select Slack when prompted
 ```
 
 Then start the gateway:
 
 ```bash
-hermes gateway              # Foreground
-hermes gateway install      # Install as a user service
-sudo hermes gateway install --system   # Linux only: boot-time system service
+indagis gateway              # Foreground
+indagis gateway install      # Install as a user service
+sudo indagis gateway install --system   # Linux only: boot-time system service
 ```
 
 :::tip Codex reasoning-effort safety
@@ -270,7 +270,7 @@ New Slack apps use Slack's **Agent** messaging experience. Existing Hermes
 Assistant apps can migrate by regenerating the manifest with `--agent-view`:
 
 ```bash
-hermes slack manifest --agent-view --write
+indagis slack manifest --agent-view --write
 ```
 
 Update the manifest in **Features → App Manifest**, then reinstall the app if
@@ -283,11 +283,11 @@ channel's history.
 
 ### Refreshing slash commands after updates
 
-When Hermes adds new commands (e.g. after `hermes update`), regenerate
+When Hermes adds new commands (e.g. after `indagis update`), regenerate
 the manifest and update your Slack app:
 
 ```bash
-hermes slack manifest --write
+indagis slack manifest --write
 ```
 
 Then in Slack:
@@ -360,7 +360,7 @@ If you maintain your Slack manifest by hand and just want the slash
 command list:
 
 ```bash
-hermes slack manifest --slashes-only > /tmp/slashes.json
+indagis slack manifest --slashes-only > /tmp/slashes.json
 ```
 
 Paste that array into the `features.slash_commands` key of your
@@ -644,7 +644,7 @@ By default, emoji reactions are acknowledged and dropped — a 👍 on a bot
 message does nothing. Set `slack.reaction_triggers` to route reactions into
 the agent loop (requires the `reactions:read` scope plus the
 `reaction_added`/`reaction_removed` bot event subscriptions in your Slack app
-manifest — regenerate with `hermes slack manifest`):
+manifest — regenerate with `indagis slack manifest`):
 
 ```yaml
 slack:

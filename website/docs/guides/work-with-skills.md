@@ -21,7 +21,7 @@ Every Hermes installation ships with bundled skills. See what's available:
 /skills
 
 # Or from the CLI:
-hermes skills list
+indagis skills list
 ```
 
 This shows a compact list with names and descriptions:
@@ -90,13 +90,13 @@ Official optional skills ship with Hermes but aren't active by default. Install 
 
 ```bash
 # Install an official optional skill
-hermes skills install official/research/arxiv
+indagis skills install official/research/arxiv
 
 # Install from the hub in a chat session
 /skills install official/creative/songwriting-and-ai-music
 
 # Install SKILL.md and its referenced support files from an HTTP(S) URL
-hermes skills install https://sharethis.chat/SKILL.md
+indagis skills install https://sharethis.chat/SKILL.md
 /skills install https://example.com/SKILL.md --name my-skill
 ```
 
@@ -113,7 +113,7 @@ Installed skills take effect in new sessions. If you want it available in the cu
 
 ```bash
 # Check it's there
-hermes skills list | grep arxiv
+indagis skills list | grep arxiv
 
 # Or in chat
 /skills search arxiv
@@ -159,10 +159,10 @@ Manage skill config from the CLI:
 
 ```bash
 # Interactive config for a specific skill
-hermes skills config gif-search
+indagis skills config gif-search
 
 # View all skill config
-hermes config get skills.config --json
+indagis config get skills.config --json
 ```
 
 ---
@@ -235,7 +235,7 @@ For API details, load the reference: `skill_view("my-skill", "references/api-doc
 Start a new session and try your skill:
 
 ```bash
-hermes chat -q "/my-skill help me with the thing"
+indagis chat -q "/my-skill help me with the thing"
 ```
 
 The skill appears automatically — no registration needed. Drop it in `~/.indagis/skills/` and it's live.
@@ -251,7 +251,7 @@ The agent can also create and update skills itself using `skill_manage`. After s
 Control which skills are available on which platforms:
 
 ```bash
-hermes skills
+indagis skills
 ```
 
 This opens an interactive TUI where you can enable or disable skills per platform (CLI, Telegram, Discord, etc.). Useful when you want certain skills only available in specific contexts — for example, keeping development skills off Telegram.

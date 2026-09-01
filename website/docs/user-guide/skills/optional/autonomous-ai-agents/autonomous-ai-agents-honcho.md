@@ -14,7 +14,7 @@ Configure and troubleshoot Honcho memory for Hermes.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/autonomous-ai-agents/honcho` |
+| Source | Optional — install with `indagis skills install official/autonomous-ai-agents/honcho` |
 | Path | `optional-skills/autonomous-ai-agents/honcho` |
 | Version | `2.0.0` |
 | Author | Hermes Agent |
@@ -47,14 +47,14 @@ Honcho provides AI-native cross-session user modeling. It learns who the user is
 ### Cloud (app.honcho.dev)
 
 ```bash
-hermes memory setup honcho
+indagis memory setup honcho
 # select "cloud", paste API key from https://app.honcho.dev
 ```
 
 ### Self-hosted
 
 ```bash
-hermes memory setup honcho
+indagis memory setup honcho
 # select "local", enter base URL (e.g. http://localhost:8000)
 ```
 
@@ -63,7 +63,7 @@ See: https://docs.honcho.dev/v3/guides/integrations/hermes#running-honcho-locall
 ### Verify
 
 ```bash
-hermes honcho status    # shows resolved config, connection test, peer info
+indagis honcho status    # shows resolved config, connection test, peer info
 ```
 
 ## Architecture
@@ -138,7 +138,7 @@ Honcho sessions scope where messages and observations land. Strategy options:
 | `per-session` | New Honcho session each Hermes run |
 | `global` | Single session across all directories |
 
-Manual override: `hermes honcho map my-project-name`
+Manual override: `indagis honcho map my-project-name`
 
 ### Recall Modes
 
@@ -220,7 +220,7 @@ Each Hermes profile gets its own Honcho AI peer while sharing the same workspace
 ### Create a profile with Honcho peer
 
 ```bash
-hermes profile create coder --clone
+indagis profile create coder --clone
 # creates host block hermes.coder, AI peer "coder", inherits config from default
 ```
 
@@ -233,7 +233,7 @@ What `--clone` does for Honcho:
 ### Backfill existing profiles
 
 ```bash
-hermes honcho sync    # creates host blocks for all profiles that don't have one yet
+indagis honcho sync    # creates host blocks for all profiles that don't have one yet
 ```
 
 ### Per-profile config
@@ -404,13 +404,13 @@ This fix addresses edge cases where raw user conclusions containing markup or sp
 ## Troubleshooting
 
 ### "Honcho not configured"
-Run `hermes honcho setup`. Ensure `memory.provider: honcho` is in `~/.indagis/config.yaml`.
+Run `indagis honcho setup`. Ensure `memory.provider: honcho` is in `~/.indagis/config.yaml`.
 
 ### Memory not persisting across sessions
-Check `hermes honcho status` -- verify `saveMessages: true` and `writeFrequency` isn't `session` (which only writes on exit).
+Check `indagis honcho status` -- verify `saveMessages: true` and `writeFrequency` isn't `session` (which only writes on exit).
 
 ### Profile not getting its own peer
-Use `--clone` when creating: `hermes profile create <name> --clone`. For existing profiles: `hermes honcho sync`.
+Use `--clone` when creating: `indagis profile create <name> --clone`. For existing profiles: `indagis honcho sync`.
 
 ### Observation changes in dashboard not reflected
 Observation config is synced from the server on each session init. Start a new session after changing settings in the Honcho UI.
@@ -428,19 +428,19 @@ Session summary requires at least one prior turn in the current Honcho session. 
 
 | Command | Description |
 |---------|-------------|
-| `hermes honcho setup` | Interactive setup wizard (cloud/local, identity, observation, recall, sessions) |
-| `hermes honcho status` | Show resolved config, connection test, peer info for active profile |
-| `hermes honcho enable` | Enable Honcho for the active profile (creates host block if needed) |
-| `hermes honcho disable` | Disable Honcho for the active profile |
-| `hermes honcho peer` | Show or update peer names (`--user <name>`, `--ai <name>`, `--reasoning <level>`) |
-| `hermes honcho peers` | Show peer identities across all profiles |
-| `hermes honcho mode` | Show or set recall mode (`hybrid`, `context`, `tools`) |
-| `hermes honcho tokens` | Show or set token budgets (`--context <N>`, `--dialectic <N>`) |
-| `hermes honcho sessions` | List known directory-to-session-name mappings |
-| `hermes honcho map <name>` | Map current working directory to a Honcho session name |
-| `hermes honcho identity` | Seed AI peer identity or show both peer representations |
-| `hermes honcho sync` | Create host blocks for all Hermes profiles that don't have one yet |
-| `hermes honcho migrate` | Step-by-step migration guide from OpenClaw native memory to Hermes + Honcho |
-| `hermes memory setup` | Generic memory provider picker (selecting "honcho" runs the same wizard) |
-| `hermes memory status` | Show active memory provider and config |
-| `hermes memory off` | Disable external memory provider |
+| `indagis honcho setup` | Interactive setup wizard (cloud/local, identity, observation, recall, sessions) |
+| `indagis honcho status` | Show resolved config, connection test, peer info for active profile |
+| `indagis honcho enable` | Enable Honcho for the active profile (creates host block if needed) |
+| `indagis honcho disable` | Disable Honcho for the active profile |
+| `indagis honcho peer` | Show or update peer names (`--user <name>`, `--ai <name>`, `--reasoning <level>`) |
+| `indagis honcho peers` | Show peer identities across all profiles |
+| `indagis honcho mode` | Show or set recall mode (`hybrid`, `context`, `tools`) |
+| `indagis honcho tokens` | Show or set token budgets (`--context <N>`, `--dialectic <N>`) |
+| `indagis honcho sessions` | List known directory-to-session-name mappings |
+| `indagis honcho map <name>` | Map current working directory to a Honcho session name |
+| `indagis honcho identity` | Seed AI peer identity or show both peer representations |
+| `indagis honcho sync` | Create host blocks for all Hermes profiles that don't have one yet |
+| `indagis honcho migrate` | Step-by-step migration guide from OpenClaw native memory to Hermes + Honcho |
+| `indagis memory setup` | Generic memory provider picker (selecting "honcho" runs the same wizard) |
+| `indagis memory status` | Show active memory provider and config |
+| `indagis memory off` | Disable external memory provider |

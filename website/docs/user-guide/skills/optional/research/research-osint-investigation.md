@@ -14,7 +14,7 @@ Follow the money via public records and sanctions data.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/research/osint-investigation` |
+| Source | Optional — install with `indagis skills install official/research/osint-investigation` |
 | Path | `optional-skills/research/osint-investigation` |
 | Version | `0.1.0` |
 | Author | Hermes Agent (adapted from ShinMegamiBoson/OpenPlanter, MIT) |

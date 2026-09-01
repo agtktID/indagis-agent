@@ -37,7 +37,7 @@ The SMS gateway shares credentials with the optional [telephony skill](/referenc
 ### Interactive setup (recommended)
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **SMS (Twilio)** from the platform list. The wizard will prompt for your credentials.
@@ -102,7 +102,7 @@ SMS_WEBHOOK_PORT=3000
 ## Step 4: Start the Gateway
 
 ```bash
-hermes gateway
+indagis gateway
 ```
 
 You should see:

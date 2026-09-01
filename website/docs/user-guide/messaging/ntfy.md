@@ -4,7 +4,7 @@
 
 ntfy makes a great lightweight push channel for Hermes: subscribe to a topic from the [ntfy mobile app](https://ntfy.sh/docs/subscribe/phone/), send messages to the topic to talk to the agent, get the response back on your phone.
 
-> Run `hermes gateway setup` and pick **ntfy** for a guided walk-through.
+> Run `indagis gateway setup` and pick **ntfy** for a guided walk-through.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ That's it. No SDK, no daemon, no Node.js. The adapter uses `httpx` which is alre
 ### Via setup wizard
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **ntfy** and follow the prompts.
@@ -68,7 +68,7 @@ In all cases, do not put sensitive data through ntfy unless the underlying topic
    ```bash
    echo 'NTFY_TOPIC=hermes-myname-2026' >> ~/.indagis/.env
    echo 'NTFY_ALLOWED_USERS=hermes-myname-2026' >> ~/.indagis/.env
-   hermes gateway restart
+   indagis gateway restart
    ```
 4. From the ntfy app, send a message to the topic. The agent's reply lands as a push notification.
 
@@ -85,10 +85,10 @@ cronjob(
 )
 ```
 
-Or target a specific topic explicitly via the cron job's `deliver:` field, or from a shell script with the [`hermes send` CLI](/guides/pipe-script-output):
+Or target a specific topic explicitly via the cron job's `deliver:` field, or from a shell script with the [`indagis send` CLI](/guides/pipe-script-output):
 
 ```bash
-hermes send ntfy:alerts-channel "Done!"
+indagis send ntfy:alerts-channel "Done!"
 ```
 
 This works even when the cron runs out-of-process from the gateway — the plugin registers a `standalone_sender_fn` that opens its own HTTP connection.

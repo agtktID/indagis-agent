@@ -14,7 +14,7 @@ On-demand GPU cloud instances for ML training.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/lambda-labs` |
+| Source | Optional — install with `indagis skills install official/mlops/lambda-labs` |
 | Path | `optional-skills/mlops/lambda-labs` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

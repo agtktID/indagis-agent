@@ -14,7 +14,7 @@ Train sparse autoencoders to interpret model features.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/saelens` |
+| Source | Optional — install with `indagis skills install official/mlops/saelens` |
 | Path | `optional-skills/mlops/saelens` |
 | Version | `1.0.1` |
 | Author | Orchestra Research |

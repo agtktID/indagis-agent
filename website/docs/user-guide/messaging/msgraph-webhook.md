@@ -43,7 +43,7 @@ MSGRAPH_WEBHOOK_ACCEPTED_RESOURCES=communications/onlineMeetings
 
 Note: the bind host is read from `extra.host` in `config.yaml` (see the example above); there is no `MSGRAPH_WEBHOOK_HOST` env-var override.
 
-Start the gateway: `hermes gateway run`. The listener exposes:
+Start the gateway: `indagis gateway run`. The listener exposes:
 
 - `POST /msgraph/webhook` — change notifications from Graph
 - `GET /msgraph/webhook?validationToken=...` — Graph subscription validation handshake

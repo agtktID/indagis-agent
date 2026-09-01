@@ -338,7 +338,7 @@ plugins:
       llm:
         # Allow this plugin to choose a different Hermes provider
         # (must be one Hermes already knows about — same names as
-        # `hermes model` and config.yaml model.provider).
+        # `indagis model` and config.yaml model.provider).
         allow_provider_override: true
 
         # Optionally restrict which providers. Use ["*"] for any.

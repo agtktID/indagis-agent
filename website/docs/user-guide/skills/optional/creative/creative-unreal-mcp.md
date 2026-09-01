@@ -14,7 +14,7 @@ Automate Unreal Engine editor scenes, actors, and renders.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/creative/unreal-mcp` |
+| Source | Optional — install with `indagis skills install official/creative/unreal-mcp` |
 | Path | `optional-skills/creative/unreal-mcp` |
 | Version | `1.0.0` |
 | Author | Hermes Agent |
@@ -77,7 +77,7 @@ Two halves, in this order: the editor side must be up before Hermes connects.
 
 ### One-time, Hermes side
 
-    hermes mcp install unreal-engine
+    indagis mcp install unreal-engine
 
 This writes the `mcp_servers.unreal-engine` HTTP entry pointing at
 `http://127.0.0.1:8000/mcp` and probes the live server for its tools. Run it
@@ -129,7 +129,7 @@ changes (new plugin enabled, toolset authored, `RefreshTools` run).
 
 The alternative eager mode (`Enable Tool Search` off in Editor Preferences)
 advertises every tool as its own `mcp_unreal_engine_<tool>` entry. Discovery
-then happens at `hermes mcp install`/`configure` time instead. Tool-search
+then happens at `indagis mcp install`/`configure` time instead. Tool-search
 mode is the default and what this skill assumes; it also keeps schema tokens
 out of every API call, so prefer it.
 

@@ -55,7 +55,7 @@ status` to verify the install.
 
 **Option 2: enable the toolset interactively.**
 
-1. Run `hermes tools`, pick `🖱️  Computer Use (macOS/Windows/Linux)`.
+1. Run `indagis tools`, pick `🖱️  Computer Use (macOS/Windows/Linux)`.
 2. The setup runs the upstream installer (same as Option 1).
 
 After installing, regardless of which path you took, grant the
@@ -70,7 +70,7 @@ platform-appropriate prereqs:
 Then start a session with the toolset enabled:
 
 ```
-hermes -t computer_use chat
+indagis -t computer_use chat
 ```
 
 or add `computer_use` to your enabled toolsets in `~/.indagis/config.yaml`.
@@ -449,7 +449,7 @@ Specific failure modes the doctor doesn't catch:
 
 **`computer_use backend unavailable: cua-driver is not installed`** —
 Run `hermes computer-use install` to fetch the cua-driver binary, or
-run `hermes tools` and enable the Computer Use toolset.
+run `indagis tools` and enable the Computer Use toolset.
 
 **Clicks seem to have no effect** — Capture and verify. A modal you
 didn't see may be blocking input. Dismiss it with `escape` or the close

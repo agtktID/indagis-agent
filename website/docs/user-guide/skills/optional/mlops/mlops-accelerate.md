@@ -14,7 +14,7 @@ Run PyTorch training across GPUs with minimal changes.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/accelerate` |
+| Source | Optional — install with `indagis skills install official/mlops/accelerate` |
 | Path | `optional-skills/mlops/accelerate` |
 | Version | `1.0.1` |
 | Author | Orchestra Research |

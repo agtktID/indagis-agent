@@ -270,7 +270,7 @@ be re-allowed this way):
 
 **Diagnosing it.** When the child drops one or more non-allowlisted `HERMES_*`
 variables, Hermes emits a one-line `debug` log naming them and pointing at the
-`env_passthrough` escape hatch. Run with debug logging (`hermes logs --level
+`env_passthrough` escape hatch. Run with debug logging (`indagis logs --level
 DEBUG`, or check `~/.indagis/logs/agent.log`) and look for
 `execute_code: dropped N non-allowlisted HERMES_* var(s)` if a script behaves
 as though a `HERMES_*` variable is missing.
