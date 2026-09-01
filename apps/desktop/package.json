@@ -4,7 +4,7 @@
   "version": "0.17.0",
   "private": true,
   "description": "Native desktop shell for Indagis Agent.",
-  "author": "Nous Research",
+  "author": "Indagis",
   "type": "module",
   "main": "dist/electron-main.mjs",
   "engines": {
@@ -163,14 +163,14 @@
   },
   "build": {
     "electronVersion": "40.10.2",
-    "appId": "com.nousresearch.hermes",
+    "appId": "com.indagis.agent",
     "productName": "Indagis",
     "executableName": "Indagis",
     "protocols": [
       {
-        "name": "Hermes Protocol",
+        "name": "Indagis Protocol",
         "schemes": [
-          "hermes"
+          "indagis"
         ]
       }
     ],
@@ -256,7 +256,7 @@
     },
     "linux": {
       "category": "Development",
-      "maintainer": "Nous Research <support@nousresearch.com>",
+      "maintainer": "Indagis",
       "synopsis": "Native desktop shell for Indagis Agent.",
       "target": [
         "AppImage",
