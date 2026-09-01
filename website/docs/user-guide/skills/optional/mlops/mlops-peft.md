@@ -14,7 +14,7 @@ Fine-tune large LLMs with LoRA on limited GPU memory.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/peft` |
+| Source | Optional — install with `indagis skills install official/mlops/peft` |
 | Path | `optional-skills/mlops/peft` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

@@ -14,7 +14,7 @@ Embed an in-page natural-language GUI copilot in web apps.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/web-development/page-agent` |
+| Source | Optional — install with `indagis skills install official/web-development/page-agent` |
 | Path | `optional-skills/web-development/page-agent` |
 | Version | `1.0.0` |
 | Author | Hermes Agent |

@@ -66,7 +66,7 @@ mcp_servers:
 Then start Hermes:
 
 ```bash
-hermes chat
+indagis chat
 ```
 
 Now ask something concrete:
@@ -143,13 +143,13 @@ Use `chrome-devtools-mcp`.
 If your Windows Chrome already has live remote debugging enabled from `chrome://inspect/#remote-debugging`, add it like this from WSL:
 
 ```bash
-hermes mcp add chrome-devtools-win --command cmd.exe --args /c npx -y chrome-devtools-mcp@latest --autoConnect --no-usage-statistics
+indagis mcp add chrome-devtools-win --command cmd.exe --args /c npx -y chrome-devtools-mcp@latest --autoConnect --no-usage-statistics
 ```
 
 After saving the server:
 
 ```bash
-hermes mcp test chrome-devtools-win
+indagis mcp test chrome-devtools-win
 ```
 
 Then start a fresh Hermes session or run:
@@ -271,11 +271,11 @@ Use [Open Scaffold](https://github.com/graphanov/open-scaffold) when you want He
 Add the server for one scaffolded repository:
 
 ```bash
-hermes mcp add open_scaffold --command npx --args -y open-scaffold@latest mcp serve --repo /absolute/path/to/repo
-hermes mcp test open_scaffold
+indagis mcp add open_scaffold --command npx --args -y open-scaffold@latest mcp serve --repo /absolute/path/to/repo
+indagis mcp test open_scaffold
 ```
 
-Then keep the exposed surface read-oriented. Choose `select` in the `hermes mcp add` prompt, or edit `config.yaml` afterward:
+Then keep the exposed surface read-oriented. Choose `select` in the `indagis mcp add` prompt, or edit `config.yaml` afterward:
 
 ```yaml
 mcp_servers:

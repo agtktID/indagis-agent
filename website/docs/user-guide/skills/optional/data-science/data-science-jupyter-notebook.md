@@ -14,7 +14,7 @@ Iterative Python via live Jupyter kernel (hamelnb).
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/data-science/jupyter-notebook` |
+| Source | Optional — install with `indagis skills install official/data-science/jupyter-notebook` |
 | Path | `optional-skills/data-science/jupyter-notebook` |
 | Version | `1.0.0` |
 | Author | Hermes Agent |

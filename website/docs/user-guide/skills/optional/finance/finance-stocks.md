@@ -14,7 +14,7 @@ Stock quotes, history, search, compare, crypto via Yahoo.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/finance/stocks` |
+| Source | Optional — install with `indagis skills install official/finance/stocks` |
 | Path | `optional-skills/finance/stocks` |
 | Version | `0.1.0` |
 | Author | Mibay (Mibayy), Hermes Agent |

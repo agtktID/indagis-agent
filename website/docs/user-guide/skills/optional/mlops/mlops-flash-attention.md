@@ -14,7 +14,7 @@ Speed up long-sequence transformer training and inference.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/flash-attention` |
+| Source | Optional — install with `indagis skills install official/mlops/flash-attention` |
 | Path | `optional-skills/mlops/flash-attention` |
 | Version | `1.0.1` |
 | Author | Orchestra Research |

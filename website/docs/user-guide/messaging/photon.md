@@ -52,7 +52,7 @@ That's it — there is no public URL or tunnel to set up.
 Either run the unified gateway wizard and pick **Photon iMessage**:
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 …or run the Photon setup directly (the wizard calls the same flow):
@@ -94,10 +94,10 @@ channel. Choose one approach:
 line, Hermes replies with a pairing code. Approve it with:
 
 ```bash
-hermes pairing approve photon <CODE>
+indagis pairing approve photon <CODE>
 ```
 
-Use `hermes pairing list` to see pending codes and approved users.
+Use `indagis pairing list` to see pending codes and approved users.
 
 **Pre-authorize specific numbers** (in `~/.indagis/.env`):
 
@@ -149,7 +149,7 @@ BlueBubbles iMessage channel uses.
 ## Start the gateway
 
 ```bash
-hermes gateway start
+indagis gateway start
 ```
 
 You'll see something like:
@@ -215,7 +215,7 @@ Common issues:
   50 new-conversation initiations per shared line per day. Increases
   available — email `help@photon.codes`.
 - **Cron and standalone sends need the gateway running.** Out-of-process
-  senders (cron jobs, `hermes send`, the dashboard) reuse the sidecar the
+  senders (cron jobs, `indagis send`, the dashboard) reuse the sidecar the
   gateway spawned — they read its port/token from
   `<hermes-home>/runtime/photon-sidecar.json`, written once the sidecar
   passes its health check and removed when it stops. If a standalone send

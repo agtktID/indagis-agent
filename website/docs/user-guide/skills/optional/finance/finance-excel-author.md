@@ -14,7 +14,7 @@ Build auditable financial workbooks headless via openpyxl.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/finance/excel-author` |
+| Source | Optional — install with `indagis skills install official/finance/excel-author` |
 | Path | `optional-skills/finance/excel-author` |
 | Version | `1.0.0` |
 | Author | Anthropic (adapted by Nous Research) |

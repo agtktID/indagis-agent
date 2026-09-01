@@ -14,7 +14,7 @@ Agent payments via Stripe Link — cards, SPT, approvals.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/payments/stripe-link-cli` |
+| Source | Optional — install with `indagis skills install official/payments/stripe-link-cli` |
 | Path | `optional-skills/payments/stripe-link-cli` |
 | Version | `0.1.0` |
 | Author | Teknium (teknium1), Hermes Agent |
@@ -179,10 +179,10 @@ rm -f /tmp/link-card.json
 `@stripe/link-cli --mcp` exposes the same commands as MCP tools over stdio. To register it with Hermes' native MCP:
 
 ```
-hermes mcp add stripe-link --command "npx" --args "@stripe/link-cli --mcp"
+indagis mcp add stripe-link --command "npx" --args "@stripe/link-cli --mcp"
 ```
 
-Then `hermes mcp list` should show `stripe-link`. The same approval rules apply — MCP doesn't bypass the Link app approval step.
+Then `indagis mcp list` should show `stripe-link`. The same approval rules apply — MCP doesn't bypass the Link app approval step.
 
 ## Pitfalls
 

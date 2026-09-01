@@ -213,7 +213,7 @@ Both backends tested on the same machine (Apple M5 Max, 128 GB unified memory) r
 Once your local server is running:
 
 ```bash
-hermes model
+indagis model
 ```
 
 Select **Custom endpoint** and follow the prompts. It will ask for the base URL and model name — use the values from whichever backend you set up above.

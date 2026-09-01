@@ -14,7 +14,7 @@ Plan and run multi-agent video production pipelines.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/creative/kanban-video-orchestrator` |
+| Source | Optional — install with `indagis skills install official/creative/kanban-video-orchestrator` |
 | Path | `optional-skills/creative/kanban-video-orchestrator` |
 | Version | `1.0.0` |
 | Author | ['SHL0MS', 'alt-glitch'] |
@@ -111,11 +111,11 @@ Generate a setup script (`setup.sh`) and run it. The script:
 
 1. Creates the project workspace (`~/projects/video-pipeline/<slug>/`)
 2. Copies any provided assets into `taste/`, `audio/`, `assets/`
-3. Creates each Hermes profile via `hermes profile create --clone`
+3. Creates each Hermes profile via `indagis profile create --clone`
 4. Writes per-profile `SOUL.md` (personality + role definition)
 5. Configures profile YAML (toolsets, always_load skills, cwd)
 6. Writes `brief.md`, `TEAM.md`, and `taste/` content
-7. Fires the initial `hermes kanban create` task assigned to the director
+7. Fires the initial `indagis kanban create` task assigned to the director
 
 Use `scripts/bootstrap_pipeline.py` to generate setup.sh from a brief +
 team-design JSON. See **[references/kanban-setup.md](https://github.com/agtktID/indagis-agent/blob/main/optional-skills/creative/kanban-video-orchestrator/references/kanban-setup.md)**
@@ -127,9 +127,9 @@ for the setup script structure, profile config patterns, and the critical
 Run `setup.sh`. Then provide the user with monitoring commands:
 
 ```bash
-hermes kanban watch --tenant <project-tenant>     # live events
-hermes kanban list  --tenant <project-tenant>     # board snapshot
-hermes dashboard                                   # visual board UI
+indagis kanban watch --tenant <project-tenant>     # live events
+indagis kanban list  --tenant <project-tenant>     # board snapshot
+indagis dashboard                                   # visual board UI
 ```
 
 The director profile takes over from here, decomposing the work and routing
@@ -186,7 +186,7 @@ task graphs. See **[references/examples.md](https://github.com/agtktID/indagis-a
 6. **The director never executes.** Even with the full `kanban + terminal +
    file` toolset, the director's `SOUL.md` rules forbid it from executing
    work itself. It decomposes and routes only — every concrete task becomes
-   a `hermes kanban create` call to a specialist profile. The kanban
+   a `indagis kanban create` call to a specialist profile. The kanban
    orchestration guidance auto-injected into every kanban worker's system
    prompt spells this out further.
 

@@ -14,7 +14,7 @@ TRL: SFT, DPO, GRPO, RLOO reward modeling for LLM RLHF.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/trl-fine-tuning` |
+| Source | Optional — install with `indagis skills install official/mlops/trl-fine-tuning` |
 | Path | `optional-skills/mlops/training/trl-fine-tuning` |
 | Version | `1.0.1` |
 | Author | Orchestra Research |

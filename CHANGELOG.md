@@ -428,7 +428,7 @@ dependency, being arbitrated separately as of this writing).
   `desktop-electron-pin.test.ts` (a dedicated regression guard, see its
   docstring for the Windows install failure it prevents) caught this;
   fixed by pinning both to the exact, already-CVE-patched `40.10.6`.
-- `pyproject.toml` — `authors = [{ name = "Nous Research" }]` → `Indagis`.
+- `pyproject.toml` — `authors = [{ name = "Nous Research" }]` → `Indagis` in this branch's commit; superseded on merge by `agtktID`, already shipped independently on `main` (commit `ed7b9663a`) by another session before this branch merged — see "Coordination" note below.
 
 **Verification:** `vitest run --project electron` — `update-remote.test.ts`
 (6/6), `desktop-electron-pin.test.ts` (3/3, previously failing),

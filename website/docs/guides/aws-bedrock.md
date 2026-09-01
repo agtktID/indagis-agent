@@ -31,17 +31,17 @@ On AWS compute, attach an IAM role with `AmazonBedrockFullAccess` and you're don
 cd ~/.indagis/hermes-agent && uv pip install -e ".[bedrock]"
 
 # Select Bedrock as your provider
-hermes model
+indagis model
 # → Choose "More providers..." → "AWS Bedrock"
 # → Select your region and model
 
 # Start chatting
-hermes chat
+indagis chat
 ```
 
 ## Configuration
 
-After running `hermes model`, your `~/.indagis/config.yaml` will contain:
+After running `indagis model`, your `~/.indagis/config.yaml` will contain:
 
 ```yaml
 model:
@@ -98,7 +98,7 @@ For models whose context window isn't in Hermes' static table, Hermes can probe 
 
 ## Available Models
 
-Bedrock models use **inference profile IDs** for on-demand invocation. The `hermes model` picker shows these automatically, with recommended models at the top:
+Bedrock models use **inference profile IDs** for on-demand invocation. The `indagis model` picker shows these automatically, with recommended models at the top:
 
 | Model | ID | Notes |
 |-------|-----|-------|
@@ -127,7 +127,7 @@ Use the `/model` command during a conversation:
 ## Diagnostics
 
 ```bash
-hermes doctor
+indagis doctor
 ```
 
 The doctor checks:
@@ -141,8 +141,8 @@ The doctor checks:
 Bedrock works with all Hermes gateway platforms (Telegram, Discord, Slack, Feishu, etc.). Configure Bedrock as your provider, then start the gateway normally:
 
 ```bash
-hermes gateway setup
-hermes gateway start
+indagis gateway setup
+indagis gateway start
 ```
 
 The gateway reads `config.yaml` and uses the same Bedrock provider configuration.

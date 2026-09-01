@@ -14,7 +14,7 @@ Shop catalog search, checkout, order tracking, returns.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/productivity/shop` |
+| Source | Optional — install with `indagis skills install official/productivity/shop` |
 | Path | `optional-skills/productivity/shop` |
 | Version | `1.0.1` |
 | Author | Joe Rinaldi Johnson (joerj123), Hermes Agent |

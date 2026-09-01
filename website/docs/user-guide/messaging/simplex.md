@@ -2,7 +2,7 @@
 
 [SimpleX Chat](https://simplex.chat/) is a private, decentralised messaging platform where users own their contacts and groups. Unlike other platforms, SimpleX assigns no persistent user IDs — every contact is identified by an opaque internal ID generated at connection time, which makes it one of the most private messengers available.
 
-> Run `hermes gateway setup` and pick **SimpleX** for a guided walk-through.
+> Run `indagis gateway setup` and pick **SimpleX** for a guided walk-through.
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ The daemon listens on WebSocket at `ws://127.0.0.1:5225` by default.
 ### Via setup wizard
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **SimpleX Chat** and follow the prompts.
@@ -69,7 +69,7 @@ After starting the daemon, open a conversation with your agent contact. The nume
 By default **all contacts are denied**. You must either:
 
 1. Set `SIMPLEX_ALLOWED_USERS` to a comma-separated list of `contactId`s and/or display names (e.g. `SIMPLEX_ALLOWED_USERS=4,alice` matches either contactId 4 or the contact whose display name is "alice"), or
-2. Use **DM pairing** — send any message to the bot and it will reply with a pairing code. Enter that code via `hermes pairing approve simplex <CODE>`.
+2. Use **DM pairing** — send any message to the bot and it will reply with a pairing code. Enter that code via `indagis pairing approve simplex <CODE>`.
 
 ## Group chats
 
@@ -83,22 +83,22 @@ SIMPLEX_GROUP_ALLOWED=*              # any group the bot is in
 ```
 
 Address groups by prefixing the chat ID with `group:`, e.g.
-`simplex:group:12` as a cron `deliver=` target or in a `hermes send` call.
+`simplex:group:12` as a cron `deliver=` target or in a `indagis send` call.
 
-## Sending with `hermes send`
+## Sending with `indagis send`
 
 SimpleX works as a standalone send target — the daemon must be running,
 but a live gateway is not required for plain text:
 
 ```bash
-hermes send --to simplex:alice "hello"          # DM by contact display name
-hermes send --to simplex:group:12 "hello"       # group by numeric ID
-hermes send --to simplex "hello"                # SIMPLEX_HOME_CHANNEL
+indagis send --to simplex:alice "hello"          # DM by contact display name
+indagis send --to simplex:group:12 "hello"       # group by numeric ID
+indagis send --to simplex "hello"                # SIMPLEX_HOME_CHANNEL
 ```
 
 While the gateway is running, the adapter enumerates your contacts and
 allowed groups into the channel directory (refreshed every 5 minutes), so
-`hermes send --list` shows them by name. Before the first gateway run the
+`indagis send --list` shows them by name. Before the first gateway run the
 platform still appears in `--list` with a "no channels discovered yet"
 hint — direct targets like the ones above work regardless.
 
@@ -130,10 +130,10 @@ cronjob(
 )
 ```
 
-Or target a specific contact via the cron job's `deliver:` field, or from a shell script with the [`hermes send` CLI](/guides/pipe-script-output):
+Or target a specific contact via the cron job's `deliver:` field, or from a shell script with the [`indagis send` CLI](/guides/pipe-script-output):
 
 ```bash
-hermes send simplex:<contact-id> "Done!"
+indagis send simplex:<contact-id> "Done!"
 ```
 
 ## Privacy notes

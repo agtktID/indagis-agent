@@ -27,7 +27,7 @@ If those constraints don't work for your use case, the [Baileys bridge integrati
 ## Quick start
 
 ```bash
-hermes whatsapp-cloud
+indagis whatsapp-cloud
 ```
 
 The wizard walks you through every credential, validates each one as you paste it (catches the #1 setup trap — pasting a phone number into the Phone Number ID field), and prints exact follow-up instructions for the parts that need to happen outside the wizard (starting cloudflared, configuring Meta's webhook dashboard).
@@ -143,7 +143,7 @@ Once your tunnel is running:
    python -c "import secrets; print(secrets.token_urlsafe(32))"
    ```
    Save it as `WHATSAPP_CLOUD_VERIFY_TOKEN` in `~/.indagis/.env`.
-3. Start the Hermes gateway: `hermes gateway`.
+3. Start the Hermes gateway: `indagis gateway`.
 4. In the Meta App Dashboard → **WhatsApp → Configuration** (or **Use cases → Customize → Configuration** depending on UI version) → click **Edit** on the Webhook section.
 5. Fill in:
    - **Callback URL**: `https://abc123.trycloudflare.com/whatsapp/webhook`
@@ -207,7 +207,7 @@ Once your bot is working, head to **[business.facebook.com/wa/manage/phone-numbe
 | **About / description / website / email / hours / category** | "Edit profile" button | These appear in the info pane when a user taps the bot's name. Cosmetic. |
 | **Verified badge** (green checkmark) | Business Manager → Security Center → Start Verification | Requires Meta's separate business verification process. |
 
-The `hermes whatsapp-cloud` wizard prints these links at the end of setup. None of this is required for the bot to work — it's pure polish for how your bot appears to users.
+The `indagis whatsapp-cloud` wizard prints these links at the end of setup. None of this is required for the bot to work — it's pure polish for how your bot appears to users.
 
 ---
 
@@ -329,7 +329,7 @@ Almost always one of:
 
 - **Tunnel URL is wrong or stale** — cloudflared quick tunnels rotate.  Get a fresh URL and update both `.env` and Meta's dashboard.
 - **Verify token mismatch** — the token in `~/.indagis/.env`'s `WHATSAPP_CLOUD_VERIFY_TOKEN` must match exactly what you typed into Meta's dashboard.  Run the curl probe above to confirm the gateway's verify handshake works locally first.
-- **Gateway not running** — check `hermes gateway` is up.
+- **Gateway not running** — check `indagis gateway` is up.
 - **App Secret not set** — without it, Hermes refuses inbound POSTs with 503.  Meta interprets that as "can't validate."
 
 ### `graph error 100`: Object with ID '...' does not exist
@@ -359,7 +359,7 @@ Same 401 root causes as outbound (`graph error 190`) — the access token is inv
 
 ### Bot replies appear as raw JSON / tool-call leakage
 
-Common cause: the toolset configured for `whatsapp_cloud` is missing the tools the agent wants to call.  Check `hermes tools list` and verify the platform is using `hermes-whatsapp` (the default Cloud adapter toolset, same as Baileys).
+Common cause: the toolset configured for `whatsapp_cloud` is missing the tools the agent wants to call.  Check `indagis tools list` and verify the platform is using `hermes-whatsapp` (the default Cloud adapter toolset, same as Baileys).
 
 If the model emits tool-call-shaped text instead of a structured call, it usually means the toolset was effectively empty.  See `hermes_cli/platforms.py` for the platform → default toolset mapping.
 
@@ -368,9 +368,9 @@ If the model emits tool-call-shaped text instead of a structured call, it usuall
 The default `stt.provider: local` requires `pip install faster-whisper`.  If you're a Nous subscriber, you can route STT through Meta's managed audio gateway instead:
 
 ```bash
-hermes config set stt.provider openai
-hermes config set stt.use_gateway true
-hermes gateway restart
+indagis config set stt.provider openai
+indagis config set stt.use_gateway true
+indagis gateway restart
 ```
 
 This uses your Nous Portal access token instead of needing a separate OpenAI key.
@@ -389,7 +389,7 @@ This uses your Nous Portal access token instead of needing a separate OpenAI key
 
 ## Comparison to the Baileys bridge
 
-| | Baileys (`hermes whatsapp`) | Cloud API (`hermes whatsapp-cloud`) |
+| | Baileys (`indagis whatsapp`) | Cloud API (`indagis whatsapp-cloud`) |
 |---|---|---|
 | Account type | Personal | Business |
 | Setup | QR code scan | Meta app + WABA + token |

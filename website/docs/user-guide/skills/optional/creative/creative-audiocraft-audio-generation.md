@@ -14,7 +14,7 @@ AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/creative/audiocraft-audio-generation` |
+| Source | Optional — install with `indagis skills install official/creative/audiocraft-audio-generation` |
 | Path | `optional-skills/creative/audiocraft-audio-generation` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

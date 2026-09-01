@@ -14,7 +14,7 @@ Hybrid local search over notes, docs, and transcripts.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/research/qmd` |
+| Source | Optional — install with `indagis skills install official/research/qmd` |
 | Path | `optional-skills/research/qmd` |
 | Version | `1.0.0` |
 | Author | Hermes Agent + Teknium |

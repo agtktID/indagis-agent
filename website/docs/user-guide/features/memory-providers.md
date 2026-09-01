@@ -11,12 +11,12 @@ Hermes Agent ships with 8 external memory provider plugins that give the agent p
 ## Quick Start
 
 ```bash
-hermes memory setup      # interactive picker + configuration
-hermes memory status     # check what's active
-hermes memory off        # disable external provider
+indagis memory setup      # interactive picker + configuration
+indagis memory status     # check what's active
+indagis memory off        # disable external provider
 ```
 
-You can also select the active memory provider via `hermes plugins` → Provider Plugins → Memory Provider.
+You can also select the active memory provider via `indagis plugins` → Provider Plugins → Memory Provider.
 
 Or set manually in `~/.indagis/config.yaml`:
 
@@ -65,10 +65,10 @@ The auto-injected dialectic also scales its reasoning level by query length (lon
 
 **Setup Wizard:**
 ```bash
-hermes memory setup        # select "honcho" — runs the Honcho-specific post-setup
+indagis memory setup        # select "honcho" — runs the Honcho-specific post-setup
 ```
 
-The legacy `hermes honcho setup` command still works (it now redirects to `hermes memory setup`), but is only registered after Honcho is selected as the active memory provider.
+The legacy `indagis honcho setup` command still works (it now redirects to `indagis memory setup`), but is only registered after Honcho is selected as the active memory provider.
 
 **Headless / remote machines:** for cloud auth on a box without a browser (SSH, remote VM), pick **device** at the wizard's auth-method prompt. The CLI prints a short code and a verification link; open the link in a browser on any other machine, approve, and setup completes — no API key copy-paste. The wizard defaults to this option automatically when it detects no usable local browser.
 
@@ -143,8 +143,8 @@ The legacy `hermes honcho setup` command still works (it now redirects to `herme
 
 </details>
 
-:::tip Migrating from `hermes honcho`
-If you previously used `hermes honcho setup`, your config and all server-side data are intact. Just re-enable through the setup wizard again or manually set `memory.provider: honcho` to reactivate via the new system.
+:::tip Migrating from `indagis honcho`
+If you previously used `indagis honcho setup`, your config and all server-side data are intact. Just re-enable through the setup wizard again or manually set `memory.provider: honcho` to reactivate via the new system.
 :::
 
 **Multi-peer setup:**
@@ -163,7 +163,7 @@ The mapping:
 ### New profile, fresh Honcho peer
 
 ```bash
-hermes profile create coder --clone
+indagis profile create coder --clone
 ```
 
 `--clone` creates a `hermes.coder` host block in `honcho.json` with `aiPeer: "coder"`, shared `workspace`, inherited `peerName`, `recallMode`, `writeFrequency`, `observation`, etc. The AI peer is eagerly created in Honcho so it exists before the first message.
@@ -171,7 +171,7 @@ hermes profile create coder --clone
 ### Existing profiles, backfill Honcho peers
 
 ```bash
-hermes honcho sync
+indagis honcho sync
 ```
 
 Scans every Hermes profile, creates host blocks for any profile without one, inherits settings from the default `hermes` block, and creates the new AI peers eagerly. Idempotent — skips profiles that already have a host block.
@@ -216,7 +216,7 @@ The peer model above covers CLI, TUI, and desktop sessions, where every conversa
 | `userPeerAliases` | Maps specific runtime IDs to peers (`{"7654321": "alice"}`). The home for routing distinct identities — including agents that each carry their own peer |
 | `runtimePeerPrefix` | Namespaces any unmapped runtime ID (`telegram_7654321`) so platforms with same-shaped IDs don't collide |
 
-Off-gateway these keys do nothing. `hermes memory setup` only prompts for them when it detects a connected gateway platform. See the [Honcho page](./honcho.md#gateway-identity-mapping) for the resolver ladder and the setup flow.
+Off-gateway these keys do nothing. `indagis memory setup` only prompts for them when it detects a connected gateway platform. See the [Honcho page](./honcho.md#gateway-identity-mapping) for the resolver ladder and the setup flow.
 
 <details>
 <summary>Full honcho.json example (multi-profile)</summary>
@@ -300,12 +300,12 @@ openviking-server doctor
 openviking-server
 
 # Then configure Hermes
-hermes memory setup    # select "openviking"
+indagis memory setup    # select "openviking"
 # Or manually:
-hermes config set memory.provider openviking
+indagis config set memory.provider openviking
 ```
 
-`hermes memory setup` can reuse or copy connection values from
+`indagis memory setup` can reuse or copy connection values from
 `~/.openviking/ovcli.conf`. Manual setup uses the active profile's `.env` file;
 for the default profile that is `~/.indagis/.env`, and for named profiles use
 `~/.indagis/profiles/<profile>/.env`.
@@ -348,30 +348,30 @@ Server-side LLM fact extraction with semantic search, reranking, and automatic d
 
 **Setup (Platform):**
 ```bash
-hermes memory setup    # select "mem0" → "Platform"
+indagis memory setup    # select "mem0" → "Platform"
 # Or manually:
-hermes config set memory.provider mem0
+indagis config set memory.provider mem0
 echo "MEM0_API_KEY=your-key" >> ~/.indagis/.env
 ```
 
 **Setup (OSS):**
 ```bash
-hermes memory setup    # select "mem0" → "Open Source (self-hosted)"
+indagis memory setup    # select "mem0" → "Open Source (self-hosted)"
 # Or via flags:
-hermes memory setup mem0 --mode oss --oss-llm openai --oss-llm-key sk-... --oss-vector qdrant
+indagis memory setup mem0 --mode oss --oss-llm openai --oss-llm-key sk-... --oss-vector qdrant
 ```
 
 Preview without writing files:
 ```bash
-hermes memory setup mem0 --mode oss --oss-llm-key sk-... --dry-run
+indagis memory setup mem0 --mode oss --oss-llm-key sk-... --dry-run
 ```
 
 **Setup (Self-Hosted Dashboard):** connect to a Mem0 server you run via Docker (the dashboard's REST API):
 
 ```bash
-hermes memory setup    # select "mem0" → "Self-hosted server"
+indagis memory setup    # select "mem0" → "Self-hosted server"
 # Or via flags:
-hermes memory setup mem0 --mode selfhosted --host http://localhost:8888 --api-key your-admin-api-key
+indagis memory setup mem0 --mode selfhosted --host http://localhost:8888 --api-key your-admin-api-key
 ```
 
 Or configure manually — either as env vars:
@@ -407,7 +407,7 @@ The plugin authenticates with `X-API-Key` and uses the server's `/search` / `/me
 | Embedder | openai, ollama |
 | Vector Store | qdrant (local/server), pgvector |
 
-**Switching modes:** Re-run `hermes memory setup mem0 --mode <platform|selfhosted|oss>` or edit `mem0.json` directly.
+**Switching modes:** Re-run `indagis memory setup mem0 --mode <platform|selfhosted|oss>` or edit `mem0.json` directly.
 
 ---
 
@@ -426,9 +426,9 @@ Long-term memory with knowledge graph, entity resolution, and multi-strategy ret
 
 **Setup:**
 ```bash
-hermes memory setup    # select "hindsight"
+indagis memory setup    # select "hindsight"
 # Or manually:
-hermes config set memory.provider hindsight
+indagis config set memory.provider hindsight
 echo "HINDSIGHT_API_KEY=your-key" >> ~/.indagis/.env
 ```
 
@@ -473,9 +473,9 @@ Local SQLite fact store with FTS5 full-text search, trust scoring, and HRR (Holo
 
 **Setup:**
 ```bash
-hermes memory setup    # select "holographic"
+indagis memory setup    # select "holographic"
 # Or manually:
-hermes config set memory.provider holographic
+indagis config set memory.provider holographic
 ```
 
 **Config:** `config.yaml` under `plugins.hermes-memory-store`
@@ -509,9 +509,9 @@ Cloud memory API with hybrid search (Vector + BM25 + Reranking), 7 memory types,
 
 **Setup:**
 ```bash
-hermes memory setup    # select "retaindb"
+indagis memory setup    # select "retaindb"
 # Or manually:
-hermes config set memory.provider retaindb
+indagis config set memory.provider retaindb
 echo "RETAINDB_API_KEY=your-key" >> ~/.indagis/.env
 ```
 
@@ -536,9 +536,9 @@ Persistent memory via the `brv` CLI — hierarchical knowledge tree with tiered 
 curl -fsSL https://byterover.dev/install.sh | sh
 
 # Then configure Hermes
-hermes memory setup    # select "byterover"
+indagis memory setup    # select "byterover"
 # Or manually:
-hermes config set memory.provider byterover
+indagis config set memory.provider byterover
 ```
 
 **Key features:**
@@ -563,9 +563,9 @@ Semantic long-term memory with profile recall, semantic search, explicit memory 
 
 **Setup:**
 ```bash
-hermes memory setup    # select "supermemory"
+indagis memory setup    # select "supermemory"
 # Or manually:
-hermes config set memory.provider supermemory
+indagis config set memory.provider supermemory
 echo 'SUPERMEMORY_API_KEY=***' >> ~/.indagis/.env
 ```
 
@@ -575,7 +575,7 @@ Self-hosted setup:
 npx supermemory local
 ```
 
-Before running `hermes memory setup`, set `base_url` in
+Before running `indagis memory setup`, set `base_url` in
 `$INDAGIS_HOME/supermemory.json`:
 
 ```json
@@ -584,7 +584,7 @@ Before running `hermes memory setup`, set `base_url` in
 }
 ```
 
-Then run `hermes memory setup` and enter the API key printed by the local
+Then run `indagis memory setup` and enter the API key printed by the local
 server. Configuring the endpoint first ensures the setup connection probe also
 stays local.
 
@@ -648,8 +648,8 @@ Structured long-term memory using Memori Cloud, with background completed-turn c
 ```bash
 pip install hermes-memori
 hermes-memori install
-hermes config set memory.provider memori
-hermes memory setup
+indagis config set memory.provider memori
+indagis memory setup
 ```
 
 ---

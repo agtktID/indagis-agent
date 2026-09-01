@@ -14,7 +14,7 @@ Axolotl: YAML LLM fine-tuning (LoRA, DPO, GRPO).
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/axolotl` |
+| Source | Optional — install with `indagis skills install official/mlops/axolotl` |
 | Path | `optional-skills/mlops/training/axolotl` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

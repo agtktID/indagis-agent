@@ -14,7 +14,7 @@ Pay HTTP 402 APIs via Machine Payments Protocol (MPP).
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/payments/mpp-agent` |
+| Source | Optional — install with `indagis skills install official/payments/mpp-agent` |
 | Path | `optional-skills/payments/mpp-agent` |
 | Version | `0.1.0` |
 | Author | Teknium (teknium1), Hermes Agent |

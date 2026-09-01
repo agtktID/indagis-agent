@@ -14,7 +14,7 @@ Agent RAG and long-term memory with Pinecone.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/research/pinecone-research` |
+| Source | Optional — install with `indagis skills install official/research/pinecone-research` |
 | Path | `optional-skills/research/pinecone-research` |
 | Version | `1.0.0` |
 | Author | immuhammadfurqan |

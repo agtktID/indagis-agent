@@ -3419,8 +3419,16 @@ OPTIONAL_ENV_VARS = {
         "category": "provider",
         "advanced": True,
     },
-    "HERMES_QWEN_BASE_URL": {
+    "INDAGIS_QWEN_BASE_URL": {
         "description": "Qwen Portal base URL override (default: https://portal.qwen.ai/v1)",
+        "prompt": "Qwen Portal base URL (leave empty for default)",
+        "url": None,
+        "password": False,
+        "category": "provider",
+        "advanced": True,
+    },
+    "HERMES_QWEN_BASE_URL": {
+        "description": "Legacy name for INDAGIS_QWEN_BASE_URL — still read as a fallback if set, but new setups should use INDAGIS_QWEN_BASE_URL instead.",
         "prompt": "Qwen Portal base URL (leave empty for default)",
         "url": None,
         "password": False,

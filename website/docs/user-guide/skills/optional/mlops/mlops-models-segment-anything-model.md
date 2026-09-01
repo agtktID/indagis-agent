@@ -14,7 +14,7 @@ SAM: zero-shot image segmentation via points, boxes, masks.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/mlops/segment-anything-model` |
+| Source | Optional — install with `indagis skills install official/mlops/segment-anything-model` |
 | Path | `optional-skills/mlops/models/segment-anything-model` |
 | Version | `1.0.0` |
 | Author | Orchestra Research |

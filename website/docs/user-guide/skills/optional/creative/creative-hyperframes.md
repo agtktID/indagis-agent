@@ -14,7 +14,7 @@ Render MP4/WebM videos from HTML compositions.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/creative/hyperframes` |
+| Source | Optional — install with `indagis skills install official/creative/hyperframes` |
 | Path | `optional-skills/creative/hyperframes` |
 | Version | `1.0.0` |
 | Author | heygen-com |
