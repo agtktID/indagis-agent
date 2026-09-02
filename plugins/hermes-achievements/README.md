@@ -1,14 +1,16 @@
-# Hermes Achievements
+# Achievements
 
-> **Bundled with Hermes Agent.** Originally authored by [@PCinkusz](https://github.com/PCinkusz) at https://github.com/PCinkusz/hermes-achievements — vendored into `plugins/hermes-achievements/` so it ships with the dashboard out-of-the-box and stays in lockstep with Hermes feature changes. Upstream repo remains the staging ground for new badges and UI iteration.
+> **Bundled with Indagis Agent** (formerly Hermes Agent). Originally authored by [@PCinkusz](https://github.com/PCinkusz) at https://github.com/PCinkusz/hermes-achievements — vendored into `plugins/hermes-achievements/` so it ships with the dashboard out-of-the-box and stays in lockstep with Indagis Agent feature changes. Upstream repo remains the staging ground for new badges and UI iteration.
 >
-> When Hermes is installed via the install script or cloned from source, this plugin auto-registers as a dashboard tab on first `hermes dashboard` launch. No separate install step. See [Built-in Plugins → hermes-achievements](../../website/docs/user-guide/features/built-in-plugins.md) in the main docs.
+> When Indagis Agent is installed via the install script or cloned from source, this plugin auto-registers as a dashboard tab on first `indagis dashboard` launch. No separate install step. See [Built-in Plugins → hermes-achievements](../../website/docs/user-guide/features/built-in-plugins.md) in the main docs.
+>
+> **Naming:** the plugin's directory, manifest `name`, dashboard API route, and on-disk storage keys (`state.json`, `scan_snapshot.json`, `scan_checkpoint.json` under `~/.indagis/plugins/hermes-achievements/`) intentionally keep the `hermes-achievements` id rather than following the Hermes → Indagis rebrand. That id is a stable storage-key namespace: existing installs have accumulated achievement-unlock history keyed to it, and renaming it would silently orphan that data (users would appear to lose all unlocked badges). Only display text, prose, and docs below have been rebranded.
 
-Achievement system for the Hermes Dashboard: collectible, tiered badges generated from real local Hermes session history.
+Achievement system for the Indagis Agent Dashboard: collectible, tiered badges generated from real local Indagis Agent session history.
 
-![Hermes Achievements dashboard](docs/assets/achievements-dashboard-hd.png)
+![Achievements dashboard](docs/assets/achievements-dashboard-hd.png)
 
-The screenshots use temporary demo tier data to show the full visual range. The plugin itself reads real local Hermes session history by default.
+The screenshots use temporary demo tier data to show the full visual range. The plugin itself reads real local Indagis Agent session history by default.
 
 > **Update notice (2026-04-29):** If you installed this plugin before today, update to the latest version. The achievements scan path was refactored for much faster warm loads (snapshot cache + incremental checkpoint scan).
 >
@@ -16,12 +18,12 @@ The screenshots use temporary demo tier data to show the full visual range. The 
 
 ## What it does
 
-Hermes Achievements scans local Hermes sessions and unlocks badges based on real agent behavior:
+Achievements scans local Indagis Agent sessions and unlocks badges based on real agent behavior:
 
 - autonomous tool chains
 - debugging and recovery patterns
 - vibe-coding file edits
-- Hermes-native skills, memory, cron, and plugin usage
+- Indagis-native skills, memory, cron, and plugin usage
 - web research and browser automation
 - model/provider workflows
 - lifestyle patterns such as weekend or night sessions
@@ -30,7 +32,7 @@ Achievements have three visible states:
 
 - **Unlocked** — earned at least one tier
 - **Discovered** — known achievement, progress visible, not earned yet
-- **Secret** — hidden until Hermes detects the first related signal
+- **Secret** — hidden until Indagis Agent detects the first related signal
 
 Most achievements level through:
 
@@ -58,17 +60,17 @@ Version `0.2.x` expands the catalog to 60+ achievements, including model/provide
 
 ## Install
 
-Clone into your Hermes plugins directory:
+Clone into your Indagis Agent plugins directory:
 
 ```bash
-git clone https://github.com/PCinkusz/hermes-achievements ~/.hermes/plugins/hermes-achievements
+git clone https://github.com/PCinkusz/hermes-achievements ~/.indagis/plugins/hermes-achievements
 ```
 
 For local development, keep the repo elsewhere and symlink it:
 
 ```bash
 git clone https://github.com/PCinkusz/hermes-achievements ~/hermes-achievements
-ln -s ~/hermes-achievements ~/.hermes/plugins/hermes-achievements
+ln -s ~/hermes-achievements ~/.indagis/plugins/hermes-achievements
 ```
 
 Then rescan dashboard plugins:
@@ -77,26 +79,26 @@ Then rescan dashboard plugins:
 curl http://127.0.0.1:9119/api/dashboard/plugins/rescan
 ```
 
-If backend API routes 404, restart `hermes dashboard`; plugin APIs are mounted at dashboard startup.
+If backend API routes 404, restart `indagis dashboard`; plugin APIs are mounted at dashboard startup.
 
 ## Updating
 
 If you installed with git:
 
 ```bash
-cd ~/.hermes/plugins/hermes-achievements
+cd ~/.indagis/plugins/hermes-achievements
 git pull --ff-only
 curl http://127.0.0.1:9119/api/dashboard/plugins/rescan
 ```
 
-If the update changes backend routes or `plugin_api.py`, restart `hermes dashboard` after pulling.
+If the update changes backend routes or `plugin_api.py`, restart `indagis dashboard` after pulling.
 
 As of 2026-04-29, updating is strongly recommended because scan performance changed significantly:
 - removed duplicate `/overview` scan path
 - added cached `/achievements` snapshot
 - added incremental checkpoint reuse for unchanged sessions
 
-Achievement unlock state is stored locally in `state.json` and is not overwritten by git updates. New achievements are evaluated from your existing Hermes session history. Achievement IDs are stable and should not be renamed casually because they are the unlock-state keys.
+Achievement unlock state is stored locally in `state.json` and is not overwritten by git updates. New achievements are evaluated from your existing Indagis Agent session history. Achievement IDs are stable and should not be renamed casually because they are the unlock-state keys — the same applies to the plugin's own directory/manifest name, which is kept as `hermes-achievements` for the same reason (see the "Naming" note above).
 
 Releases are tagged in git, for example:
 
