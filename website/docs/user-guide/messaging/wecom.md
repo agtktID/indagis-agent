@@ -1,12 +1,12 @@
 ---
-sidebar_position: 14
+id: wecom
 title: "WeCom (Enterprise WeChat)"
-description: "Connect Hermes Agent to WeCom via the AI Bot WebSocket gateway"
+sidebar_position: 1
+description: "Connect Indagis to WeCom (企业微信), Tencent's enterprise messaging platform. The adapter uses WeCom's AI Bot WebSocket gateway for real-time bidirectio..."
 ---
-
 # WeCom (Enterprise WeChat)
 
-Connect Hermes to [WeCom](https://work.weixin.qq.com/) (企业微信), Tencent's enterprise messaging platform. The adapter uses WeCom's AI Bot WebSocket gateway for real-time bidirectional communication — no public endpoint or webhook needed.
+Connect Indagis to [WeCom](https://work.weixin.qq.com/) (企业微信), Tencent's enterprise messaging platform. The adapter uses WeCom's AI Bot WebSocket gateway for real-time bidirectional communication — no public endpoint or webhook needed.
 
 See also: [WeCom Callback](./wecom-callback.md) for inbound webhook setup.
 
@@ -24,10 +24,10 @@ See also: [WeCom Callback](./wecom-callback.md) for inbound webhook setup.
 #### Recommended: Scan-to-Create (one command)
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
-Select **WeCom** and scan the QR code with your WeCom mobile app. Hermes will automatically create a bot application with the correct permissions and save the credentials.
+Select **WeCom** and scan the QR code with your WeCom mobile app. Indagis will automatically create a bot application with the correct permissions and save the credentials.
 
 The setup wizard will:
 1. Display a QR code in your terminal
@@ -43,18 +43,18 @@ If scan-to-create is not available, the wizard falls back to manual input:
 2. Navigate to **Applications** → **Create Application** → **AI Bot**
 3. Configure the bot name and description
 4. Copy the **Bot ID** and **Secret** from the credentials page
-5. Run `hermes gateway setup`, select **WeCom**, and enter the credentials when prompted
+5. Run `indagis gateway setup`, select **WeCom**, and enter the credentials when prompted
 
 :::warning
 Keep the Bot Secret private. Anyone with it can impersonate your bot.
 :::
 
-### Step 2: Configure Hermes
+### Step 2: Configure Indagis
 
 #### Option A: Interactive Setup (Recommended)
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **WeCom** and follow the prompts. The wizard will guide you through:
@@ -64,7 +64,7 @@ Select **WeCom** and follow the prompts. The wizard will guide you through:
 
 #### Option B: Manual Configuration
 
-Add the following to `~/.hermes/.env`:
+Add the following to `~/.indagis/.env`:
 
 ```bash
 WECOM_BOT_ID=your-bot-id
@@ -80,7 +80,7 @@ WECOM_HOME_CHANNEL=chat_id
 ### Step 3: Start the gateway
 
 ```bash
-hermes gateway
+indagis gateway
 ```
 
 ## Features
@@ -96,10 +96,12 @@ hermes gateway
 - **Auto-reconnect** — exponential backoff on connection drops
 
 :::note Streaming and typing indicators
-The WeCom adapter delivers each response as a single complete message — it does
-**not** stream responses token-by-token, and it does **not** show a typing
-indicator. "Reply correlation" (below) only threads a response to its inbound
-request; it is not live streaming.
+The WeCom adapter streams responses natively over WeCom's `msgtype: "stream"`
+protocol: the client shows a thinking/typing bubble as soon as a turn starts,
+and the reply renders token-by-token in a single bubble as the model
+generates it. Tool-call progress is folded into the same bubble. Native
+streaming is enabled by default (`display.platforms.wecom.streaming: true` in
+`config.yaml`); set it to `false` to restore single-shot delivery.
 :::
 
 ## Configuration Options
@@ -116,6 +118,9 @@ Set these in `config.yaml` under `platforms.wecom.extra`:
 | `allow_from` | `[]` | User IDs allowed for DMs (when dm_policy=allowlist) |
 | `group_allow_from` | `[]` | Group IDs allowed (when group_policy=allowlist) |
 | `groups` | `{}` | Per-group configuration (see below) |
+| `stream_keepalive_enabled` | `false` | Send periodic keepalive frames to refresh WeCom's ~6-minute reply-stream window on long turns |
+| `stream_keepalive_interval_seconds` | `120` | Keepalive frame cadence when enabled |
+| `stream_safe_duration_seconds` | `330` | Stream age after which finalize prefers the reliable proactive send |
 
 ## Access Policies
 
@@ -237,7 +242,7 @@ Files exceeding the absolute 20 MB limit are rejected with an informational mess
 
 When the bot receives a message via the WeCom callback, the adapter remembers the inbound request ID. If a response is sent while the request context is still active, the adapter uses WeCom's reply-mode (`aibot_respond_msg`) to correlate the response directly to the inbound message. This provides a more natural conversation experience in the WeCom client.
 
-The full response is delivered as a single message — the adapter does not stream tokens incrementally. If the inbound request context has expired or is unavailable, the adapter falls back to proactive message sending via `aibot_send_msg`.
+When a native reply stream is active, the response streams incrementally through reply-mode `msgtype: "stream"` frames. If the inbound request context has expired or is unavailable (or a stream frame fails), the adapter falls back to proactive message sending via `aibot_send_msg`.
 
 Reply-mode also works for media: uploaded media can be sent as a reply to the originating message.
 
@@ -299,3 +304,5 @@ Inbound messages are deduplicated using message IDs with a 5-minute window and a
 | Images sent as files | Images > 10 MB exceed the native image limit and are auto-downgraded to file attachments. |
 | `Timeout sending message to WeCom` | The WebSocket may have disconnected. Check logs for reconnection messages. |
 | `WeCom websocket closed during authentication` | Network issue or incorrect credentials. Verify bot_id and secret. |
+
+---

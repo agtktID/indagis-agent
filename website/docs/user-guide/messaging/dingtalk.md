@@ -1,22 +1,23 @@
 ---
-sidebar_position: 10
+id: dingtalk
 title: "DingTalk"
-description: "Set up Hermes Agent as a DingTalk chatbot"
+sidebar_position: 1
+description: "Indagis Agent integrates with DingTalk (钉钉) as a chatbot, letting you chat with your AI assistant through direct messages or group chats. The bot co..."
 ---
-
+# DingTalk
 # DingTalk Setup
 
-Hermes Agent integrates with DingTalk (钉钉) as a chatbot, letting you chat with your AI assistant through direct messages or group chats. The bot connects via DingTalk's Stream Mode — a long-lived WebSocket connection that requires no public URL or webhook server — and replies using markdown-formatted messages through DingTalk's session webhook API.
+Indagis Agent integrates with DingTalk (钉钉) as a chatbot, letting you chat with your AI assistant through direct messages or group chats. The bot connects via DingTalk's Stream Mode — a long-lived WebSocket connection that requires no public URL or webhook server — and replies using markdown-formatted messages through DingTalk's session webhook API.
 
-Before setup, here's the part most people want to know: how Hermes behaves once it's in your DingTalk workspace.
+Before setup, here's the part most people want to know: how Indagis behaves once it's in your DingTalk workspace.
 
-## How Hermes Behaves
+## How Indagis Behaves
 
 | Context | Behavior |
 |---------|----------|
-| **DMs (1:1 chat)** | Hermes responds to every message. No `@mention` needed. Each DM has its own session. |
-| **Group chats** | Hermes responds when you `@mention` it. Without a mention, Hermes ignores the message. |
-| **Shared groups with multiple users** | By default, Hermes isolates session history per user inside the group. Two people talking in the same group do not share one transcript unless you explicitly disable that. |
+| **DMs (1:1 chat)** | Indagis responds to every message. No `@mention` needed. Each DM has its own session. |
+| **Group chats** | Indagis responds when you `@mention` it. Without a mention, Indagis ignores the message. |
+| **Shared groups with multiple users** | By default, Indagis isolates session history per user inside the group. Two people talking in the same group do not share one transcript unless you explicitly disable that. |
 
 ### Session Model in DingTalk
 
@@ -44,7 +45,7 @@ This guide walks you through the full setup process — from creating your DingT
 Install the required Python packages:
 
 ```bash
-cd ~/.hermes/hermes-agent && uv pip install -e ".[dingtalk]"
+cd ~/.indagis/indagis-agent && uv pip install -e ".[dingtalk]"
 ```
 
 Or individually:
@@ -63,7 +64,7 @@ pip install dingtalk-stream httpx alibabacloud-dingtalk
 2. Log in with your DingTalk admin account.
 3. Click **Application Development** → **Custom Apps** → **Create App via H5 Micro-App** (or **Robot** depending on your console version).
 4. Fill in:
-   - **App Name**: e.g., `Hermes Agent`
+   - **App Name**: e.g., `Indagis Agent`
    - **Description**: optional
 5. After creating, navigate to **Credentials & Basic Info** to find your **Client ID** (AppKey) and **Client Secret** (AppSecret). Copy both.
 
@@ -83,35 +84,35 @@ Stream Mode is the recommended setup. It uses a long-lived WebSocket connection 
 
 ## Step 3: Find Your DingTalk User ID
 
-Hermes Agent uses your DingTalk User ID to control who can interact with the bot. DingTalk User IDs are alphanumeric strings set by your organization's admin.
+Indagis Agent uses your DingTalk User ID to control who can interact with the bot. DingTalk User IDs are alphanumeric strings set by your organization's admin.
 
 To find yours:
 
 1. Ask your DingTalk organization admin — User IDs are configured in the DingTalk admin console under **Contacts** → **Members**.
 2. Alternatively, the bot logs the `sender_id` for each incoming message. Start the gateway, send the bot a message, then check the logs for your ID.
 
-## Step 4: Configure Hermes Agent
+## Step 4: Configure Indagis Agent
 
 ### Option A: Interactive Setup (Recommended)
 
 Run the guided setup command:
 
 ```bash
-hermes gateway setup
+indagis gateway setup
 ```
 
 Select **DingTalk** when prompted. The setup wizard can authorize via one of two paths:
 
-- **QR-code device flow (recommended).** Scan the QR that prints in your terminal with the DingTalk mobile app — your Client ID and Client Secret are returned automatically and written to `~/.hermes/.env`. No developer-console trip needed.
+- **QR-code device flow (recommended).** Scan the QR that prints in your terminal with the DingTalk mobile app — your Client ID and Client Secret are returned automatically and written to `~/.indagis/.env`. No developer-console trip needed.
 - **Manual paste.** If you already have credentials (or QR scanning isn't convenient), paste your Client ID, Client Secret, and allowed user IDs when prompted.
 
 :::note openClaw branding disclosure
-Because DingTalk's `verification_uri_complete` is hardcoded to the openClaw identity at the API layer, the QR currently authorizes under an `openClaw` source string until Alibaba / DingTalk-Real-AI registers a Hermes-specific template server-side. This is purely how DingTalk presents the consent screen — the bot you create is fully yours and private to your tenant.
+Because DingTalk's `verification_uri_complete` is hardcoded to the openClaw identity at the API layer, the QR currently authorizes under an `openClaw` source string until Alibaba / DingTalk-Real-AI registers a Indagis-specific template server-side. This is purely how DingTalk presents the consent screen — the bot you create is fully yours and private to your tenant.
 :::
 
 ### Option B: Manual Configuration
 
-Add the following to your `~/.hermes/.env` file:
+Add the following to your `~/.indagis/.env` file:
 
 ```bash
 # Required
@@ -132,7 +133,7 @@ DINGTALK_ALLOWED_USERS=user-id-1
 # DINGTALK_ALLOW_ALL_USERS=true
 ```
 
-Optional behavior settings in `~/.hermes/config.yaml`:
+Optional behavior settings in `~/.indagis/config.yaml`:
 
 ```yaml
 group_sessions_per_user: true
@@ -161,20 +162,20 @@ gateway:
 Once configured, start the DingTalk gateway:
 
 ```bash
-hermes gateway
+indagis gateway
 ```
 
 The bot should connect to DingTalk's Stream Mode within a few seconds. Send it a message — either a DM or in a group where it's been added — to test.
 
 :::tip
-You can run `hermes gateway` in the background or as a systemd service for persistent operation. See the deployment docs for details.
+You can run `indagis gateway` in the background or as a systemd service for persistent operation. See the deployment docs for details.
 :::
 
 ## Features
 
 ### AI Cards
 
-Hermes can reply using DingTalk AI Cards instead of plain markdown messages. Cards provide a richer, more structured display and support streaming updates as the agent generates its response.
+Indagis can reply using DingTalk AI Cards instead of plain markdown messages. Cards provide a richer, more structured display and support streaming updates as the agent generates its response.
 
 To enable AI Cards, configure a card template ID in `config.yaml`:
 
@@ -190,7 +191,7 @@ You can find your card template ID in the DingTalk Developer Console under your 
 
 ### Emoji Reactions
 
-Hermes automatically adds emoji reactions to your messages to show processing status:
+Indagis automatically adds emoji reactions to your messages to show processing status:
 
 - 🤔Thinking — added when the bot starts processing your message
 - 🥳Done — added when the response is complete (replaces the Thinking reaction)
@@ -243,7 +244,7 @@ pip install dingtalk-stream httpx
 
 **Cause**: The credentials aren't set in your environment or `.env` file.
 
-**Fix**: Verify `DINGTALK_CLIENT_ID` and `DINGTALK_CLIENT_SECRET` are set correctly in `~/.hermes/.env`. The Client ID is your AppKey, and the Client Secret is your AppSecret from the DingTalk Developer Console.
+**Fix**: Verify `DINGTALK_CLIENT_ID` and `DINGTALK_CLIENT_SECRET` are set correctly in `~/.indagis/.env`. The Client ID is your AppKey, and the Client Secret is your AppSecret from the DingTalk Developer Console.
 
 ### Stream disconnects / reconnection loops
 
@@ -253,9 +254,9 @@ pip install dingtalk-stream httpx
 
 ### Bot is offline
 
-**Cause**: The Hermes gateway isn't running, or it failed to connect.
+**Cause**: The Indagis gateway isn't running, or it failed to connect.
 
-**Fix**: Check that `hermes gateway` is running. Look at the terminal output for error messages. Common issues: wrong credentials, app deactivated, `dingtalk-stream` or `httpx` not installed.
+**Fix**: Check that `indagis gateway` is running. Look at the terminal output for error messages. Common issues: wrong credentials, app deactivated, `dingtalk-stream` or `httpx` not installed.
 
 ### "No session_webhook available"
 
@@ -269,7 +270,7 @@ pip install dingtalk-stream httpx
 Always set `DINGTALK_ALLOWED_USERS` to restrict who can interact with the bot. Without it, the gateway denies all users by default as a safety measure. Only add User IDs of people you trust — authorized users have full access to the agent's capabilities, including tool use and system access.
 :::
 
-For more information on securing your Hermes Agent deployment, see the [Security Guide](../security.md).
+For more information on securing your Indagis Agent deployment, see the [Security Guide](../security.md).
 
 ## Notes
 
@@ -281,3 +282,5 @@ For more information on securing your Hermes Agent deployment, see the [Security
 - **Message deduplication**: The adapter deduplicates messages with a 5-minute window to prevent processing the same message twice.
 - **Auto-reconnection**: If the stream connection drops, the adapter automatically reconnects with exponential backoff.
 - **Message length limit**: Responses are capped at 20,000 characters per message. Longer responses are truncated.
+
+---
