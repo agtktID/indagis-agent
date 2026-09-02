@@ -50,7 +50,6 @@ against double-reconfigure.
 from __future__ import annotations
 
 import os
-from utils import env_with_legacy_alias
 import sys
 
 _IS_WINDOWS = sys.platform == "win32"
@@ -191,8 +190,16 @@ def harden_import_path(src_root: str | None = None) -> None:
     repository root for every shipped entry point, so the guard is
     self-sufficient and does not depend on the spawner exporting an env var.
     """
-    root = src_root or env_with_legacy_alias("INDAGIS_PYTHON_SRC_ROOT", "HERMES_PYTHON_SRC_ROOT") or os.path.dirname(
-        os.path.abspath(__file__)
+    # Deliberately not env_with_legacy_alias() here: that would import
+    # `utils`, which is exactly the module this guard exists to protect
+    # against being shadowed by a same-named package in the caller's CWD
+    # (issue #51286) — importing it before sys.path is fixed up below would
+    # defeat the guard. Inline the two-name lookup instead.
+    root = (
+        src_root
+        or os.environ.get("INDAGIS_PYTHON_SRC_ROOT")
+        or os.environ.get("HERMES_PYTHON_SRC_ROOT")
+        or os.path.dirname(os.path.abspath(__file__))
     )
 
     sys.path[:] = [p for p in sys.path if p not in ("", ".")]
@@ -216,7 +223,10 @@ def activate_durable_lazy_target() -> None:
     always wins name collisions (see ``tools.lazy_deps`` for the full
     security rationale). Never raises; a missing/empty target is a no-op.
     """
-    if not env_with_legacy_alias("INDAGIS_LAZY_INSTALL_TARGET", "HERMES_LAZY_INSTALL_TARGET", "").strip():
+    # Same reasoning as harden_import_path(): avoid importing `utils` this
+    # early, since a caller may invoke this before the CWD-collision guard
+    # has run.
+    if not (os.environ.get("INDAGIS_LAZY_INSTALL_TARGET") or os.environ.get("HERMES_LAZY_INSTALL_TARGET") or "").strip():
         return
     try:
         from tools import lazy_deps
