@@ -404,8 +404,8 @@ function WorkflowPane() {
         ) : (
           <svg
             style={{ display: 'block' }}
-            width={computed.width}
             height={computed.height}
+            width={computed.width}
             viewBox={`0 0 ${computed.width} ${computed.height}`}
           >
             <defs>
@@ -481,8 +481,8 @@ function WorkflowPane() {
                     fill={DIM}
                     fontSize="10"
                     x={NODE_W - 10}
-                    y={34}
                     textAnchor="end"
+                    y={34}
                   >
                     {node.durationS.toFixed(1)}s
                   </text>
