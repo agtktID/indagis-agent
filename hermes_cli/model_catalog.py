@@ -1,9 +1,13 @@
 """Remote model catalog fetcher.
 
-The Hermes docs site hosts a JSON manifest of curated models for providers
-we want to update without shipping a release (currently OpenRouter and
-Nous Portal). This module fetches, validates, and caches that manifest,
-falling back to the in-repo hardcoded lists when the network is unavailable.
+Indagis does not host its own model-catalog.json yet, so this feature is
+disabled by default (``model_catalog.enabled: false`` in config_defaults.py)
+and callers always get the in-repo hardcoded lists. When enabled — e.g.
+pointed at a self-hosted manifest via config — this module fetches,
+validates, and caches a JSON manifest of curated models for providers we
+want to update without shipping a release (currently OpenRouter and Nous
+Portal), falling back to the in-repo hardcoded lists when the network is
+unavailable.
 
 Pipeline
 --------
