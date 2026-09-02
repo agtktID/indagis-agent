@@ -48,7 +48,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, Future
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 
 # Default test discovery roots.
@@ -1042,7 +1042,13 @@ def main() -> int:
             _PER_FILE_TIMEOUT_OVERRIDES = {
                 "tests/test_hermes_state.py": 900.0,
             }
-            rel_path = str(file.relative_to(repo_root))
+            try:
+                rel_path: Optional[str] = str(file.relative_to(repo_root))
+            except ValueError:
+                # `file` isn't under repo_root — e.g. a probe file this
+                # runner's own tests write under a pytest tmp_path. There's
+                # no override to look up; fall through to the default.
+                rel_path = None
             if rel_path in _PER_FILE_TIMEOUT_OVERRIDES:
                 file_timeout: float = _PER_FILE_TIMEOUT_OVERRIDES[rel_path]
             else:
