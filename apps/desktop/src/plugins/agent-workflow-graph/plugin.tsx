@@ -403,10 +403,10 @@ function WorkflowPane() {
           <EmptyState activeId={activeId} />
         ) : (
           <svg
-            style={{ display: 'block' }}
-            width={computed.width}
             height={computed.height}
+            style={{ display: 'block' }}
             viewBox={`0 0 ${computed.width} ${computed.height}`}
+            width={computed.width}
           >
             <defs>
               <marker
@@ -480,9 +480,9 @@ function WorkflowPane() {
                   <text
                     fill={DIM}
                     fontSize="10"
+                    textAnchor="end"
                     x={NODE_W - 10}
                     y={34}
-                    textAnchor="end"
                   >
                     {node.durationS.toFixed(1)}s
                   </text>

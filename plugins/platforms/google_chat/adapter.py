@@ -48,6 +48,8 @@ import time
 from pathlib import Path as _Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
+import hermes_constants as _hermes_constants
+
 # Heavy google-cloud + googleapiclient imports are deferred to first
 # adapter use. Importing them eagerly here added ~110ms wall and ~33MB
 # RSS to *every* CLI invocation (the plugin loader imports this module at
@@ -718,11 +720,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
         # active side-threads survive gateway restarts (the bug that
         # made the in-memory version of this heuristic flaky for
         # multi-restart sessions).
-        try:
-            from hermes_constants import get_indagis_home as _get_hermes_home
-            _hermes_home = _get_hermes_home()
-        except (ModuleNotFoundError, ImportError):
-            _hermes_home = _Path.home() / ".hermes"
+        _hermes_home = _hermes_constants.get_indagis_home()
         self._thread_count_store = _ThreadCountStore(
             _hermes_home / "google_chat_thread_counts.json"
         )
@@ -916,8 +914,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
     # ------------------------------------------------------------------
     def _bot_id_cache_path(self) -> _Path:
         """Location where the resolved bot user_id is cached across restarts."""
-        base = os.getenv("INDAGIS_HOME", str(_Path.home() / ".hermes"))
-        return _Path(base) / "google_chat_bot_id.json"
+        return _hermes_constants.get_indagis_home() / "google_chat_bot_id.json"
 
     def _load_cached_bot_id(self) -> Optional[str]:
         path = self._bot_id_cache_path()
