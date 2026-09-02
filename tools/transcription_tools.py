@@ -1560,9 +1560,22 @@ def build_local_transcribe_kwargs(stt_config: Optional[Dict[str, Any]] = None) -
 
     initial_prompt = local_cfg.get("initial_prompt")
     if isinstance(initial_prompt, str) and initial_prompt.strip():
-        kwargs["initial_prompt"] = initial_prompt
+        kwargs["initial_prompt"] = _rebrand_hermes_mentions(initial_prompt)
 
     return kwargs
+
+
+# A user's stt.local.initial_prompt is free text they may have written
+# before the product's rename (a domain glossary, name-biasing terms, etc.)
+# — faster-whisper decodes with it as a style/vocabulary hint, so a stale
+# "Hermes" mention would keep biasing output toward the old brand name.
+# Same rebrand-stray-mentions class as the other post-rename fixes.
+_HERMES_WORD_RE = re.compile(r"\bHermes\b")
+
+
+def _rebrand_hermes_mentions(text: str) -> str:
+    """Rewrite a stray "Hermes" brand mention in free-form config text to "Indagis"."""
+    return _HERMES_WORD_RE.sub("Indagis", text)
 
 
 def _confidence_thresholds(local_cfg: Dict[str, Any]) -> tuple[float, float]:

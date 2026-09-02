@@ -92,7 +92,14 @@ def _legacy_indagis_home_alias_path() -> Path | None:
         candidate = base / "hermes"
     else:
         candidate = Path.home() / ".hermes"
-    return candidate if candidate.exists() else None
+    try:
+        candidate_exists = candidate.exists()
+    except PermissionError:
+        # See the matching guard in _resolve_indagis_home_full_ladder: a
+        # directory that exists but can't be stat()'d raises instead of
+        # returning False. Treat it as "not usable as this alias".
+        candidate_exists = False
+    return candidate if candidate_exists else None
 
 
 def _warn_legacy_alias_in_use_once(resolved_via: str, legacy_path: Path) -> None:
@@ -220,7 +227,17 @@ def _resolve_indagis_home_full_ladder() -> Path:
 
     # P2: ~/.indagis exists on disk (priority default, no warning).
     default = _get_platform_default_indagis_home()
-    if default.exists():
+    try:
+        default_exists = default.exists()
+    except PermissionError:
+        # Path.exists() only swallows "doesn't exist"-shaped OSErrors
+        # (FileNotFoundError, NotADirectoryError) — a directory that exists
+        # but can't be stat()'d (e.g. mode 000, or a parent dir we can't
+        # traverse) raises PermissionError instead of returning False. Treat
+        # "can't tell if it's there" the same as "not there": fall through
+        # the ladder rather than crashing every caller.
+        default_exists = False
+    if default_exists:
         # The named-profile guard (#18594) has to run here too. It reads
         # `active_profile` from this same directory, so gating it on P5 alone
         # made it unreachable: P5 is only taken when this directory does NOT
@@ -889,19 +906,44 @@ def display_indagis_home() -> str:
 
     Uses ``~/`` shorthand for readability::
 
-        default:  ``~/.hermes``
+        default:  ``~/.indagis``
         profile:  ``~/.indagis/profiles/coder``
         custom:   ``/opt/hermes-custom``
 
     Use this in **user-facing** print/log messages instead of hardcoding
     ``~/.hermes``.  For code that needs a real ``Path``, use
     :func:`get_indagis_home` instead.
+
+    Note this can legitimately still read ``~/.hermes`` when
+    :func:`get_indagis_home` resolved the P4 legacy-alias directory (a real
+    ``~/.hermes`` exists and nothing overrides it) — that reflects the actual
+    directory in use. Callers that must always show the current brand name
+    regardless (a chat prompt, a consent screen) should pass this through
+    :func:`rebrand_display_path`.
     """
     home = get_indagis_home()
     try:
         return "~/" + str(home.relative_to(Path.home()))
     except ValueError:
         return str(home)
+
+
+def rebrand_display_path(display: str) -> str:
+    """Rewrite a leading ``.hermes`` home segment in a display string to ``.indagis``.
+
+    Display strings (chat prompts, OAuth consent screens, CLI hints) should
+    always read as the current Indagis brand even when the underlying
+    resolved directory is the legacy ``~/.hermes`` alias (P4 in
+    :func:`get_indagis_home`'s resolution ladder, or a caller-supplied path
+    built before the rename) — real file operations keep targeting the
+    actual directory; only what's shown to a human/model changes here.
+
+    Only rewrites ``.hermes`` as a whole path segment (``~/.hermes/...`` or
+    a bare ``.hermes``), never a substring of some other name.
+    """
+    if display == ".hermes" or display == "~/.hermes":
+        return display[: -len(".hermes")] + ".indagis"
+    return display.replace("/.hermes/", "/.indagis/")
 
 
 def secure_parent_dir(path: Path) -> None:
