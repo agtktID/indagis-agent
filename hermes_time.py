@@ -15,6 +15,7 @@ crashes due to a bad timezone string.
 
 import logging
 import os
+from utils import env_with_legacy_alias
 from datetime import datetime
 from hermes_constants import get_config_path
 from typing import Optional
@@ -41,7 +42,7 @@ def _resolve_timezone_name() -> str:
     should cache the result rather than calling on every ``now()``.
     """
     # 1. Environment variable (highest priority — set by Supervisor, etc.)
-    tz_env = os.getenv("HERMES_TIMEZONE", "").strip()
+    tz_env = env_with_legacy_alias("INDAGIS_TIMEZONE", "HERMES_TIMEZONE", "").strip()
     if tz_env:
         return tz_env
 
