@@ -1,7 +1,7 @@
 ---
 sidebar_position: 11
 title: "Automate Anything with Cron"
-description: "Real-world automation patterns using Hermes cron — monitoring, reports, pipelines, and multi-skill workflows"
+description: "Real-world automation patterns using Indagis cron — monitoring, reports, pipelines, and multi-skill workflows"
 ---
 
 # Automate Anything with Cron
@@ -15,7 +15,7 @@ Cron jobs run in fresh agent sessions with no memory of your current chat. Promp
 :::
 
 :::tip Don't need the LLM? You have two zero-token options.
-- **Recurring watchdog** where the script already produces the exact message (memory alerts, disk alerts, heartbeats): use [script-only cron jobs](/guides/cron-script-only). Same scheduler, no LLM. You can ask Hermes to set one up for you in chat — the `cronjob` tool knows when to pick `no_agent=True` and writes the script for you.
+- **Recurring watchdog** where the script already produces the exact message (memory alerts, disk alerts, heartbeats): use [script-only cron jobs](/guides/cron-script-only). Same scheduler, no LLM. You can ask Indagis to set one up for you in chat — the `cronjob` tool knows when to pick `no_agent=True` and writes the script for you.
 - **One-shot from a script that's already running** (CI step, post-commit hook, deploy script, externally-scheduled monitor): use [`indagis send`](/guides/pipe-script-output) to pipe stdout or a file straight to Telegram / Discord / Slack / etc. without setting up a cron entry.
 :::
 

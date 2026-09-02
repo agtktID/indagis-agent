@@ -6,7 +6,7 @@ description: "Ready-to-use automation blueprints — scheduled tasks, GitHub eve
 
 # Automation Blueprints
 
-Copy-paste blueprints for common automation patterns. Each blueprint uses Hermes's built-in [cron scheduler](/user-guide/features/cron) for time-based triggers and [webhook platform](/user-guide/messaging/webhooks) for event-driven triggers.
+Copy-paste blueprints for common automation patterns. Each blueprint uses Indagis's built-in [cron scheduler](/user-guide/features/cron) for time-based triggers and [webhook platform](/user-guide/messaging/webhooks) for event-driven triggers.
 
 Every blueprint works with **any model** — not locked to a single provider.
 
@@ -336,7 +336,7 @@ Daily arXiv scan that saves summaries to your note-taking system.
 
 ```bash
 indagis cron create "0 8 * * *" \
-  "Search arXiv for the 3 most interesting papers on 'language model reasoning' OR 'tool-use agents' from the past day. For each paper, create an Obsidian note with the title, authors, abstract summary, key contribution, and potential relevance to Hermes Agent development." \
+  "Search arXiv for the 3 most interesting papers on 'language model reasoning' OR 'tool-use agents' from the past day. For each paper, create an Obsidian note with the title, authors, abstract summary, key contribution, and potential relevance to Indagis Agent development." \
   --skill arxiv --skill obsidian \
   --name "Paper digest" \
   --deliver local
