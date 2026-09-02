@@ -9252,6 +9252,52 @@ function closeQuickEntryWindow() {
   quickEntryWindow = null
 }
 
+let splashWindow: BrowserWindow | null = null
+
+// Shown immediately on cold start, before the main window's renderer has
+// loaded — mainWindow itself stays `show: false` until 'ready-to-show' (see
+// createWindow below) specifically to avoid a flash of unstyled content, but
+// that leaves a blank gap on slower machines. This closes that gap with the
+// app icon on the brand background color instead of an empty window.
+function createSplashWindow() {
+  const icon = getAppIconPath()
+  splashWindow = new BrowserWindow({
+    width: 280,
+    height: 280,
+    frame: false,
+    resizable: false,
+    movable: false,
+    minimizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    show: true,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    backgroundColor: getWindowBackgroundColor(),
+    icon,
+    webPreferences: { contextIsolation: true, nodeIntegration: false }
+  })
+
+  const iconUrl = icon ? pathToFileURL(icon).toString() : ''
+  splashWindow.loadURL(
+    'data:text/html,' +
+      encodeURIComponent(`<!doctype html><html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:${getWindowBackgroundColor()}"><img src="${iconUrl}" width="140" height="140" alt="Indagis" /></body></html>`)
+  )
+
+  // Safety net: if the main window's 'ready-to-show' never fires (a slow
+  // provider handshake, a renderer crash before first paint), don't leave
+  // the splash on screen forever with no way to dismiss it.
+  setTimeout(closeSplashWindow, 8000)
+}
+
+function closeSplashWindow() {
+  if (splashWindow && !splashWindow.isDestroyed()) {
+    splashWindow.close()
+  }
+
+  splashWindow = null
+}
+
 function createWindow() {
   const icon = getAppIconPath()
   const savedWindowState = readWindowState()
@@ -9312,6 +9358,8 @@ function createWindow() {
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.show()
     }
+
+    closeSplashWindow()
 
     // Persist geometry as soon as the window is visible so a crash before the
     // first clean resize/move/close still captures the restored bounds (#56726).
@@ -11838,6 +11886,8 @@ app.on('open-url', (event, url) => {
 })
 
 app.whenReady().then(() => {
+  createSplashWindow()
+
   const systemCa = installWindowsSystemCaTrust(tls)
 
   if (systemCa.applied) {
