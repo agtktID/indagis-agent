@@ -507,29 +507,39 @@ def backup_existing(path: Path, backup_root: Path) -> Optional[Path]:
 # memory entries, user profiles, SOUL.md, and workspace instructions
 # read as self-referential to the new agent identity.
 #
-# Case-preserving: ``OpenClaw`` → ``Indagis`` (prose), but lowercase matches
-# like ``openclaw`` → ``indagis`` (so filesystem paths like ``~/.openclaw``
-# become ``~/.indagis`` — the real Indagis home — not the broken ``~/.Indagis``).
-_REBRAND_PATTERNS: List[Tuple[re.Pattern, str]] = [
-    (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), 'Indagis'),
-    (re.compile(r'\bClawdBot\b', re.IGNORECASE), 'Indagis'),
-    (re.compile(r'\bMoltBot\b', re.IGNORECASE), 'Indagis'),
+# Case-preserving, but NOT a straight-lowercase of the prose replacement:
+# ``OpenClaw`` → ``Indagis`` (prose) is today's brand name, but lowercase
+# matches like ``openclaw`` → ``hermes`` (so filesystem paths like
+# ``~/.openclaw`` become ``~/.hermes`` — the real legacy-alias home
+# get_indagis_home() still resolves via its P4 step — instead of a
+# ``~/.indagis`` that may not exist yet on a machine mid-migration, or a
+# broken ``~/.Indagis``/``~/.Hermes``).
+_REBRAND_PATTERNS: List[Tuple[re.Pattern, str, str]] = [
+    (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), 'Indagis', 'hermes'),
+    (re.compile(r'\bClawdBot\b', re.IGNORECASE), 'Indagis', 'hermes'),
+    (re.compile(r'\bMoltBot\b', re.IGNORECASE), 'Indagis', 'hermes'),
 ]
 
 
-def _case_preserving_replacement(replacement: str):
-    """Return a re.sub replacement fn that lowercases the result when the
-    matched text was all-lowercase.
+def _case_preserving_replacement(replacement: str, lowercase_replacement: str | None = None):
+    """Return a re.sub replacement fn using ``lowercase_replacement`` when the
+    matched text was all-lowercase, ``replacement`` otherwise.
 
-    Keeps ``OpenClaw`` → ``Indagis`` but maps ``openclaw`` → ``indagis`` so a
+    Keeps ``OpenClaw`` → ``Indagis`` but maps ``openclaw`` → ``hermes`` so a
     filesystem path like ``~/.openclaw/config.yaml`` rewrites to
-    ``~/.indagis/config.yaml`` (the real Indagis home) instead of the broken
-    ``~/.Indagis/config.yaml``.
+    ``~/.hermes/config.yaml`` (the real legacy-alias home) instead of the
+    broken ``~/.Indagis/config.yaml`` or a not-yet-existing ``~/.indagis``.
+    Defaults ``lowercase_replacement`` to ``replacement.lower()`` when not
+    given explicitly.
     """
+    lowercase_replacement = (
+        replacement.lower() if lowercase_replacement is None else lowercase_replacement
+    )
+
     def _sub(match: "re.Match[str]") -> str:
         matched = match.group(0)
         if matched and matched.islower():
-            return replacement.lower()
+            return lowercase_replacement
         return replacement
     return _sub
 
@@ -538,10 +548,10 @@ def rebrand_text(text: str) -> str:
     """Replace OpenClaw / ClawdBot / MoltBot brand names with Indagis.
 
     Preserves case so filesystem-path matches (lowercase) don't become
-    capitalized directory names that don't exist.
+    capitalized directory names that don't exist — see _REBRAND_PATTERNS.
     """
-    for pattern, replacement in _REBRAND_PATTERNS:
-        text = pattern.sub(_case_preserving_replacement(replacement), text)
+    for pattern, replacement, lowercase_replacement in _REBRAND_PATTERNS:
+        text = pattern.sub(_case_preserving_replacement(replacement, lowercase_replacement), text)
     return text
 
 
@@ -3107,32 +3117,10 @@ class Migrator:
             )
 
 
-def _resolve_indagis_home() -> Path:
-    """Mirrors hermes_constants.get_indagis_home()'s priority order.
-
-    Standalone script (no import path to hermes_constants): INDAGIS_HOME env
-    -> ~/.indagis (if present) -> HERMES_HOME env (legacy alias) -> ~/.hermes
-    (if present, legacy alias) -> ~/.indagis default.
-    """
-    val = os.environ.get("INDAGIS_HOME", "").strip()
-    if val:
-        return Path(val)
-    default = Path.home() / ".indagis"
-    if default.exists():
-        return default
-    legacy_env = os.environ.get("HERMES_HOME", "").strip()
-    if legacy_env:
-        return Path(legacy_env)
-    legacy_default = Path.home() / ".hermes"
-    if legacy_default.exists():
-        return legacy_default
-    return default
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Migrate OpenClaw user state into Hermes Agent.")
     parser.add_argument("--source", default=str(Path.home() / ".openclaw"), help="OpenClaw home directory")
-    parser.add_argument("--target", default=str(_resolve_indagis_home()), help="Hermes home directory")
+    parser.add_argument("--target", default=os.environ.get("INDAGIS_HOME") or str(Path.home() / ".hermes"), help="Hermes home directory")
     parser.add_argument(
         "--workspace-target",
         help="Optional workspace root where the workspace instructions file should be copied",

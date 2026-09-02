@@ -9,7 +9,9 @@ you are about to push:
     python3 scripts/audit_pr_attribution.py --fix      # create mapping files
 
 Logic (kept in sync with contributor-check.yml):
-  - scans ``git log $(git merge-base origin/feat/rebranding HEAD)..HEAD --format=%ae``
+  - scans ``git log $(git merge-base origin/<default-branch> HEAD)..HEAD
+    --format=%ae`` — ``<default-branch>`` is auto-detected (see
+    ``default_base_ref()``), not hardcoded to "main"
   - skips teknium/bot emails and ``<id>+<login>@users.noreply.github.com``
     (CI auto-resolves those)
   - everything else must have ``contributors/emails/<email>`` or a legacy
@@ -55,9 +57,30 @@ def run(*args: str, check: bool = True) -> str:
     return result.stdout.strip()
 
 
+def default_base_ref() -> str:
+    """The remote's current default branch, not hardcoded to "main".
+
+    Queries the remote directly with `git ls-remote --symref origin HEAD`
+    (a single lightweight network call) rather than trusting the local
+    `refs/remotes/origin/HEAD` symref, which is only set at clone/fetch
+    time and goes stale if the remote's default branch changes afterward —
+    confirmed on a real worktree in this repo, where the cached local
+    symref still pointed at a since-deleted branch while the remote's
+    actual default branch had moved to "main". Falls back to the local
+    symref if offline, and finally to the literal "main".
+    """
+    ls_remote = run("git", "ls-remote", "--symref", "origin", "HEAD", check=False)
+    for line in ls_remote.splitlines():
+        if line.startswith("ref:") and line.endswith("\tHEAD"):
+            return line.split()[1].rsplit("/", 1)[-1]
+    symref = run("git", "symbolic-ref", "refs/remotes/origin/HEAD", check=False)
+    if symref:
+        return symref.rsplit("/", 1)[-1]
+    return "main"
+
+
 def new_emails() -> list[str]:
-    # TODO(Phase 5): revert to origin/main once main exists on this fork
-    base = run("git", "merge-base", "origin/feat/rebranding", "HEAD")
+    base = run("git", "merge-base", f"origin/{default_base_ref()}", "HEAD")
     log = run("git", "log", f"{base}..HEAD", "--format=%ae", "--no-merges", check=False)
     return sorted({e for e in log.splitlines() if e.strip()})
 

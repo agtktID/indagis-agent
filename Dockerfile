@@ -340,7 +340,18 @@ RUN if [ -n "${HERMES_GIT_SHA}" ]; then \
 # the profile create/delete hooks (Phase 4); they live under
 # /run/service/ (tmpfs) and are reconciled on container restart by
 # /etc/cont-init.d/02-reconcile-profiles (Phase 4 Task 4.0).
-COPY docker/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
+#
+# --chmod is required here (unlike a bare COPY): without it, BuildKit bakes
+# in the exact mode bits these files have on the host build machine at build
+# time, which depends on that machine's umask. A restrictive local umask
+# (e.g. 027) produces service dirs with no "other" read/execute bits, so
+# s6-rc-compile fails with EACCES for any non-root/non-owning UID during
+# s6-overlay's own preinit stage — before main-wrapper.sh's --user guard
+# ever runs. a+rX makes every copied path world-readable and, for
+# directories and files that already have an execute bit for someone (the
+# run/finish scripts), world-executable too; go-w keeps it non-writable by
+# non-root, matching the read-only source tree below.
+COPY --chmod=a+rX,go-w docker/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 
 # stage2-hook handles UID/GID remap, volume chown, config seeding,
 # skills sync — all the work the old entrypoint.sh did before

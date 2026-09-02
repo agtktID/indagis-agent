@@ -2208,7 +2208,7 @@ class TestConcurrentToolExecution:
         assert outcome.result == "ok"
         assert dispatched == [{"command": "true"}]
         assert duplicate_errors == [
-            "Hermes tool execution callback invoked more than once"
+            "Indagis tool execution callback invoked more than once"
         ]
         assert outcome.blocked is False
 
