@@ -324,7 +324,7 @@ class TestDaytonaBulkDownload:
         env._daytona_bulk_download(dest)
 
         tar_cmd = env._sandbox.process.exec.call_args_list[0][0][0]
-        assert "home/daytona/.hermes" in tar_cmd
+        assert "home/daytona/.indagis" in tar_cmd
 
 
 class TestDaytonaCleanup:
@@ -401,7 +401,7 @@ class TestBulkDownloadWiring:
         # Replicate the wiring done in __init__
         from tools.environments.file_sync import iter_sync_files
         env._sync_manager = daytona_env.FileSyncManager(
-            get_files_fn=lambda: iter_sync_files(f"{env._remote_home}/.hermes"),
+            get_files_fn=lambda: iter_sync_files(f"{env._remote_home}/.indagis"),
             upload_fn=env._daytona_upload,
             delete_fn=env._daytona_delete,
             bulk_upload_fn=env._daytona_bulk_upload,
