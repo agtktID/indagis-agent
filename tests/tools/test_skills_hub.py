@@ -1554,19 +1554,18 @@ class TestParallelSearchSourcesTimeout:
 
 
 # ---------------------------------------------------------------------------
-# _load_hermes_index — centralized index fetch (Browse-hub landing / search)
+# _load_hermes_index — centralized index (Browse-hub landing / search)
 # ---------------------------------------------------------------------------
 
 
 class TestLoadHermesIndex:
-    """Regression coverage for the Skills-Hub index fetch.
+    """Regression coverage for the disabled centralized-index fetch.
 
-    The centralized index is a large body served with Content-Encoding: br.
-    httpx's streaming Brotli decoder (brotlicffi 1.2.0.1, pinned for Discord
-    attachment decoding) raises DecodingError on payloads this size, which
-    used to cascade into a silently-empty Skills Hub. The fetch must therefore
-    (a) not ask for Brotli, and (b) survive a DecodingError by retrying
-    uncompressed instead of blanking the hub.
+    Indagis does not host its own centralized skills-index.json yet, so
+    ``_load_hermes_index`` must never reach out to the upstream Nous Research
+    project's server — it should read only the local on-disk cache (if any)
+    and let ``HermesIndexSource.is_available`` report unavailable otherwise,
+    so Skills Hub falls back to the per-source adapters transparently.
     """
 
     @staticmethod
@@ -1578,49 +1577,38 @@ class TestLoadHermesIndex:
         monkeypatch.setattr(hub, "_hermes_index_cache_file", lambda: cache_file)
         return cache_file
 
-    def test_fetch_does_not_request_brotli(self, monkeypatch, tmp_path):
-        """The index fetch must not negotiate Brotli (the broken decoder path)."""
+    def test_never_makes_a_network_call(self, monkeypatch, tmp_path):
+        """The index load must not hit the network at all."""
         import tools.skills_hub as hub
 
         self._isolate_cache(monkeypatch, tmp_path)
 
-        captured = {}
+        def fail_get(*args, **kwargs):
+            raise AssertionError("_load_hermes_index must not call httpx.get")
 
-        def fake_get(url, *args, **kwargs):
-            captured["headers"] = kwargs.get("headers", {})
-            resp = MagicMock()
-            resp.status_code = 200
-            resp.json.return_value = {"skills": [{"name": "x"}]}
-            return resp
+        monkeypatch.setattr(hub.httpx, "get", fail_get)
 
-        monkeypatch.setattr(hub.httpx, "get", fake_get)
+        assert hub._load_hermes_index() is None
 
-        data = hub._load_hermes_index()
-        assert data == {"skills": [{"name": "x"}]}
-
-        accept = captured["headers"].get("Accept-Encoding", "")
-        assert "br" not in [tok.strip() for tok in accept.split(",")], (
-            f"index fetch must not request Brotli, got Accept-Encoding={accept!r}"
-        )
-
-    def test_persistent_decoding_error_falls_back_to_stale_cache(
-        self, monkeypatch, tmp_path
-    ):
-        """If every attempt fails to decode, serve the stale cache rather than None."""
+    def test_serves_existing_local_cache(self, monkeypatch, tmp_path):
+        """A pre-existing local cache is still served, without a network call."""
         import tools.skills_hub as hub
 
         cache_file = self._isolate_cache(monkeypatch, tmp_path)
-        cache_file.write_text(json.dumps({"skills": [{"name": "stale"}]}))
-        # Force the cache to look expired so the network path runs.
-        old = time.time() - (hub.HERMES_INDEX_TTL + 100)
-        import os
+        cache_file.write_text(json.dumps({"skills": [{"name": "cached"}]}))
 
-        os.utime(cache_file, (old, old))
+        def fail_get(*args, **kwargs):
+            raise AssertionError("_load_hermes_index must not call httpx.get")
 
-        def fake_get(url, *args, **kwargs):
-            raise httpx.DecodingError("brotli boom")
-
-        monkeypatch.setattr(hub.httpx, "get", fake_get)
+        monkeypatch.setattr(hub.httpx, "get", fail_get)
 
         data = hub._load_hermes_index()
-        assert data == {"skills": [{"name": "stale"}]}
+        assert data == {"skills": [{"name": "cached"}]}
+
+    def test_no_cache_returns_none(self, monkeypatch, tmp_path):
+        """With no local cache and no fetch, the index is simply unavailable."""
+        import tools.skills_hub as hub
+
+        self._isolate_cache(monkeypatch, tmp_path)
+
+        assert hub._load_hermes_index() is None
