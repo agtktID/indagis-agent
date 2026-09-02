@@ -368,7 +368,7 @@ def _print_curator_first_run_notice() -> None:
     print("  Preview now:  indagis curator run --dry-run")
     print("  Pause it:     indagis curator pause")
     print(
-        "  Docs:         https://hermes-agent.nousresearch.com/docs/user-guide/features/curator"
+        "  Docs:         https://agtktid.github.io/docs/user-guide/features/curator"
     )
 
 def _print_fts_optimize_available_notice() -> None:
