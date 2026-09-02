@@ -449,7 +449,7 @@ def run_bot() -> int:  # noqa: C901 — orchestration, explicit branches
     out_dir_env = os.environ.get("HERMES_MEET_OUT_DIR", "").strip()
     headed = os.environ.get("HERMES_MEET_HEADED", "").lower() in {"1", "true", "yes"}
     auth_state = os.environ.get("HERMES_MEET_AUTH_STATE", "").strip()
-    guest_name = os.environ.get("HERMES_MEET_GUEST_NAME", "Hermes Agent")
+    guest_name = os.environ.get("HERMES_MEET_GUEST_NAME", "Indagis Agent")
     duration_s = _parse_duration(os.environ.get("HERMES_MEET_DURATION", ""))
     # v2: optional realtime mode. Enabled when HERMES_MEET_MODE=realtime.
     mode = os.environ.get("HERMES_MEET_MODE", "transcribe").strip().lower()
@@ -818,7 +818,7 @@ def _looks_like_human_speaker(speaker: str, bot_guest_name: str) -> bool:
     if not speaker or not speaker.strip():
         return False
     spk = speaker.strip().lower()
-    if spk in {"unknown", "you", bot_guest_name.strip().lower()}:
+    if spk in {"unknown", "you", "hermes agent", bot_guest_name.strip().lower()}:
         return False
     return True
 
