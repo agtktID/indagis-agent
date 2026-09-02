@@ -223,8 +223,8 @@ function VulnRow({ v }: { v: Vulnerability }) {
       {open && (
         <tr>
           <td
-            colSpan={5}
             className="px-4 py-3"
+            colSpan={5}
             style={{
               backgroundColor: OBSIDIAN,
               borderTop: `1px solid ${CYAN_DIM}`,
@@ -246,8 +246,8 @@ function VulnRow({ v }: { v: Vulnerability }) {
                 <Field label="Vulnerable range" value={v.vulnerableRange} />
                 <Field label="Patched version" value={v.patchedVersion} />
                 <Field label="Current version" value={v.currentVersion} />
-                <Field label="Fix commit" value={v.fixCommit} mono />
-                {v.notes && <Field label="Notes" value={v.notes} block />}
+                <Field label="Fix commit" mono value={v.fixCommit} />
+                {v.notes && <Field block label="Notes" value={v.notes} />}
               </dl>
             </div>
           </td>
