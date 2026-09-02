@@ -58,6 +58,7 @@ import json
 import logging
 import math
 import os
+from utils import env_with_legacy_alias
 import tempfile
 import time
 import uuid
@@ -3270,7 +3271,7 @@ def compress_context(
                         parent_session_id=old_session_id,
                         child_session_id=new_session_id,
                         source=agent.platform
-                        or os.environ.get("HERMES_SESSION_SOURCE", "cli"),
+                        or env_with_legacy_alias("INDAGIS_SESSION_SOURCE", "HERMES_SESSION_SOURCE", "cli"),
                         model=agent.model,
                         model_config=agent._session_init_model_config,
                         system_prompt=new_system_prompt,

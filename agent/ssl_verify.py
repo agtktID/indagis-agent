@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+from utils import env_with_legacy_alias
 import ssl
 from pathlib import Path
 from typing import Any, Optional
@@ -47,7 +48,7 @@ def resolve_httpx_verify(
 
     effective_ca = (
         (ca_bundle or "").strip()
-        or os.getenv("HERMES_CA_BUNDLE", "").strip()
+        or env_with_legacy_alias("INDAGIS_CA_BUNDLE", "HERMES_CA_BUNDLE", "").strip()
         or os.getenv("SSL_CERT_FILE", "").strip()
         or os.getenv("REQUESTS_CA_BUNDLE", "").strip()
         or os.getenv("CURL_CA_BUNDLE", "").strip()

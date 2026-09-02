@@ -17,6 +17,7 @@ import json
 from pathlib import Path
 import logging
 import os
+from utils import env_with_legacy_alias
 import random
 import threading
 import time
@@ -132,7 +133,7 @@ def _parse_tool_arguments(raw_arguments: Any) -> tuple[dict, Optional[str]]:
 
 
 def _resolve_concurrent_tool_timeout() -> float | None:
-    raw = os.getenv("HERMES_CONCURRENT_TOOL_TIMEOUT_S", "").strip()
+    raw = env_with_legacy_alias("INDAGIS_CONCURRENT_TOOL_TIMEOUT_S", "HERMES_CONCURRENT_TOOL_TIMEOUT_S", "").strip()
     if not raw:
         return _DEFAULT_CONCURRENT_TOOL_TIMEOUT_S
     try:

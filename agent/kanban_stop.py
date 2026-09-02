@@ -14,6 +14,7 @@ loop continues instead of exiting.
 from __future__ import annotations
 
 import os
+from utils import env_with_legacy_alias
 from typing import Any, Iterable, Optional
 
 
@@ -28,10 +29,10 @@ def kanban_stop_nudge_enabled() -> bool:
     On when ``HERMES_KANBAN_TASK`` is set (dispatcher-spawned worker), unless
     ``HERMES_KANBAN_STOP_NUDGE`` explicitly disables it.
     """
-    env = os.environ.get("HERMES_KANBAN_STOP_NUDGE")
+    env = env_with_legacy_alias("INDAGIS_KANBAN_STOP_NUDGE", "HERMES_KANBAN_STOP_NUDGE", None)
     if env is not None and env.strip().lower() in {"0", "false", "no", "off"}:
         return False
-    task = (os.environ.get("HERMES_KANBAN_TASK") or "").strip()
+    task = (env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK") or "").strip()
     return bool(task)
 
 
@@ -85,7 +86,7 @@ def build_kanban_stop_nudge(
     if session_called_kanban_terminal(messages):
         return None
 
-    tid = (task_id or os.environ.get("HERMES_KANBAN_TASK") or "").strip() or "this task"
+    tid = (task_id or env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK") or "").strip() or "this task"
     return (
         "[System: You are a Indagis kanban worker. A plain-text reply is NOT a "
         "terminal state for the board.\n\n"
