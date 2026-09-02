@@ -3,14 +3,14 @@ name: blender-mcp
 description: Drive Blender via the catalog blender MCP, with bpy recipes.
 version: 2.1.0
 requires: Blender 3.0+ desktop instance (headless via xvfb-run)
-author: alireza78a + kshitijk4poor + Hermes Agent
+author: alireza78a + kshitijk4poor + Indagis Agent
 tags: [blender, 3d, animation, modeling, bpy, mcp]
 platforms: [linux, macos, windows]
 ---
 
 # Blender MCP Skill
 
-Companion skill for the `blender` entry in the Hermes MCP catalog. The MCP
+Companion skill for the `blender` entry in the Indagis MCP catalog. The MCP
 server provides the connection to Blender; this skill teaches the bpy idioms
 and pitfalls for driving it well. It does not cover Blender UI workflows —
 everything here goes through the MCP tools against a live Blender session.
@@ -40,7 +40,7 @@ connected.
 
 3. Every session: start Blender FIRST, press N in the viewport, open the
    "BlenderMCP" tab, click "Connect to Claude" (starts the local bridge
-   socket). Then start your Hermes session so the MCP tools are loaded.
+   socket). Then start your Indagis session so the MCP tools are loaded.
 
    The addon refuses to start under `blender -b` (background mode). On a
    machine without a display, run Blender under a virtual one:
@@ -123,7 +123,7 @@ Render to file:
 - Break complex scenes into multiple smaller `execute_blender_code` calls to
   avoid bridge timeouts.
 - Render output paths must be absolute (`/tmp/render.png`), not relative —
-  they resolve on the BLENDER host's filesystem, which matters if Hermes and
+  they resolve on the BLENDER host's filesystem, which matters if Indagis and
   Blender run on different machines.
 - `shade_smooth()` requires the object to be selected and in object mode.
 - `execute_blender_code` runs arbitrary Python inside Blender with no sandbox

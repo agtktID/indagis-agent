@@ -17,7 +17,7 @@ Ground answers and documents in cited, verifiable sources.
 | Source | Bundled (installed by default) |
 | Path | `skills/research/grounded-citations` |
 | Version | `1.1.0` |
-| Author | Hermes Agent + Teknium |
+| Author | Indagis Agent + Teknium |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Research`, `Citations`, `Grounding`, `Sources`, `Web`, `Reports` |
@@ -26,7 +26,7 @@ Ground answers and documents in cited, verifiable sources.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Indagis loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Grounded Citations

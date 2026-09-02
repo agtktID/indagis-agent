@@ -17,7 +17,7 @@ Iterative Python via live Jupyter kernel (hamelnb).
 | Source | Optional — install with `indagis skills install official/data-science/jupyter-notebook` |
 | Path | `optional-skills/data-science/jupyter-notebook` |
 | Version | `1.0.0` |
-| Author | Hermes Agent |
+| Author | Indagis Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `jupyter`, `notebook`, `repl`, `data-science`, `exploration`, `iterative` |
@@ -25,7 +25,7 @@ Iterative Python via live Jupyter kernel (hamelnb).
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Indagis loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Jupyter Notebook (hamelnb live kernel)

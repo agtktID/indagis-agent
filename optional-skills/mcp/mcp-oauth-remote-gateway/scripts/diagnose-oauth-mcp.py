@@ -31,7 +31,7 @@ UA = "python-httpx/0.27"  # CF blocks default urllib UA on many providers
 
 
 def _hermes_home():
-    # Prefer Hermes' own resolver (profile-safe); fall back to env then ~/.hermes.
+    # Prefer Indagis' own resolver (profile-safe); fall back to env then ~/.hermes.
     try:
         from hermes_constants import get_indagis_home
         return str(get_indagis_home())
