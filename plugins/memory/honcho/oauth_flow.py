@@ -44,12 +44,19 @@ def _display_config_path(path: object) -> str:
     The absolute path (username + home layout) never leaves the machine — it's
     only shown to the user. Collapse ``$HOME`` to ``~``; for a path outside
     home, send the bare filename rather than leak an arbitrary absolute path.
+
+    A real ``~/.hermes`` legacy-alias directory (see
+    ``hermes_constants.get_indagis_home``'s P4 resolution step) is a valid
+    path on disk, but the consent screen should still read as the current
+    Indagis brand — rewritten via :func:`hermes_constants.rebrand_display_path`.
     """
     from pathlib import Path as _Path
 
+    from hermes_constants import rebrand_display_path
+
     p = _Path(str(path))
     try:
-        return "~/" + str(p.relative_to(_Path.home()))
+        return rebrand_display_path("~/" + str(p.relative_to(_Path.home())))
     except ValueError:
         return p.name
 
@@ -182,7 +189,9 @@ def begin_authorization(
     if source:
         params["source"] = source
     if config_path:
-        params["config_path"] = config_path
+        from hermes_constants import rebrand_display_path
+
+        params["config_path"] = rebrand_display_path(config_path)
     return f"{endpoints.authorize_url}?{urlencode(params)}", state
 
 
