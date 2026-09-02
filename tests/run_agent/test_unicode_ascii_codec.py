@@ -149,7 +149,7 @@ class TestSanitizeStructureNonAscii:
     def test_sanitizes_nested_dict_structure(self):
         payload = {
             "default_headers": {
-                "X-Title": "Hermes │ Agent",
+                "X-Title": "Indagis │ Agent",
                 "User-Agent": "Hermes/1.0 🤖",
             }
         }
