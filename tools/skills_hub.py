@@ -3975,11 +3975,8 @@ def check_for_skill_updates(
 
 
 # ---------------------------------------------------------------------------
-# Hermes centralized index source
+# Centralized index source
 # ---------------------------------------------------------------------------
-
-HERMES_INDEX_URL = "https://hermes-agent.nousresearch.com/docs/api/skills-index.json"
-HERMES_INDEX_TTL = 6 * 3600  # 6 hours
 
 
 def _hermes_index_cache_file() -> Path:
@@ -3987,77 +3984,20 @@ def _hermes_index_cache_file() -> Path:
 
 
 def _load_hermes_index() -> Optional[dict]:
-    """Fetch the centralized skills index, with local cache.
+    """Load the centralized skills index from local cache, if present.
 
-    The index is a JSON file hosted on the docs site, rebuilt daily by CI.
-    We cache it locally for HERMES_INDEX_TTL seconds to avoid repeated
-    downloads within a session.
+    Indagis does not yet host its own centralized skills-index.json, so the
+    remote fetch is disabled rather than reaching out to the upstream Nous
+    Research project's server. ``HermesIndexSource.is_available`` reports
+    unavailable when this returns ``None``/empty, and ``parallel_search_sources``
+    then falls back transparently to the per-source adapters (GitHub taps,
+    skills.sh, ClawHub, well-known, ``optional-skills/``) instead.
     """
-    # Check local cache
-    hermes_index_cache_file = _hermes_index_cache_file()
-    if hermes_index_cache_file.exists():
-        try:
-            age = time.time() - hermes_index_cache_file.stat().st_mtime
-            if age < HERMES_INDEX_TTL:
-                return json.loads(hermes_index_cache_file.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            pass
-
-    # Fetch from docs site.
-    #
-    # We deliberately DON'T let httpx negotiate Brotli here.  The index is a
-    # large body (tens of MB); httpx's streaming Brotli decoder, backed by
-    # brotlicffi 1.2.0.1 (pinned for Discord attachment decoding), trips over
-    # its own output_buffer_limit on payloads this size and raises
-    # DecodingError("brotli: decoder process called with data when
-    # 'can_accept_more_data()' is False").  That surfaces as an empty Skills
-    # Hub (blank Browse-hub landing, index contributes 0 search hits) because
-    # the error is caught below and we silently fall back to a (often absent)
-    # stale cache.  Requesting gzip/deflate sidesteps the broken decoder while
-    # still compressing the transfer.  The identity retry is belt-and-braces
-    # for any future proxy that ignores the header and returns Brotli anyway.
-    data = None
-    for accept_encoding in ("gzip, deflate", "identity"):
-        try:
-            resp = httpx.get(
-                HERMES_INDEX_URL,
-                timeout=15,
-                follow_redirects=True,
-                headers={"Accept-Encoding": accept_encoding},
-            )
-            if resp.status_code != 200:
-                logger.debug("Indagis index fetch returned %d", resp.status_code)
-                return _load_stale_index_cache()
-            data = resp.json()
-            break
-        except httpx.DecodingError as e:
-            # Content-Encoding decode failed — retry once uncompressed before
-            # giving up on the network path entirely.
-            logger.debug(
-                "Indagis index decode failed (Accept-Encoding=%s): %s",
-                accept_encoding,
-                e,
-            )
-            continue
-        except (httpx.HTTPError, json.JSONDecodeError) as e:
-            logger.debug("Indagis index fetch failed: %s", e)
-            return _load_stale_index_cache()
-
-    if data is None:
-        return _load_stale_index_cache()
-
-    # Validate structure
-    if not isinstance(data, dict) or "skills" not in data:
-        return _load_stale_index_cache()
-
-    # Cache locally
-    try:
-        hermes_index_cache_file.parent.mkdir(parents=True, exist_ok=True)
-        hermes_index_cache_file.write_text(json.dumps(data), encoding="utf-8")
-    except OSError:
-        pass
-
-    return data
+    logger.debug(
+        "Centralized skills index disabled (no Indagis-hosted index yet); "
+        "falling back to per-source search"
+    )
+    return _load_stale_index_cache()
 
 
 def _load_stale_index_cache() -> Optional[dict]:

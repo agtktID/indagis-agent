@@ -28,8 +28,11 @@ def _check_config():
     if not CANVAS_BASE_URL:
         missing.append("CANVAS_BASE_URL")
     if missing:
+        _indagis_home = os.path.expanduser("~/.indagis")
         hermes_env = os.path.join(
-            os.environ.get("INDAGIS_HOME", os.path.expanduser("~/.hermes")), ".env"
+            os.environ.get("INDAGIS_HOME")
+            or (_indagis_home if os.path.isdir(_indagis_home) else os.path.expanduser("~/.hermes")),
+            ".env",
         )
         print(
             f"Missing required environment variables: {', '.join(missing)}\n"
