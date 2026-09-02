@@ -52,9 +52,9 @@ hermes teams-pipeline maintain-subscriptions --dry-run
 
 You MUST run `maintain-subscriptions` on a schedule. Pick one of these three options:
 
-#### Option 1: Hermes cron (recommended if you already run the Hermes gateway)
+#### Option 1: Indagis cron (recommended if you already run the Indagis gateway)
 
-Hermes ships a built-in cron scheduler. The `--no-agent` mode runs a script as the job (rather than using an LLM), and `--script` must point at a file under `~/.indagis/scripts/`. First create the script:
+Indagis ships a built-in cron scheduler. The `--no-agent` mode runs a script as the job (rather than using an LLM), and `--script` must point at a file under `~/.indagis/scripts/`. First create the script:
 
 ```bash
 mkdir -p ~/.indagis/scripts
@@ -88,7 +88,7 @@ Create `/etc/systemd/system/hermes-teams-pipeline-maintain.service`:
 
 ```ini
 [Unit]
-Description=Hermes Teams pipeline subscription maintenance
+Description=Indagis Teams pipeline subscription maintenance
 After=network-online.target
 
 [Service]
@@ -102,7 +102,7 @@ And `/etc/systemd/system/hermes-teams-pipeline-maintain.timer`:
 
 ```ini
 [Unit]
-Description=Run Hermes Teams pipeline subscription maintenance every 12 hours
+Description=Run Indagis Teams pipeline subscription maintenance every 12 hours
 
 [Timer]
 OnBootSec=5min
@@ -239,7 +239,7 @@ Check:
 - [ ] Notion and Linear sinks are configured only if actually needed
 - [ ] `hermes teams-pipeline validate` returns an OK snapshot
 - [ ] `hermes teams-pipeline token-health --force-refresh` succeeds
-- [ ] **`maintain-subscriptions` is scheduled** (Hermes cron, systemd timer, or crontab — see [Automating subscription renewal](#automating-subscription-renewal-required-for-production)). Without this, Graph subscriptions silently expire within 72 hours.
+- [ ] **`maintain-subscriptions` is scheduled** (Indagis cron, systemd timer, or crontab — see [Automating subscription renewal](#automating-subscription-renewal-required-for-production)). Without this, Graph subscriptions silently expire within 72 hours.
 - [ ] a real end-to-end meeting event has produced a stored job
 - [ ] at least one summary has reached the intended delivery sink
 

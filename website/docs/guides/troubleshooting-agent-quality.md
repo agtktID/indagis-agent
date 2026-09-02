@@ -1,12 +1,12 @@
 ---
 sidebar_position: 27
 title: "Troubleshooting: \"My Agent Feels Dumber\""
-description: "A diagnostic checklist for when Hermes seems less capable than before or forgets things mid-session — model switches, context pressure, wrong context detection, and the frozen memory snapshot"
+description: "A diagnostic checklist for when Indagis seems less capable than before or forgets things mid-session — model switches, context pressure, wrong context detection, and the frozen memory snapshot"
 ---
 
 # Troubleshooting: "My Agent Feels Dumber"
 
-Sometimes Hermes seems less sharp than it was yesterday, or forgets something you told it twenty minutes ago. This is almost never mysterious — there's usually one specific, checkable cause. Work through this checklist in order: the steps are sorted by how often each one turns out to be the answer.
+Sometimes Indagis seems less sharp than it was yesterday, or forgets something you told it twenty minutes ago. This is almost never mysterious — there's usually one specific, checkable cause. Work through this checklist in order: the steps are sorted by how often each one turns out to be the answer.
 
 ## 1. Check which model the session is actually using
 
@@ -50,7 +50,7 @@ Use `/compress` regularly during long sessions rather than waiting for problems,
 
 **Check:** Look at the CLI startup line — it shows the detected context length (e.g., `📊 Context limit: 128000 tokens`). You can also check with `/usage` during a session.
 
-**What it means:** Hermes may have auto-detected the wrong context length for your model. Set it explicitly:
+**What it means:** Indagis may have auto-detected the wrong context length for your model. Set it explicitly:
 
 ```yaml
 # In ~/.indagis/config.yaml
@@ -70,13 +70,13 @@ providers:
         context_length: 64000
 ```
 
-Ollama users: if you set a custom `num_ctx`, set the matching context length in Hermes — Ollama's `/api/show` reports the model's *maximum* context, not the effective `num_ctx` you configured. On a running gateway, edits to `model.context_length` or any `compression.*` key take effect on the next message — no restart needed.
+Ollama users: if you set a custom `num_ctx`, set the matching context length in Indagis — Ollama's `/api/show` reports the model's *maximum* context, not the effective `num_ctx` you configured. On a running gateway, edits to `model.context_length` or any `compression.*` key take effect on the next message — no restart needed.
 
 See [Context Length Detection](/integrations/providers#context-length-detection) for how auto-detection works and all override options.
 
 ## 4. "I told it something and it forgot" — the frozen memory snapshot
 
-**Symptom:** You asked Hermes to remember something during this session, it confirmed the save, but later in the *same* session it doesn't seem to know it.
+**Symptom:** You asked Indagis to remember something during this session, it confirmed the save, but later in the *same* session it doesn't seem to know it.
 
 **Check:** Nothing is broken — check the timing. Memory saved mid-session is written to disk immediately, but the system prompt won't reflect it until the next session.
 
@@ -90,7 +90,7 @@ See [Persistent Memory](/user-guide/features/memory#how-memory-appears-in-the-sy
 
 ## 5. Memory is bounded and curated — not a transcript
 
-**Symptom:** Hermes doesn't recall a detail from a session last week, even though you discussed it at length.
+**Symptom:** Indagis doesn't recall a detail from a session last week, even though you discussed it at length.
 
 **Check:** Memory capacity and contents. The system prompt memory header shows usage (e.g., `[67% — 1,474/2,200 chars]`), and `hermes journey list` shows every saved memory entry and skill.
 
@@ -102,7 +102,7 @@ You can also help directly: say "remember this for next time" after a productive
 
 ## 6. Check that skills and tools are loaded
 
-**Symptom:** Hermes used to handle a specific workflow expertly and now approaches it naively, or says it can't do something it did before.
+**Symptom:** Indagis used to handle a specific workflow expertly and now approaches it naively, or says it can't do something it did before.
 
 **Check:**
 
@@ -115,7 +115,7 @@ You can also help directly: say "remember this for next time" after a productive
 
 ## 7. Compression side-effects
 
-**Symptom:** After a long session (or right after running `/compress`), Hermes remembers the broad strokes but has lost fine detail from earlier in the conversation.
+**Symptom:** After a long session (or right after running `/compress`), Indagis remembers the broad strokes but has lost fine detail from earlier in the conversation.
 
 **Check:** Whether compression has fired — `/usage` and `/context` show compression stats and context state on messaging platforms, and manual `/compress` always reports its result.
 

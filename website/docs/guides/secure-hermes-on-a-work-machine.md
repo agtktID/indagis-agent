@@ -1,30 +1,30 @@
 ---
 sidebar_position: 26
-title: "Running Hermes on a Personal or Work Machine"
-description: "A security-posture walkthrough for running Hermes Agent on the machine you live on — what the defaults protect, how to tighten further, and how to undo mistakes"
+title: "Running Indagis on a Personal or Work Machine"
+description: "A security-posture walkthrough for running Indagis Agent on the machine you live on — what the defaults protect, how to tighten further, and how to undo mistakes"
 ---
 
-# Running Hermes on a Personal or Work Machine
+# Running Indagis on a Personal or Work Machine
 
 You're about to run an agent on the machine you live on — a personal laptop or an employer-managed workstation. What's the safe posture?
 
-Short answer: the defaults already do most of the work. Hermes ships secure-by-default, with a defense-in-depth model covering command approval, file-write safety, and credential handling. This page walks through what's on out of the box, which knobs to tighten for a shared or work machine, and how to undo mistakes when they happen. Every control here is covered in depth in the [Security](/user-guide/security) guide.
+Short answer: the defaults already do most of the work. Indagis ships secure-by-default, with a defense-in-depth model covering command approval, file-write safety, and credential handling. This page walks through what's on out of the box, which knobs to tighten for a shared or work machine, and how to undo mistakes when they happen. Every control here is covered in depth in the [Security](/user-guide/security) guide.
 
 ## What the Defaults Already Protect
 
 Fresh install, no configuration — these protections are active:
 
-**Dangerous commands require approval.** Before executing any command, Hermes checks it against a curated list of dangerous patterns — recursive deletes, writes to `/etc/`, disk operations, pipe-to-shell, and more. The default `approvals.mode: smart` uses an auxiliary LLM to assess risk: low-risk commands are auto-approved for that command only, genuinely dangerous commands are auto-denied, and uncertain cases escalate to a manual prompt.
+**Dangerous commands require approval.** Before executing any command, Indagis checks it against a curated list of dangerous patterns — recursive deletes, writes to `/etc/`, disk operations, pipe-to-shell, and more. The default `approvals.mode: smart` uses an auxiliary LLM to assess risk: low-risk commands are auto-approved for that command only, genuinely dangerous commands are auto-denied, and uncertain cases escalate to a manual prompt.
 
 **Approval prompts fail closed.** If you don't respond to an approval prompt within the timeout (default 300 seconds), the command is **denied**. Walking away from your desk never silently approves anything.
 
 **A hardline blocklist is the always-on floor.** Some commands — `rm -rf /`, fork bombs, zeroing a physical disk — are refused **regardless** of approval mode, `--yolo`, or an explicit "allow always". The blocklist trips before the approval layer even sees the command, and there is no override flag.
 
-**File writes to sensitive paths are blocked.** The `write_file` and `patch` tools cannot touch OS credential stores (`~/.ssh/`, `~/.aws/`, `~/.kube/`, `/etc/sudoers`, `~/.netrc`), Hermes credential stores (`auth.json`, `.env`, pairing data), or project secret files (`.env`, `.env.local`, `.envrc`) anywhere on disk. Blocked writes return an error immediately — there is no approval prompt and no way to override from the chat UI.
+**File writes to sensitive paths are blocked.** The `write_file` and `patch` tools cannot touch OS credential stores (`~/.ssh/`, `~/.aws/`, `~/.kube/`, `/etc/sudoers`, `~/.netrc`), Indagis credential stores (`auth.json`, `.env`, pairing data), or project secret files (`.env`, `.env.local`, `.envrc`) anywhere on disk. Blocked writes return an error immediately — there is no approval prompt and no way to override from the chat UI.
 
 **Secrets are redacted from output.** `security.redact_secrets` is on by default: patterns that look like API keys, tokens, and passwords in tool output are redacted before they enter the conversation context and logs.
 
-**Your data goes only where you point it.** API calls go **only to the LLM provider you configure**. Hermes Agent does not collect telemetry, usage data, or analytics. Your conversations, memory, and skills are stored locally in `~/.hermes/`. See the [FAQ](/reference/faq#is-my-data-sent-anywhere).
+**Your data goes only where you point it.** API calls go **only to the LLM provider you configure**. Indagis Agent does not collect telemetry, usage data, or analytics. Your conversations, memory, and skills are stored locally in `~/.hermes/`. See the [FAQ](/reference/faq#is-my-data-sent-anywhere).
 
 :::info
 There's more below the surface — SSRF protection on all URL-capable tools, filtered environments for MCP subprocesses, prompt-injection scanning of context files. The [Security](/user-guide/security) page documents every layer.
@@ -70,7 +70,7 @@ export HERMES_WRITE_SAFE_ROOT=/path/to/project:/home/you/.hermes
 Sensitive paths inside the safe root are still blocked — pointing it at `$HOME` does not allow writing `~/.ssh/id_rsa`.
 
 :::caution
-Don't add this to `~/.indagis/.env` casually. If you set it to a project directory only, the agent cannot write to `~/.indagis/cron/jobs.json`, profile skills, or other Hermes state outside that prefix. Include your Hermes home as a second root, as above.
+Don't add this to `~/.indagis/.env` casually. If you set it to a project directory only, the agent cannot write to `~/.indagis/cron/jobs.json`, profile skills, or other Indagis state outside that prefix. Include your Indagis home as a second root, as above.
 :::
 
 ### Move command execution off the host
@@ -108,7 +108,7 @@ Or use DM pairing instead of hardcoding IDs: unknown users receive a one-time pa
 
 ## The Undo Layer: Checkpoints and `/rollback`
 
-Approval gates prevent damage; [checkpoints](/user-guide/checkpoints-and-rollback) reverse it. When enabled, Hermes automatically snapshots your project before destructive operations — `write_file`, `patch`, and destructive terminal commands like `rm`, `mv`, `sed -i`, and `git reset` — into a shadow git store under `~/.indagis/checkpoints/store/`. Your real project `.git` is never touched.
+Approval gates prevent damage; [checkpoints](/user-guide/checkpoints-and-rollback) reverse it. When enabled, Indagis automatically snapshots your project before destructive operations — `write_file`, `patch`, and destructive terminal commands like `rm`, `mv`, `sed -i`, and `git reset` — into a shadow git store under `~/.indagis/checkpoints/store/`. Your real project `.git` is never touched.
 
 Checkpoints are opt-in. Enable per-session:
 
@@ -133,7 +133,7 @@ Then, in a session:
 | `/rollback <N> <file>` | Restore a single file from checkpoint N |
 
 :::tip
-Preview with `/rollback diff <N>` before restoring, and combine checkpoints with git worktrees for maximum safety — each Hermes session in its own worktree, with checkpoints as an extra layer.
+Preview with `/rollback diff <N>` before restoring, and combine checkpoints with git worktrees for maximum safety — each Indagis session in its own worktree, with checkpoints as an extra layer.
 :::
 
 ## What This Threat Model Is — and Isn't
