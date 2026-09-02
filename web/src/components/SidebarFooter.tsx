@@ -34,6 +34,18 @@ export function SidebarFooter({ status }: SidebarFooterProps) {
           {t.app.footer.org}
         </a>
       </div>
+
+      {/* Placeholder for the agency site link — no URL yet, plain text only.
+          Swap for an <a href="..."> once indagis-labs.com (or equivalent)
+          is live. */}
+      <span
+        className={cn(
+          "font-mono-ui text-[10px] tabular-nums tracking-[0.06em]",
+          "text-text-tertiary/70",
+        )}
+      >
+        Indagis-Labs
+      </span>
     </div>
   );
 }

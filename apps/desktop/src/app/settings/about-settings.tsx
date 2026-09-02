@@ -21,7 +21,7 @@ import {
 import { ListRow, SectionHeading, SettingsContent } from './primitives'
 import { UninstallSection } from './uninstall-section'
 
-const RELEASE_NOTES_URL = 'https://github.com/NousResearch/hermes-agent/releases'
+const RELEASE_NOTES_URL = 'https://github.com/agtktID/indagis-agent/releases'
 
 function relativeTime(ms: number | undefined, a: Translations['settings']['about']) {
   if (!ms) {
@@ -176,25 +176,13 @@ export function AboutSettings() {
           title={a.automaticUpdates}
         />
 
-        {/* Indagis → Hermes attribution. Mandated by the upstream MIT
-            license: a single, always-visible "Built on" line in About.
-            Links to the original NousResearch repository so the credit
-            is verifiable. */}
+        {/* Placeholder for the agency site link — no URL yet, plain text
+            only. Swap for a real link once indagis-labs.com (or
+            equivalent) is live. */}
         <div className="mt-2 flex flex-col gap-0.5 px-1 text-xs text-muted-foreground">
-          <a
-            className="font-mono text-[11px] tracking-wide text-muted-foreground transition-colors hover:text-foreground"
-            href="https://github.com/NousResearch/hermes-agent"
-            onClick={event => {
-              event.preventDefault()
-              void window.hermesDesktop?.openExternal?.(
-                'https://github.com/NousResearch/hermes-agent'
-              )
-            }}
-            rel="noreferrer"
-            target="_blank"
-          >
-            Built on Indagis Agent · NousResearch · MIT License
-          </a>
+          <span className="font-mono text-[11px] tracking-wide text-muted-foreground">
+            Indagis-Labs
+          </span>
         </div>
 
         <UninstallSection />
