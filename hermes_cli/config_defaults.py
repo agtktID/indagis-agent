@@ -2386,10 +2386,14 @@ DEFAULT_CONFIG = {
     # Remotely-hosted model catalog manifest.  When enabled, the CLI fetches
     # curated model lists for OpenRouter and Nous Portal from this URL,
     # falling back to the in-repo snapshot on network failure.  Lets us
-    # update model picker lists without shipping a hermes-agent release.
-    # The default URL is served by the docs site GitHub Pages deploy.
+    # update model picker lists without shipping an Indagis Agent release.
+    # Disabled by default: Indagis does not host its own model-catalog.json
+    # yet, so the URL below (Nous Research's docs site) is left in place as
+    # documentation of the schema/source this points at once Indagis stands
+    # up its own hosting, but is never fetched while disabled — the CLI
+    # always uses the in-repo snapshot instead.
     "model_catalog": {
-        "enabled": True,
+        "enabled": False,
         "url": "https://hermes-agent.nousresearch.com/docs/api/model-catalog.json",
         # Disk cache TTL in hours.  Beyond this, the CLI refetches on the
         # next /model or `hermes model` invocation; network failures
