@@ -7,7 +7,7 @@ Queries multiple models in parallel via OpenRouter, scores responses
 on quality/filteredness/speed, returns the best unfiltered answer.
 
 Usage in execute_code:
-    exec(open(os.path.join(os.environ.get("INDAGIS_HOME", os.path.expanduser("~/.hermes")), "skills/red-teaming/godmode/scripts/godmode_race.py")).read())
+    exec(open(os.path.join(os.environ.get("INDAGIS_HOME") or (os.path.expanduser("~/.indagis") if os.path.isdir(os.path.expanduser("~/.indagis")) else os.path.expanduser("~/.hermes")), "skills/red-teaming/godmode/scripts/godmode_race.py")).read())
     
     result = race_models(
         query="Your query here",

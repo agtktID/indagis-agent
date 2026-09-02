@@ -7,7 +7,7 @@ finds what works, and locks it in by writing config.yaml + prefill.json.
 
 Usage in execute_code:
     exec(open(os.path.expanduser(
-        os.path.join(os.environ.get("INDAGIS_HOME", os.path.expanduser("~/.hermes")), "skills/red-teaming/godmode/scripts/auto_jailbreak.py")
+        os.path.join(os.environ.get("INDAGIS_HOME") or (os.path.expanduser("~/.indagis") if os.path.isdir(os.path.expanduser("~/.indagis")) else os.path.expanduser("~/.hermes")), "skills/red-teaming/godmode/scripts/auto_jailbreak.py")
     )).read())
     
     result = auto_jailbreak()  # Uses current model from config
@@ -26,6 +26,29 @@ try:
 except ImportError:
     OpenAI = None
 
+
+def _resolve_indagis_home() -> Path:
+    """Mirrors hermes_constants.get_indagis_home()'s priority order.
+
+    Standalone script (no import path to hermes_constants): INDAGIS_HOME env
+    -> ~/.indagis (if present) -> HERMES_HOME env (legacy alias) -> ~/.hermes
+    (if present, legacy alias) -> ~/.indagis default.
+    """
+    val = os.getenv("INDAGIS_HOME", "").strip()
+    if val:
+        return Path(val)
+    default = Path.home() / ".indagis"
+    if default.exists():
+        return default
+    legacy_env = os.getenv("HERMES_HOME", "").strip()
+    if legacy_env:
+        return Path(legacy_env)
+    legacy_default = Path.home() / ".hermes"
+    if legacy_default.exists():
+        return legacy_default
+    return default
+
+
 # ═══════════════════════════════════════════════════════════════════
 # Load sibling modules
 # ═══════════════════════════════════════════════════════════════════
@@ -35,7 +58,7 @@ try:
     _SKILL_DIR = Path(__file__).resolve().parent.parent
 except NameError:
     # __file__ not defined when loaded via exec() — search standard paths
-    _SKILL_DIR = Path(os.getenv("INDAGIS_HOME", Path.home() / ".hermes")) / "skills" / "red-teaming" / "godmode"
+    _SKILL_DIR = _resolve_indagis_home() / "skills" / "red-teaming" / "godmode"
 
 _SCRIPTS_DIR = _SKILL_DIR / "scripts"
 _TEMPLATES_DIR = _SKILL_DIR / "templates"
@@ -57,7 +80,7 @@ if _race_path.exists():
 # Hermes config paths
 # ═══════════════════════════════════════════════════════════════════
 
-INDAGIS_HOME = Path(os.getenv("INDAGIS_HOME", Path.home() / ".hermes"))
+INDAGIS_HOME = _resolve_indagis_home()
 CONFIG_PATH = INDAGIS_HOME / "config.yaml"
 PREFILL_PATH = INDAGIS_HOME / "prefill.json"
 
