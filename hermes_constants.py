@@ -889,19 +889,44 @@ def display_indagis_home() -> str:
 
     Uses ``~/`` shorthand for readability::
 
-        default:  ``~/.hermes``
+        default:  ``~/.indagis``
         profile:  ``~/.indagis/profiles/coder``
         custom:   ``/opt/hermes-custom``
 
     Use this in **user-facing** print/log messages instead of hardcoding
     ``~/.hermes``.  For code that needs a real ``Path``, use
     :func:`get_indagis_home` instead.
+
+    Note this can legitimately still read ``~/.hermes`` when
+    :func:`get_indagis_home` resolved the P4 legacy-alias directory (a real
+    ``~/.hermes`` exists and nothing overrides it) — that reflects the actual
+    directory in use. Callers that must always show the current brand name
+    regardless (a chat prompt, a consent screen) should pass this through
+    :func:`rebrand_display_path`.
     """
     home = get_indagis_home()
     try:
         return "~/" + str(home.relative_to(Path.home()))
     except ValueError:
         return str(home)
+
+
+def rebrand_display_path(display: str) -> str:
+    """Rewrite a leading ``.hermes`` home segment in a display string to ``.indagis``.
+
+    Display strings (chat prompts, OAuth consent screens, CLI hints) should
+    always read as the current Indagis brand even when the underlying
+    resolved directory is the legacy ``~/.hermes`` alias (P4 in
+    :func:`get_indagis_home`'s resolution ladder, or a caller-supplied path
+    built before the rename) — real file operations keep targeting the
+    actual directory; only what's shown to a human/model changes here.
+
+    Only rewrites ``.hermes`` as a whole path segment (``~/.hermes/...`` or
+    a bare ``.hermes``), never a substring of some other name.
+    """
+    if display == ".hermes" or display == "~/.hermes":
+        return display[: -len(".hermes")] + ".indagis"
+    return display.replace("/.hermes/", "/.indagis/")
 
 
 def secure_parent_dir(path: Path) -> None:
