@@ -92,7 +92,14 @@ def _legacy_indagis_home_alias_path() -> Path | None:
         candidate = base / "hermes"
     else:
         candidate = Path.home() / ".hermes"
-    return candidate if candidate.exists() else None
+    try:
+        candidate_exists = candidate.exists()
+    except PermissionError:
+        # See the matching guard in _resolve_indagis_home_full_ladder: a
+        # directory that exists but can't be stat()'d raises instead of
+        # returning False. Treat it as "not usable as this alias".
+        candidate_exists = False
+    return candidate if candidate_exists else None
 
 
 def _warn_legacy_alias_in_use_once(resolved_via: str, legacy_path: Path) -> None:
