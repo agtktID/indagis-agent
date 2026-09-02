@@ -7,6 +7,7 @@ can invoke skills via /skill-name commands.
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import re
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -182,11 +183,11 @@ def _resolve_skill_commands_platform() -> Optional[str]:
         from gateway.session_context import get_session_env
 
         resolved_platform = (
-            os.getenv("HERMES_PLATFORM")
+            env_with_legacy_alias("INDAGIS_PLATFORM", "HERMES_PLATFORM")
             or get_session_env("HERMES_SESSION_PLATFORM")
         )
     except Exception:
-        resolved_platform = os.getenv("HERMES_PLATFORM")
+        resolved_platform = env_with_legacy_alias("INDAGIS_PLATFORM", "HERMES_PLATFORM")
     return resolved_platform or None
 
 def _load_skill_payload(skill_identifier: str, task_id: str | None = None) -> tuple[dict[str, Any], Path | None, str] | None:

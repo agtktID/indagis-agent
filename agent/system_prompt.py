@@ -50,7 +50,7 @@ from agent.prompt_builder import (
 )
 from agent.runtime_cwd import resolve_context_cwd
 from hermes_constants import get_indagis_home
-from utils import is_truthy_value
+from utils import env_with_legacy_alias, is_truthy_value
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +144,7 @@ def _tui_embedded_pane_clarifier(hint: str) -> str:
         return hint
     if _TUI_EMBEDDED_PANE_CLARIFIER in hint:
         return hint
-    if not is_truthy_value(os.getenv("HERMES_DESKTOP_TERMINAL")):
+    if not is_truthy_value(env_with_legacy_alias("INDAGIS_DESKTOP_TERMINAL", "HERMES_DESKTOP_TERMINAL")):
         return hint
     return hint + _TUI_EMBEDDED_PANE_CLARIFIER
 

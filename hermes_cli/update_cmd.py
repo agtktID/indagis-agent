@@ -27,6 +27,7 @@ import hashlib
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import shlex
 import shutil
 import subprocess
@@ -717,7 +718,7 @@ def _print_update_completion(message: str) -> None:
     with an action id, a terminal receipt line the Desktop can match after
     the dashboard restarts (see #47359 / #58764)."""
     print(message)
-    action_id = os.environ.get("HERMES_ACTION_ID", "")
+    action_id = env_with_legacy_alias("INDAGIS_ACTION_ID", "HERMES_ACTION_ID", "")
     if len(action_id) == 32 and all(char in "0123456789abcdef" for char in action_id):
         print(f"=== hermes-update completed {action_id} ===")
 

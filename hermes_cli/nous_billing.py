@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import json
 import os
+from utils import env_with_legacy_alias
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -176,7 +177,7 @@ def resolve_portal_base_url(state: Optional[dict[str, Any]] = None) -> str:
     ``HERMES_PORTAL_BASE_URL`` → ``NOUS_PORTAL_BASE_URL`` → stored auth-state
     ``portal_base_url`` → registry default. Trailing slash stripped.
     """
-    env = os.getenv("HERMES_PORTAL_BASE_URL") or os.getenv("NOUS_PORTAL_BASE_URL")
+    env = env_with_legacy_alias("INDAGIS_PORTAL_BASE_URL", "HERMES_PORTAL_BASE_URL") or os.getenv("NOUS_PORTAL_BASE_URL")
     if env and env.strip():
         return env.strip().rstrip("/")
     if state:

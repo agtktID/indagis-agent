@@ -35,7 +35,7 @@ from agent.skill_utils import (
     skill_matches_platform,
     skill_matches_platform_list,
 )
-from utils import atomic_json_write
+from utils import atomic_json_write, env_with_legacy_alias
 
 logger = logging.getLogger(__name__)
 
@@ -152,14 +152,15 @@ DEFAULT_AGENT_IDENTITY = (
 )
 
 HERMES_AGENT_HELP_GUIDANCE = (
-    "You run on Hermes Agent (by Nous Research). When the user needs help with "
-    "Hermes itself — configuring, setting up, using, extending, or troubleshooting "
-    "it — or when you need to understand your own features, tools, or capabilities, "
-    "the documentation at https://agtktid.github.io/docs is your "
-    "authoritative reference and always holds the latest, most up-to-date "
-    "information. Load the `hermes-agent` skill with skill_view(name='hermes-agent') "
-    "for additional guidance and proven workflows, but treat the docs as the source "
-    "of truth when the two differ."
+    "You run on Indagis Agent. When the user needs help with Indagis Agent itself "
+    "— configuring, setting up, using, extending, or troubleshooting it — or when "
+    "you need to understand your own features, tools, or capabilities, the "
+    "documentation at https://agtktid.github.io/docs is your authoritative "
+    "reference and always holds the latest, most up-to-date information. Load the "
+    "`hermes-agent` skill with skill_view(name='hermes-agent') for additional "
+    "guidance and proven workflows (the skill id is kept stable for compatibility "
+    "with existing installs), but treat the docs as the source of truth when the "
+    "two differ."
 )
 
 MEMORY_GUIDANCE = (
@@ -1263,7 +1264,7 @@ def build_environment_hints() -> str:
     # it's part of the stable, cache-safe system prompt. The env var is the
     # build-time/embedder mechanism (set in a container ENV); config.yaml
     # ``agent.environment_hint`` is the user-facing surface. Env var wins.
-    extra = (os.getenv("HERMES_ENVIRONMENT_HINT") or "").strip()
+    extra = (env_with_legacy_alias("INDAGIS_ENVIRONMENT_HINT", "HERMES_ENVIRONMENT_HINT") or "").strip()
     if not extra:
         try:
             from hermes_cli.config import load_config_readonly
@@ -1585,7 +1586,7 @@ def _skill_should_show(
 
 def _current_session_platform_hint() -> str:
     """Return the active platform without importing the gateway package on CLI startup."""
-    platform = os.environ.get("HERMES_PLATFORM") or os.environ.get("HERMES_SESSION_PLATFORM")
+    platform = env_with_legacy_alias("INDAGIS_PLATFORM", "HERMES_PLATFORM") or env_with_legacy_alias("INDAGIS_SESSION_PLATFORM", "HERMES_SESSION_PLATFORM")
     if platform:
         return platform
 

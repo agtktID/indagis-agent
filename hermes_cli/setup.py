@@ -15,6 +15,7 @@ import importlib.util
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import re
 import shutil
 import sys
@@ -290,7 +291,7 @@ def is_noninteractive() -> bool:
     installed (the start path asks "Install it now?" with no one to answer).
     Honour the explicit env flag here so callers fall back to their default.
     """
-    return os.environ.get("HERMES_NONINTERACTIVE", "").strip().lower() in {
+    return env_with_legacy_alias("INDAGIS_NONINTERACTIVE", "HERMES_NONINTERACTIVE", "").strip().lower() in {
         "1",
         "true",
         "yes",

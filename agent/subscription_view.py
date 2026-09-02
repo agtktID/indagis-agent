@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import logging
 import os
+from utils import env_with_legacy_alias
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import Any, Optional
@@ -464,7 +465,7 @@ def dev_fixture_subscription_state() -> Optional[SubscriptionState]:
     Returns ``None`` when the env var is unset/empty (the real portal path runs).
     Throwaway scaffolding — mirrors ``HERMES_DEV_CREDITS_FIXTURE``.
     """
-    name = (os.getenv("HERMES_DEV_SUBSCRIPTION_FIXTURE") or "").strip().lower()
+    name = (env_with_legacy_alias("INDAGIS_DEV_SUBSCRIPTION_FIXTURE", "HERMES_DEV_SUBSCRIPTION_FIXTURE") or "").strip().lower()
     if not name:
         return None
 

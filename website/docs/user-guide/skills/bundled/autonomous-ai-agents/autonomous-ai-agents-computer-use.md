@@ -27,7 +27,7 @@ whenever the `computer_use` tool is available.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Indagis loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Computer Use (universal, any-model, cross-platform)
@@ -42,9 +42,9 @@ Everything here works with any tool-capable model — Claude, GPT, Gemini,
 or an open model on a local OpenAI-compatible endpoint. There is no
 Anthropic-native schema to learn.
 
-Hermes drives [cua-driver](https://github.com/trycua/cua) under the hood
-for the platform plumbing. The Hermes-side `computer_use` tool exposed
-in this skill is a higher-level Hermes vocabulary; the raw cua-driver
+Indagis drives [cua-driver](https://github.com/trycua/cua) under the hood
+for the platform plumbing. The Indagis-side `computer_use` tool exposed
+in this skill is a higher-level Indagis vocabulary; the raw cua-driver
 MCP tools (which a different agent harness would see) are NOT what you
 call — call the `computer_use` actions documented below.
 
@@ -290,7 +290,7 @@ in your conversation context.
 
 ## Going deeper — read the cua-driver skill pack
 
-Hermes intentionally keeps THIS skill focused on the Hermes-side
+Indagis intentionally keeps THIS skill focused on the Indagis-side
 `computer_use` action vocabulary. The platform-specific deep dives
 (macOS no-foreground contract, Windows UIA + Session 0, Linux AT-SPI +
 X11/Wayland nuances, recording trajectory + video, browser-page
@@ -322,7 +322,7 @@ These are platform deep dives, not duplicates — when the user reports
 `WINDOWS.md` for the UIA / UWP context that explains why and what to
 do differently.
 
-When `cua-driver skills install` autodetects Hermes (planned follow-up
+When `cua-driver skills install` autodetects Indagis (planned follow-up
 in trycua/cua), this happens automatically on install. Until then, ask
 the user to run the command and the pack lands in their agent skill
 space alongside this skill.

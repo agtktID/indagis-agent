@@ -39,7 +39,7 @@ from typing import Optional, Dict, List, Any, Set, Tuple, Union
 logger = logging.getLogger(__name__)
 
 from hermes_time import now as _hermes_now
-from utils import atomic_replace, atomic_write_text
+from utils import atomic_replace, atomic_write_text, env_with_legacy_alias
 
 # ``croniter`` compiles ~15 ms of regexes at import and only matters for
 # 5-field cron expressions. Resolve lazily; ``HAS_CRONITER`` stays a module
@@ -220,7 +220,7 @@ def _oneshot_run_claim_ttl_seconds() -> float:
     - positive N → ``max(N * headroom, ONESHOT_RUN_CLAIM_TTL_SECONDS)`` so a
       tiny configured timeout can never expire a claim mid-run.
     """
-    raw = os.getenv("HERMES_CRON_TIMEOUT", "").strip()
+    raw = env_with_legacy_alias("INDAGIS_CRON_TIMEOUT", "HERMES_CRON_TIMEOUT", "").strip()
     timeout = _DEFAULT_CRON_INACTIVITY_TIMEOUT
     if raw:
         try:
@@ -2010,7 +2010,7 @@ def _machine_id() -> str:
     Uses ``HERMES_MACHINE_ID`` if set, else hostname + pid. The CAS correctness
     comes from the file lock + the fresh-claim check, not from this value.
     """
-    explicit = os.getenv("HERMES_MACHINE_ID", "").strip()
+    explicit = env_with_legacy_alias("INDAGIS_MACHINE_ID", "HERMES_MACHINE_ID", "").strip()
     if explicit:
         return explicit
     try:

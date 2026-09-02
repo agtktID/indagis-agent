@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import os
+from utils import env_with_legacy_alias
 import ssl
 from pathlib import Path
 
@@ -26,7 +27,7 @@ _SKIP_VALUES = {"1", "true", "yes", "on"}
 
 
 def _skip_ssl_guard_enabled() -> bool:
-    return os.getenv("HERMES_SKIP_SSL_GUARD", "").strip().lower() in _SKIP_VALUES
+    return env_with_legacy_alias("INDAGIS_SKIP_SSL_GUARD", "HERMES_SKIP_SSL_GUARD", "").strip().lower() in _SKIP_VALUES
 
 
 def _repair_hint() -> str:

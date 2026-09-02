@@ -1,6 +1,6 @@
 # Egress credential-injection proxy (iron-proxy)
 
-When Hermes runs your agent inside a Docker terminal sandbox, that sandbox normally holds your real upstream API keys (`OPENROUTER_API_KEY`, `OPENAI_API_KEY`, etc.). A prompt-injected agent in that sandbox can `cat ~/.config/openrouter/auth.json` or `printenv | grep -i key` and exfiltrate them.
+When Indagis runs your agent inside a Docker terminal sandbox, that sandbox normally holds your real upstream API keys (`OPENROUTER_API_KEY`, `OPENAI_API_KEY`, etc.). A prompt-injected agent in that sandbox can `cat ~/.config/openrouter/auth.json` or `printenv | grep -i key` and exfiltrate them.
 
 The egress proxy fixes this: the sandbox holds opaque **proxy tokens**, never the real keys. All outbound traffic from the sandbox routes through a local [iron-proxy](https://github.com/ironsh/iron-proxy) daemon (Apache-2.0, Go) on the host, which terminates TLS and swaps the proxy token for the real credential before forwarding the request upstream. Compromise the sandbox and the attacker walks away with tokens that only work behind the **configured trusted proxy boundary** — the CA private key and the proxy endpoint integrity are part of that boundary. If traffic can be redirected to attacker-controlled proxy infrastructure (e.g. a stolen CA private key or a hijacked proxy endpoint), the token guarantee no longer holds.
 
@@ -187,7 +187,7 @@ When `credential_source: bitwarden`, the iron-proxy daemon refetches secrets fro
 2. `hermes egress stop && hermes egress start` on the host.
 3. Sandboxes started after that point swap proxy tokens for the new value.
 
-No `.env` edits. No Hermes restart on the host. The proxy daemon is the only thing that touches the new value — your host process and `os.environ` are untouched.
+No `.env` edits. No Indagis restart on the host. The proxy daemon is the only thing that touches the new value — your host process and `os.environ` are untouched.
 
 ### Fail-loud at start
 
@@ -257,7 +257,7 @@ When there are existing tokens AND stdin is a tty, the wizard prompts for confir
 
 ```
 ⚠  --rotate-tokens will invalidate proxy tokens in every running
-   Hermes sandbox.  They will start 401-ing against upstreams until restarted.
+   Indagis sandbox.  They will start 401-ing against upstreams until restarted.
 Type 'rotate' to confirm:
 ```
 
@@ -273,7 +273,7 @@ backup: ~/.indagis/proxy/mappings.json.rotated-20260524T143012
 hermes egress start
 ```
 
-Containers already running hold the old tokens and will need to be restarted to pick up the new ones. New persistent Docker containers include an egress-posture label, so Hermes will not reuse a pre-egress or pre-rotation container for new sessions.
+Containers already running hold the old tokens and will need to be restarted to pick up the new ones. New persistent Docker containers include an egress-posture label, so Indagis will not reuse a pre-egress or pre-rotation container for new sessions.
 
 ## State directory layout
 
@@ -369,7 +369,7 @@ This is a known v1 limitation. Track [github.com/ironsh/iron-proxy/issues](https
 
 ### docker\_env collisions
 
-If you set proxy-controlling env vars in your `docker_env:` config block (rare but possible), Hermes refuses to start the sandbox when `enforce_on_docker: true` is set. This includes both:
+If you set proxy-controlling env vars in your `docker_env:` config block (rare but possible), Indagis refuses to start the sandbox when `enforce_on_docker: true` is set. This includes both:
 
 - Egress-control vars: `HTTPS_PROXY`, `HTTP_PROXY`, `NO_PROXY`, `REQUESTS_CA_BUNDLE`, `SSL_CERT_FILE`, `CURL_CA_BUNDLE`, `NODE_EXTRA_CA_CERTS`
 - Real provider env vars: every name in `mappings.json` (e.g. `OPENROUTER_API_KEY`, `OPENAI_API_KEY`)
@@ -432,7 +432,7 @@ If the nonce check fails, the code falls back to matching `argv[0]` basename aga
 - **Cloud metadata IP (169.254.169.254) requested** — refused by `upstream_deny_cidrs` regardless of allowlist.
 - **`docker_env` collides with a proxy-controlling var (enforce on)** — sandbox creation refuses with the names of the colliding keys.
 - **`docker_forward_env` tries to forward a protected provider key (enforce on)** — sandbox creation refuses; remove the key from `docker_forward_env` or opt out with `proxy.enforce_on_docker: false`.
-- **`docker_extra_args` overrides proxy env/network controls (enforce on)** — sandbox creation refuses; user-supplied `-e HTTPS_PROXY=...`, `--env-file`, or `--network` args run after Hermes' generated args and can bypass egress.
+- **`docker_extra_args` overrides proxy env/network controls (enforce on)** — sandbox creation refuses; user-supplied `-e HTTPS_PROXY=...`, `--env-file`, or `--network` args run after Indagis' generated args and can bypass egress.
 - **BWS access token missing in `credential_source: bitwarden`** — `hermes egress start` refuses with `--no-bitwarden` as the recovery hint.
 - **iron-proxy doesn't bind within 5 seconds** — process is killed, pidfile unlinked, error names the port + tail of `iron-proxy.log`.
 - **Concurrent `hermes egress start` calls** — second call refuses with "another start in progress" if the first's daemon is up; otherwise the second unlinks the stale pidfile and proceeds.
@@ -520,7 +520,7 @@ Two common causes:
 
 ### "Address in use" after the parent process died
 
-The parent Hermes process died during `hermes egress start` (Ctrl-C during the listening probe, OOM, panic). The new fix-up logic writes the pidfile immediately after `Popen` so the orphan is recoverable:
+The parent Indagis process died during `hermes egress start` (Ctrl-C during the listening probe, OOM, panic). The new fix-up logic writes the pidfile immediately after `Popen` so the orphan is recoverable:
 
 ```bash
 hermes egress stop   # finds the orphan via the pidfile, kills it
@@ -566,5 +566,5 @@ When the pinned version moves to v0.40+ (which adds `log.audit_path`), per-reque
 - Upstream project: [github.com/ironsh/iron-proxy](https://github.com/ironsh/iron-proxy)
 - Upstream docs: [docs.iron.sh](https://docs.iron.sh/)
 - Bitwarden integration: [`hermes secrets bitwarden`](../secrets/bitwarden)
-- Hermes Docker terminal backend: [Docker](../docker)
+- Indagis Docker terminal backend: [Docker](../docker)
 - Developer / contributor reference: [Egress proxy internals](../../developer-guide/egress-internals)

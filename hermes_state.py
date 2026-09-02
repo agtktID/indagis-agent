@@ -21,6 +21,7 @@ import hashlib
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import random
 import re
 import sqlite3
@@ -1630,7 +1631,7 @@ END;
 
 def fts5_cjk_so_path() -> Path:
     """Location of the cjk_unicode61 loadable extension."""
-    env = os.getenv("HERMES_FTS5_CJK_SO")
+    env = env_with_legacy_alias("INDAGIS_FTS5_CJK_SO", "HERMES_FTS5_CJK_SO")
     if env:
         return Path(env).expanduser()
     return get_indagis_home() / "lib" / "libfts5_cjk.so"
@@ -1638,7 +1639,7 @@ def fts5_cjk_so_path() -> Path:
 
 def _cjk_fts_config_enabled() -> bool:
     """config.yaml ``sessions.cjk_fts`` (default on), via its env bridge."""
-    return os.getenv("HERMES_CJK_FTS", "1").strip().lower() not in (
+    return env_with_legacy_alias("INDAGIS_CJK_FTS", "HERMES_CJK_FTS", "1").strip().lower() not in (
         "0", "false", "off", "no",
     )
 

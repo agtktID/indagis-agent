@@ -71,6 +71,7 @@ from hermes_cli._subprocess_compat import suppress_platform_ver_console
 suppress_platform_ver_console()
 
 import os
+from utils import env_with_legacy_alias
 import sys
 
 # ── Startup fast-path bootstrap ─────────────────────────────────────────
@@ -328,7 +329,7 @@ def _wants_tui_early(argv: "list[str] | None" = None) -> bool:
         argv = sys.argv[1:]
     if "--cli" in argv:
         return False
-    if os.environ.get("HERMES_TUI") == "1" or "--tui" in argv:
+    if env_with_legacy_alias("INDAGIS_TUI", "HERMES_TUI") == "1" or "--tui" in argv:
         return True
     try:
         if not (sys.stdin.isatty() and sys.stdout.isatty()):
@@ -347,7 +348,7 @@ def _wants_tui_early(argv: "list[str] | None" = None) -> bool:
 # `entry.tsx`; this is just the earlier cousin. ``HERMES_TUI_NO_EARLY_DISABLE``
 # escapes the behaviour for diagnostics.
 def _suppress_mouse_residue_early() -> None:
-    if os.environ.get("HERMES_TUI_NO_EARLY_DISABLE") == "1":
+    if env_with_legacy_alias("INDAGIS_TUI_NO_EARLY_DISABLE", "HERMES_TUI_NO_EARLY_DISABLE") == "1":
         return
     if not _wants_tui_early():
         return
@@ -646,7 +647,7 @@ def _apply_profile_override() -> None:
     # would silently redirect the default gateway into that profile — yielding a
     # duplicate gateway for the active profile and no real default gateway. See
     # the "Docker & Profiles & Dashboard" report.
-    if profile_name is None and not os.environ.get("HERMES_S6_SUPERVISED_CHILD"):
+    if profile_name is None and not env_with_legacy_alias("INDAGIS_S6_SUPERVISED_CHILD", "HERMES_S6_SUPERVISED_CHILD"):
         try:
             from hermes_constants import get_default_indagis_root
 
@@ -900,7 +901,7 @@ def _termux_bundled_skills_stamp_path() -> Path:
 def _termux_bundled_skills_sync_needed() -> bool:
     if not _is_termux_startup_environment():
         return True
-    if os.environ.get("HERMES_TERMUX_FORCE_SKILLS_SYNC") == "1":
+    if env_with_legacy_alias("INDAGIS_TERMUX_FORCE_SKILLS_SYNC", "HERMES_TERMUX_FORCE_SKILLS_SYNC") == "1":
         return True
     try:
         stamp = _termux_bundled_skills_stamp_path()
@@ -940,7 +941,7 @@ def _sync_bundled_skills_for_startup() -> bool:
 def _termux_should_prefetch_update_check() -> bool:
     if not _is_termux_startup_environment():
         return True
-    return os.environ.get("HERMES_TERMUX_PREFETCH_UPDATES") == "1"
+    return env_with_legacy_alias("INDAGIS_TERMUX_PREFETCH_UPDATES", "HERMES_TERMUX_PREFETCH_UPDATES") == "1"
 
 
 def _relative_time(ts) -> str:
@@ -1787,7 +1788,7 @@ def _tui_need_rebuild(root: Path) -> bool:
     check still rebuilds immediately after source updates, dependency updates,
     or local edits. Set ``HERMES_TUI_FORCE_BUILD=1`` to force the old behaviour.
     """
-    force = (os.environ.get("HERMES_TUI_FORCE_BUILD") or "").strip().lower()
+    force = (env_with_legacy_alias("INDAGIS_TUI_FORCE_BUILD", "HERMES_TUI_FORCE_BUILD") or "").strip().lower()
     if force in {"1", "true", "yes", "on"}:
         return True
 
@@ -1821,7 +1822,7 @@ def _ensure_tui_node() -> None:
     """
     if shutil.which("node") and shutil.which("npm"):
         return
-    if os.environ.get("HERMES_SKIP_NODE_BOOTSTRAP"):
+    if env_with_legacy_alias("INDAGIS_SKIP_NODE_BOOTSTRAP", "HERMES_SKIP_NODE_BOOTSTRAP"):
         return
 
     helper = PROJECT_ROOT / "scripts" / "lib" / "node-bootstrap.sh"
@@ -1915,7 +1916,7 @@ def _ensure_tui_workspace(tui_dir: Path) -> None:
         return
 
     if _restore_tui_workspace(tui_dir):
-        if not os.environ.get("HERMES_QUIET"):
+        if not env_with_legacy_alias("INDAGIS_QUIET", "HERMES_QUIET"):
             print(f"Restored missing TUI workspace: {tui_dir}")
         return
 
@@ -1939,7 +1940,7 @@ def _make_tui_argv(tui_dir: Path, tui_dev: bool) -> tuple[list[str], Path]:
 
     def _node_bin(bin: str) -> str:
         if bin == "node":
-            env_node = os.environ.get("HERMES_NODE")
+            env_node = env_with_legacy_alias("INDAGIS_NODE", "HERMES_NODE")
             if env_node and os.path.isfile(env_node) and os.access(env_node, os.X_OK):
                 return env_node
         # find_node_executable() prefers the managed $INDAGIS_HOME/node tree,
@@ -1962,7 +1963,7 @@ def _make_tui_argv(tui_dir: Path, tui_dev: bool) -> tuple[list[str], Path]:
         return path
 
     # Footgun: --dev against a prebuilt bundle that has no source/node_modules.
-    ext_dir = os.environ.get("HERMES_TUI_DIR")
+    ext_dir = env_with_legacy_alias("INDAGIS_TUI_DIR", "HERMES_TUI_DIR")
     if tui_dev and ext_dir:
         print(
             f"Error: --dev is incompatible with HERMES_TUI_DIR={ext_dir}\n"
@@ -2018,7 +2019,7 @@ def _make_tui_argv(tui_dir: Path, tui_dev: bool) -> tuple[list[str], Path]:
         and _tui_need_npm_install(tui_dir)
     ):
         npm = _node_bin("npm")
-        if not os.environ.get("HERMES_QUIET"):
+        if not env_with_legacy_alias("INDAGIS_QUIET", "HERMES_QUIET"):
             print("Installing TUI dependencies…")
         npm_cwd = _workspace_root(tui_dir)
         # --workspace ui-tui avoids resolving apps/desktop (Electron + node-pty).
@@ -2339,7 +2340,7 @@ def _launch_tui(
 
     if model:
         env["HERMES_MODEL"] = model
-        env["HERMES_INFERENCE_MODEL"] = model
+        env["INDAGIS_INFERENCE_MODEL"] = model
     if provider:
         env["HERMES_TUI_PROVIDER"] = provider
         env["HERMES_INFERENCE_PROVIDER"] = provider
@@ -2374,7 +2375,7 @@ def _launch_tui(
     elif quiet:
         env["HERMES_TUI_TOOL_PROGRESS"] = "off"
     if accept_hooks:
-        env["HERMES_ACCEPT_HOOKS"] = "1"
+        env["INDAGIS_ACCEPT_HOOKS"] = "1"
     # Guarantee a generous V8 heap for the TUI. Default node cap is ~1.5–4GB
     # depending on version and can fatal-OOM on long sessions with large
     # transcripts / reasoning blobs. We target 8GB on an unconstrained host,
@@ -2452,7 +2453,7 @@ def _pin_kanban_board_env() -> None:
     calls hit board B (#20074). Pinning at chat boot mirrors what the
     dispatcher already does for spawned workers.
     """
-    if os.environ.get("HERMES_KANBAN_BOARD"):
+    if env_with_legacy_alias("INDAGIS_KANBAN_BOARD", "HERMES_KANBAN_BOARD"):
         return
     try:
         from hermes_cli.kanban_db import get_current_board
@@ -2514,7 +2515,7 @@ def _resolve_use_tui(args) -> bool:
             return False
     except Exception:
         return False
-    if os.environ.get("HERMES_TUI") == "1":
+    if env_with_legacy_alias("INDAGIS_TUI", "HERMES_TUI") == "1":
         return True
     try:
         from hermes_cli.config import load_config
@@ -3083,7 +3084,7 @@ def select_provider_and_model(args=None):
         config_provider = model_cfg.get("provider")
 
     effective_provider = (
-        config_provider or os.getenv("HERMES_INFERENCE_PROVIDER") or "auto"
+        config_provider or env_with_legacy_alias("INDAGIS_INFERENCE_PROVIDER", "HERMES_INFERENCE_PROVIDER") or "auto"
     )
     compatible_custom_providers = get_compatible_custom_providers(config)
     def _named_custom_provider_map(cfg) -> dict[str, dict[str, str]]:
@@ -10264,8 +10265,8 @@ def cmd_dashboard(args):
     # HERMES_WEB_DIST overrides (dev / custom builds) must still work.
     # The desktop-spawned backend itself (HERMES_DESKTOP=1) keeps its dist.
     # Intentionally headless `serve` re-sets HERMES_SERVE_HEADLESS below.
-    if os.environ.get("HERMES_DESKTOP") != "1":
-        _inherited_web_dist = os.environ.get("HERMES_WEB_DIST", "")
+    if env_with_legacy_alias("INDAGIS_DESKTOP", "HERMES_DESKTOP") != "1":
+        _inherited_web_dist = env_with_legacy_alias("INDAGIS_WEB_DIST", "HERMES_WEB_DIST", "")
         if _is_electron_packaged_web_dist(_inherited_web_dist):
             os.environ.pop("HERMES_WEB_DIST", None)
     if not _headless_backend:
@@ -10295,7 +10296,7 @@ def cmd_dashboard(args):
         and not getattr(args, "isolated", False)
         and not getattr(args, "open_profile", "")
         # Desktop pool backends are intentionally per-profile.
-        and os.environ.get("HERMES_DESKTOP") != "1"
+        and env_with_legacy_alias("INDAGIS_DESKTOP", "HERMES_DESKTOP") != "1"
     ):
         url = f"http://{args.host or '127.0.0.1'}:{args.port}/?profile={_launch_profile}"
         if _dashboard_listening(args.host, args.port):
@@ -10758,7 +10759,7 @@ _AGENT_SUBCOMMANDS = {
 
 
 def _is_tui_chat_launch(args) -> bool:
-    return bool(getattr(args, "tui", False) or os.environ.get("HERMES_TUI") == "1")
+    return bool(getattr(args, "tui", False) or env_with_legacy_alias("INDAGIS_TUI", "HERMES_TUI") == "1")
 
 
 def _command_has_dedicated_mcp_startup(args) -> bool:
@@ -10889,7 +10890,7 @@ def _try_termux_fast_cli_launch() -> bool:
     """Run obvious Termux non-TUI chat/oneshot/version paths on a light parser."""
     if not _is_termux_startup_environment():
         return False
-    if os.environ.get("HERMES_TERMUX_DISABLE_FAST_CLI") == "1":
+    if env_with_legacy_alias("INDAGIS_TERMUX_DISABLE_FAST_CLI", "HERMES_TERMUX_DISABLE_FAST_CLI") == "1":
         return False
 
     argv = sys.argv[1:]
@@ -10946,7 +10947,7 @@ def _try_termux_fast_cli_launch() -> bool:
             os.environ["HERMES_DEFER_AGENT_STARTUP"] = "1"
             os.environ["HERMES_FAST_STARTUP_BANNER"] = "1"
             if getattr(args, "accept_hooks", False):
-                os.environ["HERMES_ACCEPT_HOOKS"] = "1"
+                os.environ["INDAGIS_ACCEPT_HOOKS"] = "1"
         else:
             _prepare_agent_startup(args)
         cmd_chat(args)

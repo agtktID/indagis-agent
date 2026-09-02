@@ -41,7 +41,7 @@ from agent.interrupt_compat import request_hard_interrupt
 _RUNTIME_PROVIDER_CUSTOM = "custom"
 from tools import file_state
 from tools.terminal_tool import set_approval_callback as _set_subagent_approval_cb
-from utils import base_url_hostname, is_truthy_value
+from utils import base_url_hostname, env_with_legacy_alias, is_truthy_value
 
 
 # Tools that children must never have access to
@@ -3642,7 +3642,7 @@ def _load_config() -> dict:
     flag is set we keep ``cli.CLI_CONFIG`` authoritative to preserve the
     flag's contract of suppressing user config.yaml settings.
     """
-    prefer_legacy = os.environ.get("HERMES_IGNORE_USER_CONFIG") == "1"
+    prefer_legacy = env_with_legacy_alias("INDAGIS_IGNORE_USER_CONFIG", "HERMES_IGNORE_USER_CONFIG") == "1"
     if not prefer_legacy:
         try:
             from hermes_cli.config import load_config_readonly

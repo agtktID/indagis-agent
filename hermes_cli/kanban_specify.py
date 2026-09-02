@@ -40,7 +40,7 @@ from typing import Optional
 
 from hermes_cli import kanban_db as kb
 
-from utils import env_int
+from utils import env_int, env_with_legacy_alias
 
 HERMES_KANBAN_SPECIFY_MAX_TOKENS = max(
     1500,
@@ -133,7 +133,7 @@ def _profile_author() -> str:
     """Mirror of ``hermes_cli.kanban._profile_author``. Kept local to
     avoid a circular import when kanban.py imports this module."""
     return (
-        os.environ.get("HERMES_PROFILE")
+        env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE")
         or os.environ.get("USER")
         or "specifier"
     )

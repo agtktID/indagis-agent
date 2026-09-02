@@ -1,8 +1,8 @@
 ---
 name: actual-setup
-description: Set up Actual Computer (actual.inc) inference in Hermes.
+description: Set up Actual Computer (actual.inc) inference in Indagis.
 version: 2.0.0
-author: shl0ms + Hermes Agent
+author: shl0ms + Indagis Agent
 license: MIT
 metadata:
   hermes:
@@ -12,7 +12,7 @@ metadata:
 
 # Actual Computer Setup Skill
 
-Sets up [actual.inc](https://actual.inc) (Actual Computer) as a Hermes inference
+Sets up [actual.inc](https://actual.inc) (Actual Computer) as a Indagis inference
 provider. Actual turns the user's own hardware into a private inference cluster
 and exposes an OpenAI-compatible API two ways: a hosted end-to-end-encrypted
 relay at `https://api.actual.inc` (authenticated with an `ac_` key), and a local
@@ -23,15 +23,15 @@ a human in a browser.
 ## When to Use
 
 - User wants to add actual.inc as an inference provider (cloud relay or local).
-- User has an `ac_` key and wants Hermes routed through their Actual cluster.
+- User has an `ac_` key and wants Indagis routed through their Actual cluster.
 - User wants fully-local, on-device inference via the Actual daemon.
 - Troubleshooting: Actual requests failing with cryptic 400s or empty streams.
 
 ## Prerequisites
 
-- Hermes has **first-class `actual` provider support** (provider id `actual`,
+- Indagis has **first-class `actual` provider support** (provider id `actual`,
   aliases `actual-computer`, `actualcomputer`, `aci`). Do NOT configure Actual
-  as a `custom_providers` / `providers.actual.*` entry on current Hermes — the
+  as a `custom_providers` / `providers.actual.*` entry on current Indagis — the
   built-in provider owns the name and handles base-url normalization, the
   Responses transport, and local no-auth automatically.
 - Relay mode: an Actual account and an `ac_` inference key from
@@ -74,7 +74,7 @@ a human in a browser.
    actual models list        # note the INSTALLED name (differs from download id)
    actual models load "qwen2.5-0.5b-instruct-q4_k_m"   # load by installed name
    ```
-3. Point Hermes at the daemon. `ACTUAL_BASE_URL` with a loopback host flips the
+3. Point Indagis at the daemon. `ACTUAL_BASE_URL` with a loopback host flips the
    built-in provider into local no-auth mode automatically — no key needed:
    append `ACTUAL_BASE_URL=http://127.0.0.1:8080` to `~/.hermes/.env`, then:
    ```bash
@@ -101,17 +101,17 @@ a human in a browser.
 
 ## Pitfalls
 
-1. **reasoning_effort trap (handled by Hermes since the first-class provider).**
+1. **reasoning_effort trap (handled by Indagis since the first-class provider).**
    Actual's SGLang/vLLM backends accept only `none/low/medium/high/max`;
    `xhigh`/`ultra` used to fail with a cryptic
    `Expecting value: line 1 column 1 (char 0)` (a wrapped HTTP 400). The
    built-in provider clamps `xhigh→high` and `ultra→max` on the wire. If a
-   request still 400s this way on an old Hermes, set a per-model cap:
+   request still 400s this way on an old Indagis, set a per-model cap:
    `agent.reasoning_overrides.<model>: high` in config.yaml.
-2. **Context-window overflow on small local models.** Hermes' default toolset
+2. **Context-window overflow on small local models.** Indagis' default toolset
    is ~26k tokens of schemas plus a ~9k-token system prompt. A model loaded
    with a 32k context overflows before the first turn, and llama.cpp-family
-   servers emit a bare `data: [DONE]` — Hermes reports
+   servers emit a bare `data: [DONE]` — Indagis reports
    `Provider returned an empty stream with no finish_reason`. This is NOT an
    SSE bug. Fixes: restrict tools (`-t file,web`), load the model with a
    larger `n_ctx`, or pick a >=64k-context model for the full toolset.
@@ -127,7 +127,7 @@ a human in a browser.
    assuming failure.
 5. **Do not create a custom provider named `actual`.** Older setup guides
    (pre first-class support) wrote `providers.actual.*` config blocks. On
-   current Hermes the built-in provider wins the name; stale custom blocks
+   current Indagis the built-in provider wins the name; stale custom blocks
    are ignored or conflict. Remove them and use the env vars + model.provider
    flow above.
 
