@@ -61,7 +61,22 @@ REPO_URL_HTTPS="https://github.com/agtktID/indagis-agent.git"
 # P3/P4 detection logic that resolve_indagis_home applies, but only
 # for the warning — the path capture delegates to resolve_indagis_home.
 _SCRIPT_DIR_HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
-source "$_SCRIPT_DIR_HERE/install_helpers.sh"
+if [ -f "$_SCRIPT_DIR_HERE/install_helpers.sh" ]; then
+    source "$_SCRIPT_DIR_HERE/install_helpers.sh"
+else
+    # Running via `curl | bash` (the documented one-liner above): there is no
+    # local checkout yet, so BASH_SOURCE/$0 resolve to a directory that does
+    # not contain install_helpers.sh. Fetch the sibling file from the same
+    # raw-content host over HTTPS instead of failing outright.
+    _HELPERS_URL="https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install_helpers.sh"
+    _HELPERS_TMP="$(mktemp)"
+    trap 'rm -f "$_HELPERS_TMP"' EXIT
+    if ! curl -fsSL "$_HELPERS_URL" -o "$_HELPERS_TMP"; then
+        echo "✗ Could not find install_helpers.sh locally and failed to download it from $_HELPERS_URL" >&2
+        exit 1
+    fi
+    source "$_HELPERS_TMP"
+fi
 if [ -n "${INDAGIS_HOME:-}" ]; then
     _indagis_warn_legacy_alias_in_use_once "INDAGIS_HOME" "$INDAGIS_HOME"
 elif [ -d "${HOME:-}/.hermes" ]; then
