@@ -1,12 +1,14 @@
 ---
-sidebar_position: 2.5
+id: platform-support
 title: "Platform Support"
-description: "Which operating systems, distribution methods, and features Hermes Agent supports."
+sidebar_position: 5
+description: "Platform Support"
 ---
+# Platform Support
 
 # Platform Support
 
-Hermes Agent maintains support for many platforms and distribution methods, but we can't support every possible install method.
+Indagis Agent maintains support for many platforms and distribution methods, but we can't support every possible install method.
 
 ---
 
@@ -16,10 +18,10 @@ We strive to never break installations and updates for these. Issues & regressio
 
 | OS / Architecture                                                             | Installation methods                                                                                                           | Notes                                                                                                                                                     |
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **macOS** (Apple Silicon)                                                     | [Hermes Desktop](https://hermes-agent.nousresearch.com/), [`install.sh`](./installation.md#linux--macos--wsl2--android-termux) |
-| [**Windows 10 / 11**](../user-guide/windows-native.md) (x86_64, aarch64)      | [Hermes Desktop](https://hermes-agent.nousresearch.com/), [`install.ps1`](./installation.md#windows-native)                    | A few features are [not available](../user-guide/windows-native.md#feature-matrix).                                                                       |
+| **macOS** (Apple Silicon)                                                     | [Indagis Desktop](https://agent.indagis-labs.fr/), [`install.sh`](./installation.md#linux--macos--wsl2--android-termux) |
+| [**Windows 10 / 11**](../user-guide/windows-native.md) (x86_64, aarch64)      | [Indagis Desktop](https://agent.indagis-labs.fr/), [`install.ps1`](./installation.md#windows-native)                    | A few features are [not available](../user-guide/windows-native.md#feature-matrix).                                                                       |
 | **Linux / [WSL2](../user-guide/windows-wsl-quickstart.md)** (x86_64, aarch64) | [`install.sh`](./installation.md#linux--macos--wsl2--android-termux)                                                           | We test on the latest Ubuntu and WSL2. If your distro has glibc, systemd, and follows the Filesystem Hierarchy Standard, it's likely to work pretty well. |
-| [**Docker Container**](../user-guide/docker.md#quick-start) (x86_64, aarch64) | [`docker pull`](../user-guide/docker.md#quick-start)                                                                           | Docker installs do not support `hermes update`. Updating is done by running a new image.                                                                  |
+| [**Docker Container**](../user-guide/docker.md#quick-start) (x86_64, aarch64) | [`docker pull`](../user-guide/docker.md#quick-start)                                                                           | Docker installs do not support `indagis update`. Updating is done by running a new image.                                                                  |
 
 ---
 
@@ -44,7 +46,9 @@ PRs to fix them will _not_ be accepted, and any code that keeps compatibility wi
 
 - installs via the AUR (we might upstream patches if it helps out &lt;3)
 - macOS on x86 (Intel) processors
-- installs via `pypi` (e.g. `uv tool install hermes-agent`, `pip install hermes-agent`, etc.)
-- installs via `brew` (`brew install hermes-agent`)
+- installs via `pypi` (e.g. `uv tool install indagis-agent`, `pip install indagis-agent`, etc.)
+- installs via `brew` (`brew install indagis-agent`)
 
 If you are using an unsupported distribution method, please read the [the installation guide](./installation.md) to learn how to switch to a supported one.
+
+---
