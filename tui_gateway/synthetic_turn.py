@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import json
 import os
+from utils import env_with_legacy_alias
 import threading
 import time
 from typing import Any, Callable, Optional
@@ -39,7 +40,7 @@ from typing import Any, Callable, Optional
 
 def synth_turn_armed() -> bool:
     """True when the synthetic-turn test seam is armed via env."""
-    return os.environ.get("HERMES_ISO_CERTIFY_SYNTH_TURN") == "1"
+    return env_with_legacy_alias("INDAGIS_ISO_CERTIFY_SYNTH_TURN", "HERMES_ISO_CERTIFY_SYNTH_TURN") == "1"
 
 
 def _env_float(name: str, default: float) -> float:
