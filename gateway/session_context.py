@@ -423,13 +423,14 @@ def session_is_messaging_surface() -> bool:
     to emit a delivery tag, whether a file has to land somewhere the gateway
     is allowed to send from, whether narration would read as chat noise.
 
-    Resolves ``HERMES_PLATFORM``, then the session platform, then the session
-    source, and reports messaging when any of them names a surface outside
+    Resolves ``INDAGIS_PLATFORM`` (or its deprecated ``HERMES_PLATFORM``
+    alias), then the session platform, then the session source, and reports
+    messaging when any of them names a surface outside
     :data:`NON_MESSAGING_SESSION_SURFACES`.
     """
-    import os
+    from utils import env_with_legacy_alias
 
-    platform = os.getenv("HERMES_PLATFORM") or get_session_env("HERMES_SESSION_PLATFORM", "")
+    platform = env_with_legacy_alias("INDAGIS_PLATFORM", "HERMES_PLATFORM") or get_session_env("HERMES_SESSION_PLATFORM", "")
     source = get_session_env("HERMES_SESSION_SOURCE", "")
     for identity in (platform, source):
         identity = str(identity or "").strip().lower()
@@ -480,13 +481,13 @@ def async_delivery_supported() -> bool:
     registering a watcher / dispatching a detached child, so they can refuse a
     promise the channel can't keep instead of silently no-op'ing.
     """
-    import os
+    from utils import env_with_legacy_alias
 
     # A Kanban worker is a one-shot subprocess. Its parent session and process
     # disappear after the quiet turn returns, so a completion queued later has
     # no durable consumer even though an ordinary CLI session can drain that
     # queue. Force tools onto their existing synchronous/polling fallbacks.
-    if os.environ.get("HERMES_KANBAN_TASK"):
+    if env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK"):
         return False
 
     value = _SESSION_ASYNC_DELIVERY.get()
