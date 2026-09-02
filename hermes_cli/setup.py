@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 
-_DOCS_BASE = "https://hermes-agent.nousresearch.com/docs"
+_DOCS_BASE = "https://agtktid.github.io/docs"
 
 
 def _model_config_dict(config: Dict[str, Any]) -> Dict[str, Any]:
