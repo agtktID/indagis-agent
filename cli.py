@@ -224,7 +224,7 @@ from hermes_cli.browser_connect import (
     try_launch_chrome_debug,
 )
 from hermes_cli.env_loader import load_hermes_dotenv
-from utils import base_url_host_matches, fast_safe_load
+from utils import base_url_host_matches, env_with_legacy_alias, fast_safe_load
 
 _hermes_home = get_indagis_home()
 _project_env = Path(__file__).parent / '.env'
@@ -1016,7 +1016,7 @@ def _prepare_deferred_agent_startup() -> None:
     if os.environ.get("HERMES_DEFER_AGENT_STARTUP") != "1":
         return
     _deferred_agent_startup_done = True
-    _accept_hooks = os.environ.get("HERMES_ACCEPT_HOOKS", "").lower() in {
+    _accept_hooks = env_with_legacy_alias("INDAGIS_ACCEPT_HOOKS", "HERMES_ACCEPT_HOOKS").lower() in {
         "1",
         "true",
         "yes",
