@@ -34,23 +34,6 @@ export function SidebarFooter({ status }: SidebarFooterProps) {
           {t.app.footer.org}
         </a>
       </div>
-
-      {/* Indagis → Hermes attribution. Mandated by the upstream MIT license
-          and the design-system spec: a single, always-visible "Built on"
-          line below the version footer. Links to the original NousResearch
-          repository so the credit is verifiable. */}
-      <a
-        href="https://github.com/NousResearch/hermes-agent"
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn(
-          "font-mono-ui text-[10px] tabular-nums tracking-[0.06em]",
-          "text-text-tertiary/70 transition-colors hover:text-text-secondary",
-          "focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-midground/40",
-        )}
-      >
-        Built on Hermes Agent · NousResearch · MIT License
-      </a>
     </div>
   );
 }
