@@ -220,7 +220,17 @@ def _resolve_indagis_home_full_ladder() -> Path:
 
     # P2: ~/.indagis exists on disk (priority default, no warning).
     default = _get_platform_default_indagis_home()
-    if default.exists():
+    try:
+        default_exists = default.exists()
+    except PermissionError:
+        # Path.exists() only swallows "doesn't exist"-shaped OSErrors
+        # (FileNotFoundError, NotADirectoryError) — a directory that exists
+        # but can't be stat()'d (e.g. mode 000, or a parent dir we can't
+        # traverse) raises PermissionError instead of returning False. Treat
+        # "can't tell if it's there" the same as "not there": fall through
+        # the ladder rather than crashing every caller.
+        default_exists = False
+    if default_exists:
         # The named-profile guard (#18594) has to run here too. It reads
         # `active_profile` from this same directory, so gating it on P5 alone
         # made it unreachable: P5 is only taken when this directory does NOT
