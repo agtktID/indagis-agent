@@ -503,17 +503,17 @@ def backup_existing(path: Path, backup_root: Path) -> Optional[Path]:
 
 
 # ── Brand rewriting ─────────────────────────────────────────
-# Replace OpenClaw brand names with Hermes in migrated text so that
+# Replace OpenClaw brand names with Indagis in migrated text so that
 # memory entries, user profiles, SOUL.md, and workspace instructions
 # read as self-referential to the new agent identity.
 #
-# Case-preserving: ``OpenClaw`` → ``Hermes`` (prose), but lowercase matches
-# like ``openclaw`` → ``hermes`` (so filesystem paths like ``~/.openclaw``
-# become ``~/.hermes`` — the real Hermes home — not the broken ``~/.Hermes``).
+# Case-preserving: ``OpenClaw`` → ``Indagis`` (prose), but lowercase matches
+# like ``openclaw`` → ``indagis`` (so filesystem paths like ``~/.openclaw``
+# become ``~/.indagis`` — the real Indagis home — not the broken ``~/.Indagis``).
 _REBRAND_PATTERNS: List[Tuple[re.Pattern, str]] = [
-    (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), 'Hermes'),
-    (re.compile(r'\bClawdBot\b', re.IGNORECASE), 'Hermes'),
-    (re.compile(r'\bMoltBot\b', re.IGNORECASE), 'Hermes'),
+    (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), 'Indagis'),
+    (re.compile(r'\bClawdBot\b', re.IGNORECASE), 'Indagis'),
+    (re.compile(r'\bMoltBot\b', re.IGNORECASE), 'Indagis'),
 ]
 
 
@@ -521,10 +521,10 @@ def _case_preserving_replacement(replacement: str):
     """Return a re.sub replacement fn that lowercases the result when the
     matched text was all-lowercase.
 
-    Keeps ``OpenClaw`` → ``Hermes`` but maps ``openclaw`` → ``hermes`` so a
+    Keeps ``OpenClaw`` → ``Indagis`` but maps ``openclaw`` → ``indagis`` so a
     filesystem path like ``~/.openclaw/config.yaml`` rewrites to
-    ``~/.hermes/config.yaml`` (the real Hermes home) instead of the broken
-    ``~/.Hermes/config.yaml``.
+    ``~/.indagis/config.yaml`` (the real Indagis home) instead of the broken
+    ``~/.Indagis/config.yaml``.
     """
     def _sub(match: "re.Match[str]") -> str:
         matched = match.group(0)
@@ -535,7 +535,7 @@ def _case_preserving_replacement(replacement: str):
 
 
 def rebrand_text(text: str) -> str:
-    """Replace OpenClaw / ClawdBot / MoltBot brand names with Hermes.
+    """Replace OpenClaw / ClawdBot / MoltBot brand names with Indagis.
 
     Preserves case so filesystem-path matches (lowercase) don't become
     capitalized directory names that don't exist.
