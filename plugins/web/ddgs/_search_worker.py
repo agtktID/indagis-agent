@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import os
+from utils import env_with_legacy_alias
 import sys
 import time
 
@@ -86,7 +87,7 @@ def main() -> int:
 
     hook = request.get("test_hook")
     if hook:
-        if os.environ.get("HERMES_DDGS_ALLOW_TEST_HOOKS") != "1":
+        if env_with_legacy_alias("INDAGIS_DDGS_ALLOW_TEST_HOOKS", "HERMES_DDGS_ALLOW_TEST_HOOKS") != "1":
             _write_envelope(
                 {"ok": False, "error": "test_hook refused (hooks not enabled)"}
             )

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+from utils import env_with_legacy_alias
 import logging
 import hashlib
 import ipaddress
@@ -63,7 +64,7 @@ def resolve_active_host() -> str:
       3. defaultHost from the active config, but only for the default profile
       4. Fallback: ``"hermes"`` (default profile)
     """
-    explicit = os.environ.get("HERMES_HONCHO_HOST", "").strip()
+    explicit = env_with_legacy_alias("INDAGIS_HONCHO_HOST", "HERMES_HONCHO_HOST", "").strip()
     if explicit:
         return explicit
 
