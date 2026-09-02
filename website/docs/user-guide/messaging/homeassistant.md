@@ -1,13 +1,13 @@
 ---
 title: Home Assistant
-description: Control your smart home with Hermes Agent via Home Assistant integration.
+description: Control your smart home with Indagis Agent via Home Assistant integration.
 sidebar_label: Home Assistant
 sidebar_position: 5
 ---
 
 # Home Assistant Integration
 
-Hermes Agent integrates with [Home Assistant](https://www.home-assistant.io/) in two ways:
+Indagis Agent integrates with [Home Assistant](https://www.home-assistant.io/) in two ways:
 
 1. **Gateway platform** — subscribes to real-time state changes via WebSocket and responds to events
 2. **Smart home tools** — four LLM-callable tools for querying and controlling devices via the REST API
@@ -19,7 +19,7 @@ Hermes Agent integrates with [Home Assistant](https://www.home-assistant.io/) in
 1. Open your Home Assistant instance
 2. Go to your **Profile** (click your name in the sidebar)
 3. Scroll to **Long-Lived Access Tokens**
-4. Click **Create Token**, give it a name like "Hermes Agent"
+4. Click **Create Token**, give it a name like "Indagis Agent"
 5. Copy the token
 
 ### 2. Configure Environment Variables
@@ -48,7 +48,7 @@ Home Assistant will appear as a connected platform alongside any other messaging
 
 ## Available Tools
 
-Hermes Agent registers four tools for smart home control:
+Indagis Agent registers four tools for smart home control:
 
 ### `ha_list_entities`
 
@@ -178,7 +178,7 @@ State changes are formatted as human-readable messages based on domain:
 
 ### Agent Responses
 
-Outbound messages from the agent are delivered as **Home Assistant persistent notifications** (via `persistent_notification.create`). These appear in the HA notification panel with the title "Hermes Agent".
+Outbound messages from the agent are delivered as **Home Assistant persistent notifications** (via `persistent_notification.create`). These appear in the HA notification panel with the title "Indagis Agent".
 
 ### Connection Management
 
@@ -255,7 +255,7 @@ Agent automatically:
 
 **Environment variables not picked up.**
 The adapter reads credentials from `~/.indagis/.env` (auto-merged at startup) or
-from `config.yaml`. Double-check the file lives under the active Hermes profile
+from `config.yaml`. Double-check the file lives under the active Indagis profile
 home and that there's no stray quoting around the URL/token. Restart the gateway
 after editing — env changes are only applied on process start.
 
@@ -265,5 +265,5 @@ The token must be a *Long-Lived Access Token* created from your HA user profile
 page (**Profile → Security → Long-lived access tokens**). Short-lived UI
 session tokens won't work. Also verify the base URL includes the scheme and
 port (e.g. `http://homeassistant.local:8123`) and is reachable from the host
-running Hermes — `curl -H "Authorization: Bearer <token>" <url>/api/` should
+running Indagis — `curl -H "Authorization: Bearer <token>" <url>/api/` should
 return `{"message": "API running."}`.

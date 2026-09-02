@@ -9,7 +9,7 @@ sidebar_position: 2
 
 **One subscription. Every tool built in.**
 
-The Tool Gateway is included with every paid [Nous Portal](https://portal.nousresearch.com) subscription. It routes Hermes' tool calls — web search, image generation, text-to-speech, and cloud browser automation — through infrastructure Nous already runs, so you don't have to sign up with Firecrawl, FAL, OpenAI, Browser Use, or anyone else just to make your agent useful.
+The Tool Gateway is included with every paid [Nous Portal](https://portal.nousresearch.com) subscription. It routes Indagis' tool calls — web search, image generation, text-to-speech, and cloud browser automation — through infrastructure Nous already runs, so you don't have to sign up with Firecrawl, FAL, OpenAI, Browser Use, or anyone else just to make your agent useful.
 
 <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap', margin: '1.5rem 0'}}>
   <a href="https://portal.nousresearch.com/manage-subscription" style={{background: 'var(--ifm-color-primary)', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '6px', textDecoration: 'none', fontWeight: 'bold'}}>Start or manage subscription →</a>
@@ -20,7 +20,7 @@ The Tool Gateway is included with every paid [Nous Portal](https://portal.nousre
 | | Tool | What you get |
 |---|---|---|
 | 🔍 | **Web search & extract** | Agent-grade web search and full-page extraction via Firecrawl. No rate limits to worry about — the gateway handles scaling. |
-| 🎨 | **Image generation** | Nine models under one endpoint: **FLUX 2 Klein 9B**, **FLUX 2 Pro**, **Z-Image Turbo**, **Nano Banana Pro** (Gemini 3 Pro Image), **GPT Image 1.5**, **GPT Image 2**, **Ideogram V3**, **Recraft V4 Pro**, **Qwen Image**. Pick per-generation with a flag, or let Hermes default to FLUX 2 Klein. |
+| 🎨 | **Image generation** | Nine models under one endpoint: **FLUX 2 Klein 9B**, **FLUX 2 Pro**, **Z-Image Turbo**, **Nano Banana Pro** (Gemini 3 Pro Image), **GPT Image 1.5**, **GPT Image 2**, **Ideogram V3**, **Recraft V4 Pro**, **Qwen Image**. Pick per-generation with a flag, or let Indagis default to FLUX 2 Klein. |
 | 🔊 | **Text-to-speech** | OpenAI TTS voices wired into the `text_to_speech` tool. Drop voice notes into Telegram, generate audio for pipelines, narrate anything. |
 | 🌐 | **Cloud browser automation** | Headless Chromium sessions via Browser Use. `browser_navigate`, `browser_click`, `browser_type`, `browser_vision` — all the agent-driving primitives, no Browserbase account required. |
 
@@ -46,7 +46,7 @@ indagis setup --portal     # Fresh install: Nous OAuth + set Nous as provider + 
 ```
 
 ```bash
-indagis model              # Switch your inference provider to Nous Portal — Hermes then offers to turn on the gateway for all tools
+indagis model              # Switch your inference provider to Nous Portal — Indagis then offers to turn on the gateway for all tools
 ```
 
 ```bash
@@ -55,7 +55,7 @@ indagis tools              # Enable the gateway per-tool — pick "Nous Subscrip
 
 `indagis setup --portal` and `indagis model` are the all-at-once paths: log in once, optionally flip every tool to the gateway. `indagis tools` is the à la carte path — turn on just the tools you want, one at a time.
 
-**You don't have to log in first.** With `indagis tools`, the Nous-managed backends (Web search, Image, Video, TTS, Browser) are always listed, even if you've never signed into Nous Portal. Select one and Hermes runs the Portal login right there if you aren't already authenticated — no need to run `indagis model` beforehand. If your Nous OAuth is already active, selecting the backend enables it immediately with no extra prompt. This path only logs you in and turns on the one tool you picked — it does **not** switch your inference provider, and it does **not** prompt you to enable the gateway for every other tool.
+**You don't have to log in first.** With `indagis tools`, the Nous-managed backends (Web search, Image, Video, TTS, Browser) are always listed, even if you've never signed into Nous Portal. Select one and Indagis runs the Portal login right there if you aren't already authenticated — no need to run `indagis model` beforehand. If your Nous OAuth is already active, selecting the backend enables it immediately with no extra prompt. This path only logs you in and turns on the one tool you picked — it does **not** switch your inference provider, and it does **not** prompt you to enable the gateway for every other tool.
 
 Check what's active at any time:
 
@@ -151,7 +151,7 @@ Precedence: `use_gateway: true` routes through Nous regardless of any direct key
 
 ```yaml
 web:
-  use_gateway: false   # Hermes now uses FIRECRAWL_API_KEY from .env
+  use_gateway: false   # Indagis now uses FIRECRAWL_API_KEY from .env
 ```
 
 `indagis tools` automatically clears the flag when you pick a non-gateway provider, so this usually happens for you.
@@ -177,7 +177,7 @@ Yes. Tool Gateway operates at the tool-execution layer, not the CLI. Every inter
 
 ### What happens if my subscription expires?
 
-Tools routed through the gateway stop working until you renew or swap in direct API keys via `indagis tools`. Hermes shows a clear error pointing at the portal.
+Tools routed through the gateway stop working until you renew or swap in direct API keys via `indagis tools`. Indagis shows a clear error pointing at the portal.
 
 ### Can I see usage or costs per tool?
 
@@ -189,4 +189,4 @@ Modal is available as an **optional add-on** through the Nous subscription, not 
 
 ### Do I need to delete my existing API keys when I enable the gateway?
 
-No — keep them in `.env`. When `use_gateway: true`, Hermes skips direct keys and uses the gateway. Flip the flag back to `false` and your keys become the source again. The gateway isn't a lock-in.
+No — keep them in `.env`. When `use_gateway: true`, Indagis skips direct keys and uses the gateway. Flip the flag back to `false` and your keys become the source again. The gateway isn't a lock-in.

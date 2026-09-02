@@ -6,7 +6,7 @@ description: "Schedule automated tasks with natural language, manage them with o
 
 # Scheduled Tasks (Cron)
 
-Schedule tasks to run automatically with natural language or cron expressions. Hermes exposes cron management through a single `cronjob` tool with action-style operations instead of separate schedule/list/remove tools.
+Schedule tasks to run automatically with natural language or cron expressions. Indagis exposes cron management through a single `cronjob` tool with action-style operations instead of separate schedule/list/remove tools.
 
 ## What cron can do now
 
@@ -19,18 +19,18 @@ Cron jobs can:
 - run in fresh agent sessions with the normal static tool list
 - run in **no-agent mode** — a script on a schedule, its stdout delivered verbatim, zero LLM involvement (see the [no-agent mode](#no-agent-mode-script-only-jobs) section below)
 
-All of this is available to Hermes itself through the `cronjob` tool, so you can create, pause, edit, and remove jobs by asking in plain language — no CLI required.
+All of this is available to Indagis itself through the `cronjob` tool, so you can create, pause, edit, and remove jobs by asking in plain language — no CLI required.
 
 :::tip
 **Which model does a cron job run on?** Resolution at fire time is: per-job pin → `cron.model` in `config.yaml` → the global default from `indagis model`.
 
 - **Per-job pin** — set by *you* via the dashboard, `indagis cron create/edit --model … --provider …`, or by editing `~/.indagis/cron/jobs.json`. Once set, it sticks until you change it. The agent's `cronjob` tool cannot set or change per-job models — inference pins are user-owned.
 - **`cron.model` / `cron.model_provider`** — a cron-fleet default: every unpinned job runs on this model, independent of your chat model. Set it once (`indagis config set cron.model <name>`) and switching your chat model with `indagis model` or `/model` never touches your cron fleet.
-- **Global default** — only when neither of the above is set does a job follow `indagis model`. In this case Hermes **snapshots** the provider and model at creation, and if the global default later changes the job **fails closed**: it skips the run, makes no inference call, and alerts you to pin the provider/model explicitly (#44585). This prevents an unattended job from silently inheriting a switch to a paid provider/model. Setting `cron.model` (or a per-job pin) is the deliberate way to route cron spend, and the drift guard does not engage for an axis covered by it. Operators who instead want unpinned jobs to track the changing global default can [disable the drift guard](#letting-unpinned-jobs-track-global-defaults).
+- **Global default** — only when neither of the above is set does a job follow `indagis model`. In this case Indagis **snapshots** the provider and model at creation, and if the global default later changes the job **fails closed**: it skips the run, makes no inference call, and alerts you to pin the provider/model explicitly (#44585). This prevents an unattended job from silently inheriting a switch to a paid provider/model. Setting `cron.model` (or a per-job pin) is the deliberate way to route cron spend, and the drift guard does not engage for an axis covered by it. Operators who instead want unpinned jobs to track the changing global default can [disable the drift guard](#letting-unpinned-jobs-track-global-defaults).
 :::
 
 :::warning
-Cron-run sessions cannot recursively create more cron jobs. Hermes disables cron management tools inside cron executions to prevent runaway scheduling loops.
+Cron-run sessions cannot recursively create more cron jobs. Indagis disables cron management tools inside cron executions to prevent runaway scheduling loops.
 :::
 
 ## Creating scheduled tasks
@@ -57,13 +57,13 @@ indagis cron create "every 1h" "Use both skills and combine the result" \
 
 ### Through natural conversation
 
-Ask Hermes normally:
+Ask Indagis normally:
 
 ```text
 Every morning at 9am, check Hacker News for AI news and send me a summary on Telegram.
 ```
 
-Hermes will use the unified `cronjob` tool internally.
+Indagis will use the unified `cronjob` tool internally.
 
 ## Letting unpinned jobs track global defaults
 
@@ -244,7 +244,7 @@ indagis cron status
 
 ### Gateway scheduler behavior
 
-On each tick Hermes:
+On each tick Indagis:
 
 1. loads jobs from `~/.indagis/cron/jobs.json`
 2. checks `next_run_at` against the current time
@@ -258,10 +258,10 @@ A file lock at `~/.indagis/cron/.tick.lock` prevents overlapping scheduler ticks
 
 ### Execution history
 
-Hermes records each claimed cron attempt in the profile-local
+Indagis records each claimed cron attempt in the profile-local
 `~/.indagis/cron/executions.db` before executor or provider dispatch. Attempts
 move through `claimed`, `running`, and one immutable terminal state:
-`completed`, `failed`, or `unknown`. After restart, Hermes marks an abandoned
+`completed`, `failed`, or `unknown`. After restart, Indagis marks an abandoned
 attempt `unknown` only when the original PID and process-start fingerprint prove
 that its owner is gone. Unknown attempts are audit records and are never
 automatically rerun.
@@ -478,17 +478,17 @@ Semantics:
 - `{"wakeAgent": false}` on the last line → silent tick (same gate LLM jobs use).
 - No tokens, no model, no provider fallback — the job never touches the inference layer.
 
-`.sh` / `.bash` files run under `bash` from `PATH` when available, otherwise `/bin/bash` (important on Windows Git Bash). Anything else runs under the current Python interpreter (`sys.executable`). Scripts must resolve inside `$INDAGIS_HOME/scripts/` — relative names, absolute paths, and `~`-prefixed paths are accepted when the resolved target stays in that directory; paths that escape it are rejected. Subprocess env is sanitized (`_sanitize_subprocess_env`): provider API credentials and other Hermes-managed secrets are **not** inherited by cron scripts.
+`.sh` / `.bash` files run under `bash` from `PATH` when available, otherwise `/bin/bash` (important on Windows Git Bash). Anything else runs under the current Python interpreter (`sys.executable`). Scripts must resolve inside `$INDAGIS_HOME/scripts/` — relative names, absolute paths, and `~`-prefixed paths are accepted when the resolved target stays in that directory; paths that escape it are rejected. Subprocess env is sanitized (`_sanitize_subprocess_env`): provider API credentials and other Indagis-managed secrets are **not** inherited by cron scripts.
 
 ### The agent sets these up for you
 
-The `cronjob` tool's schema exposes `no_agent` to Hermes directly, so you can describe a watchdog in chat and let the agent wire it up:
+The `cronjob` tool's schema exposes `no_agent` to Indagis directly, so you can describe a watchdog in chat and let the agent wire it up:
 
 ```text
 Ping me on Telegram if RAM is over 85%, every 5 minutes.
 ```
 
-Hermes will write the check script to `~/.indagis/scripts/` via `write_file`, then call:
+Indagis will write the check script to `~/.indagis/scripts/` via `write_file`, then call:
 
 ```python
 cronjob(action="create", schedule="every 5m",
@@ -535,7 +535,7 @@ cronjob(
 
 **How it works:**
 
-- When Job 2 fires, Hermes reads Job 1's most recent output from `~/.indagis/cron/output/{job1_id}/*.md`
+- When Job 2 fires, Indagis reads Job 1's most recent output from `~/.indagis/cron/output/{job1_id}/*.md`
 - That output is prepended to Job 2's prompt automatically
 - Job 2 doesn't need to hardcode "read this file" — it receives the content as context
 - The chain can be any length: Job 1 → Job 2 → Job 3 → ...
@@ -654,11 +654,11 @@ cronjob(action="create", name="weekly-news-summary",
         prompt="Summarize this week's AI news: ...")
 ```
 
-When `enabled_toolsets` is set on a job it wins; otherwise the `indagis tools` cron-platform config wins; otherwise Hermes falls back to the built-in defaults. This matters for cost control: carrying `browser`, `delegation` into every tiny "fetch news" job bloats the tool-schema prompt on every LLM call.
+When `enabled_toolsets` is set on a job it wins; otherwise the `indagis tools` cron-platform config wins; otherwise Indagis falls back to the built-in defaults. This matters for cost control: carrying `browser`, `delegation` into every tiny "fetch news" job bloats the tool-schema prompt on every LLM call.
 
 ### Skipping the agent entirely: `wakeAgent`
 
-If your cron job attaches a pre-check script (via `script=`), the script can decide at runtime whether Hermes should even invoke the agent. Emit a final stdout line of the form:
+If your cron job attaches a pre-check script (via `script=`), the script can decide at runtime whether Indagis should even invoke the agent. Emit a final stdout line of the form:
 
 ```text
 {"wakeAgent": false}
@@ -755,7 +755,7 @@ cronjob(action="create", name="summarize-new-msgs",
 The same pattern works for any data source you can query from a script — Postgres, an HTTP API, your own state store — without baking a SQL evaluator into the cron subsystem.
 
 :::tip
-Hermes's own `~/.indagis/state.db` is an internal schema that changes between releases. Don't query it from a pre-run gate — point at your own database or feed instead.
+Indagis's own `~/.indagis/state.db` is an internal schema that changes between releases. Don't query it from a pre-run gate — point at your own database or feed instead.
 :::
 
 Credit: this recipe set was prompted by @iankar8's exploration in [#2654](https://github.com/agtktID/indagis-agent/pull/2654), which proposed adding sql/file/command triggers as a parallel mechanism. The `script` + `wakeAgent` gate already covers all three cases at $0, so the work landed as documentation instead.
@@ -783,7 +783,7 @@ Job definitions are plain JSON on disk: they survive `indagis update`, gateway r
 Ask the agent to manage jobs through the `cronjob` tool, `indagis cron edit`, or `/cron` — not by patching `jobs.json` directly. Direct edits can fail silently when [file write safety](../security.md#file-write-safety) blocks the path (for example when `HERMES_WRITE_SAFE_ROOT` is set), and the [file-mutation verifier](../configuration.md#file-mutation-verifier) footer is the authoritative signal that nothing was saved.
 :::
 
-Jobs may store `model` and `provider` as `null`. When those fields are omitted, Hermes resolves them at execution time from the global configuration. They only appear in the job record when a per-job override is set.
+Jobs may store `model` and `provider` as `null`. When those fields are omitted, Indagis resolves them at execution time from the global configuration. They only appear in the job record when a per-job override is set.
 
 The storage uses atomic file writes so interrupted writes do not leave a partially written job file behind.
 

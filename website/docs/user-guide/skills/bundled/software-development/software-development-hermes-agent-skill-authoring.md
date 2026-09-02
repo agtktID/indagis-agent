@@ -1,12 +1,12 @@
 ---
-title: "Hermes Agent Skill Authoring — Author in-repo SKILL.md files: frontmatter and structure"
-sidebar_label: "Hermes Agent Skill Authoring"
+title: "Indagis Agent Skill Authoring — Author in-repo SKILL.md files: frontmatter and structure"
+sidebar_label: "Indagis Agent Skill Authoring"
 description: "Author in-repo SKILL.md files: frontmatter and structure"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
-# Hermes Agent Skill Authoring
+# Indagis Agent Skill Authoring
 
 Author in-repo SKILL.md files: frontmatter and structure.
 
@@ -17,7 +17,7 @@ Author in-repo SKILL.md files: frontmatter and structure.
 | Source | Bundled (installed by default) |
 | Path | `skills/software-development/hermes-agent-skill-authoring` |
 | Version | `1.1.0` |
-| Author | Hermes Agent |
+| Author | Indagis Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `skills`, `authoring`, `hermes-agent`, `conventions`, `skill-md` |
@@ -26,10 +26,10 @@ Author in-repo SKILL.md files: frontmatter and structure.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Indagis loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
-# Authoring Hermes-Agent Skills (in-repo)
+# Authoring Indagis Agent Skills (in-repo)
 
 ## Overview
 
@@ -66,7 +66,7 @@ Peer-matched shape used by every skill under `skills/software-development/`:
 name: my-skill-name               # lowercase, hyphens, ≤64 chars (MAX_NAME_LENGTH)
 description: Use when <trigger>. <one-line behavior>.   # first 57 chars shown in system prompt
 version: 1.1.0
-author: Hermes Agent
+author: Indagis Agent
 license: MIT
 metadata:
   hermes:
@@ -92,7 +92,7 @@ A skill exists to make the agent's process more predictable. Predictability does
 Use these quality checks when writing or editing any skill:
 
 1. **Optimize for process predictability.** Ask: what behavior should change when this skill loads? If a line does not change behavior, cut it.
-2. **Choose the right context load.** A model-invoked Hermes skill pays for its description every turn. Keep descriptions focused on trigger classes and the skill's distinctive behavior. Put details in the body or linked references.
+2. **Choose the right context load.** A model-invoked Indagis skill pays for its description every turn. Keep descriptions focused on trigger classes and the skill's distinctive behavior. Put details in the body or linked references.
 3. **Use an information hierarchy.** Put always-needed steps in `SKILL.md`; put branch-specific or bulky reference material in `references/`, `templates/`, or `scripts/` and point to it only when needed.
 4. **End steps with completion criteria.** Each ordered step should say how the agent knows it is done. Good criteria are checkable and, when it matters, exhaustive: "every modified file accounted for" beats "summarize changes."
 5. **Co-locate rules with the concept they govern.** Avoid scattering one idea across the file. Keep definition, caveats, examples, and verification near each other.
@@ -125,7 +125,7 @@ One or two paragraphs: what and why.
 ## <Topic sections specific to the skill>
 - Quick-reference tables are common
 - Code blocks with exact commands
-- Hermes-specific recipes (tests via scripts/run_tests.sh, ui-tui paths, etc.)
+- Indagis-specific recipes (tests via scripts/run_tests.sh, ui-tui paths, etc.)
 
 ## Common Pitfalls
 Numbered list of mistakes and their fixes.
@@ -192,8 +192,8 @@ Pick the closest existing category. Don't invent new top-level categories casual
 3. **Description too generic or trigger buried past char 57.** The system prompt
    skill index truncates long descriptions at 57 chars. Peer descriptions start
    with "Use when ..." and complete the trigger class within that window.
-   - Good: `Use when debugging Hermes skill discovery failures.`
-   - Bad: `This skill contains detailed guidance for agents working on Hermes skill discovery failures.`
+   - Good: `Use when debugging Indagis skill discovery failures.`
+   - Bad: `This skill contains detailed guidance for agents working on Indagis skill discovery failures.`
 
 4. **Forgetting the author/license/metadata block.** Not validator-enforced, but every peer has it; omitting makes the skill look half-finished.
 

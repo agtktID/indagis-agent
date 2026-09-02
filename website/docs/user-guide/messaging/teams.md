@@ -1,12 +1,12 @@
 ---
 sidebar_position: 5
 title: "Microsoft Teams"
-description: "Set up Hermes Agent as a Microsoft Teams bot"
+description: "Set up Indagis Agent as a Microsoft Teams bot"
 ---
 
 # Microsoft Teams Setup
 
-Connect Hermes Agent to Microsoft Teams as a bot. Unlike Slack's Socket Mode, Teams delivers messages by calling a **public HTTPS webhook**, so your instance needs a publicly reachable endpoint — either a dev tunnel (local dev) or a real domain (production).
+Connect Indagis Agent to Microsoft Teams as a bot. Unlike Slack's Socket Mode, Teams delivers messages by calling a **public HTTPS webhook**, so your instance needs a publicly reachable endpoint — either a dev tunnel (local dev) or a real domain (production).
 
 Need meeting summaries from Microsoft Graph events rather than normal bot conversations? Use the dedicated setup page: [Teams Meetings](/user-guide/messaging/teams-meetings).
 
@@ -20,7 +20,7 @@ Need meeting summaries from Microsoft Graph events rather than normal bot conver
 | **Group chat** | Bot only responds when @mentioned. |
 | **Channel** | Bot only responds when @mentioned. |
 
-Teams delivers @mentions as regular messages with `<at>BotName</at>` tags, which Hermes strips automatically before processing.
+Teams delivers @mentions as regular messages with `<at>BotName</at>` tags, which Indagis strips automatically before processing.
 
 ---
 
@@ -77,7 +77,7 @@ For production, point your bot's endpoint at your server's public domain instead
 
 ```bash
 teams app create \
-  --name "Hermes" \
+  --name "Indagis" \
   --endpoint "https://<your-tunnel-url>/api/messages"
 ```
 
@@ -216,7 +216,7 @@ For a permanent server, skip devtunnel and register your bot with your server's 
 
 ```bash
 teams app create \
-  --name "Hermes" \
+  --name "Indagis" \
   --endpoint "https://your-domain.com/api/messages"
 ```
 

@@ -17,14 +17,14 @@ Teams meeting summaries, job replay, Graph subscriptions.
 | Source | Bundled (installed by default) |
 | Path | `skills/productivity/teams-meeting-pipeline` |
 | Version | `1.1.0` |
-| Author | Hermes Agent + Teknium |
+| Author | Indagis Agent + Teknium |
 | License | MIT |
 | Tags | `Teams`, `Microsoft Graph`, `Meetings`, `Productivity`, `Operations` |
 
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Indagis loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Teams Meeting Pipeline

@@ -1,14 +1,14 @@
 ---
 sidebar_position: 11
 title: "Wake Word"
-description: "Hands-free 'Hey Hermes' wake word — start a voice session by speaking, the 'Hey Siri' way"
+description: "Hands-free 'Hey Indagis' wake word — start a voice session by speaking, the 'Hey Siri' way"
 ---
 
-# Wake Word ("Hey Hermes")
+# Wake Word ("Hey Indagis")
 
-The wake word turns Hermes into a hands-free assistant across the CLI, TUI, and
-desktop app: with one setting on, Hermes listens in the background for a spoken
-trigger phrase. Say it, and Hermes starts a fresh session, opens the microphone,
+The wake word turns Indagis into a hands-free assistant across the CLI, TUI, and
+desktop app: with one setting on, Indagis listens in the background for a spoken
+trigger phrase. Say it, and Indagis starts a fresh session, opens the microphone,
 captures your command via the normal [voice pipeline](/user-guide/features/voice-mode),
 and answers — exactly like "Hey Siri" or "Alexa". Use `surface` to pick which
 one listens.
@@ -38,12 +38,12 @@ container" still goes through normally.
 
 ## Remote desktop (client capture)
 
-When the desktop app connects to a **remote** Hermes backend (for example a
+When the desktop app connects to a **remote** Indagis backend (for example a
 headless Docker host or a machine in another room), the backend often has **no
 microphone**. Server-side PortAudio then fails with “Failed to open the
 wake-word microphone.”
 
-Hermes supports **client capture** for that case:
+Indagis supports **client capture** for that case:
 
 1. The desktop arms wake with `capture: client` (automatic for the GUI when the
    backend has no local input device, or set explicitly below).
@@ -79,7 +79,7 @@ backend process.
 | **sherpa** | Free | None | **Open vocabulary** — detects ANY typed phrase with zero training. Small English model auto-downloads on first use (~13 MB) |
 | **Porcupine** | Free tier / paid | `PORCUPINE_ACCESS_KEY` | Picovoice engine; built-in keywords + custom `.ppn` files |
 
-By default the phrase is **"hey hermes"** — a model for it ships with Hermes, so
+By default the phrase is **"hey hermes"** — a model for it ships with Indagis, so
 it works out of the box with no training. (On first use, openWakeWord downloads
 its shared feature-extraction models — a small one-time fetch.)
 
@@ -165,16 +165,16 @@ don't have the single-frame-spike problem and ignore `confirmation_frames`
 (but they still honor `sensitivity`).
 
 `inference_framework` picks the openWakeWord backend. Leave it empty (the
-default) to let Hermes choose per platform: **tflite on Apple Silicon**, onnx
+default) to let Indagis choose per platform: **tflite on Apple Silicon**, onnx
 everywhere else. openWakeWord's onnx backend returns near-zero scores on macOS
 ARM64 ([openWakeWord#336](https://github.com/dscripka/openWakeWord/issues/336)),
 so a listener pinned to `onnx` there will arm, show as listening, and never
-fire. The tflite backend needs `ai-edge-litert` on macOS, which Hermes installs
+fire. The tflite backend needs `ai-edge-litert` on macOS, which Indagis installs
 on demand alongside the other wake-word deps.
 
 ### Surfaces (CLI, TUI, GUI)
 
-The wake word works in all three Hermes surfaces, and `surface` picks which one
+The wake word works in all three Indagis surfaces, and `surface` picks which one
 owns the listener and opens the new session when it fires:
 
 | `surface` | Behavior |
@@ -185,9 +185,9 @@ owns the listener and opens the new session when it fires:
 | `gui` | Only the desktop app. |
 
 The detector is on-device and single-mic, so only one surface listens at a time,
-including when Hermes surfaces run in separate processes. Ownership is sticky:
+including when Indagis surfaces run in separate processes. Ownership is sticky:
 the first eligible claimant keeps the listener until it stops, disconnects, or
-its process exits. Hermes does not silently fail over to another open surface.
+its process exits. Indagis does not silently fail over to another open surface.
 Set `surface` when you want to pin ownership instead of using first-claim wins.
 The TUI and desktop GUI share the same Python backend (`tui_gateway`), which
 runs the detector server-side and yields the mic to voice capture while a
@@ -195,7 +195,7 @@ command records.
 
 ## Using a different phrase
 
-"Hey Hermes" works out of the box — the bundled openWakeWord model
+"Hey Indagis" works out of the box — the bundled openWakeWord model
 (`model: hey_hermes`) is the default. To wake on something else, the easiest
 path is the open-vocabulary engine:
 
@@ -264,7 +264,7 @@ syllables with an uncommon word ("hermes" qualifies) beat common words like
 
 ### Option C — Porcupine (custom keyword in seconds)
 
-Create a "Hey Hermes" keyword in the [Picovoice Console](https://console.picovoice.ai/),
+Create a "Hey Indagis" keyword in the [Picovoice Console](https://console.picovoice.ai/),
 download the `.ppn`, and:
 
 ```yaml
@@ -302,10 +302,10 @@ macOS grants microphone access per **process**. STT working in the desktop app
 proves the *renderer* has mic access — the wake listener runs in the Python
 *backend*, which needs its own grant. Without it, CoreAudio hands the backend a
 "working" stream that only ever delivers silence, so the ear shows listening
-but the phrase never fires. Hermes detects this (`/wake status` shows
+but the phrase never fires. Indagis detects this (`/wake status` shows
 "mic delivers only silence"; the desktop ear tooltip carries the same hint).
-Fix: System Settings → Privacy & Security → Microphone → enable the Hermes
-backend (it may appear as your terminal, `python`, or Hermes), then toggle the
+Fix: System Settings → Privacy & Security → Microphone → enable the Indagis
+backend (it may appear as your terminal, `python`, or Indagis), then toggle the
 wake word off and on.
 
 ### "Listening" but receives silence (Windows)
