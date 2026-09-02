@@ -1,5 +1,8 @@
 ---
-sidebar_position: 4
+id: multi-profile-gateways
+title: "Running Many Gateways at Once"
+sidebar_position: 13
+description: "Operate multiple [profiles](./profiles.md) — each with its own bot tokens,"
 ---
 
 # Running Many Gateways at Once
@@ -10,12 +13,14 @@ covers the operational concerns: starting them all together, viewing logs
 across profiles, preventing the host from sleeping, and recovering from common
 launchd/systemd quirks.
 
-If you only run one Hermes agent, you don't need this page — see
-[Profiles](./profiles.md) for the basics.
+If you only run one Indagis agent, you don't need this page — see
+[Profiles](./profiles.md) for the basics. And if your instances live on
+*different* machines that one desktop app should reach simultaneously, see
+[Connecting Desktop to Many Indagis Instances](./multi-connection-desktop.md).
 
 ## When to use this
 
-You want this setup when you have two or more Hermes agents that should all
+You want this setup when you have two or more Indagis agents that should all
 be online at the same time. Common reasons:
 
 - A personal assistant on one Telegram bot and a coding agent on another
@@ -33,9 +38,9 @@ them collectively.
 
 ```bash
 # Create profiles (once)
-hermes profile create coder
-hermes profile create personal-bot
-hermes profile create research
+indagis profile create coder
+indagis profile create personal-bot
+indagis profile create research
 
 # Configure each
 coder setup
@@ -85,11 +90,11 @@ Set the flag on the **default profile** (it owns the multiplexer) and restart
 its gateway:
 
 ```bash
-hermes config set gateway.multiplex_profiles true
-hermes gateway restart
+indagis config set gateway.multiplex_profiles true
+indagis gateway restart
 ```
 
-Equivalently, in the default profile's `~/.hermes/config.yaml`:
+Equivalently, in the default profile's `~/.indagis/config.yaml`:
 
 ```yaml
 gateway:
@@ -103,7 +108,7 @@ credentials, and routes each inbound message to the profile it belongs to. Each
 turn resolves the routed profile's config, skills, memory, SOUL, **and provider
 keys** — credentials are never shared across profiles.
 
-You do **not** run `hermes gateway start` for the secondary profiles — the
+You do **not** run `indagis gateway start` for the secondary profiles — the
 default gateway serves them. See the contract changes below.
 
 ### What changes when multiplexing is on
@@ -113,7 +118,7 @@ moment the flag is off.
 
 #### 1. Secondary profiles must not start their own gateway
 
-With a multiplexer running, a named-profile `hermes gateway start` / `run` is a
+With a multiplexer running, a named-profile `indagis gateway start` / `run` is a
 **hard error**, pointing you back at the multiplexer:
 
 ```
@@ -155,14 +160,14 @@ configure them only on the default profile.
 
 Port-binding platforms covered by this rule: `webhook`, `api_server`,
 `msgraph_webhook`, `feishu`, `wecom_callback`, `bluebubbles`, `sms`,
-`whatsapp_cloud`, `line`. Configure any of these **only on the default profile**;
+`whatsapp_cloud`, `line`, `teams`. Configure any of these **only on the default profile**;
 every profile is reachable through its `/p/<profile>/` prefix.
 
 Authentication follows the profile named in the URL. Unprefixed endpoints keep
 using the default listener's existing credentials.
 
 - `/p/coder/...` API-server requests must use `API_SERVER_KEY` from
-  `~/.hermes/profiles/coder/.env`; the default listener key is rejected.
+  `~/.indagis/profiles/coder/.env`; the default listener key is rejected.
 - A webhook route that targets `coder` must declare `profile: coder` beside
   its existing route-specific `secret` in the default profile's
   `config.yaml`. That secret is then accepted only at
@@ -201,8 +206,8 @@ migration, no orphaned history.
 #### 5. One PID/lock and one status surface
 
 There is a single process-level PID and lock (the multiplexer, under the default
-home). `hermes status` reports the multiplexer and the profiles it serves;
-`hermes status -p <name>` slices to one profile. Each profile still writes its
+home). `indagis status` reports the multiplexer and the profiles it serves;
+`indagis status -p <name>` slices to one profile. Each profile still writes its
 own `runtime_status.json` under its own home, so existing per-profile readers
 keep working.
 
@@ -211,9 +216,40 @@ keep working.
 Per-profile `.env` credential isolation is preserved and, if anything,
 stricter: a profile's keys are resolved from its own scope and are never unioned
 into a shared environment (this also means subprocesses like MCP servers and
-Kanban workers only ever see their own profile's secrets). Kanban,
+Kanban workers only ever see their own profile's secrets). Terminal settings
+(`terminal.backend`, `terminal.cwd`, `terminal.docker_volumes`,
+`terminal.docker_shared_container_key`, SSH targets, …) are likewise resolved
+per profile on every routed turn: a profile that omits a terminal key gets the
+documented default, never the launch profile's value, and a profile whose
+`config.yaml`/`.env` cannot be parsed has terminal execution refused rather than
+run under another profile's sandbox policy. Kanban,
 profile-scoped skills/memory/SOUL, and model routing all behave per-profile
 exactly as they do with separate gateways.
+
+### Serving selected profiles
+
+By default, `gateway.multiplex_profiles: true` serves every valid named profile
+on the host. To keep unrelated profiles installed without starting their
+adapters or cron jobs, set `gateway.multiplex_profile_allowlist`:
+
+```yaml
+gateway:
+  multiplex_profiles: true
+  multiplex_profile_allowlist:
+    - worker
+    - guest
+```
+
+The default profile is always served and does not need to be listed. An unset
+allowlist preserves the historical serve-all behavior; an empty list serves
+only the default profile. Names are normalized and deduplicated. Invalid list
+entries or names that are not installed are skipped with a warning. A malformed
+non-list value fails safely to default-only.
+
+The resulting served set also controls `/p/<profile>/` API and webhook prefixes,
+runtime status, profile-route eligibility, and which profiles the in-process
+cron scheduler ticks. A named profile outside the allowlist may still run its
+own standalone gateway.
 
 ### Routing shared-bot chats to profiles (`profile_routes`)
 
@@ -245,6 +281,12 @@ gateway:
       platform: telegram
       chat_id: "-1001234567890"
       profile: tg-profile
+
+    # A WhatsApp DM — write the phone number; JID and LID forms also match
+    - name: owner-whatsapp
+      platform: whatsapp
+      chat_id: "15551234567"
+      profile: owner
 ```
 
 Routes are matched most-specific-first (`thread_id` > `chat_id` > `guild_id`),
@@ -254,10 +296,30 @@ no route stay on the default/active profile. The routed profile gets the full
 per-profile isolation described above (config, skills, memory, credentials,
 session namespace). Routing works on every platform adapter, not just Discord.
 
+On WhatsApp and WhatsApp Cloud, a `chat_id` route matches across user-identity
+forms: a bare phone number (`15551234567`), a JID
+(`15551234567@s.whatsapp.net`), and a LID (`…@lid`) all refer to the same
+person once the bridge has paired them (the same canonicalization session keys
+and adapter allowlists already use). You can put the phone number in
+`profile_routes` and inbound DMs still match whether WhatsApp delivers a JID or
+a LID. Without a LID mapping yet, the number form still matches a JID (the
+suffix is stripped) but cannot resolve an unknown LID — that inbound falls
+through to the default profile until the mapping appears. Group chats
+(`…@g.us`) are not sender identities and still match exactly. Telegram numeric
+ids are unchanged.
+
 `profile_routes` requires `gateway.multiplex_profiles: true`; with
-multiplexing off the routes are ignored. If a route names a profile that does
-not exist on disk, the gateway logs a warning naming the profile and source and
-falls back to the default home.
+multiplexing off the routes are ignored. If an explicit route matches but its
+target profile is not installed or is outside `multiplex_profile_allowlist`,
+the gateway rejects that ingress and logs the route and target. It does not run
+the default profile. Traffic that matches no route keeps the historical
+default-profile behavior.
+
+Cron jobs owned by a routed profile deliver through the shared bot too, but
+only to targets an enabled route with a `chat_id`/`thread_id` maps to that
+profile — a routed profile's job targeting an unrouted chat (or a chat routed
+to another profile) is never sent through the shared bot. Guild-only routes do
+not qualify a cron target; add a `chat_id` route for the delivery channel.
 
 ## Start, stop, or restart all gateways at once
 
@@ -280,9 +342,9 @@ run_for_profile() {
   profile="$1"
   action="$2"
   if [ "$profile" = "default" ]; then
-    hermes gateway "$action"
+    indagis gateway "$action"
   else
-    hermes -p "$profile" gateway "$action"
+    indagis -p "$profile" gateway "$action"
   fi
 }
 
@@ -295,7 +357,7 @@ case "$action" in
     done
     ;;
   list)
-    hermes gateway list
+    indagis gateway list
     ;;
   *)
     usage
@@ -311,12 +373,12 @@ hermes-gateways start      # start every configured profile
 hermes-gateways stop       # stop every configured profile
 hermes-gateways restart    # restart all
 hermes-gateways status     # status across all
-hermes-gateways list       # delegates to `hermes gateway list`
+hermes-gateways list       # delegates to `indagis gateway list`
 ```
 
 :::tip
-The `default` profile is targeted with `hermes gateway <action>` (no `-p`),
-not `hermes -p default gateway <action>`. The wrapper above handles both forms.
+The `default` profile is targeted with `indagis gateway <action>` (no `-p`),
+not `indagis -p default gateway <action>`. The wrapper above handles both forms.
 :::
 
 ## Manage one profile
@@ -333,7 +395,7 @@ coder gateway install    # create the LaunchAgent / systemd unit
 coder gateway uninstall  # remove the service file
 ```
 
-These are equivalent to `hermes -p coder gateway <action>` — useful if a
+These are equivalent to `indagis -p coder gateway <action>` — useful if a
 profile alias is not on `PATH` or if you target profiles dynamically from a
 script.
 
@@ -356,34 +418,34 @@ Each profile writes to its own log files:
 
 ```bash
 # Default profile
-tail -f ~/.hermes/logs/gateway.log
-tail -f ~/.hermes/logs/gateway.error.log
+tail -f ~/.indagis/logs/gateway.log
+tail -f ~/.indagis/logs/gateway.error.log
 
 # Named profile
-tail -f ~/.hermes/profiles/<name>/logs/gateway.log
-tail -f ~/.hermes/profiles/<name>/logs/gateway.error.log
+tail -f ~/.indagis/profiles/<name>/logs/gateway.log
+tail -f ~/.indagis/profiles/<name>/logs/gateway.error.log
 ```
 
 Stream every profile's log simultaneously:
 
 ```bash
-tail -f ~/.hermes/logs/gateway.log ~/.hermes/profiles/*/logs/gateway.log
+tail -f ~/.indagis/logs/gateway.log ~/.indagis/profiles/*/logs/gateway.log
 ```
 
 The CLI also has a structured log viewer:
 
 ```bash
-hermes logs -f                  # follow default profile
-hermes -p coder logs -f         # follow one profile
-hermes logs --help              # filters, levels, JSON output
+indagis logs -f                  # follow default profile
+indagis -p coder logs -f         # follow one profile
+indagis logs --help              # filters, levels, JSON output
 ```
 
 ## Identify what's actually running
 
 ```bash
-hermes profile list             # profiles + model + gateway state
+indagis profile list             # profiles + model + gateway state
 hermes-gateways status          # full status across every profile
-launchctl list | grep hermes    # macOS — PIDs and labels
+launchctl list | grep indagis    # macOS — PIDs and labels
 systemctl --user list-units 'hermes-gateway-*'   # Linux — units
 ```
 
@@ -392,18 +454,18 @@ systemctl --user list-units 'hermes-gateway-*'   # Linux — units
 Every profile keeps its config inside its own directory:
 
 ```
-~/.hermes/profiles/<name>/
+~/.indagis/profiles/<name>/
 ├── .env              # API keys, bot tokens (chmod 600)
 ├── config.yaml       # model, provider, toolsets, gateway settings
 └── SOUL.md           # personality / system prompt
 ```
 
-The default profile uses `~/.hermes/` directly with the same three files.
+The default profile uses `~/.indagis/` directly with the same three files.
 
 Edit them with any editor or via the CLI:
 
 ```bash
-hermes config set model.model anthropic/claude-sonnet-4    # default profile
+indagis config set model.model anthropic/claude-sonnet-4    # default profile
 coder config set model.model openai/gpt-5                  # named profile
 ```
 
@@ -427,7 +489,7 @@ to sleep when idle. Two patterns:
 ```bash
 caffeinate -dis                    # block display, idle, and system sleep
 caffeinate -dis -t 28800           # same, auto-exit after 8 hours
-caffeinate -i -w $(cat ~/.hermes/gateway.pid) &   # awake while default gateway runs
+caffeinate -i -w $(cat ~/.indagis/gateway.pid) &   # awake while default gateway runs
 
 # Persistent: run in background and forget
 nohup caffeinate -dis >/dev/null 2>&1 &
@@ -458,7 +520,7 @@ use a third-party tool.
 
 ```bash
 # Inhibit suspend while a command runs
-systemd-inhibit --what=idle:sleep --who=hermes --why="gateways running" \
+systemd-inhibit --what=idle:sleep --who=indagis --why="gateways running" \
   sleep infinity &
 
 # Allow user services to keep running after logout (recommended)
@@ -479,16 +541,16 @@ To audit:
 
 ```bash
 grep -H 'TELEGRAM_BOT_TOKEN\|DISCORD_BOT_TOKEN' \
-     ~/.hermes/.env ~/.hermes/profiles/*/.env
+     ~/.indagis/.env ~/.indagis/profiles/*/.env
 ```
 
 ## Updating the code
 
-`hermes update` pulls the latest code once and syncs new bundled skills into
+`indagis update` pulls the latest code once and syncs new bundled skills into
 every profile:
 
 ```bash
-hermes update
+indagis update
 hermes-gateways restart
 ```
 
@@ -498,7 +560,7 @@ User-modified skills are never overwritten.
 
 ### "Could not find service in domain for user gui: 501"
 
-You ran `hermes gateway start` after a previous `hermes gateway stop`. The
+You ran `indagis gateway start` after a previous `indagis gateway stop`. The
 CLI's `stop` does a full `launchctl unload`, which removes the service from
 launchd's registry. The CLI catches this specific error on `start` and
 automatically re-loads the plist (`↻ launchd job was unloaded; reloading
@@ -510,7 +572,7 @@ If a profile's gateway shows `not running` but a process is still alive:
 
 ```bash
 ps -ef | grep "hermes_cli.*-p <profile>"
-cat ~/.hermes/profiles/<profile>/gateway.pid
+cat ~/.indagis/profiles/<profile>/gateway.pid
 kill -TERM <pid>          # graceful
 kill -KILL <pid>          # if that fails after a few seconds
 <profile> gateway start
@@ -530,6 +592,8 @@ systemctl --user restart hermes-gateway-<profile>.service
 ### Health check
 
 ```bash
-hermes doctor                  # default profile
-hermes -p <profile> doctor     # one profile
+indagis doctor                  # default profile
+indagis -p <profile> doctor     # one profile
 ```
+
+---

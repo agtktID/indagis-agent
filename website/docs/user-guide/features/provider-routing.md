@@ -1,23 +1,23 @@
 ---
-title: Provider Routing
-description: Configure OpenRouter or Nous Portal provider preferences to optimize for cost, speed, or quality.
-sidebar_label: Provider Routing
-sidebar_position: 7
+id: provider-routing
+title: "Provider Routing"
+sidebar_position: 37
+description: "When using [OpenRouter](https://openrouter.ai) or [Indagis Cloud](/integrations/indagis-cloud) as your LLM provider, Indagis Agent supports **provider…"
 ---
 
 # Provider Routing
 
-When using [OpenRouter](https://openrouter.ai) or [Nous Portal](/integrations/nous-portal) as your LLM provider, Hermes Agent supports **provider routing** — fine-grained control over which underlying AI providers handle your requests and how they're prioritized.
+When using [OpenRouter](https://openrouter.ai) or [Indagis Cloud](/integrations/indagis-cloud) as your LLM provider, Indagis Agent supports **provider routing** — fine-grained control over which underlying AI providers handle your requests and how they're prioritized.
 
 OpenRouter routes requests to many providers (e.g., Anthropic, Google, AWS Bedrock, Together AI). Provider routing lets you optimize for cost, speed, quality, or enforce specific provider requirements.
 
 :::tip
-Traffic routed through Nous Portal respects the same provider preferences — and Portal subscribers get 10% off token-billed providers.
+Traffic routed through Indagis Cloud respects the same provider preferences — and Portal subscribers get 10% off token-billed providers.
 :::
 
 ## Configuration
 
-Add a `provider_routing` section to your `~/.hermes/config.yaml`:
+Add a `provider_routing` section to your `~/.indagis/config.yaml`:
 
 ```yaml
 provider_routing:
@@ -30,7 +30,7 @@ provider_routing:
 ```
 
 :::info
-Provider routing only applies when using OpenRouter or Nous Portal. It has no effect with direct provider connections (e.g., connecting directly to the Anthropic API).
+Provider routing only applies when using OpenRouter or Indagis Cloud. It has no effect with direct provider connections (e.g., connecting directly to the Anthropic API).
 :::
 
 ## Options
@@ -167,9 +167,9 @@ provider_routing:
 
 ## How It Works
 
-Provider routing preferences are passed to OpenRouter or Nous Portal on agent chat requests and iteration-limit summaries via the `extra_body.provider` field. (`extra_body` is the OpenAI Python SDK argument; it becomes the top-level `provider` object in the JSON request.) Auxiliary tasks such as compression and title generation are configured independently under `auxiliary.<task>.extra_body`.
+Provider routing preferences are passed to OpenRouter or Indagis Cloud on agent chat requests and iteration-limit summaries via the `extra_body.provider` field. (`extra_body` is the OpenAI Python SDK argument; it becomes the top-level `provider` object in the JSON request.) Auxiliary tasks such as compression and title generation are configured independently under `auxiliary.<task>.extra_body`.
 
-- **CLI mode** — configured in `~/.hermes/config.yaml`, loaded at startup
+- **CLI mode** — configured in `~/.indagis/config.yaml`, loaded at startup
 - **Gateway mode** — same config file, loaded when the gateway starts
 
 The routing config is read from `config.yaml` and passed as parameters when creating the `AIAgent`:
@@ -200,5 +200,7 @@ provider_routing:
 When no `provider_routing` section is configured (the default), the aggregator uses its own default routing logic, which generally balances cost and availability automatically.
 
 :::tip Provider Routing vs. Fallback Models
-Provider routing controls which **sub-providers behind OpenRouter or Nous Portal** handle your requests. For automatic failover to an entirely different provider when your primary model fails, see [Fallback Providers](/user-guide/features/fallback-providers).
+Provider routing controls which **sub-providers behind OpenRouter or Indagis Cloud** handle your requests. For automatic failover to an entirely different provider when your primary model fails, see [Fallback Providers](/user-guide/features/fallback-providers).
 :::
+
+---

@@ -1,6 +1,8 @@
 ---
-title: Tool Search
-sidebar_position: 95
+id: tool-search
+title: "Tool Search"
+sidebar_position: 43
+description: "When you have many MCP servers or non-core plugin tools attached to a"
 ---
 
 # Tool Search
@@ -10,13 +12,13 @@ session, their JSON schemas can consume a substantial fraction of the
 context window on every turn — even when only a few of them are relevant
 to what the user actually asked for.
 
-**Tool Search** is Hermes' opt-in progressive-disclosure layer for that
+**Tool Search** is Indagis' opt-in progressive-disclosure layer for that
 problem. When activated, MCP and plugin tools are replaced in the
 model-visible tools array by three bridge tools, and the model loads each
 specific tool's schema on demand.
 
-:::info Built-in Hermes tools never defer
-The tools that make up Hermes' core capability set (`terminal`,
+:::info Built-in Indagis tools never defer
+The tools that make up Indagis' core capability set (`terminal`,
 `read_file`, `write_file`, `patch`, `search_files`, `todo`, `memory`,
 `browser_*`, `web_search`, `web_extract`, `clarify`, `execute_code`,
 `delegate_task`, `session_search`, and the rest of
@@ -30,23 +32,40 @@ When Tool Search activates for a turn, the model sees three new tools in
 place of the deferred ones:
 
 ```
-tool_search(query, limit?)     — search the deferred-tool catalog
-tool_describe(name)            — load the full schema for one tool
+tool_search(queries, limit?)   — search the deferred-tool catalog (one or more queries)
+tool_describe(names)           — load the full schemas for one or more tools
 tool_call(name, arguments)     — invoke a deferred tool
 ```
 
 A typical interaction looks like:
 
 ```
-Model: tool_search("create a github issue")
-  → { matches: [{ name: "mcp_github_create_issue", ... }, ...] }
-Model: tool_describe("mcp_github_create_issue")
-  → { parameters: { type: "object", properties: { ... } } }
+Model: tool_search(["create a github issue", "send a slack message"])
+  → { results: [ { query: "create a github issue",
+                   matches: ["mcp_github_create_issue", ...] },
+                 { query: "send a slack message",
+                   matches: ["mcp_slack_post_message", ...] } ],
+      tools: { mcp_github_create_issue: { description: "...",
+                                          required: ["title"], ... },
+               mcp_slack_post_message: { ... } } }
+Model: tool_describe(["mcp_github_create_issue", "mcp_slack_post_message"])
+  → { tools: { mcp_github_create_issue: { parameters: { ... } },
+               mcp_slack_post_message: { parameters: { ... } } } }
 Model: tool_call("mcp_github_create_issue", { title: "...", body: "..." })
   → { ok: true, issue_number: 42 }
 ```
 
-When the model invokes `tool_call`, Hermes **unwraps the bridge** and
+Each query in a `tool_search` call is searched independently against the
+same catalog (`limit` applies per query); the per-query groups carry tool
+names only, while the shared `tools` map holds each matched tool's
+description and required parameter names once. Queries are stemmed, so
+"issues" finds `create_issue`. Each query group that returns no matches
+includes an `available_sources` summary of the connected servers so a lexical
+miss is not mistaken for a missing capability.
+`tool_describe` resolves every requested name in one call; unknown names
+are reported in `not_found` without failing the rest of the batch.
+
+When the model invokes `tool_call`, Indagis **unwraps the bridge** and
 dispatches the underlying tool exactly as if the model had called it
 directly. Pre-tool-call hooks, guardrails, approval prompts, and
 post-tool-call hooks all run against the real tool name — not against
@@ -78,19 +97,22 @@ tools:
     enabled: auto       # auto (default), on, or off
     threshold_pct: 5    # listing budget as a percentage of context
     search_default_limit: 5
-    max_search_limit: 20
+    max_search_limit: 25
     listing: auto       # embed a grouped name+description catalog manifest
     listing_max_tokens: 4000
 ```
 
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `enabled` | `auto` | `auto`/`on` activate whenever at least one deferrable tool exists; `off` disables entirely (everything stays eager). |
+| `enabled` | `auto` | `auto`/`on` activate whenever at least one deferrable tool exists; `off` disables entirely (everything stays eager). `auto` is currently an alias of `on` — it is reserved for a future mode that inlines schemas when they fit the context and defers only when they don't. Pin `on` or `off` if you want today's behavior guaranteed across upgrades. |
 | `threshold_pct` | `5` | Listing budget as a percentage of the active model's context length. Range 0–100. |
-| `search_default_limit` | `5` | Hits returned when the model calls `tool_search` without a `limit`. |
-| `max_search_limit` | `20` | Hard upper bound the model can request via `limit`. Range 1–50. |
+| `search_default_limit` | `5` | Hits returned per query when the model calls `tool_search` without a `limit`. |
+| `max_search_limit` | `25` | Hard upper bound the model can request via `limit` (per query). Range 1–50. |
 | `listing` | `auto` | Embed a skills-style manifest of every deferred tool (name + first sentence of its description, ≤60 chars, grouped by MCP server) in the `tool_search` bridge description. `auto` includes it when it fits the budget (falling back to names-only, then to the tier-2 server summary); `on`/`off` force either way. |
 | `listing_max_tokens` | `4000` | Absolute cap on the embedded listing, regardless of context size. Range 200–60000. Large catalogs degrade to names-only or per-server summaries, keeping full schemas available through search. |
+
+Per-call array caps are internal safety bounds, not configuration. Over-cap
+calls return an error so the model can retry with a smaller batch.
 
 ### Why the listing exists
 
@@ -136,6 +158,12 @@ to any progressive-disclosure design, not specific to this implementation:
   result enters the conversation history (so it does get cached on
   subsequent turns) but it never benefits from the system-prompt cache
   prefix.
+- **No provider-native validation for deferred schemas.** `tool_describe`
+  lets the model read a deferred tool's schema, but the provider still sees
+  only the generic `tool_call.arguments` object. Indagis therefore coerces and
+  validates the underlying arguments locally before dispatch; the concrete
+  tool or MCP server remains responsible for schemas Indagis cannot safely
+  validate, such as malformed schemas or external references.
 - **Model-quality dependence.** Tool Search assumes the model can write a
   reasonable search query for the tool it wants. Smaller models do this
   less well; the published Anthropic numbers (49% → 74% on Opus 4 with
@@ -148,11 +176,21 @@ to any progressive-disclosure design, not specific to this implementation:
 
 ## Implementation details
 
-- **Retrieval:** BM25 over tokenized tool name + description + parameter
-  names. Falls back to a literal substring match on the tool name when
-  BM25 returns no positive-score hits, which protects against
-  zero-IDF degenerate cases (e.g. searching `"github"` against a
-  catalog where every tool name contains "github").
+- **Retrieval:** BM25 over tokenized tool name, source name (the MCP
+  server or plugin toolset the tool belongs to, so searching `"linear"`
+  finds that server's tools even when a tool's own name doesn't carry
+  the service), description, and parameter names, with Snowball
+  stemming (English) applied to both the index and the query so
+  morphological variants match ("issues" finds `create_issue`). Falls
+  back to a literal substring match on the tool name when no query
+  token matches any document (e.g. searching `"hub"` where the token is
+  `github`).
+- **Parallel execution unwraps the bridge.** The batch planner decides
+  concurrency on the *underlying* tool of a `tool_call`, not on the
+  literal bridge name — so an MCP server opted in via
+  `supports_parallel_tool_calls: true` keeps its concurrency when its
+  tools are called through the bridge, and `tool_search` /
+  `tool_describe` lookups batch concurrently like any read-only tool.
 - **Catalog is stateless across turns.** It rebuilds from the current
   tool-defs list every assembly — no session-keyed `Map`. This avoids
   the class of bug where a stored catalog drifts out of sync with the
@@ -164,7 +202,7 @@ to any progressive-disclosure design, not specific to this implementation:
   discover or call a tool outside that subset — the deferred catalog is
   the deferrable slice of the session's own enabled/disabled toolsets,
   not the whole process registry.
-- **No JS sandbox.** Hermes uses the simpler "structured tools" mode
+- **No JS sandbox.** Indagis uses the simpler "structured tools" mode
   (search / describe / call as plain functions). The JS-sandbox "code
   mode" some other implementations offer is a large surface area; we
   skip it.
@@ -175,3 +213,5 @@ to any progressive-disclosure design, not specific to this implementation:
 - `tests/tools/test_tool_search.py` — the regression suite
 - The `openclaw-tool-search-report` PDF in the original implementation
   PR for the research that shaped the design
+
+---

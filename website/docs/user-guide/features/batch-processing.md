@@ -1,12 +1,13 @@
 ---
-sidebar_position: 12
+id: batch-processing
 title: "Batch Processing"
-description: "Generate agent trajectories at scale — parallel processing, checkpointing, and toolset distributions"
+sidebar_position: 3
+description: "Batch processing lets you run the Indagis agent across hundreds or thousands of prompts in parallel, generating structured trajectory data. This is…"
 ---
 
 # Batch Processing
 
-Batch processing lets you run the Hermes agent across hundreds or thousands of prompts in parallel, generating structured trajectory data. This is primarily used for **training data generation** — producing ShareGPT-format trajectories with tool usage statistics that can be used for fine-tuning or evaluation.
+Batch processing lets you run the Indagis agent across hundreds or thousands of prompts in parallel, generating structured trajectory data. This is primarily used for **training data generation** — producing ShareGPT-format trajectories with tool usage statistics that can be used for fine-tuning or evaluation.
 
 ## Overview
 
@@ -35,7 +36,7 @@ python batch_runner.py --list_distributions
 ```
 
 :::tip Predictable cost at scale
-Batch runs spin up many concurrent agent sessions, each making model calls and tool calls. A [Nous Portal](/user-guide/features/tool-gateway) subscription bundles model access plus web search, image gen, TTS, and cloud browsers under one bill — useful when you want stable cost-per-trajectory without juggling rate limits across five vendor accounts. Set up with `hermes setup --portal`, then point `--model` at a Nous model.
+Batch runs spin up many concurrent agent sessions, each making model calls and tool calls. A [Indagis Cloud](/user-guide/features/tool-gateway) subscription bundles model access plus web search, image gen, TTS, and cloud browsers under one bill — useful when you want stable cost-per-trajectory without juggling rate limits across five vendor accounts. Set up with `indagis setup --portal`, then point `--model` at a Nous model.
 :::
 
 ## Dataset Format
@@ -228,3 +229,5 @@ For benchmarks requiring specific environments, each prompt can specify its own 
 ```
 
 The batch runner verifies Docker images are accessible before running each prompt.
+
+---

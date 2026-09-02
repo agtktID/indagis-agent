@@ -1,27 +1,27 @@
 ---
-sidebar_position: 3
-sidebar_label: "Git Worktrees"
+id: git-worktrees
 title: "Git Worktrees"
-description: "Run multiple Hermes agents safely on the same repository using git worktrees and isolated checkouts"
+sidebar_position: 8
+description: "Indagis Agent is often used on large, long‑lived repositories. When you want to:"
 ---
 
 # Git Worktrees
 
-Hermes Agent is often used on large, long‑lived repositories. When you want to:
+Indagis Agent is often used on large, long‑lived repositories. When you want to:
 
 - Run **multiple agents in parallel** on the same project, or
 - Keep experimental refactors isolated from your main branch,
 
 Git **worktrees** are the safest way to give each agent its own checkout without duplicating the entire repository.
 
-This page shows how to combine worktrees with Hermes so each session has a clean, isolated working directory.
+This page shows how to combine worktrees with Indagis so each session has a clean, isolated working directory.
 
-## Why Use Worktrees with Hermes?
+## Why Use Worktrees with Indagis?
 
-Hermes treats the **current working directory** as the project root:
+Indagis treats the **current working directory** as the project root:
 
-- CLI: the directory where you run `hermes` or `hermes chat`
-- Messaging gateways: the directory set by `terminal.cwd` in `~/.hermes/config.yaml`
+- CLI: the directory where you run `indagis` or `indagis chat`
+- Messaging gateways: the directory set by `terminal.cwd` in `~/.indagis/config.yaml`
 
 If you run multiple agents in the **same checkout**, their changes can interfere with each other:
 
@@ -36,6 +36,25 @@ With worktrees, each agent gets:
 See also: [Checkpoints and /rollback](./checkpoints-and-rollback.md).
 
 ## Quick Start: Creating a Worktree
+
+### From inside a session: `/worktree new`
+
+The fastest path (inspired by Copilot CLI's `/worktree new`): from an
+interactive CLI session, run
+
+```
+/worktree new my-experiment
+```
+
+Indagis creates `.worktrees/my-experiment/` inside the repo (branch
+`indagis/my-experiment`, based on the freshly-fetched remote tip unless
+`worktree_sync: false`), and retargets the session's terminal and file tools
+into it — no restart needed. Omit the name to get a random `hermes-<id>`
+tree. `/worktree` alone shows the active tree; `/worktree list` lists all of
+them. On exit the tree is kept only if it has unpushed commits, exactly like
+`indagis -w`.
+
+### Manually with git
 
 From your main repository (containing `.git/`), create a new worktree for a feature branch:
 
@@ -52,16 +71,16 @@ This creates:
 - A new directory: `../repo-feature`
 - A new branch: `feature/hermes-experiment` checked out in that directory
 
-Now you can `cd` into the new worktree and run Hermes there:
+Now you can `cd` into the new worktree and run Indagis there:
 
 ```bash
 cd ../repo-feature
 
-# Start Hermes in the worktree
-hermes
+# Start Indagis in the worktree
+indagis
 ```
 
-Hermes will:
+Indagis will:
 
 - See `../repo-feature` as the project root.
 - Use that directory for context files, code edits, and tools.
@@ -83,14 +102,14 @@ In separate terminals:
 ```bash
 # Terminal 1
 cd ../repo-experiment-a
-hermes
+indagis
 
 # Terminal 2
 cd ../repo-experiment-b
-hermes
+indagis
 ```
 
-Each Hermes process:
+Each Indagis process:
 
 - Works on its own branch (`feature/hermes-a` vs `feature/hermes-b`).
 - Writes checkpoints under a different shadow repo hash (derived from the worktree path).
@@ -122,11 +141,11 @@ Notes:
 
 - `git worktree remove` will refuse to remove a worktree with uncommitted changes unless you force it.
 - Removing a worktree does **not** automatically delete the branch; you can delete or keep the branch using normal `git branch` commands.
-- Hermes checkpoint data under `~/.hermes/checkpoints/` is not automatically pruned when you remove a worktree, but it is usually very small.
+- Indagis checkpoint data under `~/.indagis/checkpoints/` is not automatically pruned when you remove a worktree, but it is usually very small.
 
 ## Best Practices
 
-- **One worktree per Hermes experiment**
+- **One worktree per Indagis experiment**
   - Create a dedicated branch/worktree for each substantial change.
   - This keeps diffs focused and PRs small and reviewable.
 - **Name branches after the experiment**
@@ -134,35 +153,35 @@ Notes:
 - **Commit frequently**
   - Use git commits for high‑level milestones.
   - Use [checkpoints and /rollback](./checkpoints-and-rollback.md) as a safety net for tool‑driven edits in between.
-- **Avoid running Hermes from the bare repo root when using worktrees**
+- **Avoid running Indagis from the bare repo root when using worktrees**
   - Prefer the worktree directories instead, so each agent has a clear scope.
 
-## Using `hermes -w` (Automatic Worktree Mode)
+## Using `indagis -w` (Automatic Worktree Mode)
 
-Hermes has a built‑in `-w` flag that **automatically creates a disposable git worktree** with its own branch. You don't need to set up worktrees manually — just `cd` into your repo and run:
+Indagis has a built‑in `-w` flag that **automatically creates a disposable git worktree** with its own branch. You don't need to set up worktrees manually — just `cd` into your repo and run:
 
 ```bash
 cd /path/to/your/repo
-hermes -w
+indagis -w
 ```
 
-Hermes will:
+Indagis will:
 
 - Create a temporary worktree under `.worktrees/` inside your repo.
-- Check out an isolated branch (e.g. `hermes/hermes-<hash>`).
+- Check out an isolated branch (e.g. `indagis/hermes-<hash>`).
 - Run the full CLI session inside that worktree.
 
 This is the easiest way to get worktree isolation. You can also combine it with a single query:
 
 ```bash
-hermes -w -z "Fix issue #123"
+indagis -w -z "Fix issue #123"
 ```
 
-For parallel agents, open multiple terminals and run `hermes -w` in each — every invocation gets its own worktree and branch automatically.
+For parallel agents, open multiple terminals and run `indagis -w` in each — every invocation gets its own worktree and branch automatically.
 
 ## Putting It All Together
 
-- Use **git worktrees** to give each Hermes session its own clean checkout.
+- Use **git worktrees** to give each Indagis session its own clean checkout.
 - Use **branches** to capture the high‑level history of your experiments.
 - Use **checkpoints + `/rollback`** to recover from mistakes inside each worktree.
 
@@ -175,3 +194,5 @@ This combination gives you:
 ## Developing the UI surfaces across worktrees
 
 The TypeScript surfaces (`ui-tui/`, `apps/desktop/`) each need a `node_modules`, which a fresh `npm ci` per worktree duplicates across every branch. If you hack on the TUI or desktop app from multiple worktrees, see [TUI & Desktop from Worktrees](../developer-guide/worktree-ui-dev.md) for the `htui` / `hgui` helpers that share one install by symlink.
+
+---

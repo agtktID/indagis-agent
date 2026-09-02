@@ -1,12 +1,13 @@
 ---
-title: Deliverable Mode (Artifacts in Chat)
-sidebar_label: Deliverable Mode
-description: How the agent ships generated charts, PDFs, spreadsheets, and other files as native attachments in messaging platforms.
+id: deliverable-mode
+title: "Deliverable Mode (Artifacts in Chat)"
+sidebar_position: 15
+description: "When Indagis Agent runs inside a messaging gateway (Slack, Discord, Telegram,"
 ---
 
 # Deliverable Mode
 
-When Hermes Agent runs inside a messaging gateway (Slack, Discord, Telegram,
+When Indagis Agent runs inside a messaging gateway (Slack, Discord, Telegram,
 WhatsApp, Signal, etc.), it can deliver generated files directly into the
 chat — not as paths the user has to copy, but as native attachments.
 
@@ -66,8 +67,8 @@ messaging platforms.
 
 **Project-level:** add the bias to `AGENTS.md` / `CLAUDE.md` /
 `.cursorrules` in a project the agent works from, to your global
-persona in `~/.hermes/SOUL.md`, or as a named preset under
-`agent.personalities` in `~/.hermes/config.yaml` (switchable per session
+persona in `~/.indagis/SOUL.md`, or as a named preset under
+`agent.personalities` in `~/.indagis/config.yaml` (switchable per session
 via `/personality`).
 
 The mechanic the agent has to use is simple: render the file to an
@@ -78,7 +79,7 @@ mutilated.
 
 ## Kanban: artifacts ride completion notifications
 
-If you use Hermes' kanban multi-agent workflow, workers can attach
+If you use Indagis' kanban multi-agent workflow, workers can attach
 deliverable files to their `kanban_complete` call:
 
 ```python
@@ -115,14 +116,14 @@ community servers for most popular tools — install whichever you need:
 | **Snowflake / BigQuery** | SQL against data warehouses |
 | **Google Drive** | File search, contents, share management |
 
-Install MCP servers via `~/.hermes/config.yaml` under the `mcp_servers`
+Install MCP servers via `~/.indagis/config.yaml` under the `mcp_servers`
 section. See [MCP integration](./mcp.md) for the full setup guide.
 
 ## Comparison to Perplexity Computer in Slack
 
 Perplexity Computer's Slack integration is built around the same idea:
 the agent generates a deliverable (chart, PDF, slide deck) and posts it
-back into the thread as a native attachment. Hermes Agent's deliverable
+back into the thread as a native attachment. Indagis Agent's deliverable
 mode provides the same user-facing pattern locally:
 
 - Generation happens in the user's own venv / sandbox (no remote tenant).
@@ -132,3 +133,5 @@ mode provides the same user-facing pattern locally:
 
 OAuth tokens stay on the user's machine in `auth.json` / `.env`. No hosted
 token storage. No multi-tenant microVM. Same end result.
+
+---
