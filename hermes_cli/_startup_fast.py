@@ -26,6 +26,7 @@ toward the slow path, which then does the authoritative parse).
 from __future__ import annotations
 
 import os
+from utils import env_with_legacy_alias
 import sys
 
 __all__ = [
@@ -121,7 +122,7 @@ def container_mode_may_be_active() -> bool:
     host's version instead of the container's. Hence: any profile
     ambiguity → assume container mode may be active.
     """
-    if os.environ.get("HERMES_DEV") == "1":
+    if env_with_legacy_alias("INDAGIS_DEV", "HERMES_DEV") == "1":
         return False
     if is_container_startup_environment():
         return False
@@ -208,7 +209,7 @@ def try_fast_version(argv: list[str] | None = None) -> bool:
     if argv is None:
         argv = sys.argv[1:]
     is_termux = is_termux_env()
-    if is_termux and os.environ.get("HERMES_TERMUX_DISABLE_FAST_CLI") == "1":
+    if is_termux and env_with_legacy_alias("INDAGIS_TERMUX_DISABLE_FAST_CLI", "HERMES_TERMUX_DISABLE_FAST_CLI") == "1":
         return False
     if is_termux:
         if not is_termux_fast_version_argv(argv):

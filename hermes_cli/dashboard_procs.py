@@ -13,6 +13,7 @@ patches on ``hermes_cli.main`` resolve unchanged.
 """
 
 import os
+from utils import env_with_legacy_alias
 import subprocess
 import sys
 from pathlib import Path
@@ -183,7 +184,7 @@ def _kill_stale_dashboard_processes(
     # backend child, it sets HERMES_DESKTOP_CHILD_PID so that the update
     # path can skip killing the desktop-managed process.  (#37532)
     exclude: set[int] | None = None
-    raw_pid = os.environ.get("HERMES_DESKTOP_CHILD_PID")
+    raw_pid = env_with_legacy_alias("INDAGIS_DESKTOP_CHILD_PID", "HERMES_DESKTOP_CHILD_PID")
     if raw_pid:
         # The desktop may manage several backends (one per active profile) and
         # passes them comma-separated; a lone int still parses for back-compat.

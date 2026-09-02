@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+from utils import env_with_legacy_alias
 import sys
 import threading
 import time
@@ -1232,7 +1233,7 @@ class CLICommandsMixin:
         try:
             self._session_db.create_session(
                 session_id=new_session_id,
-                source=os.environ.get("HERMES_SESSION_SOURCE", "cli"),
+                source=env_with_legacy_alias("INDAGIS_SESSION_SOURCE", "HERMES_SESSION_SOURCE", "cli"),
                 model=self.model,
                 model_config={
                     "max_iterations": self.max_turns,

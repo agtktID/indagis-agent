@@ -378,7 +378,7 @@ def _run_agent(
                     cfg_provider = str(model_cfg.get("provider") or "").strip().lower()
                 current_provider = (
                     cfg_provider
-                    or os.getenv("HERMES_INFERENCE_PROVIDER", "").strip().lower()
+                    or env_with_legacy_alias("INDAGIS_INFERENCE_PROVIDER", "HERMES_INFERENCE_PROVIDER", "").strip().lower()
                     or "auto"
                 )
                 detected = detect_provider_for_model(explicit_model, current_provider)
