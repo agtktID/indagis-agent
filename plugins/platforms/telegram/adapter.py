@@ -305,7 +305,7 @@ from plugins.platforms.telegram.telegram_network import (
     discover_fallback_ips,
     parse_fallback_ip_env,
 )
-from utils import atomic_replace, env_float, env_int
+from utils import atomic_replace, env_float, env_int, env_with_legacy_alias
 
 _TELEGRAM_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
 _TELEGRAM_IMAGE_MIME_TO_EXT = {
@@ -3804,7 +3804,7 @@ class TelegramAdapter(BasePlatformAdapter):
                     kwargs["limits"] = _pool_limits
                 return kwargs
 
-            disable_fallback = (os.getenv("HERMES_TELEGRAM_DISABLE_FALLBACK_IPS", "").strip().lower() in {"1", "true", "yes", "on"})
+            disable_fallback = (env_with_legacy_alias("INDAGIS_TELEGRAM_DISABLE_FALLBACK_IPS", "HERMES_TELEGRAM_DISABLE_FALLBACK_IPS", "").strip().lower() in {"1", "true", "yes", "on"})
             fallback_ips = self._fallback_ips()
             if not fallback_ips:
                 logger.warning("[%s] Discovering Telegram API fallback IPs via DNS-over-HTTPS…", self.name)
@@ -9898,7 +9898,7 @@ def _resolve_notifications_mode() -> str:
     config.yaml display.platforms.telegram.notifications, defaulting to
     'important'.  Mirrors the post-construction logic that used to live in
     gateway/run.py::_create_adapter()."""
-    mode = os.getenv("HERMES_TELEGRAM_NOTIFICATIONS", "")
+    mode = env_with_legacy_alias("INDAGIS_TELEGRAM_NOTIFICATIONS", "HERMES_TELEGRAM_NOTIFICATIONS", "")
     if not mode:
         try:
             from gateway.config import load_gateway_config

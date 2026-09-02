@@ -33,6 +33,7 @@ import asyncio
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import re
 import sqlite3
 import subprocess
@@ -106,7 +107,7 @@ def _active_profile_name() -> str:
         from hermes_cli.profiles import get_active_profile_name
         return get_active_profile_name() or "default"
     except Exception:
-        return os.getenv("HERMES_PROFILE", "default") or "default"
+        return env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE", "default") or "default"
 
 
 def _profile_home(profile: str) -> Optional[str]:

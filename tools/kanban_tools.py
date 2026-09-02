@@ -33,6 +33,8 @@ import logging
 import os
 from typing import Any, Optional
 
+from utils import env_with_legacy_alias
+
 from agent.redact import redact_sensitive_text
 from hermes_cli.goals import judge_goal
 from tools.registry import registry, tool_error
@@ -394,7 +396,7 @@ def inject_new_comments_from_env(agent: Any) -> bool:
     # notes) so nothing is re-injected next poll.
     _comment_watermark[tid] = max(c.id for c in rows)
 
-    own = (os.environ.get("HERMES_PROFILE") or "").strip()
+    own = (env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE") or "").strip()
     fresh = [c for c in rows if (c.author or "").strip() != own and (c.body or "").strip()]
     if not fresh:
         return False
@@ -968,7 +970,7 @@ def _handle_comment(args: dict, **kw) -> str:
     # the future-worker context with what reads as a system directive.
     # Cross-task commenting itself remains unrestricted (see #19713) —
     # comments are the deliberate handoff channel between tasks.
-    author = os.environ.get("HERMES_PROFILE") or "worker"
+    author = env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE") or "worker"
     board = args.get("board")
     try:
         kb, conn = _connect(board=board)
@@ -1328,7 +1330,7 @@ def _handle_create(args: dict, **kw) -> str:
                     int(goal_max_turns) if goal_max_turns is not None else None
                 ),
                 initial_status=str(initial_status),
-                created_by=os.environ.get("HERMES_PROFILE") or "worker",
+                created_by=env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE") or "worker",
                 session_id=session_id,
             )
             new_task = kb.get_task(conn, new_tid)
@@ -1431,7 +1433,7 @@ def _maybe_auto_subscribe(conn: Any, task_id: str) -> bool:
         message_id = get_session_env("HERMES_SESSION_MESSAGE_ID", "") or ""
         notifier_profile = (
             get_session_env("HERMES_SESSION_PROFILE", "")
-            or os.environ.get("HERMES_PROFILE")
+            or env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE")
         )
         if not notifier_profile:
             try:
