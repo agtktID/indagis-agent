@@ -3107,10 +3107,32 @@ class Migrator:
             )
 
 
+def _resolve_indagis_home() -> Path:
+    """Mirrors hermes_constants.get_indagis_home()'s priority order.
+
+    Standalone script (no import path to hermes_constants): INDAGIS_HOME env
+    -> ~/.indagis (if present) -> HERMES_HOME env (legacy alias) -> ~/.hermes
+    (if present, legacy alias) -> ~/.indagis default.
+    """
+    val = os.environ.get("INDAGIS_HOME", "").strip()
+    if val:
+        return Path(val)
+    default = Path.home() / ".indagis"
+    if default.exists():
+        return default
+    legacy_env = os.environ.get("HERMES_HOME", "").strip()
+    if legacy_env:
+        return Path(legacy_env)
+    legacy_default = Path.home() / ".hermes"
+    if legacy_default.exists():
+        return legacy_default
+    return default
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Migrate OpenClaw user state into Hermes Agent.")
     parser.add_argument("--source", default=str(Path.home() / ".openclaw"), help="OpenClaw home directory")
-    parser.add_argument("--target", default=os.environ.get("INDAGIS_HOME") or str(Path.home() / ".hermes"), help="Hermes home directory")
+    parser.add_argument("--target", default=str(_resolve_indagis_home()), help="Hermes home directory")
     parser.add_argument(
         "--workspace-target",
         help="Optional workspace root where the workspace instructions file should be copied",
