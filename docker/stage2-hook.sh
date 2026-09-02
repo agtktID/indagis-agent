@@ -37,7 +37,8 @@ as_hermes() { [ "$(id -u)" = 0 ] || { "$@"; return; }; s6-setuidgid hermes "$@";
 # supervision-tree side of this.
 #
 # The supported way to match host-side ownership is to start as root (the image
-# default) and pass HERMES_UID/HERMES_GID — or the PUID/PGID aliases — which the
+# default) and pass INDAGIS_UID/INDAGIS_GID (or the deprecated HERMES_UID/
+# HERMES_GID names, or the PUID/PGID aliases) — which the
 # remap block below consumes via usermod/groupmod + targeted chown. That gives
 # the exact same outcome (files owned by your host UID) without breaking s6.
 #
@@ -60,7 +61,7 @@ will fail.
 To make container-written files match your HOST user, DON'T use --user.
 Start the container as root (the default) and pass your host UID/GID instead:
 
-    docker run -e HERMES_UID=\$(id -u) -e HERMES_GID=\$(id -g) ...
+    docker run -e INDAGIS_UID=\$(id -u) -e INDAGIS_GID=\$(id -g) ...
 
 NAS users (Synology / unRAID / UGOS) can use the PUID/PGID aliases:
 
@@ -95,14 +96,23 @@ validate_uid_gid() {
 }
 
 # --- UID/GID remap ---
-# Accept PUID/PGID as aliases for HERMES_UID/HERMES_GID.  NAS users (UGOS,
+# INDAGIS_UID/INDAGIS_GID are preferred; HERMES_UID/HERMES_GID are a
+# deprecated fallback (logged) for existing deployments that haven't
+# migrated yet.  Accept PUID/PGID as aliases too.  NAS users (UGOS,
 # Synology, unRAID) expect the LinuxServer.io PUID/PGID convention and
 # bind-mount /opt/data from a host directory owned by their own UID; without
 # this alias those vars are silently ignored and the s6-setuidgid drop to
-# UID 10000 leaves the runtime unable to read the volume.  HERMES_UID/
-# HERMES_GID still win when both are set.  See #15290, salvages #25872.
-HERMES_UID="${HERMES_UID:-${PUID:-}}"
-HERMES_GID="${HERMES_GID:-${PGID:-}}"
+# UID 10000 leaves the runtime unable to read the volume.  INDAGIS_UID/
+# INDAGIS_GID still win when set alongside PUID/PGID.  See #15290, salvages
+# #25872.
+if [ -n "${HERMES_UID:-}" ] && [ -z "${INDAGIS_UID:-}" ]; then
+    echo "[stage2] HERMES_UID is deprecated and will be removed in a future release; use INDAGIS_UID instead." >&2
+fi
+if [ -n "${HERMES_GID:-}" ] && [ -z "${INDAGIS_GID:-}" ]; then
+    echo "[stage2] HERMES_GID is deprecated and will be removed in a future release; use INDAGIS_GID instead." >&2
+fi
+HERMES_UID="${INDAGIS_UID:-${HERMES_UID:-${PUID:-}}}"
+HERMES_GID="${INDAGIS_GID:-${HERMES_GID:-${PGID:-}}}"
 
 if [ -n "${HERMES_UID:-}" ] && validate_uid_gid "$HERMES_UID" && [ "$HERMES_UID" != "$(id -u hermes)" ]; then
     echo "[stage2] Changing hermes UID to $HERMES_UID"

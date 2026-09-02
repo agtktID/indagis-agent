@@ -554,6 +554,29 @@ def env_bool(key: str, default: bool = False) -> bool:
     return is_truthy_value(os.getenv(key, ""), default=default)
 
 
+def env_with_legacy_alias(new_name: str, old_name: str, default: str = "") -> str:
+    """Read an env var under its new ``INDAGIS_*`` name, falling back to a
+    deprecated legacy ``HERMES_*`` name.
+
+    ``new_name`` always wins when both are set. When only ``old_name`` is
+    set, its value is used but a deprecation warning is logged once per
+    call site so operators can migrate their configuration.
+    """
+    new_value = os.getenv(new_name)
+    if new_value is not None:
+        return new_value
+    old_value = os.getenv(old_name)
+    if old_value is not None:
+        logger.warning(
+            "%s is deprecated and will be removed in a future release; "
+            "use %s instead.",
+            old_name,
+            new_name,
+        )
+        return old_value
+    return default
+
+
 # ─── Proxy Helpers ────────────────────────────────────────────────────────────
 
 

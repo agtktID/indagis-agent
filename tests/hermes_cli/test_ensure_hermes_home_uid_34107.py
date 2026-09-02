@@ -28,6 +28,8 @@ import pytest
 
 class TestResolveHermesUidGid:
     def test_returns_parsed_values_when_both_set(self, monkeypatch):
+        monkeypatch.delenv("INDAGIS_UID", raising=False)
+        monkeypatch.delenv("INDAGIS_GID", raising=False)
         monkeypatch.setenv("HERMES_UID", "1000")
         monkeypatch.setenv("HERMES_GID", "911")
         from hermes_cli.config import _resolve_hermes_uid_gid
@@ -35,9 +37,31 @@ class TestResolveHermesUidGid:
         assert uid == 1000
         assert gid == 911
 
+    def test_indagis_names_are_preferred_over_legacy_hermes_names(self, monkeypatch):
+        monkeypatch.setenv("INDAGIS_UID", "2000")
+        monkeypatch.setenv("INDAGIS_GID", "922")
+        monkeypatch.setenv("HERMES_UID", "1000")
+        monkeypatch.setenv("HERMES_GID", "911")
+        from hermes_cli.config import _resolve_hermes_uid_gid
+        uid, gid = _resolve_hermes_uid_gid()
+        assert uid == 2000
+        assert gid == 922
+
+    def test_indagis_names_work_without_legacy_names_set(self, monkeypatch):
+        monkeypatch.setenv("INDAGIS_UID", "2000")
+        monkeypatch.setenv("INDAGIS_GID", "922")
+        monkeypatch.delenv("HERMES_UID", raising=False)
+        monkeypatch.delenv("HERMES_GID", raising=False)
+        from hermes_cli.config import _resolve_hermes_uid_gid
+        uid, gid = _resolve_hermes_uid_gid()
+        assert uid == 2000
+        assert gid == 922
+
 
     @pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific")
     def test_windows_returns_none_none(self, monkeypatch):
+        monkeypatch.delenv("INDAGIS_UID", raising=False)
+        monkeypatch.delenv("INDAGIS_GID", raising=False)
         monkeypatch.setenv("HERMES_UID", "1000")
         monkeypatch.setenv("HERMES_GID", "911")
         from hermes_cli.config import _resolve_hermes_uid_gid
@@ -53,6 +77,8 @@ class TestResolveHermesUidGid:
 
 class TestChownToHermesUid:
     def test_calls_os_chown_when_both_set(self, tmp_path, monkeypatch):
+        monkeypatch.delenv("INDAGIS_UID", raising=False)
+        monkeypatch.delenv("INDAGIS_GID", raising=False)
         monkeypatch.setenv("HERMES_UID", "1000")
         monkeypatch.setenv("HERMES_GID", "911")
         from hermes_cli import config as cfg
@@ -70,6 +96,8 @@ class TestChownToHermesUid:
         the entrypoint's startup chown -R will pick it up on restart, and
         in most cases the dir was already correctly-owned by the calling
         user anyway."""
+        monkeypatch.delenv("INDAGIS_UID", raising=False)
+        monkeypatch.delenv("INDAGIS_GID", raising=False)
         monkeypatch.setenv("HERMES_UID", "1000")
         monkeypatch.setenv("HERMES_GID", "911")
         from hermes_cli import config as cfg
@@ -87,6 +115,8 @@ class TestChownToHermesUid:
     def test_attributeerror_swallowed_for_windows_compat(self, tmp_path, monkeypatch):
         """os.chown doesn't exist on Windows. Catching AttributeError keeps
         the helper portable."""
+        monkeypatch.delenv("INDAGIS_UID", raising=False)
+        monkeypatch.delenv("INDAGIS_GID", raising=False)
         monkeypatch.setenv("HERMES_UID", "1000")
         monkeypatch.setenv("HERMES_GID", "911")
         from hermes_cli import config as cfg
@@ -106,6 +136,8 @@ class TestChownToHermesUid:
 class TestSecureDirChown:
     @pytest.mark.skipif(sys.platform == "win32", reason="chown is no-op on Windows")
     def test_secure_dir_invokes_chown_when_env_set(self, tmp_path, monkeypatch):
+        monkeypatch.delenv("INDAGIS_UID", raising=False)
+        monkeypatch.delenv("INDAGIS_GID", raising=False)
         monkeypatch.setenv("HERMES_UID", "1000")
         monkeypatch.setenv("HERMES_GID", "911")
         from hermes_cli import config as cfg
@@ -119,6 +151,8 @@ class TestSecureDirChown:
 
     @pytest.mark.skipif(sys.platform == "win32", reason="chown is no-op on Windows")
     def test_secure_dir_no_chown_when_env_unset(self, tmp_path, monkeypatch):
+        monkeypatch.delenv("INDAGIS_UID", raising=False)
+        monkeypatch.delenv("INDAGIS_GID", raising=False)
         monkeypatch.delenv("HERMES_UID", raising=False)
         monkeypatch.delenv("HERMES_GID", raising=False)
         from hermes_cli import config as cfg

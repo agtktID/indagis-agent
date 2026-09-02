@@ -32,7 +32,7 @@ from hermes_constants import (
     set_indagis_home_override,
 )
 from hermes_cli.env_loader import load_hermes_dotenv
-from utils import is_truthy_value
+from utils import env_with_legacy_alias, is_truthy_value
 from tools.environments.local import hermes_subprocess_env
 from agent.replay_cleanup import sanitize_replay_history
 from agent.skill_commands import describe_skill_invocation
@@ -3455,7 +3455,7 @@ def _ensure_skin_watcher() -> None:
 def _resolve_model() -> str:
     env = (
         os.environ.get("HERMES_MODEL", "")
-        or os.environ.get("HERMES_INFERENCE_MODEL", "")
+        or env_with_legacy_alias("INDAGIS_INFERENCE_MODEL", "HERMES_INFERENCE_MODEL")
     ).strip()
     if env:
         return env
@@ -3522,7 +3522,7 @@ def _config_model_target() -> tuple[str, str]:
     """(model, provider) currently selected by config.yaml — and ONLY config.
 
     Unlike `_resolve_model()`, this never reads HERMES_MODEL /
-    HERMES_INFERENCE_MODEL. Those env vars are a launch-scoped seed
+    INDAGIS_INFERENCE_MODEL. Those env vars are a launch-scoped seed
     (`hermes --tui -m <model>`, hosted-instance provisioning); if they
     fed the per-turn sync, the seed would be replayed as a /model switch
     and persisted globally, or would pin the session so dashboard/CLI
@@ -3539,7 +3539,7 @@ def _config_model_target() -> tuple[str, str]:
     elif isinstance(cfg_model, str):
         model = cfg_model.strip()
     # No fallback to _resolve_model() here: that reads HERMES_MODEL /
-    # HERMES_INFERENCE_MODEL, which `hermes --tui -m <model>` sets as a
+    # INDAGIS_INFERENCE_MODEL, which `hermes --tui -m <model>` sets as a
     # session-scoped seed for THIS launch. When config.yaml has no
     # model.default (custom-provider-only setups), falling back to the env
     # seed made the per-turn sync treat the -m flag as "the configured
@@ -3558,7 +3558,7 @@ def _resolve_startup_runtime() -> tuple[str, str | None]:
 
     explicit_model = (
         os.environ.get("HERMES_MODEL", "")
-        or os.environ.get("HERMES_INFERENCE_MODEL", "")
+        or env_with_legacy_alias("INDAGIS_INFERENCE_MODEL", "HERMES_INFERENCE_MODEL")
     ).strip()
     if not explicit_model:
         return model, None
@@ -4500,7 +4500,7 @@ def _apply_model_switch(
     # user's chosen model/provider instead of falling back to global config.
     #
     # We deliberately do NOT write process-global env vars (HERMES_MODEL /
-    # HERMES_INFERENCE_MODEL / HERMES_TUI_PROVIDER / HERMES_INFERENCE_PROVIDER)
+    # INDAGIS_INFERENCE_MODEL / HERMES_TUI_PROVIDER / HERMES_INFERENCE_PROVIDER)
     # here. The desktop backend hosts every same-profile session in ONE process,
     # so mutating os.environ on a /model switch leaked the new model/provider
     # into every OTHER live session's next agent rebuild — switching the model
