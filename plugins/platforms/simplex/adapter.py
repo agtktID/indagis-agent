@@ -49,6 +49,7 @@ import base64
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import random
 import re
 import time
@@ -192,7 +193,7 @@ class SimplexAdapter(BasePlatformAdapter):
         # Text message batching — concatenate rapid-fire messages into one
         # event before dispatching, mirroring Telegram's batching.
         self._text_batch_delay = float(
-            os.getenv("HERMES_SIMPLEX_TEXT_BATCH_DELAY", "0.8")
+            env_with_legacy_alias("INDAGIS_SIMPLEX_TEXT_BATCH_DELAY", "HERMES_SIMPLEX_TEXT_BATCH_DELAY", "0.8")
         )
         self._pending_text_batches: Dict[str, MessageEvent] = {}
         self._pending_text_batch_tasks: Dict[str, asyncio.Task] = {}

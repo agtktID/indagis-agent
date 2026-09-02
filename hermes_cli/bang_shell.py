@@ -18,6 +18,7 @@ composer, so :func:`bang_shell_enabled` gates the feature off there.
 from __future__ import annotations
 
 import os
+from utils import env_with_legacy_alias
 import subprocess
 from typing import Optional
 
@@ -73,7 +74,7 @@ def bang_shell_enabled() -> bool:
         return False
     if env_var_enabled("HERMES_CRON_SESSION"):
         return False
-    if (os.getenv("HERMES_SESSION_PLATFORM") or "").strip():
+    if (env_with_legacy_alias("INDAGIS_SESSION_PLATFORM", "HERMES_SESSION_PLATFORM") or "").strip():
         return False
     return True
 

@@ -147,7 +147,7 @@ from gateway.platforms.helpers import (
     ThreadParticipationTracker,
     convert_table_to_bullets,
 )
-from utils import atomic_json_write, env_float, env_int
+from utils import atomic_json_write, env_float, env_int, env_with_legacy_alias
 from gateway.platforms.base import (
     BasePlatformAdapter,
     MessageEvent,
@@ -499,7 +499,7 @@ def _build_allowed_mentions():
 
 def _discord_ready_timeout_seconds() -> float:
     """Return the Discord ready wait timeout during gateway startup."""
-    raw = os.getenv("HERMES_GATEWAY_PLATFORM_CONNECT_TIMEOUT", "").strip()
+    raw = env_with_legacy_alias("INDAGIS_GATEWAY_PLATFORM_CONNECT_TIMEOUT", "HERMES_GATEWAY_PLATFORM_CONNECT_TIMEOUT", "").strip()
     if raw:
         try:
             return max(0.0, float(raw))
@@ -1752,7 +1752,7 @@ class DiscordAdapter(BasePlatformAdapter):
         ``GatewayRunner._adapter_disconnect_timeout_secs``.
         """
         budget = 5.0  # mirrors gateway _ADAPTER_DISCONNECT_TIMEOUT_SECS_DEFAULT
-        raw = os.getenv("HERMES_GATEWAY_ADAPTER_DISCONNECT_TIMEOUT", "").strip()
+        raw = env_with_legacy_alias("INDAGIS_GATEWAY_ADAPTER_DISCONNECT_TIMEOUT", "HERMES_GATEWAY_ADAPTER_DISCONNECT_TIMEOUT", "").strip()
         if raw:
             try:
                 parsed = float(raw)

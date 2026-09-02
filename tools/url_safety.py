@@ -35,7 +35,7 @@ from typing import Any, Optional
 from urllib.parse import parse_qsl, quote, unquote, urljoin, urlparse, urlsplit, urlunsplit
 
 from hermes_constants import get_indagis_home_override
-from utils import is_truthy_value
+from utils import env_with_legacy_alias, is_truthy_value
 
 logger = logging.getLogger(__name__)
 
@@ -249,7 +249,7 @@ def _resolve_allow_private_urls() -> bool:
     """Resolve the effective private-URL toggle from the active config scope."""
 
     # 1. Env var override (highest priority)
-    env_val = os.getenv("HERMES_ALLOW_PRIVATE_URLS", "").strip().lower()
+    env_val = env_with_legacy_alias("INDAGIS_ALLOW_PRIVATE_URLS", "HERMES_ALLOW_PRIVATE_URLS", "").strip().lower()
     if env_val in {"true", "1", "yes"}:
         return True
     if env_val in {"false", "0", "no"}:

@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import logging
 import os
+from utils import env_with_legacy_alias
 import urllib.parse
 from typing import Optional
 
@@ -220,7 +221,7 @@ def resolve_public_url() -> str:
     malformed config entry falls through to ``""``. This means a typo
     in one surface doesn't prevent the other from working.
     """
-    env_raw = os.environ.get("HERMES_DASHBOARD_PUBLIC_URL", "")
+    env_raw = env_with_legacy_alias("INDAGIS_DASHBOARD_PUBLIC_URL", "HERMES_DASHBOARD_PUBLIC_URL", "")
     env_clean = _normalise_public_url(env_raw)
     if env_clean:
         return env_clean

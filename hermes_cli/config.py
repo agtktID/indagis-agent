@@ -354,7 +354,7 @@ _IGNORED_MANAGED_VALUES = frozenset({"brew", "homebrew"})
 
 def get_managed_system() -> Optional[str]:
     """Return the package manager owning this install, if any."""
-    raw = os.getenv("HERMES_MANAGED", "").strip()
+    raw = env_with_legacy_alias("INDAGIS_MANAGED", "HERMES_MANAGED", "").strip()
     if raw:
         normalized = raw.lower()
         if normalized in _IGNORED_MANAGED_VALUES:
@@ -613,7 +613,7 @@ def format_docker_update_message() -> str:
 def format_managed_message(action: str = "modify this Indagis installation") -> str:
     """Build a user-facing error for managed installs."""
     managed_system = get_managed_system() or "a package manager"
-    raw = os.getenv("HERMES_MANAGED", "").strip().lower()
+    raw = env_with_legacy_alias("INDAGIS_MANAGED", "HERMES_MANAGED", "").strip().lower()
 
     if managed_system == "NixOS":
         env_hint = "true" if raw in _MANAGED_TRUE_VALUES else raw or "true"
@@ -649,7 +649,7 @@ def get_container_exec_info() -> Optional[dict]:
     container.enable = true. It tells the host CLI to exec into the container
     instead of running locally.
     """
-    if os.environ.get("HERMES_DEV") == "1":
+    if env_with_legacy_alias("INDAGIS_DEV", "HERMES_DEV") == "1":
         return None
 
     from hermes_constants import is_container
@@ -689,7 +689,7 @@ def get_container_exec_info() -> Optional[dict]:
 
 # Re-export from hermes_constants — canonical definition lives there.
 from hermes_constants import get_indagis_home, get_process_indagis_home  # noqa: F811,E402
-from utils import atomic_replace, fast_safe_load
+from utils import atomic_replace, env_with_legacy_alias, fast_safe_load
 
 def get_config_path() -> Path:
     """Get the main config file path."""
@@ -704,7 +704,8 @@ def get_project_root() -> Path:
     return Path(__file__).parent.parent.resolve()
 
 def _resolve_hermes_uid_gid() -> tuple[Optional[int], Optional[int]]:
-    """Read the HERMES_UID / HERMES_GID env vars set by Docker deployments.
+    """Read the INDAGIS_UID / INDAGIS_GID env vars set by Docker deployments
+    (falling back to the deprecated ``HERMES_UID`` / ``HERMES_GID`` names).
 
     Docker containers running Hermes commonly set these to map the in-container
     user to a host user so volume-mounted state files end up with the right
@@ -720,8 +721,8 @@ def _resolve_hermes_uid_gid() -> tuple[Optional[int], Optional[int]]:
     """
     if sys.platform == "win32":
         return None, None
-    uid_str = os.environ.get("HERMES_UID", "").strip()
-    gid_str = os.environ.get("HERMES_GID", "").strip()
+    uid_str = env_with_legacy_alias("INDAGIS_UID", "HERMES_UID").strip()
+    gid_str = env_with_legacy_alias("INDAGIS_GID", "HERMES_GID").strip()
     try:
         uid = int(uid_str) if uid_str else None
     except ValueError:
@@ -734,7 +735,7 @@ def _resolve_hermes_uid_gid() -> tuple[Optional[int], Optional[int]]:
 
 
 def _chown_to_hermes_uid(path) -> None:
-    """Chown ``path`` to ``HERMES_UID:HERMES_GID`` if those env vars are set.
+    """Chown ``path`` to ``INDAGIS_UID:INDAGIS_GID`` if those env vars are set.
 
     No-op when:
       - Either env var is unset/invalid
@@ -775,7 +776,7 @@ def _secure_dir(path):
     The execute-only bit on a directory permits cd-through without exposing
     directory listings.
 
-    Also applies ``HERMES_UID``/``HERMES_GID``-based ownership when those env
+    Also applies ``INDAGIS_UID``/``INDAGIS_GID``-based ownership when those env
     vars are set (#34107 — Docker deployments need this so profile subdirs
     created at runtime by kanban workers don't land as root:root and block
     subsequent uid-mapped workers).
@@ -783,7 +784,7 @@ def _secure_dir(path):
     if is_managed():
         return
     try:
-        mode_str = os.environ.get("HERMES_HOME_MODE", "").strip()
+        mode_str = env_with_legacy_alias("INDAGIS_HOME_MODE", "HERMES_HOME_MODE", "").strip()
         mode = int(mode_str, 8) if mode_str else 0o700
     except ValueError:
         mode = 0o700
@@ -803,7 +804,7 @@ def _is_container() -> bool:
     permissions.
     """
     # Explicit opt-out
-    if os.environ.get("HERMES_CONTAINER") or os.environ.get("HERMES_SKIP_CHMOD"):
+    if env_with_legacy_alias("INDAGIS_CONTAINER", "HERMES_CONTAINER") or env_with_legacy_alias("INDAGIS_SKIP_CHMOD", "HERMES_SKIP_CHMOD"):
         return True
     # Docker / Podman marker file
     if os.path.exists("/.dockerenv"):

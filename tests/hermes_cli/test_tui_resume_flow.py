@@ -242,7 +242,7 @@ def test_launch_tui_exports_model_provider_and_toolsets(monkeypatch, main_mod):
 
     env = captured["env"]
     assert env["HERMES_MODEL"] == "nous/hermes-test"
-    assert env["HERMES_INFERENCE_MODEL"] == "nous/hermes-test"
+    assert env["INDAGIS_INFERENCE_MODEL"] == "nous/hermes-test"
     assert env["HERMES_TUI_PROVIDER"] == "nous"
     assert env["HERMES_INFERENCE_PROVIDER"] == "nous"
     assert env["HERMES_TUI_TOOLSETS"] == "web,terminal"
