@@ -90,8 +90,8 @@ def test_clean_text_for_capture_strips_injected_context():
 def test_format_prefetch_context_deduplicates_overlap():
     result = _format_prefetch_context(
         static_facts=["Jordan prefers short answers"],
-        dynamic_facts=["Jordan prefers short answers", "Uses Hermes"],
-        search_results=[{"memory": "Uses Hermes", "similarity": 0.9}],
+        dynamic_facts=["Jordan prefers short answers", "Uses Indagis"],
+        search_results=[{"memory": "Uses Indagis", "similarity": 0.9}],
         max_results=10,
     )
     assert result.count("Jordan prefers short answers") == 1
