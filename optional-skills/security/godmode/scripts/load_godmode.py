@@ -3,7 +3,7 @@ Loader for G0DM0D3 scripts. Handles the exec-scoping issues.
 
 Usage in execute_code:
     exec(open(os.path.expanduser(
-        os.path.join(os.environ.get("INDAGIS_HOME", os.path.expanduser("~/.hermes")), "skills/red-teaming/godmode/scripts/load_godmode.py")
+        os.path.join(os.environ.get("INDAGIS_HOME") or (os.path.expanduser("~/.indagis") if os.path.isdir(os.path.expanduser("~/.indagis")) else os.path.expanduser("~/.hermes")), "skills/red-teaming/godmode/scripts/load_godmode.py")
     )).read())
     
     # Now all functions are available:
@@ -17,7 +17,30 @@ Usage in execute_code:
 import os, sys
 from pathlib import Path
 
-_gm_scripts_dir = Path(os.getenv("INDAGIS_HOME", Path.home() / ".hermes")) / "skills" / "red-teaming" / "godmode" / "scripts"
+
+def _gm_resolve_indagis_home() -> Path:
+    """Mirrors hermes_constants.get_indagis_home()'s priority order.
+
+    Standalone script (no import path to hermes_constants): INDAGIS_HOME env
+    -> ~/.indagis (if present) -> HERMES_HOME env (legacy alias) -> ~/.hermes
+    (if present, legacy alias) -> ~/.indagis default.
+    """
+    val = os.getenv("INDAGIS_HOME", "").strip()
+    if val:
+        return Path(val)
+    default = Path.home() / ".indagis"
+    if default.exists():
+        return default
+    legacy_env = os.getenv("HERMES_HOME", "").strip()
+    if legacy_env:
+        return Path(legacy_env)
+    legacy_default = Path.home() / ".hermes"
+    if legacy_default.exists():
+        return legacy_default
+    return default
+
+
+_gm_scripts_dir = _gm_resolve_indagis_home() / "skills" / "red-teaming" / "godmode" / "scripts"
 
 _gm_old_argv = sys.argv
 sys.argv = ["_godmode_loader"]
@@ -41,5 +64,6 @@ sys.argv = _gm_old_argv
 
 # Cleanup loader vars
 for _gm_cleanup in ['_gm_scripts_dir', '_gm_old_argv', '_gm_load', '_gm_ns', '_gm_k',
-                     '_gm_v', '_gm_script', '_gm_path', '_gm_cleanup']:
+                     '_gm_v', '_gm_script', '_gm_path', '_gm_cleanup',
+                     '_gm_resolve_indagis_home']:
     globals().pop(_gm_cleanup, None)

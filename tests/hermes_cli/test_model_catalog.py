@@ -76,9 +76,19 @@ class TestFetchSuccess:
         from hermes_cli import model_catalog
         manifest = _valid_manifest()
         with patch.object(
-            model_catalog, "_fetch_manifest", return_value=manifest
-        ) as fetch:
-            result = model_catalog.get_catalog(force_refresh=True)
+            model_catalog,
+            "_load_catalog_config",
+            return_value={
+                "enabled": True,
+                "url": "http://master",
+                "ttl_hours": 24.0,
+                "providers": {},
+            },
+        ):
+            with patch.object(
+                model_catalog, "_fetch_manifest", return_value=manifest
+            ) as fetch:
+                result = model_catalog.get_catalog(force_refresh=True)
 
         assert result == manifest
         assert fetch.called
@@ -100,13 +110,23 @@ class TestFetchFailure:
         from hermes_cli import model_catalog
         # Prime disk cache with a fresh copy.
         manifest = _valid_manifest()
-        with patch.object(model_catalog, "_fetch_manifest", return_value=manifest):
-            model_catalog.get_catalog(force_refresh=True)
+        with patch.object(
+            model_catalog,
+            "_load_catalog_config",
+            return_value={
+                "enabled": True,
+                "url": "http://master",
+                "ttl_hours": 24.0,
+                "providers": {},
+            },
+        ):
+            with patch.object(model_catalog, "_fetch_manifest", return_value=manifest):
+                model_catalog.get_catalog(force_refresh=True)
 
-        # Now wipe in-process cache and simulate network failure on refetch.
-        model_catalog.reset_cache()
-        with patch.object(model_catalog, "_fetch_manifest", return_value=None):
-            result = model_catalog.get_catalog(force_refresh=True)
+            # Now wipe in-process cache and simulate network failure on refetch.
+            model_catalog.reset_cache()
+            with patch.object(model_catalog, "_fetch_manifest", return_value=None):
+                result = model_catalog.get_catalog(force_refresh=True)
 
         assert result == manifest
 
@@ -122,8 +142,18 @@ class TestFetchFailure:
         import os as _os
         _os.utime(cache, (old, old))
 
-        with patch.object(model_catalog, "_fetch_manifest", return_value=None):
-            result = model_catalog.get_catalog()
+        with patch.object(
+            model_catalog,
+            "_load_catalog_config",
+            return_value={
+                "enabled": True,
+                "url": "http://master",
+                "ttl_hours": 24.0,
+                "providers": {},
+            },
+        ):
+            with patch.object(model_catalog, "_fetch_manifest", return_value=None):
+                result = model_catalog.get_catalog()
 
         # Stale cache is better than nothing.
         assert result == manifest
@@ -187,8 +217,18 @@ class TestFallbackChain:
                 return None
             return manifest
 
-        with patch.object(model_catalog, "_fetch_manifest", side_effect=fake_fetch):
-            result = model_catalog.get_catalog(force_refresh=True)
+        with patch.object(
+            model_catalog,
+            "_load_catalog_config",
+            return_value={
+                "enabled": True,
+                "url": self.PRIMARY,
+                "ttl_hours": 24.0,
+                "providers": {},
+            },
+        ):
+            with patch.object(model_catalog, "_fetch_manifest", side_effect=fake_fetch):
+                result = model_catalog.get_catalog(force_refresh=True)
 
         assert result == manifest
         assert self.FALLBACK in calls
@@ -198,9 +238,19 @@ class TestCuratedAccessors:
     def test_openrouter_returns_tuples(self, isolated_home):
         from hermes_cli import model_catalog
         with patch.object(
-            model_catalog, "_fetch_manifest", return_value=_valid_manifest()
+            model_catalog,
+            "_load_catalog_config",
+            return_value={
+                "enabled": True,
+                "url": "http://master",
+                "ttl_hours": 24.0,
+                "providers": {},
+            },
         ):
-            result = model_catalog.get_curated_openrouter_models()
+            with patch.object(
+                model_catalog, "_fetch_manifest", return_value=_valid_manifest()
+            ):
+                result = model_catalog.get_curated_openrouter_models()
         assert result == [
             ("anthropic/claude-opus-4.7", "recommended"),
             ("openai/gpt-5.4", ""),
