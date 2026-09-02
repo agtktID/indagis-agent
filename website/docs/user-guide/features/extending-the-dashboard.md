@@ -1,12 +1,12 @@
 ---
 sidebar_position: 17
 title: "Extending the Dashboard"
-description: "Build themes and plugins for the Hermes web dashboard — palettes, typography, layouts, custom tabs, shell slots, page-scoped slots, and backend API routes"
+description: "Build themes and plugins for the Indagis web dashboard — palettes, typography, layouts, custom tabs, shell slots, page-scoped slots, and backend API routes"
 ---
 
 # Extending the Dashboard
 
-The Hermes web dashboard (`indagis dashboard`) is built to be reskinned and extended without forking the codebase. Three layers are exposed:
+The Indagis web dashboard (`indagis dashboard`) is built to be reskinned and extended without forking the codebase. Three layers are exposed:
 
 1. **Themes** — YAML files that repaint the dashboard's palette, typography, layout, and per-component chrome. Drop a file in `~/.indagis/dashboard-themes/`; it appears in the theme switcher.
 2. **UI plugins** — a directory with `manifest.json` + a JavaScript bundle that registers a tab, replaces a built-in page, augments one via page-scoped slots, or injects components into named shell slots.
@@ -284,15 +284,15 @@ Each built-in ships its own palette, typography, and layout — switching produc
 
 | Theme | Palette | Typography | Layout |
 |-------|---------|------------|--------|
-| **Hermes Teal** (`default`) | Dark teal + cream | System stack, 15px | 0.5rem radius, comfortable |
-| **Hermes Teal (Large)** (`default-large`) | Same as default | System stack, 18px, line-height 1.65 | 0.5rem radius, spacious |
+| **Indagis Teal** (`default`) | Dark teal + cream | System stack, 15px | 0.5rem radius, comfortable |
+| **Indagis Teal (Large)** (`default-large`) | Same as default | System stack, 18px, line-height 1.65 | 0.5rem radius, spacious |
 | **Midnight** (`midnight`) | Deep blue-violet | Inter + JetBrains Mono, 14px | 0.75rem radius, comfortable |
 | **Ember** (`ember`) | Warm crimson + bronze | Spectral (serif) + IBM Plex Mono, 15px | 0.25rem radius, comfortable |
 | **Mono** (`mono`) | Grayscale | IBM Plex Sans + IBM Plex Mono, 13px | 0 radius, compact |
 | **Cyberpunk** (`cyberpunk`) | Neon green on black | Share Tech Mono everywhere, 14px | 0 radius, compact |
 | **Rosé** (`rose`) | Pink + ivory | Fraunces (serif) + DM Mono, 16px | 1rem radius, spacious |
 
-Themes that reference Google Fonts (all except Hermes Teal) load the stylesheet on demand — the first time you switch to them a `<link>` tag is injected into `<head>`.
+Themes that reference Google Fonts (all except Indagis Teal) load the stylesheet on demand — the first time you switch to them a `<link>` tag is injected into `<head>`.
 
 ### Full theme YAML reference
 
@@ -361,7 +361,7 @@ Refresh the dashboard after creating the file. Switch themes live from the heade
 
 ## Plugins
 
-A dashboard plugin is a directory with a `manifest.json`, a pre-built JS bundle, and optionally a CSS file and a Python file with FastAPI routes. Plugins live next to other Hermes plugins in `~/.indagis/plugins/<name>/` — the dashboard extension is a `dashboard/` subfolder inside that plugin directory, so one plugin can extend both the CLI/gateway and the dashboard from a single install.
+A dashboard plugin is a directory with a `manifest.json`, a pre-built JS bundle, and optionally a CSS file and a Python file with FastAPI routes. Plugins live next to other Indagis plugins in `~/.indagis/plugins/<name>/` — the dashboard extension is a `dashboard/` subfolder inside that plugin directory, so one plugin can extend both the CLI/gateway and the dashboard from a single install.
 
 Plugins don't bundle React or UI components. They use the **Plugin SDK** exposed on `window.__HERMES_PLUGIN_SDK__`. This keeps plugin bundles tiny (typically a few KB) and avoids version conflicts.
 
@@ -526,7 +526,7 @@ SDK.components.TabsList
 SDK.components.TabsTrigger
 SDK.components.PluginSlot    // render a named slot (useful for nested plugin UIs)
 
-// Hermes API client + raw fetcher
+// Indagis API client + raw fetcher
 SDK.api                      // typed client — getStatus, getSessions, getConfig, ...
 SDK.fetchJSON                // raw fetch for custom endpoints (plugin-registered routes)
 
@@ -549,7 +549,7 @@ SDK.fetchJSON("/api/plugins/my-plugin/data")
 
 `fetchJSON` injects the session auth token, surfaces errors as thrown exceptions, and parses JSON automatically.
 
-#### Calling built-in Hermes endpoints
+#### Calling built-in Indagis endpoints
 
 ```javascript
 // Agent status
@@ -579,7 +579,7 @@ window.__HERMES_PLUGINS__.registerSlot("my-plugin", "header-left", MyCrest);
 | Slot | Location |
 |------|----------|
 | `backdrop` | Inside the `<Backdrop />` layer stack, above the noise layer. |
-| `header-left` | Before the Hermes brand in the top bar. |
+| `header-left` | Before the Indagis brand in the top bar. |
 | `header-right` | Before the theme/language switchers in the top bar. |
 | `header-banner` | Full-width strip below the nav. |
 | `sidebar` | Cockpit sidebar rail — **only rendered when `layoutVariant === "cockpit"`**. |
@@ -749,7 +749,7 @@ Routes are mounted under `/api/plugins/<name>/`, so the above becomes:
 
 Plugin API routes sit behind the dashboard's normal auth gate — unauthenticated requests get a `401` before the plugin route runs, and requests to a disabled plugin's routes are rejected at request time. Still, **don't expose the dashboard on a public interface with `--host 0.0.0.0` if you run untrusted plugins** — an authenticated session can reach their routes too.
 
-#### Accessing Hermes internals
+#### Accessing Indagis internals
 
 Backend routes run inside the dashboard process, so they can import from the hermes-agent codebase directly:
 
@@ -862,7 +862,7 @@ cp hermes-example-plugins/strike-freedom-cockpit/theme/strike-freedom.yaml \
 cp -r hermes-example-plugins/strike-freedom-cockpit ~/.indagis/plugins/
 ```
 
-Open the dashboard, pick **Strike Freedom** from the theme switcher. The cockpit sidebar appears, the crest shows in the header, the tagline replaces the footer. Switch back to **Hermes Teal** and the plugin remains installed but invisible (the `sidebar` slot only renders under the `cockpit` layout variant).
+Open the dashboard, pick **Strike Freedom** from the theme switcher. The cockpit sidebar appears, the crest shows in the header, the tagline replaces the footer. Switch back to **Indagis Teal** and the plugin remains installed but invisible (the `sidebar` slot only renders under the `cockpit` layout variant).
 
 Read the plugin source (`strike-freedom-cockpit/dashboard/dist/index.js` in the companion repo) to see how it reads CSS vars, guards against older dashboards without slot support, and registers three slots from one bundle.
 

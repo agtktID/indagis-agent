@@ -13,7 +13,7 @@ The `x_search` tool lets the agent search X (Twitter) posts, profiles, and threa
 
 ## `x_search` vs `xurl`
 
-Hermes can expose two different X surfaces:
+Indagis can expose two different X surfaces:
 
 | Surface | Use it for | Do not use it for |
 |---------|------------|-------------------|
