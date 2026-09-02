@@ -39,6 +39,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import re
 from dataclasses import dataclass
 from typing import Optional
@@ -163,7 +164,7 @@ def _extract_json_blob(raw: str) -> Optional[dict]:
 def _profile_author() -> str:
     """Mirror of ``hermes_cli.kanban._profile_author``."""
     return (
-        os.environ.get("HERMES_PROFILE")
+        env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE")
         or os.environ.get("USER")
         or "decomposer"
     )

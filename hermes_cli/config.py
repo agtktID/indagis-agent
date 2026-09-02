@@ -354,7 +354,7 @@ _IGNORED_MANAGED_VALUES = frozenset({"brew", "homebrew"})
 
 def get_managed_system() -> Optional[str]:
     """Return the package manager owning this install, if any."""
-    raw = os.getenv("HERMES_MANAGED", "").strip()
+    raw = env_with_legacy_alias("INDAGIS_MANAGED", "HERMES_MANAGED", "").strip()
     if raw:
         normalized = raw.lower()
         if normalized in _IGNORED_MANAGED_VALUES:
@@ -613,7 +613,7 @@ def format_docker_update_message() -> str:
 def format_managed_message(action: str = "modify this Indagis installation") -> str:
     """Build a user-facing error for managed installs."""
     managed_system = get_managed_system() or "a package manager"
-    raw = os.getenv("HERMES_MANAGED", "").strip().lower()
+    raw = env_with_legacy_alias("INDAGIS_MANAGED", "HERMES_MANAGED", "").strip().lower()
 
     if managed_system == "NixOS":
         env_hint = "true" if raw in _MANAGED_TRUE_VALUES else raw or "true"
@@ -649,7 +649,7 @@ def get_container_exec_info() -> Optional[dict]:
     container.enable = true. It tells the host CLI to exec into the container
     instead of running locally.
     """
-    if os.environ.get("HERMES_DEV") == "1":
+    if env_with_legacy_alias("INDAGIS_DEV", "HERMES_DEV") == "1":
         return None
 
     from hermes_constants import is_container
@@ -784,7 +784,7 @@ def _secure_dir(path):
     if is_managed():
         return
     try:
-        mode_str = os.environ.get("HERMES_HOME_MODE", "").strip()
+        mode_str = env_with_legacy_alias("INDAGIS_HOME_MODE", "HERMES_HOME_MODE", "").strip()
         mode = int(mode_str, 8) if mode_str else 0o700
     except ValueError:
         mode = 0o700
@@ -804,7 +804,7 @@ def _is_container() -> bool:
     permissions.
     """
     # Explicit opt-out
-    if os.environ.get("HERMES_CONTAINER") or os.environ.get("HERMES_SKIP_CHMOD"):
+    if env_with_legacy_alias("INDAGIS_CONTAINER", "HERMES_CONTAINER") or env_with_legacy_alias("INDAGIS_SKIP_CHMOD", "HERMES_SKIP_CHMOD"):
         return True
     # Docker / Podman marker file
     if os.path.exists("/.dockerenv"):

@@ -18,6 +18,7 @@ import argparse
 import contextlib
 import json
 import os
+from utils import env_with_legacy_alias
 import shlex
 import sys
 import time
@@ -1170,7 +1171,7 @@ def _is_delegated_child_cli_mutation(args: argparse.Namespace) -> bool:
 
         return is_delegated_child_process_context()
     except Exception:
-        return bool(os.environ.get("HERMES_DELEGATED_CHILD_CONTEXT"))
+        return bool(env_with_legacy_alias("INDAGIS_DELEGATED_CHILD_CONTEXT", "HERMES_DELEGATED_CHILD_CONTEXT"))
 
 
 # ---------------------------------------------------------------------------
@@ -2127,9 +2128,9 @@ def _cmd_attach_rm(args: argparse.Namespace) -> int:
 
 
 def _worker_run_id_for(task_id: str) -> Optional[int]:
-    if os.environ.get("HERMES_KANBAN_TASK") != task_id:
+    if env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK") != task_id:
         return None
-    raw = os.environ.get("HERMES_KANBAN_RUN_ID")
+    raw = env_with_legacy_alias("INDAGIS_KANBAN_RUN_ID", "HERMES_KANBAN_RUN_ID")
     if not raw:
         return None
     try:
