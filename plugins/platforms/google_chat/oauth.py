@@ -84,8 +84,22 @@ except (ModuleNotFoundError, ImportError):
     # (mirrors the same fallback used by the google-workspace skill's
     # _hermes_home.py shim).
     def get_indagis_home() -> Path:
+        # Mirrors hermes_constants' resolution order: INDAGIS_HOME env ->
+        # ~/.indagis (if present) -> HERMES_HOME env (legacy alias) ->
+        # ~/.hermes (if present, legacy alias) -> ~/.indagis default.
         val = os.environ.get("INDAGIS_HOME", "").strip()
-        return Path(val) if val else Path.home() / ".hermes"
+        if val:
+            return Path(val)
+        default = Path.home() / ".indagis"
+        if default.exists():
+            return default
+        legacy_env = os.environ.get("HERMES_HOME", "").strip()
+        if legacy_env:
+            return Path(legacy_env)
+        legacy_default = Path.home() / ".hermes"
+        if legacy_default.exists():
+            return legacy_default
+        return default
 
     def display_indagis_home() -> str:
         home = get_indagis_home()
