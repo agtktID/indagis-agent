@@ -25,14 +25,14 @@ from typing import Optional
 from hermes_cli.config import cfg_get
 
 from tools.interrupt import is_interrupted
-from utils import env_var_enabled, is_truthy_value
+from utils import env_var_enabled, env_with_legacy_alias, is_truthy_value
 
 logger = logging.getLogger(__name__)
 
 # Freeze YOLO mode at module import time. Reading os.environ on every call
 # would allow any skill running inside the process to set this variable and
 # instantly bypass all approval checks — a prompt-injection escalation path.
-_YOLO_MODE_FROZEN: bool = is_truthy_value(os.getenv("HERMES_YOLO_MODE", ""))
+_YOLO_MODE_FROZEN: bool = is_truthy_value(env_with_legacy_alias("INDAGIS_YOLO_MODE", "HERMES_YOLO_MODE", ""))
 
 # Per-thread/per-task gateway session identity.
 # Gateway runs agent turns concurrently in executor threads, so reading a
@@ -221,7 +221,7 @@ def _get_session_platform() -> str:
 
         return get_session_env("HERMES_SESSION_PLATFORM", "") or ""
     except Exception:
-        return os.getenv("HERMES_SESSION_PLATFORM", "") or ""
+        return os.environ.get("HERMES_SESSION_PLATFORM", "") or ""
 
 
 def _is_cron_approval_context() -> bool:

@@ -3,6 +3,7 @@
 import logging
 import ntpath
 import os
+from utils import env_with_legacy_alias
 import platform
 import re
 import shutil
@@ -732,7 +733,7 @@ def _find_bash() -> str:
 
     candidates: list[str] = []
 
-    custom = os.environ.get("HERMES_GIT_BASH_PATH")
+    custom = env_with_legacy_alias("INDAGIS_GIT_BASH_PATH", "HERMES_GIT_BASH_PATH")
     if custom and os.path.isfile(custom):
         candidates.append(custom)
 

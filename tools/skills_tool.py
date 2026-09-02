@@ -80,7 +80,7 @@ from typing import Dict, Any, List, Optional, Set, Tuple
 
 from tools.registry import registry, tool_error
 from hermes_cli.config import cfg_get
-from utils import env_var_enabled
+from utils import env_var_enabled, env_with_legacy_alias
 from agent.skill_utils import (
     EXCLUDED_SKILL_DIRS as _EXCLUDED_SKILL_DIRS,
     is_skill_support_path as _is_skill_support_path,
@@ -653,7 +653,7 @@ def _is_skill_disabled(name: str, platform: str = None) -> bool:
         from hermes_cli.config import load_config
         config = load_config()
         skills_cfg = config.get("skills", {})
-        resolved_platform = platform or os.getenv("HERMES_PLATFORM") or _get_session_platform()
+        resolved_platform = platform or env_with_legacy_alias("INDAGIS_PLATFORM", "HERMES_PLATFORM") or _get_session_platform()
         global_disabled = skills_cfg.get("disabled", [])
         if resolved_platform:
             platform_disabled = cfg_get(skills_cfg, "platform_disabled", resolved_platform)
