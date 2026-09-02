@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import logging
 import os
+from utils import env_with_legacy_alias
 import threading
 import time
 from dataclasses import dataclass, field
@@ -288,7 +289,7 @@ class CodexAppServerSession:
         self._codex_home = codex_home
         self._permission_profile = (
             permission_profile or _HERMES_TO_CODEX_PERMISSION_PROFILE.get(
-                os.environ.get("HERMES_TERMINAL_SECURITY_MODE", "auto"),
+                env_with_legacy_alias("INDAGIS_TERMINAL_SECURITY_MODE", "HERMES_TERMINAL_SECURITY_MODE", "auto"),
                 "workspace-write",
             )
         )

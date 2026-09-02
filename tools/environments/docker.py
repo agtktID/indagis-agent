@@ -9,6 +9,7 @@ import hashlib
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import re
 import shlex
 import shutil
@@ -286,7 +287,7 @@ def find_docker() -> Optional[str]:
         return _docker_executable
 
     # 1. Explicit override via env var (e.g. for Podman on immutable distros)
-    override = os.getenv("INDAGIS_DOCKER_BINARY") or os.getenv("HERMES_DOCKER_BINARY")
+    override = os.getenv("INDAGIS_DOCKER_BINARY") or env_with_legacy_alias("INDAGIS_DOCKER_BINARY", "HERMES_DOCKER_BINARY")
     if override and os.path.isfile(override) and os.access(override, os.X_OK):
         _docker_executable = override
         logger.info("Using INDAGIS_DOCKER_BINARY/HERMES_DOCKER_BINARY override: %s", override)

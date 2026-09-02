@@ -33,6 +33,7 @@ import functools
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import platform
 import re
 import secrets
@@ -1159,7 +1160,7 @@ def _execute_remote(
             f"HERMES_RPC_TOKEN={shlex.quote(rpc_token)} "
             f"PYTHONDONTWRITEBYTECODE=1"
         )
-        tz = os.getenv("HERMES_TIMEZONE", "").strip()
+        tz = env_with_legacy_alias("INDAGIS_TIMEZONE", "HERMES_TIMEZONE", "").strip()
         if tz:
             env_prefix += f" TZ={shlex.quote(tz)}"
 
@@ -1475,7 +1476,7 @@ def execute_code(
         # code reflects the correct wall-clock time.  Only TZ is set —
         # HERMES_TIMEZONE is an internal Hermes setting and must not leak
         # into child processes.
-        _tz_name = os.getenv("HERMES_TIMEZONE", "").strip()
+        _tz_name = env_with_legacy_alias("INDAGIS_TIMEZONE", "HERMES_TIMEZONE", "").strip()
         if _tz_name:
             child_env["TZ"] = _tz_name
         child_env.pop("HERMES_TIMEZONE", None)

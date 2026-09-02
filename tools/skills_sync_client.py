@@ -59,6 +59,7 @@ import hashlib
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 import time
 import stat as _stat
 from datetime import datetime, timezone
@@ -315,7 +316,7 @@ def resolve_sync_base_url() -> Optional[str]:
     env var and config key exist to point a dev/staging build at another
     plane. Returns None only if the default is somehow blanked out.
     """
-    env = os.getenv("HERMES_SYNC_BASE_URL")
+    env = env_with_legacy_alias("INDAGIS_SYNC_BASE_URL", "HERMES_SYNC_BASE_URL")
     if env and env.strip():
         return env.strip().rstrip("/")
     try:
@@ -700,7 +701,7 @@ def stable_device_id() -> str:
     # the env.
     import os
 
-    env_name = (os.environ.get("HERMES_SYNC_DEVICE_NAME") or "").strip()
+    env_name = (env_with_legacy_alias("INDAGIS_SYNC_DEVICE_NAME", "HERMES_SYNC_DEVICE_NAME") or "").strip()
     val = env_name if env_name else _default_device_label()
     try:
         path.parent.mkdir(parents=True, exist_ok=True)

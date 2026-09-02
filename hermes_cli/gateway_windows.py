@@ -30,6 +30,7 @@ from __future__ import annotations
 import ctypes
 import locale
 import os
+from utils import env_with_legacy_alias
 import re
 import shlex
 import shutil
@@ -249,9 +250,9 @@ def _launch_elevated_install(
     start_on_login: bool | None = None,
 ) -> bool:
     """Launch an elevated gateway install via UAC and return True on handoff."""
-    old_start_now = os.environ.get("HERMES_GATEWAY_INSTALL_START_NOW")
-    old_start_on_login = os.environ.get("HERMES_GATEWAY_INSTALL_START_ON_LOGIN")
-    old_handoff = os.environ.get("HERMES_GATEWAY_ELEVATED_HANDOFF")
+    old_start_now = env_with_legacy_alias("INDAGIS_GATEWAY_INSTALL_START_NOW", "HERMES_GATEWAY_INSTALL_START_NOW")
+    old_start_on_login = env_with_legacy_alias("INDAGIS_GATEWAY_INSTALL_START_ON_LOGIN", "HERMES_GATEWAY_INSTALL_START_ON_LOGIN")
+    old_handoff = env_with_legacy_alias("INDAGIS_GATEWAY_ELEVATED_HANDOFF", "HERMES_GATEWAY_ELEVATED_HANDOFF")
     try:
         if start_now is not None:
             os.environ["HERMES_GATEWAY_INSTALL_START_NOW"] = "1" if start_now else "0"

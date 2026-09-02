@@ -30,6 +30,7 @@ sort it out.  Python doesn't get that luxury.
 from __future__ import annotations
 
 import os
+from utils import env_with_legacy_alias
 import sys
 
 __all__ = ["configure_windows_stdio", "is_windows"]
@@ -105,7 +106,7 @@ def configure_windows_stdio() -> bool:
         _CONFIGURED = True
         return False
 
-    if os.environ.get("HERMES_DISABLE_WINDOWS_UTF8") in {"1", "true", "True", "yes"}:
+    if env_with_legacy_alias("INDAGIS_DISABLE_WINDOWS_UTF8", "HERMES_DISABLE_WINDOWS_UTF8") in {"1", "true", "True", "yes"}:
         _CONFIGURED = True
         return False
 

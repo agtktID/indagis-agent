@@ -1388,7 +1388,7 @@ def _(rid, params: dict) -> dict:
 
         api_key = get_secret("HERMES_API_KEY", "") or cfg.get("api_key", "")
         masked = f"****{api_key[-4:]}" if len(api_key) > 4 else "(not set)"
-        base_url = os.environ.get("HERMES_BASE_URL", "") or cfg.get("base_url", "")
+        base_url = env_with_legacy_alias("INDAGIS_BASE_URL", "HERMES_BASE_URL", "") or cfg.get("base_url", "")
 
         sections = [
             {

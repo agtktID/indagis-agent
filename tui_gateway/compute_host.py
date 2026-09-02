@@ -11,6 +11,7 @@ import argparse
 import concurrent.futures
 import json
 import os
+from utils import env_with_legacy_alias
 import signal
 import subprocess
 import sys
@@ -161,7 +162,7 @@ class ComputeHost:
         self._heartbeat_secs = (
             float(heartbeat_secs)
             if heartbeat_secs is not None
-            else float(os.environ.get("HERMES_COMPUTE_HOST_HEARTBEAT_SECS") or "15")
+            else float(env_with_legacy_alias("INDAGIS_COMPUTE_HOST_HEARTBEAT_SECS", "HERMES_COMPUTE_HOST_HEARTBEAT_SECS") or "15")
         )
         if self._heartbeat_secs > 0:
             threading.Thread(target=self._heartbeat_loop, name="compute-host-heartbeat", daemon=True).start()
@@ -806,7 +807,7 @@ def _rss_mb(pid: int) -> float:
 
 def _default_workers() -> int:
     try:
-        return max(2, int(os.environ.get("HERMES_TUI_RPC_POOL_WORKERS") or "8"))
+        return max(2, int(env_with_legacy_alias("INDAGIS_TUI_RPC_POOL_WORKERS", "HERMES_TUI_RPC_POOL_WORKERS") or "8"))
     except (TypeError, ValueError):
         return 8
 

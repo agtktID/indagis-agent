@@ -7,6 +7,7 @@ tool registration or provider resolution.
 
 import logging
 import os
+from utils import env_with_legacy_alias
 import re
 import sys
 from pathlib import Path
@@ -305,7 +306,7 @@ def _detect_environment(env: str) -> bool:
         # kanban toolset. Mirror the same signals the kanban tools themselves
         # gate on (``tools/kanban_tools.py``) so the offer filter agrees with
         # tool availability.
-        if os.getenv("HERMES_KANBAN_TASK") or os.getenv("HERMES_KANBAN_BOARD"):
+        if env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK") or env_with_legacy_alias("INDAGIS_KANBAN_BOARD", "HERMES_KANBAN_BOARD"):
             # ...but only when this execution actually owns the dispatcher's
             # task. A delegate_task child or a cron job fired in-process from a
             # worker sees the worker's vars without being that worker.
@@ -458,7 +459,7 @@ def get_disabled_skill_names(platform: str | None = None) -> Set[str]:
     from gateway.session_context import get_session_env
     resolved_platform = (
         platform
-        or os.getenv("HERMES_PLATFORM")
+        or env_with_legacy_alias("INDAGIS_PLATFORM", "HERMES_PLATFORM")
         or get_session_env("HERMES_SESSION_PLATFORM")
     )
     global_disabled = _normalize_string_set(skills_cfg.get("disabled"))
