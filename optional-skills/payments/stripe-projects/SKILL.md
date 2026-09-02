@@ -2,7 +2,7 @@
 name: stripe-projects
 description: Provision SaaS services + sync creds via Stripe Projects.
 version: 0.1.0
-author: Teknium (teknium1), Hermes Agent
+author: Teknium (teknium1), Indagis Agent
 license: MIT
 platforms: [linux, macos]
 metadata:
@@ -13,7 +13,7 @@ metadata:
 
 # Stripe Projects Skill
 
-Wraps the [Stripe Projects](https://projects.dev) CLI plugin so Hermes can provision SaaS services (Neon, Twilio, Vercel, etc.), generate and sync credentials into the user's `.env`, and manage billing across providers from one place.
+Wraps the [Stripe Projects](https://projects.dev) CLI plugin so Indagis can provision SaaS services (Neon, Twilio, Vercel, etc.), generate and sync credentials into the user's `.env`, and manage billing across providers from one place.
 
 Gated `[linux, macos]` while the broader payments cluster matures on Windows. The Stripe CLI itself is cross-platform; this gate is a posture for the cluster, not a hard limit.
 

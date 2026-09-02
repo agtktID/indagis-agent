@@ -1,7 +1,7 @@
 """Filesystem paths for the unbroker skill (stdlib only).
 
 All per-subject data lives under PDD_DATA_DIR (default: $INDAGIS_HOME/unbroker),
-which is the same trust boundary Hermes uses for .env and OAuth tokens.
+which is the same trust boundary Indagis uses for .env and OAuth tokens.
 """
 from __future__ import annotations
 

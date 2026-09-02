@@ -1,8 +1,8 @@
 ---
 name: hermes-s6-container-supervision
-description: Modify or debug s6 services in the Hermes Docker image.
+description: Modify or debug s6 services in the Indagis Docker image.
 version: 1.0.0
-author: Hermes Agent
+author: Indagis Agent
 license: MIT
 platforms: [linux]
 environments: [s6]
@@ -12,18 +12,18 @@ metadata:
     related_skills: [hermes-agent]
 ---
 
-# Hermes s6-overlay Container Supervision
+# Indagis s6-overlay Container Supervision
 
 ## When to use this skill
 
 Load this skill when you're working on:
-- Adding or removing a static service in the Hermes Docker image (something that should be supervised at every container start, like the dashboard)
+- Adding or removing a static service in the Indagis Docker image (something that should be supervised at every container start, like the dashboard)
 - Diagnosing why a per-profile gateway isn't starting, restarting, or surviving `docker restart`
 - Understanding why the container's CMD is `/opt/hermes/docker/main-wrapper.sh` and how leading-dash args reach the user's program
 - Modifying `cont-init.d` boot scripts (UID remap, volume seeding, profile reconciliation)
 - Changing the rendered run-script for per-profile gateways (Phase 4)
 
-If you're just running the Hermes Agent and want to use Docker, see `website/docs/user-guide/docker.md` instead.
+If you're just running the Indagis Agent and want to use Docker, see `website/docs/user-guide/docker.md` instead.
 
 ## Architecture at a glance
 
@@ -176,4 +176,4 @@ Check whether something is invoking `s6-svscanctl -t` or `/run/s6/basedir/bin/ha
 ## Related skills
 
 - `hermes-agent-dev`: General hermes-agent codebase navigation
-- `hermes-tool-quirks`: Specific Hermes-tool workarounds (sed/grep/etc.) — load when debugging the s6 stack's interaction with hermes built-in tools.
+- `hermes-tool-quirks`: Specific Indagis-tool workarounds (sed/grep/etc.) — load when debugging the s6 stack's interaction with hermes built-in tools.
