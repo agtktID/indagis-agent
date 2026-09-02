@@ -9,6 +9,7 @@ import sys
 import threading
 from pathlib import Path
 
+import hermes_constants
 from dotenv import load_dotenv
 from utils import atomic_replace, fast_safe_load
 
@@ -474,7 +475,7 @@ def load_hermes_dotenv(
     """
     loaded: list[Path] = []
 
-    home_path = Path(hermes_home or os.getenv("INDAGIS_HOME", Path.home() / ".hermes"))
+    home_path = Path(hermes_home) if hermes_home else hermes_constants.get_indagis_home()
     user_env = home_path / ".env"
     project_env_path = Path(project_env) if project_env else None
 
@@ -744,9 +745,4 @@ def _load_secrets_config(home_path: Path) -> dict:
 
 def _process_hermes_home() -> Path:
     """The INDAGIS_HOME the shared config cache is keyed to."""
-    try:
-        from hermes_constants import get_indagis_home
-
-        return get_indagis_home()
-    except Exception:
-        return Path.home() / ".hermes"
+    return hermes_constants.get_indagis_home()
