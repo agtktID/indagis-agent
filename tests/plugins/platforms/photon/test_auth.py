@@ -251,7 +251,7 @@ def test_create_project_omits_spectrum_flag(monkeypatch: pytest.MonkeyPatch) -> 
         return _FakeResponse(json_body={"success": True, "id": "new-proj"})
 
     monkeypatch.setattr(photon_auth.httpx, "post", fake_post)
-    data = photon_auth.create_project("tok", name="Hermes Agent")
+    data = photon_auth.create_project("tok", name="Indagis Agent")
     assert data["id"] == "new-proj"
     # Spectrum is always provisioned at create-time; the field was dropped
     # from the API schema, so we must not send it.
