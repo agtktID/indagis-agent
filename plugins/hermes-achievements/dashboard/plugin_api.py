@@ -20,8 +20,22 @@ try:
 except ImportError:
     import os as _os
     def get_indagis_home() -> Path:  # type: ignore[misc]
+        # Mirrors hermes_constants' resolution order: INDAGIS_HOME env ->
+        # ~/.indagis (if present) -> HERMES_HOME env (legacy alias) ->
+        # ~/.hermes (if present, legacy alias) -> ~/.indagis default.
         val = (_os.environ.get("INDAGIS_HOME") or "").strip()
-        return Path(val) if val else Path.home() / ".hermes"
+        if val:
+            return Path(val)
+        default = Path.home() / ".indagis"
+        if default.exists():
+            return default
+        legacy_env = (_os.environ.get("HERMES_HOME") or "").strip()
+        if legacy_env:
+            return Path(legacy_env)
+        legacy_default = Path.home() / ".hermes"
+        if legacy_default.exists():
+            return legacy_default
+        return default
 
 try:
     from fastapi import APIRouter
