@@ -65,7 +65,13 @@ Source of truth: live via SendMessage check-ins with each peer session (no autom
 - Merge gate: tests pass, no push without user confirmation in that session's own conversation
 
 ### card-009 — Phase 1b: home-directory resolution bypasses + CONTRIBUTING.md
-- Owner: assigned to vibrant-jemison-ffb7ce-26
+- **DONE — commit e3afb7f6f on branch claude/vibrant-jemison-ffb7ce, NOT YET PUSHED (awaiting that session's user confirmation)**
+- 16 files fixed, 316+130 targeted tests verified passing (test_mcp_serve.py 88/88 among them). 2 pre-existing unrelated failures in test_openclaw_migration.py confirmed unrelated (separate rebrand_text() bug).
+- Deliberately NOT touched (verified, not oversights): hermes_cli/auth.py (already correct on its primary path; its one literal ~/.hermes is an intentional pytest seat-belt comparing against real unmocked HOME), hermes_cli/main.py desktop-ssh path (documented, tracks bug #69551, Electron client hardcodes $HOME/.hermes/desktop-ssh independent of INDAGIS_HOME).
+- Gotcha found: `from hermes_constants import get_indagis_home` at module level breaks tests/test_mcp_serve.py's monkeypatch (`monkeypatch.setattr(hermes_constants, "get_indagis_home", ...)`) — must use `import hermes_constants` + `hermes_constants.get_indagis_home()` instead, in mcp_serve.py / google_chat/adapter.py / openviking/__init__.py.
+- Bonus fix: CONTRIBUTING.md also had `git clone https://github.com/NousResearch/hermes-agent.git` (wrong upstream), fixed alongside the ~/.hermes paths.
+- **Collision note**: a parallel workflow agent (launched by the orchestrator, unaware of this commit) redid the same work independently — its output will be discarded in favor of this already-verified commit once cherry-picked.
+- Original owner: vibrant-jemison-ffb7ce-26
 - Scope: hermes_cli/env_loader.py, mcp_serve.py (4 sites), hermes_cli/auth.py, hermes_cli/main.py, plugins/hermes-achievements/dashboard/plugin_api.py, plugins/platforms/{google_chat,telegram}/*, plugins/memory/openviking/__init__.py, optional-skills/{security/godmode,productivity/canvas,migration/openclaw-migration}/scripts/*, skills/{productivity/google-workspace,research/grounded-citations}/scripts/_hermes_home.py (delete duplicate, call the shared resolver instead), CONTRIBUTING.md dev-setup section
 - State: **Ready** — task sent, from ADR 0001 (accepted) / plan Phase 1. This is the highest-severity item: new users/contributors with no INDAGIS_HOME set are silently routed to the wrong home directory.
 - Acceptance: every site uses get_indagis_home()/get_process_indagis_home() (matching the pattern already correct elsewhere in the same files); no literal `~/.hermes` construction remains outside the intentional legacy-fallback ladder in hermes_constants.py; CONTRIBUTING.md matches README.md's already-correct convention
