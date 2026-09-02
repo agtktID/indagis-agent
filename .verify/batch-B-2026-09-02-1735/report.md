@@ -1,0 +1,751 @@
+# Batch B Verify Report — 2026-09-02-1735
+
+- Total files processed: 79
+- Target worktree: `/home/user/Documents/indagis-agent-work/.claude/worktrees/refonte-hermes-doc/website`
+- Source verbatim: `/tmp/indagis-tasks/`
+
+## user-guide/egress
+
+- `docs/user-guide/egress/index.md`
+  - status: EXISTS
+  - title: Egress proxy
+  - bytes: 595
+  - sha256: `4495b3a7b9a6370a71078dccdcf1f0f38a6348dedfec4d3397e615fcee7318be`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/egress/iron-proxy.md`
+  - status: EXISTS
+  - title: Egress credential-injection proxy (iron-proxy)
+  - bytes: 39880
+  - sha256: `82d608269fcc8767d879e433b67cf8a54158e2a8842051efc1d0dea1566877f0`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+
+## user-guide/features
+
+- `docs/user-guide/features/acp.md`
+  - status: EXISTS
+  - title: ACP Host Integration
+  - bytes: 14810
+  - sha256: `2f1aeef45d3f0a80f38d48d3d9ecd3e55fa3f18cb8373af6b2a3708b3753fa20`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/api-server.md`
+  - status: EXISTS
+  - title: API Server
+  - bytes: 33359
+  - sha256: `7dcee68a12836bbb8dd6673ec939c3a9233929ba32280598e6cc6d56e84b024c`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/batch-processing.md`
+  - status: EXISTS
+  - title: Batch Processing
+  - bytes: 9243
+  - sha256: `b7c9dcbe5ae4a7a614283fb89dfac9cbf58e7b0be30aa466a41866aa6bb8a56d`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/browser.md`
+  - status: EXISTS
+  - title: Browser Automation
+  - bytes: 46230
+  - sha256: `c33543957e563dc499fbdb4dbc43a494e7e4a88649d1d5184726cf5f48bd9116`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/built-in-plugins.md`
+  - status: EXISTS
+  - title: Built-in Plugins
+  - bytes: 20624
+  - sha256: `0db3f67338c49f44bc15c02bddfc717e59cea7f7d47f1f26e4981d2eb59cc7e9`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/code-execution.md`
+  - status: EXISTS
+  - title: Code Execution
+  - bytes: 12530
+  - sha256: `084e91503188dbaacd23b79cd186634bb3bd891223267e0c15c57a1520231520`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/codex-app-server-runtime.md`
+  - status: EXISTS
+  - title: Codex App-Server Runtime (optional)
+  - bytes: 31511
+  - sha256: `2d0ec75680b27b8006fd593f08ce50b76a8d29526d52b28a42f9f07efae741ea`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/computer-use.md`
+  - status: EXISTS
+  - title: Computer Use
+  - bytes: 28511
+  - sha256: `42a1115b486f1f14f42a4261ed22e09c34716e1951e35801fb7ff89def1f0936`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/context-files.md`
+  - status: EXISTS
+  - title: Context Files
+  - bytes: 11046
+  - sha256: `ed688998173163f3afb80858fcf32f984c1e59ea8faf2bfeb5e978719e5ce2e5`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/context-references.md`
+  - status: EXISTS
+  - title: Context References
+  - bytes: 5443
+  - sha256: `03aaebe1b4b4066edae8fc0a11ca92fddad4dabf41ffd37ea87f36422fba0c48`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/credential-pools.md`
+  - status: EXISTS
+  - title: Credential Pools
+  - bytes: 10726
+  - sha256: `a398b57500d514c49093724070f48608f76ce92871734e8cc8a1586ed5d5f386`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/cron.md`
+  - status: EXISTS
+  - title: Scheduled Tasks (Cron)
+  - bytes: 53124
+  - sha256: `b20b2a7747df3f5d0c80083c1662e0301a56ae0eff378bfbd949689ce929f4df`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/curator.md`
+  - status: EXISTS
+  - title: Curator
+  - bytes: 24226
+  - sha256: `781544629a408eecfef8ca35bcd78aa8b142ca6dad97ffed7b1bed4574b6a310`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/delegation.md`
+  - status: EXISTS
+  - title: Subagent Delegation
+  - bytes: 34581
+  - sha256: `9d4507e4d89ec0f7d6b2ca7cb858caeff2f85468386cfcb2a6ab10df16e17fcc`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/deliverable-mode.md`
+  - status: EXISTS
+  - title: Deliverable Mode (Artifacts in Chat)
+  - bytes: 5770
+  - sha256: `a7727eca1c85be6304fd90bbe7a6a88cb43a7834123f810b8c1c1858abdc92f7`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/document-extraction.md`
+  - status: CREATE
+  - title: Document Extraction
+  - bytes: 3816
+  - sha256: `c13874afd118acd8ee81d66dc14e0a8a75ca008516784183a9df1af0d812060c`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/extending-the-dashboard.md`
+  - status: EXISTS
+  - title: Extending the Dashboard
+  - bytes: 41470
+  - sha256: `ab1d85a0e73bc65aa0afcadce305679ebf58cbc61a035ead80ab581d7497cde1`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/fallback-providers.md`
+  - status: EXISTS
+  - title: Fallback Providers
+  - bytes: 21640
+  - sha256: `71233d31ccc0e1ee3d1f7bf14d836e3f1d2b7772e4b549299574a37aa694ca96`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/goals.md`
+  - status: EXISTS
+  - title: Persistent Goals
+  - bytes: 20649
+  - sha256: `f951d72c7d6cd466b1a6f435b75fc87693172424ae07dfc4e11522aff923eed7`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/heartbeat.md`
+  - status: CREATE
+  - title: Session Heartbeats
+  - bytes: 3650
+  - sha256: `d0e3ae4b40e438b0760e6fa1549a6ac7dc971e98d1bc71feaf2c051e1583e760`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/honcho.md`
+  - status: EXISTS
+  - title: Honcho Memory
+  - bytes: 17530
+  - sha256: `5ee8e3c0812184dfc8a62671b8b7309a6ee5501333007f1496d0c34960ae9c24`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/hooks.md`
+  - status: EXISTS
+  - title: Event Hooks
+  - bytes: 102191
+  - sha256: `bcdda8685f1907878835a5965476806c34b8a787b593939b95fb8eac29414d0a`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/image-generation.md`
+  - status: EXISTS
+  - title: Image Generation
+  - bytes: 13981
+  - sha256: `bef4bf07d2f5d0fe4b91d9c555750016e6470813334dc2aefcf9ca9eda52d42a`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/kanban-tutorial.md`
+  - status: EXISTS
+  - title: Kanban tutorial
+  - bytes: 20341
+  - sha256: `b176ff8121934fc159b58b05b21345cb20722cbd2d31415867c31c094f204c04`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/kanban-worker-lanes.md`
+  - status: EXISTS
+  - title: Kanban worker lanes
+  - bytes: 11642
+  - sha256: `ed5d40c221762ee91d073e000d7cd39f3754771b3d46dc64283a9e40b7536f6b`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/kanban.md`
+  - status: EXISTS
+  - title: Kanban (Multi-Agent Board)
+  - bytes: 93823
+  - sha256: `c8f41db2613d0ea5889f91d4be98c53b2b83476955e481d58532efcde01ea9a3`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/loops.md`
+  - status: CREATE
+  - title: Recurring Loops
+  - bytes: 7330
+  - sha256: `53c28a2f0959b356f6764c7032cfa2a968b126ae4f2a3b8554e524c4282f700a`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/lsp.md`
+  - status: EXISTS
+  - title: LSP — Semantic Diagnostics
+  - bytes: 12034
+  - sha256: `2fae5ea6a0527eb3cc4c23277b64097bd8673cca3f7b71c0dfeec8341043f209`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/mcp.md`
+  - status: EXISTS
+  - title: MCP (Model Context Protocol)
+  - bytes: 38237
+  - sha256: `564e62d1045b7d4af06977738124c02915691e03bbc1a811e0ed680df036f525`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/memory-providers.md`
+  - status: EXISTS
+  - title: Memory Providers
+  - bytes: 32090
+  - sha256: `37650f7fdfd32d486c1790a42b4397421d3f2eda1fa2404816648eda8dbb883e`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/memory.md`
+  - status: EXISTS
+  - title: Persistent Memory
+  - bytes: 21948
+  - sha256: `ea1018c2585d92cdab0544a28e2bd451bfdfd5f13ccbd89806279a230180fb79`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/mixture-of-agents.md`
+  - status: EXISTS
+  - title: Mixture of Agents
+  - bytes: 13017
+  - sha256: `5bf8a00ff7e10f076647c1c92df50d303d0e9077d8893a13cfc47394a5a0b557`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/overview.md`
+  - status: EXISTS
+  - title: Features Overview
+  - bytes: 7506
+  - sha256: `6e3e41ebaabaf01283eb61cef1d19abf54388b08ec7be7c8c2c2555969edb95f`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/personality.md`
+  - status: EXISTS
+  - title: Personality & SOUL.md
+  - bytes: 9754
+  - sha256: `6d10ca8c50562327a83b839ad133ca4b9524050da3c06120c560acd5b4bbea93`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/pets.md`
+  - status: EXISTS
+  - title: Pets (Petdex Mascots)
+  - bytes: 10760
+  - sha256: `7d8219d900f21534de0095a98890f68533178b142984476edbc0d7bed38c0174`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/plugins.md`
+  - status: EXISTS
+  - title: Plugins
+  - bytes: 45453
+  - sha256: `805f0187524bc20f02b0560618b6261734a8f2860b768e1df5531eb913f97896`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/provider-routing.md`
+  - status: EXISTS
+  - title: Provider Routing
+  - bytes: 5842
+  - sha256: `47098de590cae628b661f9964c773baa80321dcc672eb72c9dd429a434aa9976`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/skills.md`
+  - status: EXISTS
+  - title: Skills System
+  - bytes: 50279
+  - sha256: `d55d0faa57bf1d35e973b4a592bee915e81a4d83f37ddf5661d0c17aa14ea43f`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/skins.md`
+  - status: EXISTS
+  - title: Skins & Themes
+  - bytes: 11733
+  - sha256: `2b046c0bbb70c3f4daa163b89e663be6d905a6401eec8d10700de72de1c300cd`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/spotify.md`
+  - status: EXISTS
+  - title: Spotify
+  - bytes: 14716
+  - sha256: `9228bf784ea30267d10fbd1c8444d045700b3b01959f1f7aa7ff52187914aa6a`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/subscription-proxy.md`
+  - status: EXISTS
+  - title: Subscription Proxy
+  - bytes: 6263
+  - sha256: `d3ec1d608fdcf4d64ed95ad7822629c4995c9e46137aaae134877f685d68233d`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/tool-gateway.md`
+  - status: EXISTS
+  - title: Nous Tool Gateway
+  - bytes: 12089
+  - sha256: `5ab5a0ac2efd3fffcac7fafddabbf37a6336624add7ad5e4a6530493d9e3637a`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/tool-search.md`
+  - status: EXISTS
+  - title: Tool Search
+  - bytes: 11614
+  - sha256: `337e7a1d1274ad8cb1f0c788b484561b317afddd12d8b2e8b51b2b618d24075b`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/tools.md`
+  - status: EXISTS
+  - title: Tools & Toolsets
+  - bytes: 12619
+  - sha256: `df24abc5befd810bc7b2fda83b34720bbbc40696344d9a5ffd72440b7a7ec123`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/tts.md`
+  - status: EXISTS
+  - title: Voice & TTS
+  - bytes: 42704
+  - sha256: `97af26a5d443a35f2066d907f859a318eb6797505605b29afbc8cbaee3b02967`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/vision.md`
+  - status: EXISTS
+  - title: Vision & Image Paste
+  - bytes: 10750
+  - sha256: `e6f7f9cad4e94fd1d51f3d9344177812524f9091983ed29f983262e17ee7b4eb`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/voice-mode.md`
+  - status: EXISTS
+  - title: Voice Mode
+  - bytes: 26177
+  - sha256: `d64febe4c2e225702c183be6b8187153d006c4d3f579ea4124a808311c4eebb7`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/wake-word.md`
+  - status: EXISTS
+  - title: Wake Word
+  - bytes: 15090
+  - sha256: `fc7bfd98f0ba4fc9d41fd58c58a6f413b46befa60ee370db7359530367a217cb`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/web-dashboard.md`
+  - status: EXISTS
+  - title: Indagis Web Dashboard
+  - bytes: 75569
+  - sha256: `39bec75584a6fd2caf675e272ee3fc98656579dea22a0938a4ac0bbf4534422b`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/web-search.md`
+  - status: EXISTS
+  - title: Web Search & Extract
+  - bytes: 20787
+  - sha256: `00655862d0d083e506aacb905a32764c730808df96b635818bd4fc50469fc448`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/features/x-search.md`
+  - status: EXISTS
+  - title: X (Twitter) Search
+  - bytes: 9911
+  - sha256: `09677cbbfee2589a36a1df81869ddb30d893401d733e74c77211a0aaaf0c9374`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+
+## user-guide (racine)
+
+- `docs/user-guide/bot-mode.md`
+  - status: CREATE
+  - title: Bot Mode
+  - bytes: 23561
+  - sha256: `d55c84080caec550f62cf3c70ba6ca7c6e71ed53b913424ab82397bdc1e97196`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/checkpoints-and-rollback.md`
+  - status: EXISTS
+  - title: Checkpoints and /rollback
+  - bytes: 11421
+  - sha256: `c2a283ff2d63973711a81f2118e575d7601d7a9f1365bf96b3b25cb05a7a4bc1`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/cli.md`
+  - status: EXISTS
+  - title: CLI Interface
+  - bytes: 26606
+  - sha256: `4a9e5c12f0b1b486ac09b6fc5cc7784ec1cc7f6a70bef80e4f9a4c7733fea592`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/configuration.md`
+  - status: EXISTS
+  - title: Indagis Agent Configuration
+  - bytes: 193942
+  - sha256: `15d17356cf109c092bd25cd1526d1ee0043eb50d4f77e477a6f450429d59fcaa`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/configuring-models.md`
+  - status: EXISTS
+  - title: Configuring Models
+  - bytes: 21612
+  - sha256: `c90fbfddd600fd5566e1984355ea4aa4480057a000418611a4979aae849edbf0`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/desktop.md`
+  - status: EXISTS
+  - title: Indagis Desktop
+  - bytes: 54327
+  - sha256: `877ca5a44c9bc70244cd2f6224376350da4e9c4b3677e4f30378711226e4e400`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/docker.md`
+  - status: EXISTS
+  - title: Indagis Docker Setup
+  - bytes: 47422
+  - sha256: `f3d7039cce8589f2782bb8ecb657de85ee0b1b9ae92964ad43cb7eeab416cac3`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/git-worktrees.md`
+  - status: EXISTS
+  - title: Git Worktrees
+  - bytes: 6602
+  - sha256: `fdd3f10a4311df5f6f8de49042b10f17901764e2da3adeab2a100172d2a56948`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/import-from-other-agents.md`
+  - status: EXISTS
+  - title: Import from Other Agents
+  - bytes: 3485
+  - sha256: `2ae36ede8e4e9fc6ee53428e6ccd710eba39bc53a42d763b85c91e71b93f4266`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/local-models.md`
+  - status: CREATE
+  - title: Local Models
+  - bytes: 5899
+  - sha256: `bfd2c8b757e4c7047a76e09269623679a01dd191bb6eba1df48d8972b935b240`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/managed-scope.md`
+  - status: EXISTS
+  - title: Managed Scope
+  - bytes: 6115
+  - sha256: `89ff6c6c98aea28441a131c678d56cdea2b046e93b7d25e65ba43576cf5c066a`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/multi-connection-desktop.md`
+  - status: CREATE
+  - title: Connecting Desktop to Many Indagis Instances
+  - bytes: 18238
+  - sha256: `c1dd265919cab35ad458a7e24f0f4e7d68bcd423cde8fefe9daf483a084003a1`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/multi-profile-gateways.md`
+  - status: EXISTS
+  - title: Running Many Gateways at Once
+  - bytes: 21686
+  - sha256: `1e71457895042892fe24c19b33626d5f2170e48dcd7795b39254ab304dd1cec9`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/profile-distributions.md`
+  - status: EXISTS
+  - title: Profile Distributions: Share a Whole Agent
+  - bytes: 31571
+  - sha256: `84bfdb2fa91c4b8e76f04a4576c922a263e9481cc0c5aa6d400f636f2a3f7d9b`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/profiles.md`
+  - status: EXISTS
+  - title: Profiles: Running Multiple Agents
+  - bytes: 16434
+  - sha256: `153d2f5ba26f21d9350a5837926535040d96be0cc6466d33242a8d52eaebae0f`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/security.md`
+  - status: EXISTS
+  - title: Security
+  - bytes: 44180
+  - sha256: `04fe3a6c65488a3771af1d565b52330a6d5c68ca4c20b03889e6f33dbeb7a906`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/sessions.md`
+  - status: EXISTS
+  - title: Sessions
+  - bytes: 45994
+  - sha256: `baf53e7e2da028985307fd4b9774a8f3f02920afb0a9b56985c52c7f1ac8bb53`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/tui.md`
+  - status: EXISTS
+  - title: TUI
+  - bytes: 18160
+  - sha256: `2057067adbfcd9c6e76e97e72cc2f1b018660f20019134a17d30a195568789bb`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/which-file-does-what.md`
+  - status: EXISTS
+  - title: Which File Does What?
+  - bytes: 6609
+  - sha256: `1dd6fa2fb0cbf7638a8cae62abea647646d830952277da3b144ed0273412d6bf`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/windows-native.md`
+  - status: EXISTS
+  - title: Windows (Native) Guide
+  - bytes: 24192
+  - sha256: `b7831569e96d80931e00f9bd8d9311f5b2210136af5ebaff45c0b9d066de4798`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/windows-wsl-quickstart.md`
+  - status: EXISTS
+  - title: Windows (WSL2) Guide
+  - bytes: 19919
+  - sha256: `40564cc2fa7eb4dbf42392d0a3d64ee5797b1717dcc3cd85d237f7d4bb409847`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+
+## user-guide/secrets
+
+- `docs/user-guide/secrets/bitwarden.md`
+  - status: EXISTS
+  - title: Bitwarden Secrets Manager
+  - bytes: 10284
+  - sha256: `b52e184cca105430d7cee10e1c9f42def562312e00da7a07ac0f4e752dee6a7c`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/secrets/command.md`
+  - status: EXISTS
+  - title: Command Helper Secret Source
+  - bytes: 3525
+  - sha256: `aebd0b3115273f4d79b56725342942c5e49b7a993a216d871add089525300b4d`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/secrets/index.md`
+  - status: EXISTS
+  - title: Secrets
+  - bytes: 4367
+  - sha256: `35e1919e09409aeda398f2cb5aa5de5b4d9109913053903aac492bfc92ceb742`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+- `docs/user-guide/secrets/onepassword.md`
+  - status: EXISTS
+  - title: 1Password
+  - bytes: 11338
+  - sha256: `299be746fdc32233180a6ddb9169d7781a682004a7ebd9c05ff28471b4512a82`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+
+## user-guide/skills
+
+- `docs/user-guide/skills/google-workspace.md`
+  - status: EXISTS
+  - title: Google Workspace — Gmail, Calendar, Drive, Sheets & Docs
+  - bytes: 6431
+  - sha256: `361584d76203c349d52ce7a0c10258691085b97358faf66d3fea8d2dae49b1f6`
+  - frontmatter: ✓
+  - no Hermes / Nous Research / nousresearch.com: ✓
+  - no standalone `hermes ` CLI command: ✓
+  - no `Nous Portal` / provider `nous` slug: ✓
+
+## Residual grep checks
+
+Command:
+```bash
+cd /home/user/Documents/indagis-agent-work/.claude/worktrees/refonte-hermes-doc/website && grep -rl 'Hermes\|Nous Research\|nousresearch\.com' docs/user-guide 2>&1 | head -20
+```
+
+Result: **0 matches within the 79 batch-B files**.
+
+Additional checks (all zero in batch-B files):
+- standalone `hermes ` CLI command: 0
+- `Nous Portal` brand: 0
+- `provider: nous` slug: 0
+- `hermes-agent.nousresearch.com` URLs: 0
+- `nousresearch.com`: 0
+
+## Verdict
+
+**PASS**
