@@ -54,7 +54,7 @@ if _race_path.exists():
     exec(compile(open(_race_path).read(), str(_race_path), 'exec'), _caller_globals)
 
 # ═══════════════════════════════════════════════════════════════════
-# Hermes config paths
+# Indagis config paths
 # ═══════════════════════════════════════════════════════════════════
 
 INDAGIS_HOME = Path(os.getenv("INDAGIS_HOME", Path.home() / ".hermes"))
@@ -319,7 +319,7 @@ def _detect_model_family(model: str) -> str:
 
 
 def _get_current_model() -> tuple:
-    """Read current model and provider from Hermes config.yaml.
+    """Read current model and provider from Indagis config.yaml.
     Returns (model_str, base_url)."""
     if not CONFIG_PATH.exists():
         return None, None
@@ -669,7 +669,7 @@ def auto_jailbreak(model=None, base_url=None, api_key=None,
             if verbose:
                 print(f"[LOCKED] Config written to: {config_written}")
                 print()
-                print("[DONE] Jailbreak locked in. Restart Hermes for changes to take effect.")
+                print("[DONE] Jailbreak locked in. Restart Indagis for changes to take effect.")
         else:
             if verbose:
                 print("[DRY RUN] Would write config + prefill but dry_run=True")
@@ -738,7 +738,7 @@ def undo_jailbreak(verbose=True):
             print(f"[UNDO] Deleted {PREFILL_PATH}")
 
     if verbose:
-        print("[UNDO] Jailbreak removed. Restart Hermes for changes to take effect.")
+        print("[UNDO] Jailbreak removed. Restart Indagis for changes to take effect.")
 
 
 # ═══════════════════════════════════════════════════════════════════

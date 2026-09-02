@@ -50,9 +50,9 @@ mkdir -p "$WORKSPACE"/{taste,audio/{voiceover,sfx},assets,scenes,checkpoints,too
 echo "  ✓ $WORKSPACE"
 
 # ─────────────────────────────────────────────────────────────────────
-# 3. Create Hermes profiles
+# 3. Create Indagis profiles
 # ─────────────────────────────────────────────────────────────────────
-echo "═══ Creating Hermes profiles ═══"
+echo "═══ Creating Indagis profiles ═══"
 
 {{PROFILE_CREATE_COMMANDS}}
 
@@ -66,7 +66,7 @@ configure_profile() {
     local toolsets_json="$2"     # JSON array string, e.g. '["kanban","terminal","file"]'
     local skills_json="$3"       # JSON array string, e.g. '["ascii-video"]'
     python3 - "$profile" "$toolsets_json" "$skills_json" "$WORKSPACE" <<'PY'
-"""Patch a Hermes profile config.yaml using PyYAML so we don't depend on the
+"""Patch a Indagis profile config.yaml using PyYAML so we don't depend on the
 exact default-config string format. Validates the patch took effect and exits
 non-zero if anything's off."""
 import json
