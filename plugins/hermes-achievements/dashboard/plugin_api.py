@@ -1,6 +1,9 @@
-"""Hermes Achievements dashboard plugin backend.
+"""Achievements dashboard plugin backend for Indagis Agent.
 
-Mounted at /api/plugins/hermes-achievements/ by Hermes dashboard.
+Retains the "hermes-achievements" plugin id/directory/storage-key for
+backward compatibility with existing installs (see README.md "Naming" note).
+
+Mounted at /api/plugins/hermes-achievements/ by the Indagis dashboard.
 """
 from __future__ import annotations
 
