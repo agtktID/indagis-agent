@@ -8,7 +8,7 @@ import shutil
 import stat
 import tempfile
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, Optional, Union
 from urllib.parse import urlparse
 
 import yaml
@@ -554,13 +554,17 @@ def env_bool(key: str, default: bool = False) -> bool:
     return is_truthy_value(os.getenv(key, ""), default=default)
 
 
-def env_with_legacy_alias(new_name: str, old_name: str, default: str = "") -> str:
+def env_with_legacy_alias(
+    new_name: str, old_name: str, default: Optional[str] = ""
+) -> Optional[str]:
     """Read an env var under its new ``INDAGIS_*`` name, falling back to a
     deprecated legacy ``HERMES_*`` name.
 
     ``new_name`` always wins when both are set. When only ``old_name`` is
     set, its value is used but a deprecation warning is logged once per
-    call site so operators can migrate their configuration.
+    call site so operators can migrate their configuration. Pass
+    ``default=None`` (instead of the default ``""``) when the call site
+    needs to distinguish "neither var set" from "set to an empty string".
     """
     new_value = os.getenv(new_name)
     if new_value is not None:

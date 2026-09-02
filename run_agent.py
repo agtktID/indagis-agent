@@ -96,7 +96,7 @@ def _session_source_for_agent(platform: Optional[str]) -> str:
 
         source = get_session_env("HERMES_SESSION_SOURCE", "")
     except Exception:
-        source = os.environ.get("HERMES_SESSION_SOURCE", "")
+        source = env_with_legacy_alias("INDAGIS_SESSION_SOURCE", "HERMES_SESSION_SOURCE", "")
     source = str(source or "").strip()
     if source:
         return source
@@ -220,7 +220,7 @@ from agent.tool_dispatch_helpers import (
     _extract_error_preview,
     _trajectory_normalize_msg,  # noqa: F401  # re-exported for tests that `from run_agent import _trajectory_normalize_msg`
 )
-from utils import atomic_json_write, base_url_host_matches, base_url_hostname, env_float, is_truthy_value, model_forces_max_completion_tokens
+from utils import atomic_json_write, base_url_host_matches, base_url_hostname, env_float, env_with_legacy_alias, is_truthy_value, model_forces_max_completion_tokens
 
 
 # Internal flags that mark a message as ephemeral empty-response/prefill
@@ -1406,8 +1406,8 @@ class AIAgent:
         if cfg is not None:
             return cfg, False
 
-        env_timeout = os.getenv("HERMES_API_CALL_STALE_TIMEOUT")
-        if env_timeout is not None:
+        env_timeout = env_with_legacy_alias("INDAGIS_API_CALL_STALE_TIMEOUT", "HERMES_API_CALL_STALE_TIMEOUT")
+        if env_timeout:
             return float(env_timeout), False
 
         # Reasoning-model floor: auto-mitigation for known reasoning models
@@ -2631,7 +2631,7 @@ class AIAgent:
 
     @staticmethod
     def _hook_payload_max_chars() -> int:
-        raw = os.getenv("HERMES_PLUGIN_PAYLOAD_MAX_CHARS", "50000")
+        raw = env_with_legacy_alias("INDAGIS_PLUGIN_PAYLOAD_MAX_CHARS", "HERMES_PLUGIN_PAYLOAD_MAX_CHARS", "50000")
         try:
             return max(1000, int(raw))
         except (TypeError, ValueError):
@@ -3439,7 +3439,7 @@ class AIAgent:
         """
         try:
             import os as _os
-            env = _os.environ.get("HERMES_FILE_MUTATION_VERIFIER")
+            env = env_with_legacy_alias("INDAGIS_FILE_MUTATION_VERIFIER", "HERMES_FILE_MUTATION_VERIFIER", None)
             if env is not None:
                 return env.strip().lower() not in {"0", "false", "no", "off"}
             # Read from the persisted config.yaml so gateway and CLI share
@@ -3536,7 +3536,7 @@ class AIAgent:
         """
         try:
             import os as _os
-            env = _os.environ.get("HERMES_TURN_COMPLETION_EXPLAINER")
+            env = env_with_legacy_alias("INDAGIS_TURN_COMPLETION_EXPLAINER", "HERMES_TURN_COMPLETION_EXPLAINER", None)
             if env is not None:
                 return env.strip().lower() not in {"0", "false", "no", "off"}
             # Read from the persisted config.yaml so gateway and CLI share
@@ -3694,7 +3694,7 @@ class AIAgent:
         self._last_activity_ts = time.time()
         self._last_activity_desc = bound_activity_description(desc)
         self._last_activity_provenance = normalize_activity_provenance(provenance)
-        if os.environ.get("HERMES_KANBAN_TASK"):
+        if env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK"):
             try:
                 from tools.kanban_tools import (
                     heartbeat_current_worker_from_env,
@@ -3860,7 +3860,7 @@ class AIAgent:
         headers = getattr(http_response, "headers", None)
         if not headers:
             return
-        _dev = is_truthy_value(os.environ.get("HERMES_DEV_CREDITS"))
+        _dev = is_truthy_value(env_with_legacy_alias("INDAGIS_DEV_CREDITS", "HERMES_DEV_CREDITS"))
 
         # ── Parse (fail-open → miss; never overwrite good state with None) ──
         try:
