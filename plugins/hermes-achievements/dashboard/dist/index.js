@@ -1,10 +1,12 @@
 (function () {
   "use strict";
-  // hermes-achievements dashboard plugin
+  // hermes-achievements dashboard plugin (bundled into Indagis Agent).
+  // Plugin id/API path kept as "hermes-achievements" for backward compatibility
+  // with existing installs' on-disk unlock state — see README.md "Naming" note.
   // Originally authored by @PCinkusz — https://github.com/PCinkusz/hermes-achievements (MIT).
-  // Bundled into hermes-agent. Upstream repo remains the staging ground for new
-  // badges and UI iteration; the in-progress scan banner below is a small addition
-  // layered on top of the original dist bundle.
+  // Upstream repo remains the staging ground for new badges and UI iteration;
+  // the in-progress scan banner below is a small addition layered on top of
+  // the original dist bundle.
   const SDK = window.__HERMES_PLUGIN_SDK__;
   if (!SDK || !window.__HERMES_PLUGINS__) return;
 
