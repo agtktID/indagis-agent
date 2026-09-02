@@ -630,8 +630,8 @@ class TestSystemUnitHermesHome:
 
         unit = gateway_cli.generate_systemd_unit(system=True, run_as_user="alice")
 
-        assert 'INDAGIS_HOME=/home/alice/.hermes' in unit
-        assert '/root/.hermes' not in unit
+        assert 'INDAGIS_HOME=/home/alice/.indagis' in unit
+        assert '/root/.indagis' not in unit
 
 
     def test_user_unit_unaffected_by_change(self):
@@ -781,7 +781,7 @@ class TestHermesHomeForTargetUser:
         monkeypatch.delenv("INDAGIS_HOME", raising=False)
 
         result = gateway_cli._hermes_home_for_target_user("/home/alice")
-        assert result == "/home/alice/.hermes"
+        assert result == "/home/alice/.indagis"
 
 
 
