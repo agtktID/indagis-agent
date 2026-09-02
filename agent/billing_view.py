@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import logging
 import os
+from utils import env_with_legacy_alias
 import uuid
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
@@ -414,7 +415,7 @@ def _dev_fixture_billing_state() -> Optional[BillingState]:
     Mirrors ``HERMES_DEV_CREDITS_FIXTURE``; the usage *bar* still comes from
     ``HERMES_DEV_CREDITS_FIXTURE`` (set both to pair a bar with a billing state).
     """
-    name = (os.getenv("HERMES_DEV_BILLING_FIXTURE") or "").strip().lower()
+    name = (env_with_legacy_alias("INDAGIS_DEV_BILLING_FIXTURE", "HERMES_DEV_BILLING_FIXTURE") or "").strip().lower()
     if not name:
         return None
 

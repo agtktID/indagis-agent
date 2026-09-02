@@ -8,6 +8,7 @@ finish immediately after editing code without fresh evidence.
 from __future__ import annotations
 
 import os
+from utils import env_with_legacy_alias
 import tempfile
 from pathlib import Path
 from typing import Any, Iterable
@@ -104,7 +105,7 @@ def verify_on_stop_enabled(config: dict[str, Any] | None = None) -> bool:
     bool forces the behavior in either direction. A missing or unrecognized
     value falls back to the surface-aware ``"auto"`` default.
     """
-    env = os.environ.get("HERMES_VERIFY_ON_STOP")
+    env = env_with_legacy_alias("INDAGIS_VERIFY_ON_STOP", "HERMES_VERIFY_ON_STOP", None)
     if env is not None:
         return env.strip().lower() not in {"0", "false", "no", "off"}
     if config is None:

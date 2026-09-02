@@ -39,7 +39,7 @@ import time
 from dataclasses import dataclass
 from typing import Any, Mapping, Optional
 
-from utils import is_truthy_value
+from utils import env_with_legacy_alias, is_truthy_value
 
 logger = logging.getLogger(__name__)
 
@@ -709,9 +709,9 @@ def dev_fixture_credits_state() -> Optional[CreditsState]:
     container env, a launch plist, …) can never surface fabricated balances/notices
     on a real account.
     """
-    if not is_truthy_value(os.environ.get("HERMES_DEV_CREDITS")):
+    if not is_truthy_value(env_with_legacy_alias("INDAGIS_DEV_CREDITS", "HERMES_DEV_CREDITS")):
         return None
-    raw = os.environ.get("HERMES_DEV_CREDITS_FIXTURE", "").strip()
+    raw = env_with_legacy_alias("INDAGIS_DEV_CREDITS_FIXTURE", "HERMES_DEV_CREDITS_FIXTURE", "").strip()
     if not raw:
         return None
     name = raw

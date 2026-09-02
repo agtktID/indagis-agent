@@ -22,6 +22,7 @@ import copy
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 from typing import Any, Dict, List, Optional
 
 from agent.thread_scoped_output import thread_scoped_silence
@@ -641,7 +642,7 @@ def build_memory_write_metadata(
         ),
         "session_id": agent.session_id or "",
         "parent_session_id": agent._parent_session_id or "",
-        "platform": agent.platform or os.environ.get("HERMES_SESSION_SOURCE", "cli"),
+        "platform": agent.platform or env_with_legacy_alias("INDAGIS_SESSION_SOURCE", "HERMES_SESSION_SOURCE", "cli"),
         "tool_name": "memory",
     }
     if task_id:
