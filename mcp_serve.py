@@ -41,6 +41,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import hermes_constants
+
 logger = logging.getLogger("hermes.mcp_serve")
 
 # ---------------------------------------------------------------------------
@@ -62,11 +64,7 @@ except ImportError:
 
 def _get_sessions_dir() -> Path:
     """Return the sessions directory using INDAGIS_HOME."""
-    try:
-        from hermes_constants import get_indagis_home
-        return get_indagis_home() / "sessions"
-    except ImportError:
-        return Path(os.environ.get("INDAGIS_HOME", Path.home() / ".hermes")) / "sessions"
+    return hermes_constants.get_indagis_home() / "sessions"
 
 
 def _get_session_db():
@@ -194,13 +192,7 @@ def _load_sessions_index_from_json() -> dict:
 
 def _load_channel_directory() -> dict:
     """Load the cached channel directory for available targets."""
-    try:
-        from hermes_constants import get_indagis_home
-        directory_file = get_indagis_home() / "channel_directory.json"
-    except ImportError:
-        directory_file = Path(
-            os.environ.get("INDAGIS_HOME", Path.home() / ".hermes")
-        ) / "channel_directory.json"
+    directory_file = hermes_constants.get_indagis_home() / "channel_directory.json"
 
     if not directory_file.exists():
         return {}
@@ -460,11 +452,7 @@ class EventBridge:
         db = _get_session_db()
         if not db:
             return
-        try:
-            from hermes_constants import get_indagis_home
-            db_file = get_indagis_home() / "state.db"
-        except ImportError:
-            db_file = Path(os.environ.get("INDAGIS_HOME", Path.home() / ".hermes")) / "state.db"
+        db_file = hermes_constants.get_indagis_home() / "state.db"
         try:
             self._state_db_mtime = db_file.stat().st_mtime if db_file.exists() else 0.0
         except OSError:
@@ -512,11 +500,7 @@ class EventBridge:
         eliminating the old dual-file (sessions.json + state.db) race that
         could drop brand-new conversations (#8925).
         """
-        try:
-            from hermes_constants import get_indagis_home
-            db_file = get_indagis_home() / "state.db"
-        except ImportError:
-            db_file = Path(os.environ.get("INDAGIS_HOME", Path.home() / ".hermes")) / "state.db"
+        db_file = hermes_constants.get_indagis_home() / "state.db"
 
         try:
             db_mtime = db_file.stat().st_mtime if db_file.exists() else 0.0
