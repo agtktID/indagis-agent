@@ -27,7 +27,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from hermes_constants import get_indagis_home, _get_platform_default_indagis_home
 from typing import Any, Callable, NamedTuple, Optional
-from utils import atomic_json_write
+from utils import atomic_json_write, env_with_legacy_alias
 
 if sys.platform == "win32":
     import msvcrt
@@ -177,7 +177,7 @@ def _get_runtime_status_path() -> Path:
 
 def _get_lock_dir() -> Path:
     """Return the machine-local directory for token-scoped gateway locks."""
-    override = os.getenv("HERMES_GATEWAY_LOCK_DIR")
+    override = env_with_legacy_alias("INDAGIS_GATEWAY_LOCK_DIR", "HERMES_GATEWAY_LOCK_DIR")
     if override:
         return Path(override)
     state_home = Path(os.getenv("XDG_STATE_HOME", Path.home() / ".local" / "state"))
