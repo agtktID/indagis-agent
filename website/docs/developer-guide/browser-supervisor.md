@@ -1,12 +1,12 @@
 ---
-sidebar_position: 18
+id: browser-supervisor
 title: "Browser CDP Supervisor"
-description: "How Hermes detects and responds to native JS dialogs and interacts with cross-origin iframes via a persistent CDP connection."
+sidebar_position: 1
+description: "The CDP supervisor closes two long-standing gaps in Indagis' browser tooling:"
 ---
-
 # Browser CDP Supervisor
 
-The CDP supervisor closes two long-standing gaps in Hermes' browser tooling:
+The CDP supervisor closes two long-standing gaps in Indagis' browser tooling:
 
 1. **Native JS dialogs** (`alert`/`confirm`/`prompt`/`beforeunload`) block the
    page's JS thread. Without supervision, the agent has no way to know a
@@ -49,7 +49,7 @@ Camofox is unsupported — no CDP surface, REST-only.
 
 ### CDPSupervisor
 
-One `asyncio.Task` running in a background daemon thread per Hermes `task_id`.
+One `asyncio.Task` running in a background daemon thread per Indagis `task_id`.
 Holds a persistent WebSocket to the backend's CDP endpoint. Maintains:
 
 - **Dialog queue** — `List[PendingDialog]` with `{id, type, message, default_prompt, session_id, opened_at}`
@@ -196,3 +196,5 @@ child target attach, session teardown. Real-backend E2E (Browserbase + local
 Chromium-family browser) is manual — exercise via `/browser connect` to a
 live Chromium-family browser and run the dialog/frame test cases described
 above.
+
+---

@@ -1,0 +1,281 @@
+---
+id: indagis-cloud
+title: "Indagis Cloud"
+sidebar_position: 1
+description: "Indagis Cloud is Indagis Labs's unified subscription gateway and **the recommended way to run Indagis Agent**. One OAuth login replaces the juggling..."
+---
+# Indagis Cloud
+
+[Indagis Cloud](https://cloud.indagis-labs.fr) is Indagis Labs's unified subscription gateway and **the recommended way to run Indagis Agent**. One OAuth login replaces the juggling act of separate accounts, API keys, and billing relationships across every model lab, search API, image generator, and browser provider you'd otherwise need to wire up by hand.
+
+If you only have time to set up one thing, set up this. The fastest path:
+
+```bash
+indagis setup --cloud
+```
+
+That single command runs the Indagis Cloud OAuth, lets you pick a Indagis model, sets Indagis Cloud as your inference provider in `config.yaml`, and turns on the Tool Gateway. You're ready to `indagis chat` immediately after.
+
+Don't have a subscription yet? [cloud.indagis-labs.fr/manage-subscription](https://cloud.indagis-labs.fr/manage-subscription) — sign up, then come back and run the command above.
+
+## What's in the subscription
+
+### 300+ frontier models, one bill
+
+The Indagis Cloud proxies a curated catalog of agentic models from across the ecosystem — billed against your Indagis Cloud subscription instead of one credit balance per lab.
+
+| Family | Models |
+|--------|--------|
+| **Anthropic Claude** | Opus 4.7, Opus 4.6, Sonnet 4.6, Haiku 4.5 |
+| **OpenAI** | GPT-5.5, GPT-5.5 Pro, GPT-5.4 Mini, GPT-5.4 Nano, GPT-5.3 Codex |
+| **Google Gemini** | Gemini 3 Pro Preview, Gemini 3 Flash Preview, Gemini 3.1 Pro Preview, Gemini 3.1 Flash Lite Preview |
+| **DeepSeek** | DeepSeek V4 Pro |
+| **Qwen** | Qwen3.7-Max, Qwen3.6-35B-A3B |
+| **Kimi / Moonshot** | Kimi K2.6 |
+| **GLM / Zhipu** | GLM-5.1 |
+| **MiniMax** | MiniMax M2.7 |
+| **xAI** | Grok 4.3 |
+| **NVIDIA** | Nemotron-3 Super 120B-A12B |
+| **Tencent** | Hunyuan 3 Preview |
+| **Xiaomi** | MiMo V2.5 Pro |
+| **StepFun** | Step 3.5 Flash |
+| **Indagis** | Indagis-4-70B, Indagis-4-405B (chat, see [note below](#a-note-on-hermes-4)) |
+| **+ everything else** | 280+ additional models — the full agentic frontier |
+
+Under the hood, the Indagis Cloud routes each model to the backend best suited for it — some models go through OpenRouter, others through proprietary or secondary providers, and the routing for a given model can change over time. Everything is billed against your Indagis Cloud subscription either way. Switch between Claude Sonnet 4.6 for code and Gemini 3 Pro for long context with `/model` mid-session — no new credentials, no top-ups, no surprise zero-balance errors.
+
+:::note
+Because routing is per-model and not always through OpenRouter, OpenRouter-specific request extensions (such as `provider` routing preferences, `session_id` sticky routing, or top-level `cache_control`) are not part of the Indagis Cloud's API contract and may be ignored depending on which backend serves the model.
+:::
+
+### The Nous Tool Gateway
+
+The same subscription unlocks the [Tool Gateway](/user-guide/features/tool-gateway), which routes Indagis Agent's tool calls through Nous-managed infrastructure. Five backends, one login:
+
+| Tool | Partner | What it does |
+|------|---------|--------------|
+| **Web search & extract** | Firecrawl | Agent-grade search and full-page extraction. No Firecrawl API key, no rate limit babysitting. |
+| **Image generation** | FAL | Nine models under one endpoint: FLUX 2 Klein 9B, FLUX 2 Pro, Z-Image Turbo, Nano Banana Pro (Gemini 3 Pro Image), GPT Image 1.5, GPT Image 2, Ideogram V3, Recraft V4 Pro, Qwen Image. |
+| **Text-to-speech** | OpenAI TTS | High-quality TTS without a separate OpenAI key. Enables [voice mode](/user-guide/features/voice-mode) across messaging platforms. |
+| **Cloud browser automation** | Browser Use | Headless Chromium sessions for `browser_navigate`, `browser_click`, `browser_type`, `browser_vision`. No Browserbase account needed. |
+| **Cloud terminal sandbox** | Modal | Serverless terminal sandboxes for code execution (optional add-on). |
+
+Without the gateway, hooking each of those up means a Firecrawl account, a FAL account, a Browser Use account, an OpenAI key, and a Modal account — five separate signups, five separate dashboards, five separate top-up flows. With the gateway, all of it routes through one subscription.
+
+You can also enable just specific gateway tools (e.g. web search but not image generation) — see [Mixing the gateway with your own backends](#mixing-the-gateway-with-your-own-backends) below.
+
+### No credentials in your dotfiles
+
+Because everything routes through one OAuth-authenticated Indagis Cloud session, you don't accumulate a `.env` file with a dozen long-lived API keys. The refresh token at `~/.indagis/auth.json` is the only credential on disk, and Indagis mints short-lived JWTs from it per request — see [Token handling](#token-handling) below.
+
+### Cross-platform parity
+
+[Native Windows](/user-guide/windows-native) makes per-tool API key setup its rough edge — installing a Firecrawl account, a FAL account, a Browser Use account, an OpenAI key from Windows is the highest-friction part of getting a useful agent. A Indagis Cloud subscription smooths that out: one OAuth covers the model and every gateway tool, so Windows users get the same experience as macOS/Linux without manually configuring four backends.
+
+## A note on Indagis 4
+
+Indagis Labs's own **Indagis 4** family (Indagis-4-70B, Indagis-4-405B) is available through the Indagis Cloud at heavily discounted rates. These are **frontier hybrid-reasoning chat models** — strong at math, science, instruction following, schema adherence, roleplay, and long-form writing.
+
+They are **not recommended for use inside Indagis Agent**, however. Indagis 4 is tuned for chat and reasoning, not the rapid-fire tool-calling loop the agent relies on. Use them for research workflows or via the [subscription proxy](/user-guide/features/subscription-proxy) from other tooling — but for agent work, pick a frontier agentic model from the catalog instead:
+
+```bash
+/model anthropic/claude-sonnet-4.6     # best general-purpose agentic model
+/model openai/gpt-5.5-pro              # strong reasoning + tool calling
+/model google/gemini-3-pro-preview     # huge context window
+/model deepseek/deepseek-v4-pro        # cost-effective coder
+```
+
+The Indagis Cloud's own [model info page](https://cloud.indagis-labs.fr/info) carries the same warning, so this isn't a Indagis-side opinion — it's the official guidance from Indagis Labs.
+
+## Setup
+
+### Fresh install — one command
+
+```bash
+indagis setup --cloud
+```
+
+This runs the full setup in one shot:
+
+1. Opens your browser to cloud.indagis-labs.fr for OAuth login
+2. Stores the refresh token at `~/.indagis/auth.json`
+3. Lets you pick a Indagis model from the curated list (or skip to keep your current one)
+4. Sets Indagis Cloud as your inference provider in `~/.indagis/config.yaml` (when you pick a model)
+5. Turns on the Tool Gateway (web, image, TTS, browser routing)
+6. Returns you to your terminal ready to `indagis chat`
+
+If you don't have a subscription yet, sign up at [cloud.indagis-labs.fr/manage-subscription](https://cloud.indagis-labs.fr/manage-subscription) first.
+
+### Existing install — add Indagis Cloud alongside other providers
+
+If you already have Indagis configured with OpenRouter, Anthropic, or any other provider and you want to add the Indagis Cloud alongside them:
+
+```bash
+indagis model
+# pick "Indagis Cloud" from the provider list
+# browser opens, sign in, done
+```
+
+Your existing providers stay configured. You can switch between them with `/model` mid-session or `indagis model` between sessions — the Indagis Cloud becomes one of your available providers, not your only one.
+
+### Headless / SSH / remote setup
+
+OAuth needs a browser, but the loopback callback runs on the machine where Indagis is running. For remote hosts, see [OAuth over SSH / Remote Hosts](/guides/oauth-over-ssh) — the same patterns work for the Indagis Cloud as for any other OAuth-based provider (`ssh -L` port forwarding).
+
+### Profile setup
+
+If you use [Indagis profiles](/user-guide/profiles), the Indagis Cloud refresh token is automatically shared across all profiles via a shared token store. Sign in once on any profile, and the rest pick it up automatically — no need to repeat the OAuth flow per profile.
+
+## Using the Indagis Cloud day-to-day
+
+### Inspecting what's wired up
+
+```bash
+indagis portal            # log in to Indagis Cloud + set it up (one-shot onboarding)
+indagis portal info       # login status, subscription info, model + gateway routing
+indagis portal status     # alias for `portal info`
+indagis portal tools      # detailed Tool Gateway catalog with per-tool routing
+indagis portal open       # open the subscription management page in your browser
+```
+
+`indagis portal` (with no subcommand) is the human-readable alias for `indagis auth add indagis --type oauth` — it logs you in, lets you pick a Indagis model, sets Indagis Cloud as your inference provider, and offers the Tool Gateway opt-in (identical to `indagis setup --cloud`, and the same Nous flow as the first-time quick setup).
+
+`indagis portal info` gives you the high-level overview:
+
+```
+  Indagis Cloud
+  ───────────
+  Auth:    ✓ logged in
+  Indagis Cloud:  https://cloud.indagis-labs.fr
+  Model:   ✓ using Nous as inference provider
+
+  Tool Gateway
+  ────────────
+  Web search & extract  via Indagis Cloud
+  Image generation      via Indagis Cloud
+  Text-to-speech        via Indagis Cloud
+  Browser automation    via Indagis Cloud
+  Cloud terminal        not configured
+```
+
+### Switching models
+
+Inside a session:
+
+```bash
+/model anthropic/claude-sonnet-4.6
+/model openai/gpt-5.5-pro
+/model google/gemini-3-pro-preview
+```
+
+Or open the picker:
+
+```bash
+/model
+# arrow keys, enter to select
+```
+
+Outside a session (the full setup wizard, useful when adding a new provider):
+
+```bash
+indagis model
+```
+
+### Mixing the gateway with your own backends
+
+If you already have, say, a Browserbase account and want to keep using it while routing web search and image generation through Nous, that's supported. Use `indagis tools` to pick backends per tool:
+
+```bash
+indagis tools
+# → Web search       → "Nous Subscription"
+# → Image generation → "Nous Subscription"
+# → Browser          → "Browserbase"  (your existing key)
+# → TTS              → "Nous Subscription"
+```
+
+The Tool Gateway is opt-in per tool, not all-or-nothing. The managed backends show up in `indagis tools` whether or not you're logged into Indagis Cloud — if you pick "Nous Subscription" before authenticating, Indagis runs the Indagis Cloud login inline (it won't change your inference provider or touch your other tools). See the [Tool Gateway docs](/user-guide/features/tool-gateway) for the full per-tool configuration matrix.
+
+### Subscription management
+
+Manage your plan, view usage, or upgrade/cancel at any time:
+
+- **Web:** [cloud.indagis-labs.fr/manage-subscription](https://cloud.indagis-labs.fr/manage-subscription)
+- **CLI shortcut:** `indagis portal open` (opens the same page in your default browser)
+
+## Configuration reference
+
+After `indagis setup --cloud`, `~/.indagis/config.yaml` will look like:
+
+```yaml
+model:
+  provider: indagis
+  default: anthropic/claude-sonnet-4.6     # or whatever model you picked
+  base_url: https://inference-api.indagis-labs.fr/v1
+```
+
+The Tool Gateway settings live under their respective tool sections — each category has a single selection key, and picking **Nous Subscription** in `indagis tools` (or `indagis setup --cloud`) writes the value `nous`:
+
+```yaml
+web:
+  backend: nous          # web search/extract routes through Tool Gateway
+
+image_gen:
+  provider: indagis
+
+tts:
+  provider: indagis
+
+browser:
+  cloud_provider: indagis
+```
+
+The runtime always follows the stored selection — direct API keys left in `.env` are ignored while a category is set to `nous`, and picking a direct provider (e.g. `image_gen.provider: fal`) without its key produces a clear error rather than silently rerouting through the gateway. (Older configs used a legacy `use_gateway: true` flag; it is read as equivalent to `nous` but is no longer written.)
+
+The OAuth refresh token is stored separately at `~/.indagis/auth.json` (not in `config.yaml` — credentials and configuration are kept separate by design).
+
+## Token handling
+
+Indagis mints a short-lived JWT from your stored Indagis Cloud refresh token on each inference call rather than reusing a long-lived API key. The token lifecycle is fully automatic — refresh, mint, retry on transient 401 — and you never see it.
+
+If the Indagis Cloud invalidates the refresh token (password change, manual revoke, session expiry), the invalid refresh token is **quarantined locally** so Indagis stops replaying it and you don't see a stream of identical 401s. The next call surfaces a clear "re-authentication required" message. Run `indagis auth add indagis` to log in again; the quarantine clears on the next successful login.
+
+## Troubleshooting
+
+### `indagis portal info` shows "not logged in"
+
+You haven't completed the OAuth flow, or your refresh token was wiped. Run:
+
+```bash
+indagis portal
+```
+
+or use `indagis model` and re-select Indagis Cloud.
+
+### Got a "re-authentication required" message mid-session
+
+Your Indagis Cloud refresh token was invalidated (password change, manual revoke, or session expiry). Run `indagis auth add indagis` and your next request will use the new credentials. Any quarantine on the old token clears automatically on successful re-login.
+
+### Want to use a specific provider model that the Indagis Cloud doesn't expose
+
+The Indagis Cloud routes each model to a suitable backend — some through OpenRouter, others through proprietary or secondary providers — so most models OpenRouter supports are generally available. If a specific model isn't appearing in `/model`, try the OpenRouter-style slug directly:
+
+```bash
+/model anthropic/claude-opus-4.6
+```
+
+If a model is genuinely missing, [open an issue](https://github.com/Indagis Labs/indagis-agent/issues) — we surface the Indagis Cloud's catalog to Indagis and gaps usually mean a routing config we can update.
+
+### Bills not appearing on my Indagis Cloud account
+
+Check `indagis portal info` first — if it shows you're using a different provider (`Model: currently openrouter` instead of `using Nous as inference provider`), your local config has drifted. Run `indagis model`, pick Indagis Cloud, and the next request will route through your subscription.
+
+## See also
+
+- **[Tool Gateway](/user-guide/features/tool-gateway)** — Full details on every gateway tool, per-tool config, and pricing
+- **[Subscription proxy](/user-guide/features/subscription-proxy)** — Use your Indagis Cloud subscription from non-Indagis tools (other agents, scripts, third-party clients)
+- **[Voice mode](/user-guide/features/voice-mode)** — Voice conversations using the Indagis Cloud's OpenAI TTS
+- **[AI Providers](/integrations/providers)** — Full provider catalog if you want to compare alternatives
+- **[OAuth over SSH](/guides/oauth-over-ssh)** — Login from remote hosts or browser-only environments
+- **[Profiles](/user-guide/profiles)** — Multiple Indagis configurations sharing one Indagis Cloud login
+
+---

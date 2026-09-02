@@ -1,9 +1,10 @@
 ---
-sidebar_position: 9
+id: context-engine-plugin
 title: "Context Engine Plugins"
-description: "How to build a context engine plugin that replaces the built-in ContextCompressor"
+sidebar_position: 1
+description: "Context engine plugins replace the built-in ContextCompressor with an alternative strategy for managing conversation context. For example, a Lossle..."
 ---
-
+# Context Engine Plugins
 # Building a Context Engine Plugin
 
 Context engine plugins replace the built-in `ContextCompressor` with an alternative strategy for managing conversation context. For example, a Lossless Context Management (LCM) engine that builds a knowledge DAG instead of lossy summarization.
@@ -219,7 +220,7 @@ Only one engine can be registered. A second plugin attempting to register is rej
 
 ## Configuration
 
-Users select your engine via `hermes plugins` → Provider Plugins → Context Engine, or by editing `config.yaml`:
+Users select your engine via `indagis plugins` → Provider Plugins → Context Engine, or by editing `config.yaml`:
 
 ```yaml
 context:
@@ -250,7 +251,7 @@ See `tests/agent/test_context_engine.py` for the full ABC contract test suite.
 
 ## Thread safety
 
-When `compression.context_timeout_seconds > 0` (the default), Hermes runs the
+When `compression.context_timeout_seconds > 0` (the default), Indagis runs the
 whole compression pass — including your engine's `compress()` and boundary
 callbacks, and any memory provider's `on_pre_compress` /
 `on_session_switch` — on a pooled daemon thread with a host-side timeout.
@@ -270,3 +271,5 @@ Your engine must therefore assume:
 - [Context Compression and Caching](/developer-guide/context-compression-and-caching) — how the built-in compressor works
 - [Memory Provider Plugins](/developer-guide/memory-provider-plugin) — analogous single-select plugin system for memory
 - [Plugins](/user-guide/features/plugins) — general plugin system overview
+
+---

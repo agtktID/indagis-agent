@@ -1,6 +1,12 @@
+---
+id: trajectory-format
+title: "Trajectory Format"
+sidebar_position: 1
+description: "Indagis Agent saves conversation trajectories in ShareGPT-compatible JSONL format"
+---
 # Trajectory Format
 
-Hermes Agent saves conversation trajectories in ShareGPT-compatible JSONL format
+Indagis Agent saves conversation trajectories in ShareGPT-compatible JSONL format
 for use as training data, debugging artifacts, and reinforcement learning datasets.
 
 Source files: `agent/trajectory.py`, `run_agent.py` (search for `_save_trajectory`), `batch_runner.py`
@@ -165,7 +171,7 @@ turn with XML-wrapped JSON responses:
 ### System Message
 
 The system message is generated at save time (not taken from the conversation).
-It follows the Hermes function-calling prompt template with:
+It follows the Indagis function-calling prompt template with:
 
 - Preamble explaining the function-calling protocol
 - `<tools>` XML block containing the JSON tool definitions
@@ -230,3 +236,5 @@ The batch runner always saves trajectories (that's its primary purpose).
 
 Samples with zero reasoning across all turns are automatically discarded by the
 batch runner to avoid polluting training data with non-reasoning examples.
+
+---

@@ -1,16 +1,16 @@
 ---
-sidebar_position: 5
+id: adding-providers
 title: "Adding Providers"
-description: "How to add a new inference provider to Hermes Agent — auth, runtime resolution, CLI flows, adapters, tests, and docs"
+sidebar_position: 1
+description: "Indagis can already talk to any OpenAI-compatible endpoint through the custom provider path. Do not add a built-in provider unless you want first-cl..."
 ---
-
 # Adding Providers
 
-Hermes can already talk to any OpenAI-compatible endpoint through the custom provider path. Do not add a built-in provider unless you want first-class UX for that service:
+Indagis can already talk to any OpenAI-compatible endpoint through the custom provider path. Do not add a built-in provider unless you want first-class UX for that service:
 
 - provider-specific auth or token refresh
 - a curated model catalog
-- setup / `hermes model` menu entries
+- setup / `indagis model` menu entries
 - provider aliases for `provider:model` syntax
 - a non-OpenAI API shape that needs an adapter
 
@@ -34,9 +34,14 @@ A built-in provider has to line up across a few layers:
 The important abstraction is `api_mode`.
 
 - Most providers use `chat_completions`.
-- Codex uses `codex_responses`.
+- Codex and Meta Model API (`api.meta.ai` — Muse Spark) use `codex_responses` (auto-sends `prompt_cache_retention: 24h` for prompt caching; `api.meta.ai` achieves 93–99% cache hits only on `/v1/responses`).
+- Ramp Router (`api.router.com`) also uses `codex_responses` — Responses is Router's native wire (`/v1/chat/completions` is only a minimal compatibility shim), and it validates `reasoning.effort` per model, which the router profile handles by declaring each model's vocabulary from the live catalog (`ProviderProfile.supported_reasoning_efforts`).
 - Anthropic uses `anthropic_messages`.
 - A new non-OpenAI protocol usually means adding a new adapter and a new `api_mode` branch.
+
+### Tool-call wire format
+
+Indagis stores conversation history in the OpenAI chat-completions shape internally, so the `chat_completions` transport's `convert_messages` / `convert_tools` (`agent/transports/chat_completions.py`) are near-identity, and every other transport converts *from* that shape into its native protocol. The canonical reference for the shape — `tools` definitions with JSON-schema `parameters`, assistant `tool_calls` entries with stringified `function.arguments`, and `role: "tool"` result messages keyed by `tool_call_id` — is the [OpenAI chat completions API reference](https://platform.openai.com/docs/api-reference/chat/create). When you write a native adapter, that page defines the input side of your conversion; your provider's docs define the output side.
 
 ## Choose the implementation path first
 
@@ -61,7 +66,7 @@ Use this when the provider does not behave like OpenAI chat completions.
 
 Examples in-tree today:
 
-- `codex_responses`
+- `codex_responses` (OpenAI Codex, xAI Grok, Meta Muse Spark via `api.meta.ai` — the latter auto-sends `prompt_cache_retention: 24h` — and Ramp Router via `api.router.com`)
 - `anthropic_messages`
 
 This path includes everything from Path A plus:
@@ -84,7 +89,7 @@ This path includes everything from Path A plus:
 8. user-facing docs under `website/docs/`
 
 :::tip
-`hermes_cli/setup.py` does **not** need changes. The setup wizard delegates provider/model selection to `select_provider_and_model()` in `main.py` — any provider added there is automatically available in `hermes setup`.
+`hermes_cli/setup.py` does **not** need changes. The setup wizard delegates provider/model selection to `select_provider_and_model()` in `main.py` — any provider added there is automatically available in `indagis setup`.
 :::
 
 ### Additional for native / non-OpenAI providers
@@ -112,8 +117,8 @@ When you add a plugin and it calls `register_provider()`, the following wire up 
 4. `env_vars` checked in priority order for the API key
 5. `fallback_models` list registered for the provider
 6. `--provider` CLI flag accepts the provider id
-7. `hermes model` menu includes the provider
-8. `hermes setup` wizard delegates to `main.py` automatically
+7. `indagis model` menu includes the provider
+8. `indagis setup` wizard delegates to `main.py` automatically
 9. `provider:model` alias syntax works
 10. Runtime resolver returns the correct `base_url` and `api_key`
 11. `--provider <name>` CLI flag accepts the provider id
@@ -127,11 +132,11 @@ See `plugins/model-providers/nvidia/` or `plugins/model-providers/gmi/` as a tem
 
 Use the full checklist below when your provider needs any of the following:
 
-- OAuth or token refresh (Nous Portal, Codex, Qwen Portal, Copilot)
+- OAuth or token refresh (Indagis Cloud, Codex, Qwen Indagis Cloud, Copilot)
 - A non-OpenAI API shape that requires a new adapter (Anthropic Messages, Codex Responses)
 - Custom endpoint detection or multi-region probing (z.ai, Kimi)
 - A curated static model catalog or live `/models` fetch
-- Provider-specific `hermes model` menu entries with bespoke auth flows
+- Provider-specific `indagis model` menu entries with bespoke auth flows
 
 ## Step 1: Pick one canonical provider id
 
@@ -177,7 +182,7 @@ Use the existing providers as templates:
 
 Questions to answer here:
 
-- What env vars should Hermes check, and in what priority order?
+- What env vars should Indagis check, and in what priority order?
 - Does the provider need base-URL overrides?
 - Does it need endpoint probing or token refresh?
 - What should the auth error say when credentials are missing?
@@ -226,11 +231,11 @@ Add a branch that returns a dict with at least:
 
 If the provider is OpenAI-compatible, `api_mode` should usually stay `chat_completions`.
 
-Be careful with API-key precedence. Hermes already contains logic to avoid leaking an OpenRouter key to unrelated endpoints. A new provider should be equally explicit about which key goes to which base URL.
+Be careful with API-key precedence. Indagis already contains logic to avoid leaking an OpenRouter key to unrelated endpoints. A new provider should be equally explicit about which key goes to which base URL.
 
 ## Step 5: Wire the CLI in `hermes_cli/main.py`
 
-A provider is not discoverable until it shows up in the interactive `hermes model` flow.
+A provider is not discoverable until it shows up in the interactive `indagis model` flow.
 
 Update these in `hermes_cli/main.py`:
 
@@ -242,7 +247,7 @@ Update these in `hermes_cli/main.py`:
 - a `_model_flow_<provider>()` function, or reuse `_model_flow_api_key_provider()` if it fits
 
 :::tip
-`hermes_cli/setup.py` does not need changes — it calls `select_provider_and_model()` from `main.py`, so your new provider appears in both `hermes model` and `hermes setup` automatically.
+`hermes_cli/setup.py` does not need changes — it calls `select_provider_and_model()` from `main.py`, so your new provider appears in both `indagis model` and `indagis setup` automatically.
 :::
 
 ## Step 6: Keep auxiliary calls working
@@ -313,7 +318,7 @@ Examples already in-tree:
 - OpenRouter gets provider-routing fields
 - not every provider should receive every request-side option
 
-When you add a native provider, double-check that Hermes is only sending fields that provider actually understands.
+When you add a native provider, double-check that Indagis is only sending fields that provider actually understands.
 
 ## Step 8: Tests
 
@@ -434,7 +439,7 @@ Search for `api_mode` and `self.client.`. Do not assume the obvious request path
 
 Fields like provider routing belong only on the providers that support them.
 
-### 7. Updating `hermes model` but not `hermes setup`
+### 7. Updating `indagis model` but not `indagis setup`
 
 Both flows need to know about the provider.
 
@@ -457,3 +462,5 @@ If you are hunting for all the places a provider touches, search these symbols:
 - [Provider Runtime Resolution](./provider-runtime.md)
 - [Architecture](./architecture.md)
 - [Contributing](./contributing.md)
+
+---

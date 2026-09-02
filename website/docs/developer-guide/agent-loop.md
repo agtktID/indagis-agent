@@ -1,9 +1,9 @@
 ---
-sidebar_position: 3
+id: agent-loop
 title: "Agent Loop Internals"
-description: "Detailed walkthrough of AIAgent execution, API modes, tools, callbacks, and fallback behavior"
+sidebar_position: 1
+description: "The core orchestration engine is run_agent.py's AIAgent class — a large file that handles everything from prompt assembly to tool dispatch to provi..."
 ---
-
 # Agent Loop Internals
 
 The core orchestration engine is `run_agent.py`'s `AIAgent` class — a large file that handles everything from prompt assembly to tool dispatch to provider failover.
@@ -40,7 +40,7 @@ result = agent.run_conversation(
 
 ## API Modes
 
-Hermes supports three API execution modes, resolved from provider selection, explicit args, and base URL heuristics:
+Indagis supports three API execution modes, resolved from provider selection, explicit args, and base URL heuristics:
 
 | API mode | Used for | Client type |
 |----------|----------|-------------|
@@ -216,7 +216,7 @@ The fallback system also covers auxiliary tasks independently — vision, compre
 After each turn:
 - Messages are saved to the session store (SQLite via `hermes_state.py`)
 - Memory changes are flushed to `MEMORY.md` / `USER.md`
-- The session can be resumed later via `/resume` or `hermes chat --resume`
+- The session can be resumed later via `/resume` or `indagis chat --resume`
 
 ## Key Source Files
 
@@ -237,3 +237,5 @@ After each turn:
 - [Context Compression & Prompt Caching](./context-compression-and-caching.md)
 - [Tools Runtime](./tools-runtime.md)
 - [Architecture Overview](./architecture.md)
+
+---

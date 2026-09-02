@@ -1,9 +1,9 @@
 ---
-sidebar_position: 11
+id: plugin-llm-access
 title: "Plugin LLM Access"
-description: "Run any LLM call from inside a plugin via ctx.llm — chat or structured, sync or async. Host-owned auth, fail-closed trust gate, optional JSON Schema validation."
+sidebar_position: 1
+description: "ctx.llm is the supported way for a plugin to make an LLM call."
 ---
-
 # Plugin LLM Access
 
 `ctx.llm` is the supported way for a plugin to make an LLM call.
@@ -84,7 +84,7 @@ model couldn't produce valid JSON, `result.parsed` is `None` and
   objects.
 * **Host-owned credentials.** OAuth tokens, refresh flows, the
   credential pool, per-task aux overrides — every credential
-  concept Hermes already has applies. The plugin never sees a
+  concept Indagis already has applies. The plugin never sees a
   token; the host attributes the call back through `result.audit`.
 * **Bounded.** Single sync or async call. No streaming, no tool
   loops, no conversation state to manage. State the input, get the
@@ -186,11 +186,11 @@ def _paste_to_tasks(ctx, raw_args: str) -> str:
 ```
 
 A third worked example, this time with image input, lives in the
-[`hermes-example-plugins`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-example)
+[`hermes-example-plugins`](https://github.com/Indagis Labs/hermes-example-plugins/tree/main/plugin-llm-example)
 repo (companion repo for reference plugins — not bundled with
-hermes-agent itself). For the async surface (`acomplete()` /
+indagis-agent itself). For the async surface (`acomplete()` /
 `acomplete_structured()` with `asyncio.gather()`), see
-[`plugin-llm-async-example`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-async-example)
+[`plugin-llm-async-example`](https://github.com/Indagis Labs/hermes-example-plugins/tree/main/plugin-llm-async-example)
 in the same repo.
 
 ## When to use which
@@ -215,7 +215,7 @@ timeout, vision routing — is the same across all four.
 ```python
 result = ctx.llm.complete(
     messages=[{"role": "user", "content": "Hi"}],
-    provider=None,         # optional, gated — Hermes provider id (e.g. "openrouter")
+    provider=None,         # optional, gated — Indagis provider id (e.g. "openrouter")
     model=None,            # optional, gated — whatever string that provider expects
     temperature=None,
     max_tokens=None,
@@ -223,6 +223,7 @@ result = ctx.llm.complete(
     agent_id=None,         # optional, gated
     profile=None,          # optional, gated — explicit auth-profile name
     purpose="optional-audit-string",
+    task=None,             # optional — a plugin-registered auxiliary slot
 )
 # → PluginLlmCompleteResult(text, provider, model, agent_id, usage, audit)
 ```
@@ -260,6 +261,7 @@ result = ctx.llm.complete_structured(
     agent_id=None,
     profile=None,
     purpose=None,
+    task=None,             # optional — a plugin-registered auxiliary slot
 )
 # → PluginLlmStructuredResult(text, provider, model, agent_id,
 #                             usage, parsed, content_type, audit)
@@ -279,13 +281,48 @@ against your schema if `jsonschema` is installed.
 ### Async
 
 ```python
-result = await ctx.llm.acomplete(messages=...)
-result = await ctx.llm.acomplete_structured(instructions=..., input=...)
+result = await ctx.llm.acomplete(messages=..., task="classifier")
+result = await ctx.llm.acomplete_structured(
+    instructions=..., input=..., task="classifier"
+)
 ```
 
 Same arguments and result types as their sync counterparts. Use
 these from gateway adapters, async hooks, or any plugin code
 already running on an asyncio loop.
+
+### Task-routed auxiliary calls
+
+Pass `task=` to any of the four call shapes when a plugin needs its
+own configured auxiliary route. Register that task during plugin setup;
+plugin defaults apply until the operator overrides its provider and model
+in `auxiliary.<task>`:
+
+```python
+def register(ctx):
+    ctx.register_auxiliary_task(
+        "classifier", display_name="Classifier", description="Classify input."
+    )
+
+
+result = ctx.llm.complete(messages=[...], task="classifier")
+result = ctx.llm.complete_structured(instructions=..., input=..., task="classifier")
+```
+
+```yaml
+auxiliary:
+  classifier:
+    provider: openrouter
+    model: vendor/model-id
+```
+
+Plugins may supply provider/model registration defaults for their own
+tasks. Operator configuration in `auxiliary.<task>` overrides those
+defaults and controls the deployment choice. A plugin can only use a task
+it registered itself; unknown or foreign task names fail before provider
+invocation. `allow_task_override: true` is an explicit operator grant for
+using Indagis built-in auxiliary tasks; it does not permit another plugin's
+tasks. Omit `task=` (or use `"auto"`) to keep the active main provider/model.
 
 ### Result attributes
 
@@ -324,6 +361,8 @@ config block, a plugin can:
 
 …and that's it. `provider=`, `model=`, `agent_id=`, and `profile=`
 arguments raise `PluginLlmTrustError` until the operator opts in.
+Likewise, `task=` can use only the plugin's registered auxiliary task
+unless the operator grants `allow_task_override` for a built-in task.
 
 **Most plugins never need this section.** A plugin that just calls
 `ctx.llm.complete(messages=...)` with no overrides runs against
@@ -336,9 +375,9 @@ plugins:
   entries:
     my-plugin:
       llm:
-        # Allow this plugin to choose a different Hermes provider
-        # (must be one Hermes already knows about — same names as
-        # `hermes model` and config.yaml model.provider).
+        # Allow this plugin to choose a different Indagis provider
+        # (must be one Indagis already knows about — same names as
+        # `indagis model` and config.yaml model.provider).
         allow_provider_override: true
 
         # Optionally restrict which providers. Use ["*"] for any.
@@ -351,7 +390,7 @@ plugins:
 
         # Optionally restrict which models. Use ["*"] for any.
         # Models are matched literally against whatever string the
-        # plugin sends — Hermes does not look anything up.
+        # plugin sends — Indagis does not look anything up.
         allowed_models:
           - openai/gpt-4o-mini
           - anthropic/claude-3-5-haiku
@@ -378,6 +417,7 @@ path-derived key for nested plugins (`image_gen/openai`,
 | ↳ allowlist     | —       | `allowed_models: [...]`          |
 | `agent_id=`     | denied  | `allow_agent_id_override: true`  |
 | `profile=`      | denied  | `allow_profile_override: true`   |
+| built-in `task=` | denied  | `allow_task_override: true`      |
 
 Each override is independently gated. Granting `allow_model_override`
 does **not** also grant `allow_provider_override` — a plugin trusted
@@ -403,13 +443,13 @@ don't have to:
 * **Provider resolution.** Reads `model.provider` + `model.model`
   from the user's config (or the explicit overrides when trusted).
 * **Auth.** Pulls API keys, OAuth tokens, or refresh tokens from
-  `~/.hermes/auth.json` / env, including the credential pool when
+  `~/.indagis/auth.json` / env, including the credential pool when
   one is configured. The plugin never sees them.
 * **Vision routing.** When image input is supplied and the user's
   active text model is text-only, the host falls back to the
   configured vision model automatically.
 * **Fallback chain.** If the user's primary provider 5xxs or 429s,
-  the request goes through Hermes' usual aggregator-aware fallback
+  the request goes through Indagis' usual aggregator-aware fallback
   before it returns an error to the plugin.
 * **Timeout.** Honours your `timeout=` argument, falling back to
   `auxiliary.<task>.timeout` config or the global aux default.
@@ -439,7 +479,7 @@ don't have to:
 
 ## Where this fits in the plugin surface
 
-Existing `ctx.*` methods extend an existing Hermes subsystem:
+Existing `ctx.*` methods extend an existing Indagis subsystem:
 
 | `ctx.register_tool` | adds a tool the agent can call |
 | `ctx.register_platform` | wires a new gateway adapter |
@@ -457,10 +497,12 @@ own model call — for any reason, structured or not — `ctx.llm`.
 
 ## Reference
 
-* Implementation: [`agent/plugin_llm.py`](https://github.com/NousResearch/hermes-agent/blob/main/agent/plugin_llm.py)
-* Tests: [`tests/agent/test_plugin_llm.py`](https://github.com/NousResearch/hermes-agent/blob/main/tests/agent/test_plugin_llm.py)
+* Implementation: [`agent/plugin_llm.py`](https://github.com/Indagis Labs/indagis-agent/blob/main/agent/plugin_llm.py)
+* Tests: [`tests/agent/test_plugin_llm.py`](https://github.com/Indagis Labs/indagis-agent/blob/main/tests/agent/test_plugin_llm.py)
 * Reference plugins (companion repo):
-  * [`plugin-llm-example`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-example) — sync structured extraction with image input
-  * [`plugin-llm-async-example`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-async-example) — async with `asyncio.gather()`
+  * [`plugin-llm-example`](https://github.com/Indagis Labs/hermes-example-plugins/tree/main/plugin-llm-example) — sync structured extraction with image input
+  * [`plugin-llm-async-example`](https://github.com/Indagis Labs/hermes-example-plugins/tree/main/plugin-llm-async-example) — async with `asyncio.gather()`
 * Auxiliary client (the engine under the hood): see
   [Provider Runtime](/developer-guide/provider-runtime).
+
+---

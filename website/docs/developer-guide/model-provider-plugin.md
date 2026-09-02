@@ -1,12 +1,13 @@
 ---
-sidebar_position: 10
+id: model-provider-plugin
 title: "Model Provider Plugins"
-description: "How to build a model provider (inference backend) plugin for Hermes Agent"
+sidebar_position: 1
+description: "Model provider plugins declare an inference backend — an OpenAI-compatible endpoint, an Anthropic Messages server, a Codex-style Responses API, or..."
 ---
-
+# Model Provider Plugins
 # Building a Model Provider Plugin
 
-Model provider plugins declare an inference backend — an OpenAI-compatible endpoint, an Anthropic Messages server, a Codex-style Responses API, or a Bedrock-native surface — that Hermes can route `AIAgent` calls through. Every built-in provider (OpenRouter, Anthropic, GMI, DeepSeek, Nvidia, …) ships as one of these plugins. Third parties can add their own by dropping a directory under `$HERMES_HOME/plugins/model-providers/` with zero changes to the repo.
+Model provider plugins declare an inference backend — an OpenAI-compatible endpoint, an Anthropic Messages server, a Codex-style Responses API, or a Bedrock-native surface — that Indagis can route `AIAgent` calls through. Every built-in provider (OpenRouter, Anthropic, GMI, DeepSeek, Nvidia, …) ships as one of these plugins. Third parties can add their own by dropping a directory under `$HERMES_HOME/plugins/model-providers/` with zero changes to the repo.
 
 :::tip
 Model provider plugins are the third kind of **provider plugin**. The others are [Memory Provider Plugins](/developer-guide/memory-provider-plugin) (cross-session knowledge) and [Context Engine Plugins](/developer-guide/context-engine-plugin) (context compression strategies). All three follow the same "drop a directory, declare a profile, no repo edits" pattern.
@@ -16,7 +17,7 @@ Model provider plugins are the third kind of **provider plugin**. The others are
 
 `providers/__init__.py._discover_providers()` runs lazily the first time any code calls `get_provider_profile()` or `list_providers()`. Discovery order:
 
-1. **Bundled plugins** — `<repo>/plugins/model-providers/<name>/` — ship with Hermes
+1. **Bundled plugins** — `<repo>/plugins/model-providers/<name>/` — ship with Indagis
 2. **User plugins** — `$HERMES_HOME/plugins/model-providers/<name>/` — drop in any directory; no restart required for subsequent sessions
 3. **Legacy single-file** — `<repo>/providers/<name>.py` — back-compat for out-of-tree editable installs
 
@@ -31,7 +32,7 @@ plugins/model-providers/my-provider/
 └── README.md         # Setup instructions (optional)
 ```
 
-The only required file is `__init__.py`. `plugin.yaml` is used by `hermes plugins` for introspection and by the general PluginManager to route the plugin to the right loader; without it, the general loader falls back to a source-text heuristic.
+The only required file is `__init__.py`. `plugin.yaml` is used by `indagis plugins` for introspection and by the general PluginManager to route the plugin to the right loader; without it, the general loader falls back to a source-text heuristic.
 
 ## Minimal example — a simple API-key provider
 
@@ -75,9 +76,9 @@ That's it. After dropping these two files, the following **auto-wire** with no o
 |---|---|---|
 | Credential resolution | `hermes_cli/auth.py` | `PROVIDER_REGISTRY["acme-inference"]` populated from profile |
 | `--provider` CLI flag | `hermes_cli/main.py` | Accepts `acme-inference` |
-| `hermes model` picker | `hermes_cli/models.py` | Appears in `CANONICAL_PROVIDERS`, model list fetched from `{base_url}/models` |
-| `hermes doctor` | `hermes_cli/doctor.py` | Health check for `ACME_API_KEY` + `{base_url}/models` probe |
-| `hermes setup` | `hermes_cli/config.py` | `ACME_API_KEY` appears in `OPTIONAL_ENV_VARS` and the setup wizard |
+| `indagis model` picker | `hermes_cli/models.py` | Appears in `CANONICAL_PROVIDERS`, model list fetched from `{base_url}/models` |
+| `indagis doctor` | `hermes_cli/doctor.py` | Health check for `ACME_API_KEY` + `{base_url}/models` probe |
+| `indagis setup` | `hermes_cli/config.py` | `ACME_API_KEY` appears in `OPTIONAL_ENV_VARS` and the setup wizard |
 | URL reverse-mapping | `agent/model_metadata.py` | Hostname → provider name for auto-detection |
 | Auxiliary model | `agent/auxiliary_client.py` | Uses `default_aux_model` for compression / summarization |
 | Runtime resolution | `hermes_cli/runtime_provider.py` | Returns correct `base_url`, `api_key`, `api_mode` |
@@ -92,7 +93,7 @@ Full definition in `providers/base.py`. The most useful ones:
 | `name` | str | Canonical id — matches `model.provider` in `config.yaml` and the `--provider` flag |
 | `aliases` | `tuple[str, ...]` | Alternative names resolved by `get_provider_profile()` (e.g. `grok` → `xai`) |
 | `api_mode` | str | `chat_completions` \| `codex_responses` \| `anthropic_messages` \| `bedrock_converse` |
-| `display_name` | str | Human label shown in `hermes model` picker |
+| `display_name` | str | Human label shown in `indagis model` picker |
 | `description` | str | Picker subtitle |
 | `signup_url` | str | Shown during first-run setup ("get an API key here") |
 | `env_vars` | `tuple[str, ...]` | API-key env vars in priority order; a final `*_BASE_URL` entry is used as the user base-URL override |
@@ -159,7 +160,7 @@ Look at these bundled plugins for idioms:
 
 ## User overrides — replace a built-in without editing the repo
 
-Say you want to point `gmi` at your private staging endpoint for testing. Create `~/.hermes/plugins/model-providers/gmi/__init__.py`:
+Say you want to point `gmi` at your private staging endpoint for testing. Create `~/.indagis/plugins/model-providers/gmi/__init__.py`:
 
 ```python
 from providers import register_provider
@@ -179,7 +180,7 @@ Next session, `get_provider_profile("gmi").base_url` returns the staging URL. No
 
 ## api_mode selection
 
-Four values are recognized. Hermes picks one based on:
+Four values are recognized. Indagis picks one based on:
 
 1. User explicit override (`config.yaml` `model.api_mode` when set)
 2. OpenCode's per-model dispatch (`opencode_model_api_mode` for Zen and Go)
@@ -195,19 +196,19 @@ Set `profile.api_mode` to match the default your provider ships — it acts as a
 |---|---|---|
 | `api_key` | Single env var carries a static API key | Most providers |
 | `oauth_device_code` | Device-code OAuth flow | — |
-| `oauth_external` | User signs in elsewhere, tokens land in `auth.json` | Anthropic OAuth, MiniMax OAuth, Qwen Portal, Nous Portal |
+| `oauth_external` | User signs in elsewhere, tokens land in `auth.json` | Anthropic OAuth, MiniMax OAuth, Qwen Indagis Cloud, Indagis Cloud |
 | `copilot` | GitHub Copilot token refresh cycle | `copilot` plugin only |
 | `aws_sdk` | AWS SDK credential chain (IAM role, profile, env) | `bedrock` plugin only |
 | `external_process` | Auth handled by a subprocess the agent spawns | `copilot-acp` plugin only |
 
-`auth_type` gates which codepaths treat your provider as a "simple api-key provider" — if it's not `api_key`, the PluginManager still records the manifest but Hermes' CLI-level automation (doctor checks, `--provider` flag, setup wizard delegation) may skip over it.
+`auth_type` gates which codepaths treat your provider as a "simple api-key provider" — if it's not `api_key`, the PluginManager still records the manifest but Indagis' CLI-level automation (doctor checks, `--provider` flag, setup wizard delegation) may skip over it.
 
 ## Discovery timing
 
 Provider discovery is **lazy** — triggered by the first `get_provider_profile()` or `list_providers()` call in the process. In practice this happens early at startup (`auth.py` module load extends `PROVIDER_REGISTRY` eagerly). If you need to verify your plugin loaded, run:
 
 ```bash
-hermes doctor
+indagis doctor
 ```
 
 — a successful `auth_type="api_key"` profile appears under the Provider Connectivity section with a `/models` probe.
@@ -239,25 +240,60 @@ register_provider(ProviderProfile(
 EOF
 
 export MY_API_KEY=your-test-key
-hermes -z "hello" --provider my-provider -m some-model
+indagis -z "hello" --provider my-provider -m some-model
 ```
 
 ## General PluginManager integration
 
-The general `PluginManager` (the thing `hermes plugins` operates on) **sees** model-provider plugins but does not import them — `providers/__init__.py` owns their lifecycle. The manager records the manifest for introspection and categorizes by `kind: model-provider`. When you drop an unlabeled user plugin into `$HERMES_HOME/plugins/` that happens to call `register_provider` with a `ProviderProfile`, the manager auto-coerces it to `kind: model-provider` via a source-text heuristic — so the plugin still routes correctly even without `plugin.yaml`.
+The general `PluginManager` (the thing `indagis plugins` operates on) **sees** model-provider plugins but does not import them — `providers/__init__.py` owns their lifecycle. The manager records the manifest for introspection and categorizes by `kind: model-provider`. When you drop an unlabeled user plugin into `$HERMES_HOME/plugins/` that happens to call `register_provider` with a `ProviderProfile`, the manager auto-coerces it to `kind: model-provider` via a source-text heuristic — so the plugin still routes correctly even without `plugin.yaml`.
 
 ## Distribute via pip
 
-Like any Hermes plugin, model providers can ship as a pip package. Add an entry point to your `pyproject.toml`:
+Model providers can ship as a pip package. Expose an entry point in the
+`hermes_agent.plugins` group in your `pyproject.toml`:
 
 ```toml
 [project.entry-points."hermes_agent.plugins"]
 acme-inference = "acme_hermes_plugin:register"
 ```
 
-…where `acme_hermes_plugin:register` is a function that calls `register_provider(profile)`. The general PluginManager picks up entry-point plugins during `discover_and_load()`. For `kind: model-provider` pip plugins, you still need to declare the kind in your manifest (or rely on the source-text heuristic).
+The target may be either:
 
-See [Building a Hermes Plugin](/developer-guide/plugins#distribute-via-pip) for the full entry-points setup.
+- a **callable** (`module:func`) — invoked with no arguments; it should call
+  `register_provider(profile)`, or
+- a **bare module** (`module`) — imported for its module-level
+  `register_provider(...)` side effect, mirroring the directory-plugin
+  `__init__.py` contract.
+
+`providers/__init__.py` discovers these entry points itself — the general
+`PluginManager` never invokes provider registration for pip packages (its
+entry-point path targets `register(ctx)`-style general plugins, gated by
+`plugins.enabled`), so the provider registry does its own scan. Two rules
+apply:
+
+- **Opt-in required.** The same `plugins.enabled` allow-list (and
+  `plugins.disabled` deny-list) from `config.yaml` governs this scan. A pip
+  package is never imported just because it is installed — users must add the
+  entry-point name to `plugins.enabled`:
+
+  ```yaml
+  plugins:
+    enabled:
+      - acme-inference
+  ```
+
+- **Lowest precedence.** Entry-point plugins are discovered **before**
+  filesystem plugins: because `register_provider()` is last-writer-wins, a
+  bundled or `$HERMES_HOME` profile of the same name always overrides a
+  pip-installed one. A pip package can add a genuinely new provider, but
+  cannot silently hijack a first-party provider name.
+
+Targets that require arguments (a general plugin's `register(ctx)`) are
+skipped by the provider scan — they belong to the `PluginManager`. A broken
+entry point is isolated — it is logged at warning level and skipped, and never
+blocks discovery of the other providers.
+
+See [Building a Indagis Plugin](/developer-guide/plugins#distribute-via-pip) for the full entry-points setup.
 
 ## Related pages
 
@@ -265,4 +301,6 @@ See [Building a Hermes Plugin](/developer-guide/plugins#distribute-via-pip) for 
 - [Adding Providers](/developer-guide/adding-providers) — end-to-end checklist for new inference backends (covers both the fast plugin path and the full CLI/auth integration)
 - [Memory Provider Plugins](/developer-guide/memory-provider-plugin)
 - [Context Engine Plugins](/developer-guide/context-engine-plugin)
-- [Building a Hermes Plugin](/developer-guide/plugins) — general plugin authoring
+- [Building a Indagis Plugin](/developer-guide/plugins) — general plugin authoring
+
+---

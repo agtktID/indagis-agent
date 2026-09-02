@@ -1,15 +1,16 @@
 ---
-title: Public Subagent Lifecycle API
-sidebar_label: Subagent lifecycle API
+id: subagent-lifecycle-api
+title: "Public Subagent Lifecycle API"
+sidebar_position: 1
+description: "Plugins can launch and supervise fresh Indagis child sessions without importing"
 ---
-
 # Public Subagent Lifecycle API
 
-Plugins can launch and supervise fresh Hermes child sessions without importing
+Plugins can launch and supervise fresh Indagis child sessions without importing
 `tools.delegate_tool`, gateway internals, TUI state, or `AIAgent` fields.
 The service resolves its parent from the current agent turn, so it works in
 CLI, gateway, non-interactive, and kanban-worker sessions. Launching outside an
-active agent turn fails closed with `No active Hermes parent session`.
+active agent turn fails closed with `No active Indagis parent session`.
 
 ```python
 from agent.subagent_lifecycle import SubagentLaunchRequest
@@ -56,6 +57,8 @@ exit; callers must treat those handles as interrupted by process exit.
 
 Requests are fail-closed: goal/context/metadata sizes are capped, unknown or
 parent-broadening toolsets are rejected, and per-tool blocks, working-directory
-overrides, and per-launch timeouts are explicitly rejected until Hermes can
+overrides, and per-launch timeouts are explicitly rejected until Indagis can
 support them without weakening isolation. Use `allowed_toolsets` to narrow a
-child; Hermes's existing unsafe-tool block remains enforced.
+child; Indagis's existing unsafe-tool block remains enforced.
+
+---

@@ -1,9 +1,10 @@
 ---
-sidebar_position: 10
+id: github-pr-review-agent
 title: "Tutorial: GitHub PR Review Agent"
-description: "Build an automated AI code reviewer that monitors your repos, reviews pull requests, and delivers feedback — hands-free"
+sidebar_position: 1
+description: "**The problem:** Your team opens PRs faster than you can review them. PRs sit for days waiting for eyeballs. Junior devs merge bugs because nobody..."
 ---
-
+# Tutorial: GitHub PR Review Agent
 # Tutorial: Build a GitHub PR Review Agent
 
 **The problem:** Your team opens PRs faster than you can review them. PRs sit for days waiting for eyeballs. Junior devs merge bugs because nobody had time to check. You spend your mornings catching up on diffs instead of building.
@@ -15,7 +16,7 @@ description: "Build an automated AI code reviewer that monitors your repos, revi
 ```
 ┌───────────────────────────────────────────────────────────────────┐
 │                                                                   │
-│   Cron Timer  ──▶  Hermes Agent  ──▶  GitHub API  ──▶  Review     │
+│   Cron Timer  ──▶  Indagis Agent  ──▶  GitHub API  ──▶  Review     │
 │   (every 2h)       + gh CLI           (PR diffs)       delivery   │
 │                    + skill                             (Telegram, │
 │                    + memory                            Discord,   │
@@ -27,19 +28,19 @@ description: "Build an automated AI code reviewer that monitors your repos, revi
 This guide uses **cron jobs** to poll for PRs on a schedule — no server or public endpoint needed. Works behind NAT and firewalls.
 
 :::tip Want real-time reviews instead?
-If you have a public endpoint available, check out [Automated GitHub PR Comments with Webhooks](./webhook-github-pr-review.md) — GitHub pushes events to Hermes instantly when PRs are opened or updated.
+If you have a public endpoint available, check out [Automated GitHub PR Comments with Webhooks](./webhook-github-pr-review.md) — GitHub pushes events to Indagis instantly when PRs are opened or updated.
 :::
 
 ---
 
 ## Prerequisites
 
-- **Hermes Agent installed** — see the [Installation guide](/getting-started/installation)
+- **Indagis Agent installed** — see the [Installation guide](/getting-started/installation)
 - **Gateway running** for cron jobs:
   ```bash
-  hermes gateway install   # Install as a service
+  indagis gateway install   # Install as a service
   # or
-  hermes gateway           # Run in foreground
+  indagis gateway           # Run in foreground
   ```
 - **GitHub CLI (`gh`) installed and authenticated**:
   ```bash
@@ -53,23 +54,23 @@ If you have a public endpoint available, check out [Automated GitHub PR Comments
 - **Messaging configured** (optional) — [Telegram](/user-guide/messaging/telegram) or [Discord](/user-guide/messaging/discord)
 
 :::tip No messaging? No problem
-Use `deliver: "local"` to save reviews to `~/.hermes/cron/output/`. Great for testing before wiring up notifications.
+Use `deliver: "local"` to save reviews to `~/.indagis/cron/output/`. Great for testing before wiring up notifications.
 :::
 
 ---
 
 ## Step 1: Verify the Setup
 
-Make sure Hermes can access GitHub. Start a chat:
+Make sure Indagis can access GitHub. Start a chat:
 
 ```bash
-hermes
+indagis
 ```
 
 Test with a simple command:
 
 ```
-Run: gh pr list --repo NousResearch/hermes-agent --state open --limit 3
+Run: gh pr list --repo Indagis Labs/indagis-agent --state open --limit 3
 ```
 
 You should see a list of open PRs. If this works, you're ready.
@@ -78,16 +79,16 @@ You should see a list of open PRs. If this works, you're ready.
 
 ## Step 2: Try a Manual Review
 
-Still in the chat, ask Hermes to review a real PR:
+Still in the chat, ask Indagis to review a real PR:
 
 ```
 Review this pull request. Read the diff, check for bugs, security issues,
 and code quality. Be specific about line numbers and quote problematic code.
 
-Run: gh pr diff 3888 --repo NousResearch/hermes-agent
+Run: gh pr diff 3888 --repo Indagis Labs/indagis-agent
 ```
 
-Hermes will:
+Indagis will:
 1. Execute `gh pr diff` to fetch the code changes
 2. Read through the entire diff
 3. Produce a structured review with specific findings
@@ -98,13 +99,13 @@ If you're happy with the quality, time to automate it.
 
 ## Step 3: Create a Review Skill
 
-A skill gives Hermes consistent review guidelines that persist across sessions and cron runs. Without one, review quality varies.
+A skill gives Indagis consistent review guidelines that persist across sessions and cron runs. Without one, review quality varies.
 
 ```bash
-mkdir -p ~/.hermes/skills/code-review
+mkdir -p ~/.indagis/skills/code-review
 ```
 
-Create `~/.hermes/skills/code-review/SKILL.md`:
+Create `~/.indagis/skills/code-review/SKILL.md`:
 
 ```markdown
 ---
@@ -143,7 +144,7 @@ Verify it loaded — start `hermes` and you should see `code-review` in the skil
 
 ## Step 4: Teach It Your Conventions
 
-This is what makes the reviewer actually useful. Start a session and teach Hermes your team's standards:
+This is what makes the reviewer actually useful. Start a session and teach Indagis your team's standards:
 
 ```
 Remember: In our backend repo, we use Python with FastAPI.
@@ -167,7 +168,7 @@ These memories persist forever — the reviewer will enforce your conventions wi
 Now wire it all together. Create a cron job that runs every 2 hours:
 
 ```bash
-hermes cron create "0 */2 * * *" \
+indagis cron create "0 */2 * * *" \
   "Check for new open PRs and review them.
 
 Repos to monitor:
@@ -196,7 +197,7 @@ If no new PRs found, say: No new PRs to review." \
 Verify it's scheduled:
 
 ```bash
-hermes cron list
+indagis cron list
 ```
 
 ### Other useful schedules
@@ -215,7 +216,7 @@ hermes cron list
 Don't want to wait for the schedule? Trigger it manually:
 
 ```bash
-hermes cron run pr-review
+indagis cron run pr-review
 ```
 
 Or from within a chat session:
@@ -250,7 +251,7 @@ Make sure `gh` has a token with `repo` scope. Reviews are posted as whoever `gh`
 Create a Monday morning overview of all your repos:
 
 ```bash
-hermes cron create "0 9 * * 1" \
+indagis cron create "0 9 * * 1" \
   "Generate a weekly PR dashboard:
 - myorg/backend-api
 - myorg/frontend-app
@@ -280,13 +281,13 @@ The gateway runs in a minimal environment. Ensure `gh` is in the system PATH and
 
 ### Reviews are too generic
 1. Add the `code-review` skill (Step 3)
-2. Teach Hermes your conventions via memory (Step 4)
+2. Teach Indagis your conventions via memory (Step 4)
 3. The more context it has about your stack, the better the reviews
 
 ### Cron job doesn't run
 ```bash
-hermes gateway status    # Is the gateway running?
-hermes cron list         # Is the job enabled?
+indagis gateway status    # Is the gateway running?
+indagis cron list         # Is the job enabled?
 ```
 
 ### Rate limits
@@ -301,3 +302,5 @@ GitHub allows 5,000 API requests/hour for authenticated users. Each PR review us
 - **[Build a Plugin](/developer-guide/plugins)** — wrap the review logic into a shareable plugin
 - **[Profiles](/user-guide/profiles)** — run a dedicated reviewer profile with its own memory and config
 - **[Fallback Providers](/user-guide/features/fallback-providers)** — ensure reviews run even when one provider is down
+
+---

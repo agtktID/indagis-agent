@@ -1,16 +1,33 @@
 ---
-sidebar_position: 9
+id: secret-source-plugin
 title: "Secret Source Plugins"
-description: "How to build a secret-manager backend plugin for Hermes Agent"
+sidebar_position: 1
+description: "Secret sources resolve provider credentials from an external secret manager (a vault, a password manager, an OS keystore, a custom script) into env..."
 ---
-
+# Secret Source Plugins
 # Building a Secret Source Plugin
 
-Secret sources resolve provider credentials from an external secret manager (a vault, a password manager, an OS keystore, a custom script) into environment variables at process startup — after `~/.hermes/.env` loads, before Hermes reads credentials. Bitwarden, 1Password, and a generic command-helper source ship in-tree; **every other backend is a plugin**. This guide covers building one.
+Secret sources resolve provider credentials from an external secret manager (a vault, a password manager, an OS keystore, a custom script) into environment variables at process startup — after `~/.indagis/.env` loads, before Indagis reads credentials. Bitwarden, 1Password, and a generic command-helper source ship in-tree; **every other backend is a plugin**. This guide covers building one.
 
 :::tip
-The bundled set is deliberately closed, same policy as [memory providers](/developer-guide/memory-provider-plugin): PRs adding new vault backends under `agent/secret_sources/` are closed with a pointer to this guide. Publish your backend as a standalone plugin repo and share it in the Nous Research Discord (`#plugins-skills-and-skins`).
+The bundled set is deliberately closed, same policy as [memory providers](/developer-guide/memory-provider-plugin): PRs adding new vault backends under `agent/secret_sources/` are closed with a pointer to this guide. Publish your backend as a standalone plugin repo and share it in the Indagis Labs Discord (`#plugins-skills-and-skins`).
 :::
+
+## First-process bootstrap timing
+
+`load_hermes_dotenv()` often runs at import time **before** plugins register.
+Indagis then re-pulls secrets after plugin discovery when any **enabled**
+plugin secret source is configured. Enablement uses the source's
+`is_enabled(cfg)` contract; the standard form is
+`secrets.<name>.enabled: true`, while custom activation remains supported.
+That closes the "replace Bitwarden with my vault" first-process gap (#64177).
+
+- Re-pull is idempotent and fail-open (never blocks startup).
+- Sources only supply env vars through the orchestrator; there is **no**
+  plugin API to dump other plugins' or the user's entire secret store beyond
+  what your source's own config allows.
+- Reading `os.environ` after load is possible for any in-process code — the
+  trust boundary remains "enabled plugins run with agent privilege".
 
 ## What the framework owns vs. what you own
 
@@ -29,7 +46,7 @@ The orchestrator (`agent.secret_sources.registry.apply_all`) owns everything sec
 ## Directory structure
 
 ```
-~/.hermes/plugins/my-vault/
+~/.indagis/plugins/my-vault/
 ├── plugin.yaml      # name, description
 └── __init__.py      # SecretSource subclass + register(ctx)
 ```
@@ -110,11 +127,11 @@ class MyVaultSource(SecretSource):
 | `protected_env_vars(cfg)` | empty | You have a bootstrap token (you almost certainly do) |
 | `fetch_timeout_seconds(cfg)` | 120s | Your backend needs a different budget |
 | `config_schema()` | `{}` | Declare config keys for setup surfaces |
-| `remediation(kind, cfg)` | generic per-`ErrorKind` hints | You want failure warnings to point at your own fix-it command (e.g. the bundled sources return `Run hermes secrets <name> token…` for `AUTH_FAILED`). Must be a pure kind→string mapping: no I/O, never raises. Return `""` to suppress the hint. |
+| `remediation(kind, cfg)` | generic per-`ErrorKind` hints | You want failure warnings to point at your own fix-it command (e.g. the bundled sources return `Run indagis secrets <name> token…` for `AUTH_FAILED`). Must be a pure kind→string mapping: no I/O, never raises. Return `""` to suppress the hint. |
 
 ## Subprocess safety: use `run_secret_cli()`
 
-If your backend shells out to a CLI, use the shared helper instead of `subprocess.run` directly. It gives you the audited posture for free: argv-only (no `shell=True`), a **minimal allowlisted child environment** (by the time sources run, `os.environ` holds every credential Hermes knows — never hand that to a child process), `NO_COLOR` + ANSI-scrubbed stderr, stdin closed, timeout → clean `RuntimeError`. Pass user-supplied reference strings after a `--` terminator in your argv so they can never parse as flags.
+If your backend shells out to a CLI, use the shared helper instead of `subprocess.run` directly. It gives you the audited posture for free: argv-only (no `shell=True`), a **minimal allowlisted child environment** (by the time sources run, `os.environ` holds every credential Indagis knows — never hand that to a child process), `NO_COLOR` + ANSI-scrubbed stderr, stdin closed, timeout → clean `RuntimeError`. Pass user-supplied reference strings after a `--` terminator in your argv so they can never parse as flags.
 
 ## Registering
 
@@ -127,7 +144,7 @@ def register(ctx):
 Registration is rejected (with a log warning, never a crash) for: non-`SecretSource` instances, invalid/duplicate names, a `scheme` another source owns, wrong `api_version`, or a `shape` outside `mapped`/`bulk`.
 
 :::note Timing
-Plugin discovery runs later in startup than the first `load_hermes_dotenv()` call, so a plugin source is not consulted by the very first env load of the process that discovers it. It IS consulted by every subsequently spawned Hermes process (gateway children, cron sessions, subagents). Bundled sources cover first-process bootstrap.
+Plugin discovery runs later in startup than the first `load_hermes_dotenv()` call. Immediately after discovery, Indagis re-pulls enabled plugin secret sources (`reset_secret_source_cache()` + `load_hermes_dotenv()`), so the discovering process *does* pick them up — see [First-process bootstrap timing](#first-process-bootstrap-timing) above (#64177). The re-pull is fail-open and skipped when no plugin source is enabled. Any code that reads `os.environ` during the plugin module's import or `register(ctx)` still runs before the re-pull and cannot depend on credentials supplied by that same source; keep credentialed work inside `fetch()`. Gateway, cron, and subagent processes perform the same discovery/re-pull sequence.
 :::
 
 ## Users configure it like any other source
@@ -144,7 +161,7 @@ Multi-source precedence, conflict warnings, and `(from My Vault)` provenance lab
 
 ## Validate with the conformance kit
 
-Subclass the kit from the Hermes repo (`tests/secret_sources/conformance.py`) in your plugin's tests:
+Subclass the kit from the Indagis repo (`tests/secret_sources/conformance.py`) in your plugin's tests:
 
 ```python
 import pytest
@@ -170,3 +187,5 @@ It checks the rules that break other people when violated: never-raises on malfo
 | `EMPTY_VALUE` | Backend returned nothing for a ref — never apply `""` over a good credential |
 | `TIMEOUT` | Fetch exceeded its budget |
 | `INTERNAL` | Anything else (bug, unexpected shape) |
+
+---
