@@ -1,14 +1,14 @@
 ---
-title: "Honcho — Configure and troubleshoot Honcho memory for Hermes"
+title: "Honcho — Configure and troubleshoot Honcho memory for Indagis"
 sidebar_label: "Honcho"
-description: "Configure and troubleshoot Honcho memory for Hermes"
+description: "Configure and troubleshoot Honcho memory for Indagis"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
 # Honcho
 
-Configure and troubleshoot Honcho memory for Hermes.
+Configure and troubleshoot Honcho memory for Indagis.
 
 ## Skill metadata
 
@@ -17,7 +17,7 @@ Configure and troubleshoot Honcho memory for Hermes.
 | Source | Optional — install with `indagis skills install official/autonomous-ai-agents/honcho` |
 | Path | `optional-skills/autonomous-ai-agents/honcho` |
 | Version | `2.0.0` |
-| Author | Hermes Agent |
+| Author | Indagis Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `Honcho`, `Memory`, `Profiles`, `Observation`, `Dialectic`, `User-Modeling`, `Session-Summary` |
@@ -26,12 +26,12 @@ Configure and troubleshoot Honcho memory for Hermes.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Indagis loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
-# Honcho Memory for Hermes
+# Honcho Memory for Indagis
 
-Honcho provides AI-native cross-session user modeling. It learns who the user is across conversations and gives every Hermes profile its own peer identity while sharing a unified view of the user.
+Honcho provides AI-native cross-session user modeling. It learns who the user is across conversations and gives every Indagis profile its own peer identity while sharing a unified view of the user.
 
 ## When to Use
 
@@ -74,7 +74,7 @@ When Honcho injects context into the system prompt (in `hybrid` or `context` rec
 
 1. **Session summary** -- a short digest of the current session so far (placed first so the model has immediate conversational continuity)
 2. **User representation** -- Honcho's accumulated model of the user (preferences, facts, patterns)
-3. **AI peer card** -- the identity card for this Hermes profile's AI peer
+3. **AI peer card** -- the identity card for this Indagis profile's AI peer
 
 The session summary is generated automatically by Honcho at the start of each turn (when a prior session exists). It gives the model a warm start without replaying full history.
 
@@ -91,10 +91,10 @@ You do not need to configure this -- it is automatic based on session state.
 
 ### Peers
 
-Honcho models conversations as interactions between **peers**. Hermes creates two peers per session:
+Honcho models conversations as interactions between **peers**. Indagis creates two peers per session:
 
 - **User peer** (`peerName`): represents the human. Honcho builds a user representation from observed messages.
-- **AI peer** (`aiPeer`): represents this Hermes instance. Each profile gets its own AI peer so agents develop independent views.
+- **AI peer** (`aiPeer`): represents this Indagis instance. Each profile gets its own AI peer so agents develop independent views.
 
 ### Observation
 
@@ -135,7 +135,7 @@ Honcho sessions scope where messages and observations land. Strategy options:
 |----------|----------|
 | `per-directory` (default) | One session per working directory |
 | `per-repo` | One session per git repository root |
-| `per-session` | New Honcho session each Hermes run |
+| `per-session` | New Honcho session each Indagis run |
 | `global` | Single session across all directories |
 
 Manual override: `indagis honcho map my-project-name`
@@ -211,7 +211,7 @@ Higher levels produce richer synthesis but cost more tokens on Honcho's backend.
 
 ## Multi-Profile Setup
 
-Each Hermes profile gets its own Honcho AI peer while sharing the same workspace (user context). This means:
+Each Indagis profile gets its own Honcho AI peer while sharing the same workspace (user context). This means:
 
 - All profiles see the same user representation
 - Each profile builds its own AI identity and observations
@@ -303,7 +303,7 @@ honcho_conclude delete_id="abc123"    # PII removal
 
 ## Agent Usage Patterns
 
-Guidelines for Hermes when Honcho memory is active.
+Guidelines for Indagis when Honcho memory is active.
 
 ### On conversation start
 
@@ -439,8 +439,8 @@ Session summary requires at least one prior turn in the current Honcho session. 
 | `indagis honcho sessions` | List known directory-to-session-name mappings |
 | `indagis honcho map <name>` | Map current working directory to a Honcho session name |
 | `indagis honcho identity` | Seed AI peer identity or show both peer representations |
-| `indagis honcho sync` | Create host blocks for all Hermes profiles that don't have one yet |
-| `indagis honcho migrate` | Step-by-step migration guide from OpenClaw native memory to Hermes + Honcho |
+| `indagis honcho sync` | Create host blocks for all Indagis profiles that don't have one yet |
+| `indagis honcho migrate` | Step-by-step migration guide from OpenClaw native memory to Indagis + Honcho |
 | `indagis memory setup` | Generic memory provider picker (selecting "honcho" runs the same wizard) |
 | `indagis memory status` | Show active memory provider and config |
 | `indagis memory off` | Disable external memory provider |

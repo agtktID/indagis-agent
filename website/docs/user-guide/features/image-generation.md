@@ -7,7 +7,7 @@ sidebar_position: 6
 
 # Image Generation
 
-Hermes Agent generates images from text prompts via FAL.ai. Eleven models are supported out of the box, each with different speed, quality, and cost tradeoffs. The active model is user-configurable via `indagis tools` and persists in `config.yaml`.
+Indagis Agent generates images from text prompts via FAL.ai. Eleven models are supported out of the box, each with different speed, quality, and cost tradeoffs. The active model is user-configurable via `indagis tools` and persists in `config.yaml`.
 
 ## Supported Models
 
@@ -62,7 +62,7 @@ image_gen:
   max_parallel_requests: 4      # concurrent images in one tool-call batch
 ```
 
-`max_parallel_requests` defaults to `4`. Hermes clamps it to at least one and
+`max_parallel_requests` defaults to `4`. Indagis clamps it to at least one and
 to the global tool-worker limit, so image providers receive bounded parallel
 requests without allowing an image batch to bypass the agent's concurrency cap.
 
@@ -125,7 +125,7 @@ edit-capable model.
 :::note OpenAI (Codex auth) is best-effort
 
 The Codex surface (`chatgpt.com/backend-api/codex`) hosts `image_generation`
-as a tool the chat model may call, and Hermes cannot force the call — the
+as a tool the chat model may call, and Indagis cannot force the call — the
 backend rejects every `tool_choice` shape for hosted tools, so the request
 relies on instructions to steer the model. When the host model declines to
 invoke the tool, the call fails with `empty_response`. Whether the hosted
@@ -207,5 +207,5 @@ Debug logs go to `./logs/image_tools_debug_<session_id>.json` with per-call deta
 
 - **Requires credentials** for the active backend (FAL `FAL_KEY` / Nous Subscription, `OPENAI_API_KEY`, xAI OAuth, `KREA_API_KEY`)
 - **Editing is model-dependent** — image-to-image works only on edit-capable models (see the table above); text-to-image-only models reject image inputs with a clear error
-- **Temporary URLs** — backends return hosted URLs that expire after hours/days; Hermes materializes them to the local cache so delivery still works after expiry
+- **Temporary URLs** — backends return hosted URLs that expire after hours/days; Indagis materializes them to the local cache so delivery still works after expiry
 - **Per-model constraints** — some models don't support `seed`, `num_inference_steps`, etc. The `supports` / `edit_supports` filter silently drops unsupported params; this is expected behavior

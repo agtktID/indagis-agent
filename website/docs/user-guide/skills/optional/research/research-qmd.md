@@ -17,7 +17,7 @@ Hybrid local search over notes, docs, and transcripts.
 | Source | Optional — install with `indagis skills install official/research/qmd` |
 | Path | `optional-skills/research/qmd` |
 | Version | `1.0.0` |
-| Author | Hermes Agent + Teknium |
+| Author | Indagis Agent + Teknium |
 | License | MIT |
 | Platforms | macos, linux |
 | Tags | `Search`, `Knowledge-Base`, `RAG`, `Notes`, `MCP`, `Local-AI` |
@@ -26,7 +26,7 @@ Hybrid local search over notes, docs, and transcripts.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Indagis loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # QMD — Query Markup Documents
@@ -238,7 +238,7 @@ qmd multi-get "journals/*.md" --json  # Batch retrieve by glob
 ## MCP Integration (Recommended)
 
 qmd exposes an MCP server that provides search tools directly to
-Hermes Agent via the native MCP client. This is the preferred
+Indagis Agent via the native MCP client. This is the preferred
 integration — once configured, the agent gets qmd tools automatically
 without needing to load this skill.
 
@@ -272,7 +272,7 @@ qmd mcp --http --daemon
 # Runs on http://localhost:8181 by default
 ```
 
-Then configure Hermes Agent to connect via HTTP:
+Then configure Indagis Agent to connect via HTTP:
 
 ```yaml
 mcp_servers:

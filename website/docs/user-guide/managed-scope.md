@@ -47,7 +47,7 @@ the feature.
 The location can be relocated with the `HERMES_MANAGED_DIR` environment variable
 (for containers or non-`/etc` deployments). This is a deployment/bootstrap path
 knob — like `INDAGIS_HOME` — set by the same administrator who owns the managed
-files. It is **never persisted** to any `.env` by Hermes.
+files. It is **never persisted** to any `.env` by Indagis.
 
 ```bash
 # Point managed scope at a custom directory (set by IT / the deployment, not the user)
@@ -97,7 +97,7 @@ indagis config        # shows a header naming the managed source + the pinned ke
 indagis doctor        # reports the resolved managed dir + pinned key counts
 ```
 
-If you try to change a managed value, Hermes refuses and names the source:
+If you try to change a managed value, Indagis refuses and names the source:
 
 ```bash
 $ indagis config set model.default my/model
@@ -130,14 +130,14 @@ sudo chmod 0755 /etc/hermes
 sudo chmod 0644 /etc/hermes/config.yaml /etc/hermes/.env
 ```
 
-Changes take effect on the next Hermes start (a malformed managed file is logged
+Changes take effect on the next Indagis start (a malformed managed file is logged
 loudly and ignored — it never blocks startup, but the admin should check
 `indagis doctor` to confirm the policy is being applied).
 
 ## Security model and limitations (v1)
 
 - **Enforcement is filesystem permissions only.** If a user has write access to
-  the managed directory (or runs Hermes as `root`), managed scope is advisory.
+  the managed directory (or runs Indagis as `root`), managed scope is advisory.
 - **The managed `.env` is world-readable** (`0644`), so any local user can read
   secrets pushed through it. Use it for shared, non-sensitive values (an org API
   base URL, feature defaults) rather than high-sensitivity secrets.

@@ -1,17 +1,17 @@
 ---
 sidebar_position: 30
-title: "Hermes Relay"
-description: "Connect Hermes to messaging platforms through a relay connector that owns the platform credentials — enrollment, capabilities, config, and troubleshooting"
+title: "Indagis Relay"
+description: "Connect Indagis to messaging platforms through a relay connector that owns the platform credentials — enrollment, capabilities, config, and troubleshooting"
 ---
 
-# Hermes Relay (Connector)
+# Indagis Relay (Connector)
 
 :::warning Experimental
 Relay is **experimental**. The wire contract, auth scheme, and configuration
 may change without a deprecation cycle while the system is being validated.
 :::
 
-Hermes Relay is not a chat platform itself — it is a **connector system** that
+Indagis Relay is not a chat platform itself — it is a **connector system** that
 lets your gateway front one or more real messaging platforms (Discord,
 Telegram, Slack, WhatsApp, …) **without holding any platform credentials**. A
 separate service, the *connector*, owns the platform bot tokens and sockets.

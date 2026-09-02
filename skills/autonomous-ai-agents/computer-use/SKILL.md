@@ -27,9 +27,9 @@ Everything here works with any tool-capable model — Claude, GPT, Gemini,
 or an open model on a local OpenAI-compatible endpoint. There is no
 Anthropic-native schema to learn.
 
-Hermes drives [cua-driver](https://github.com/trycua/cua) under the hood
-for the platform plumbing. The Hermes-side `computer_use` tool exposed
-in this skill is a higher-level Hermes vocabulary; the raw cua-driver
+Indagis drives [cua-driver](https://github.com/trycua/cua) under the hood
+for the platform plumbing. The Indagis-side `computer_use` tool exposed
+in this skill is a higher-level Indagis vocabulary; the raw cua-driver
 MCP tools (which a different agent harness would see) are NOT what you
 call — call the `computer_use` actions documented below.
 
@@ -183,8 +183,8 @@ browser tools. The contract is capability-based:
 `cua_browser_prepare` is a separate approved setup action. Driver-owned
 `isolated_new`/`isolated_named` profiles require explicit `allow_launch=true`.
 An `existing_profile` is decided by cua-driver's immutable permission mode.
-Normal Hermes sessions use `standard`, which requires a certified protected
-host and fails closed when Hermes has none. Explicit Hermes YOLO (`--yolo`,
+Normal Indagis sessions use `standard`, which requires a certified protected
+host and fails closed when Indagis has none. Explicit Indagis YOLO (`--yolo`,
 `/yolo`, or `approvals.mode: off`) launches a private embedded cua-driver in
 `unrestricted` after that risk acceptance, so there are no runtime Cua
 approval prompts. Never invent, store, log, or reuse a grant token.
@@ -318,7 +318,7 @@ in your conversation context.
 
 ## Going deeper — read the cua-driver skill pack
 
-Hermes intentionally keeps THIS skill focused on the Hermes-side
+Indagis intentionally keeps THIS skill focused on the Indagis-side
 `computer_use` action vocabulary. The platform-specific deep dives
 (macOS no-foreground contract, Windows UIA + Session 0, Linux AT-SPI +
 X11/Wayland nuances, recording trajectory + video, browser-page
@@ -350,7 +350,7 @@ These are platform deep dives, not duplicates — when the user reports
 `WINDOWS.md` for the UIA / UWP context that explains why and what to
 do differently.
 
-When `cua-driver skills install` autodetects Hermes (planned follow-up
+When `cua-driver skills install` autodetects Indagis (planned follow-up
 in trycua/cua), this happens automatically on install. Until then, ask
 the user to run the command and the pack lands in their agent skill
 space alongside this skill.

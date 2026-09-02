@@ -6,17 +6,17 @@ description: "SOUL.md vs USER.md vs MEMORY.md vs AGENTS.md — a one-page map of
 
 # Which File Does What?
 
-"I told my agent something and it forgot." "Which file is my agent's brain?" "I edited SOUL.md — why doesn't it know my name?" These questions all come down to the same thing: Hermes Agent is shaped by several markdown files, and each one has a different job. This page maps them all in one place. For depth on any of them, follow the links to [Persistent Memory](/user-guide/features/memory), [Personality & SOUL.md](/user-guide/features/personality), and [Context Files](/user-guide/features/context-files).
+"I told my agent something and it forgot." "Which file is my agent's brain?" "I edited SOUL.md — why doesn't it know my name?" These questions all come down to the same thing: Indagis Agent is shaped by several markdown files, and each one has a different job. This page maps them all in one place. For depth on any of them, follow the links to [Persistent Memory](/user-guide/features/memory), [Personality & SOUL.md](/user-guide/features/personality), and [Context Files](/user-guide/features/context-files).
 
 ## The Master Table
 
 | File | What it holds | Who writes it | When the agent sees it | Where it lives |
 |------|---------------|---------------|------------------------|----------------|
-| **SOUL.md** | The agent's primary identity — personality, tone, communication style, what to avoid stylistically | You. Hermes seeds a starter file automatically if one doesn't exist; existing files are never overwritten | Slot #1 of the system prompt, at session start | `~/.indagis/SOUL.md` (or `$INDAGIS_HOME/SOUL.md` with a custom home) — never the working directory |
+| **SOUL.md** | The agent's primary identity — personality, tone, communication style, what to avoid stylistically | You. Indagis seeds a starter file automatically if one doesn't exist; existing files are never overwritten | Slot #1 of the system prompt, at session start | `~/.indagis/SOUL.md` (or `$INDAGIS_HOME/SOUL.md` with a custom home) — never the working directory |
 | **USER.md** | User profile — your name, role, preferences, communication style, expectations | The agent, via the `memory` tool (you can gate saves with `write_approval`, or edit entries via `hermes journey edit`) | Injected into the system prompt as a frozen snapshot at session start | `~/.indagis/memories/` |
 | **MEMORY.md** | Agent's personal notes — environment facts, project conventions, tool quirks, things learned | The agent, via the `memory` tool (same gating and editing options as USER.md) | Injected into the system prompt as a frozen snapshot at session start | `~/.indagis/memories/` |
 | **AGENTS.md** | Project instructions, conventions, architecture — commands, ports, paths, repo-specific workflows | You (or whoever authors the project) | Loaded into the system prompt at startup from your working directory; nested copies are discovered progressively as the agent navigates subdirectories | Project working directory + subdirectories |
-| **.hermes.md** / **HERMES.md** | Project instructions, like AGENTS.md but Hermes-specific and highest priority | You | Loaded into the system prompt at startup (first match wins over AGENTS.md) | Your project — discovery walks up to the git root |
+| **.hermes.md** / **HERMES.md** | Project instructions, like AGENTS.md but Indagis-specific and highest priority | You | Loaded into the system prompt at startup (first match wins over AGENTS.md) | Your project — discovery walks up to the git root |
 
 :::info One project context file per session
 Only **one** project context type is loaded per session, first match wins: `.hermes.md` → `AGENTS.md` → `CLAUDE.md` → `.cursorrules`. `SOUL.md` is always loaded independently as the agent identity — it is not part of that priority chain. See [Context Files](/user-guide/features/context-files) for the full list, including `CLAUDE.md` and `.cursorrules` compatibility.
