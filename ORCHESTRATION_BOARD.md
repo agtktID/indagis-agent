@@ -5,6 +5,27 @@ Source of truth: live via SendMessage check-ins with each peer session (no autom
 
 **IMPORTANT — branch note**: this board now lives on `claude/agent-orchestrator-9262fa-resync`, not the original `claude/agent-orchestrator-9262fa`. That original branch was discovered to be 21,033 commits behind `origin/main` with NO common ancestor (git refuses to merge it — "unrelated histories"). It was created from a stale/disconnected base at worktree setup and was never caught until a workflow agent's findings, made against that stale checkout, contradicted verified real `main` state. The `-resync` branch is freshly cut from real `origin/main` and carries the same board/plan/ADR content forward. Do not build further on the old branch.
 
+## Delegation plan (2026-09-02) — deploy-readiness blockers
+
+User asked: is this ready to deploy? Verdict: no. Two hard blockers need the user's own action (not delegatable to an agent), the rest is real engineering work being assigned below.
+
+### Not delegatable — needs the user directly, not an agent
+- **Repo is private** — confirmed via a real HTTP request (raw.githubusercontent.com 404s). Blocks the documented curl\|bash install for every external user. User decision: make the repo public, or finish the indagis-agent.<domain> hosting plan (in progress, waiting on the actual IONOS domain name).
+- **PR #30 not merged** — the "Deny unrelated histories" CI fix is ready and tested but sitting unmerged; every PR (including future ones) keeps failing "All required checks pass" until the user reviews and merges it.
+- **git history "tyg" leak** — a real commit trailer (`Co-authored-by: Indagis Agent <235750049+Labscreatis@users.noreply.github.com>`) bakes the user's real local system username into permanent git history. Low severity (a username, not a credential) but only fixable by a full history rewrite across 21k+ commits — a decision with real cost, needs the user's explicit call, not an agent's.
+- **hermes-achievements/ plugin rename** — already flagged (card-011/plan Phase 2): rename the whole plugin or keep it as a distinct third-party-style name. Needs an answer before any agent touches those 28 files.
+- **Desktop splash screen visual check** — code written and pushed (commit 364f92b38), syntax-verified only. Nobody has actually seen it render — needs a real `npm run dev:electron` run by the user or a session with a properly isolated environment, not this sandbox.
+
+### card-013 — Env var codemod tool (Phase 3 of the plan, ~460 vars)
+- Owner: unassigned — needs a fresh session, this is a tooling task before it's a rename task
+- Scope: per ADR 0001's chosen approach — write and test a script that finds `os.getenv("HERMES_X")`/`os.environ["HERMES_X"]` call sites repo-wide, generates a mapping table for review, and wraps each with the `env_with_legacy_alias()` helper introduced by card-003 (must be merged first, or the session works off hungry-chebyshev's branch directly). Apply in batches per subsystem (TUI, Kanban, Gateway, etc.), not as one giant PR.
+- Blocked on: card-003 (3 already-done INDAGIS_ families) needs pushing/merging first so the helper it introduces is available to build on — currently local-only per that session's own confirmation earlier this session.
+
+### card-014 — website/docs + skills/ string cleanup batches (Phase 2 of the plan)
+- Owner: assigned to vibrant-jemison-ffb7ce-76 (active, already has context) — task sent
+- Scope: batch by directory, not one pass — start with `website/docs/guides/` and `website/docs/user-guide/`, then `skills/creative/` (65 files, largest single cluster), then the rest of `skills/` and `optional-skills/`. Mechanical "Hermes Agent" -> "Indagis Agent" text replacement, verify no code/logic touched, just prose.
+- Merge gate: same as always — no push without that session's own user confirmation.
+
 ## Active cards
 
 ### card-001 — Nous Research identity rebrand (desktop/installer)
