@@ -12,6 +12,7 @@ Dependencies (optional):
 import logging
 import math
 import os
+from utils import env_with_legacy_alias
 import platform
 import re
 import shlex
@@ -1933,7 +1934,7 @@ DEFAULT_BARGE_MULTIPLIER = 3.0
 
 
 def _voice_debug_enabled() -> bool:
-    return os.environ.get("HERMES_VOICE_DEBUG", "").strip() == "1"
+    return env_with_legacy_alias("INDAGIS_VOICE_DEBUG", "HERMES_VOICE_DEBUG", "").strip() == "1"
 
 
 def _vad_log(msg: str) -> None:
