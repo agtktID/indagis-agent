@@ -22,14 +22,13 @@ Uses stdlib ``urllib`` only, matching ``debug.py`` style — no third-party deps
 
 import json
 import os
+from utils import env_with_legacy_alias
 import urllib.request
 
 # Base URL of the Nous account service that mints the signed upload URL.
 # Overridable via env so the feature can be pointed at staging / a local dev
 # NAS instance during testing.
-NAS_BASE = os.environ.get(
-    "HERMES_DIAGNOSTICS_BASE_URL", "https://portal.nousresearch.com"
-)
+NAS_BASE = env_with_legacy_alias("INDAGIS_DIAGNOSTICS_BASE_URL", "HERMES_DIAGNOSTICS_BASE_URL", "https://portal.nousresearch.com")
 
 # Network timeout for each request (seconds). The upload itself can be larger
 # (a gzipped log bundle), so the PUT gets a more generous window.

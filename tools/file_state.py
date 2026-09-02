@@ -33,6 +33,7 @@ loop detection, which is a different concern.
 from __future__ import annotations
 
 import os
+from utils import env_with_legacy_alias
 import threading
 import time
 from collections import defaultdict
@@ -268,7 +269,7 @@ def get_registry() -> FileStateRegistry:
 
 def _disabled() -> bool:
     # Re-read each call so tests can toggle via monkeypatch.setenv.
-    return os.environ.get("HERMES_DISABLE_FILE_STATE_GUARD", "").strip() == "1"
+    return env_with_legacy_alias("INDAGIS_DISABLE_FILE_STATE_GUARD", "HERMES_DISABLE_FILE_STATE_GUARD", "").strip() == "1"
 
 
 def _fmt_ts(ts: float) -> str:

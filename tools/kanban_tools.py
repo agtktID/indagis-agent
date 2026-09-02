@@ -33,6 +33,8 @@ import logging
 import os
 from typing import Any, Optional
 
+from utils import env_with_legacy_alias
+
 from agent.redact import redact_sensitive_text
 from hermes_cli.goals import judge_goal
 from tools.registry import registry, tool_error
@@ -114,7 +116,7 @@ def _check_kanban_mode() -> bool:
     """
     if _is_delegated_child_context():
         return False
-    if os.environ.get("HERMES_KANBAN_TASK") and _is_dispatcher_owned_worker():
+    if env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK") and _is_dispatcher_owned_worker():
         return True
     return _profile_has_kanban_toolset()
 
@@ -130,7 +132,7 @@ def _check_kanban_orchestrator_mode() -> bool:
     """
     if _is_delegated_child_context():
         return False
-    if os.environ.get("HERMES_KANBAN_TASK") and _is_dispatcher_owned_worker():
+    if env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK") and _is_dispatcher_owned_worker():
         return False
     return _profile_has_kanban_toolset()
 
@@ -149,15 +151,15 @@ def _default_task_id(arg: Optional[str]) -> Optional[str]:
         # A cron job fired in-process from a worker must never inherit the
         # worker's task id as an implicit default.
         return None
-    env_tid = os.environ.get("HERMES_KANBAN_TASK")
+    env_tid = env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK")
     return env_tid or None
 
 
 def _worker_run_id(task_id: str) -> Optional[int]:
     """Return this worker's dispatcher run id when it is scoped to task_id."""
-    if os.environ.get("HERMES_KANBAN_TASK") != task_id:
+    if env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK") != task_id:
         return None
-    raw = os.environ.get("HERMES_KANBAN_RUN_ID")
+    raw = env_with_legacy_alias("INDAGIS_KANBAN_RUN_ID", "HERMES_KANBAN_RUN_ID")
     if not raw:
         return None
     try:
@@ -170,7 +172,7 @@ def _stamp_worker_session_metadata(
     task_id: str, metadata: Optional[dict]
 ) -> Optional[dict]:
     """Add trusted worker session id metadata for this worker's own task."""
-    if os.environ.get("HERMES_KANBAN_TASK") != task_id:
+    if env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK") != task_id:
         return metadata
     session_id = os.environ.get("HERMES_SESSION_ID")
     if not session_id:
@@ -199,7 +201,7 @@ def _enforce_worker_task_ownership(tid: str) -> Optional[str]:
     when it must be rejected. Callers should ``return`` the error
     verbatim.
     """
-    env_tid = os.environ.get("HERMES_KANBAN_TASK")
+    env_tid = env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK")
     if not env_tid:
         # Orchestrator or CLI context — no task-scope restriction.
         return None
@@ -298,7 +300,7 @@ def heartbeat_current_worker_from_env() -> bool:
     the worst case is one extra DB write per race, which is harmless.
     """
     global _auto_heartbeat_last_attempt
-    tid = os.environ.get("HERMES_KANBAN_TASK")
+    tid = env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK")
     if not tid:
         return False
     import time as _time
@@ -309,12 +311,12 @@ def heartbeat_current_worker_from_env() -> bool:
     try:
         kb, conn = _connect()
         try:
-            claim_lock = os.environ.get("HERMES_KANBAN_CLAIM_LOCK")
+            claim_lock = env_with_legacy_alias("INDAGIS_KANBAN_CLAIM_LOCK", "HERMES_KANBAN_CLAIM_LOCK")
             try:
                 kb.heartbeat_claim(conn, tid, claimer=claim_lock)
             except Exception:
                 logger.debug("auto-heartbeat: heartbeat_claim failed", exc_info=True)
-            run_id_raw = os.environ.get("HERMES_KANBAN_RUN_ID")
+            run_id_raw = env_with_legacy_alias("INDAGIS_KANBAN_RUN_ID", "HERMES_KANBAN_RUN_ID")
             run_id: Optional[int]
             try:
                 run_id = int(run_id_raw) if run_id_raw else None
@@ -359,7 +361,7 @@ def inject_new_comments_from_env(agent: Any) -> bool:
     the run started are injected. The worker's own authored comments (matched
     by ``HERMES_PROFILE``) are skipped to avoid echoing itself.
     """
-    tid = os.environ.get("HERMES_KANBAN_TASK")
+    tid = env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK")
     if not tid or agent is None or not hasattr(agent, "steer"):
         return False
     global _comment_poll_last_attempt
@@ -394,7 +396,7 @@ def inject_new_comments_from_env(agent: Any) -> bool:
     # notes) so nothing is re-injected next poll.
     _comment_watermark[tid] = max(c.id for c in rows)
 
-    own = (os.environ.get("HERMES_PROFILE") or "").strip()
+    own = (env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE") or "").strip()
     fresh = [c for c in rows if (c.author or "").strip() != own and (c.body or "").strip()]
     if not fresh:
         return False
@@ -451,7 +453,7 @@ def _require_orchestrator_tool(tool_name: str) -> Optional[str]:
     structured tool_error so the model gets a clear refusal instead of
     silently mutating board state from a worker context.
     """
-    if os.environ.get("HERMES_KANBAN_TASK"):
+    if env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK"):
         return tool_error(
             f"{tool_name} is orchestrator-only; dispatcher-spawned workers "
             "must use kanban_complete, kanban_block, kanban_heartbeat, or "
@@ -921,7 +923,7 @@ def _handle_heartbeat(args: dict, **kw) -> str:
             # (see _default_spawn in kanban_db.py); falling back to the
             # default _claimer_id() covers locally-driven workers that
             # never went through the dispatcher path.
-            claim_lock = os.environ.get("HERMES_KANBAN_CLAIM_LOCK")
+            claim_lock = env_with_legacy_alias("INDAGIS_KANBAN_CLAIM_LOCK", "HERMES_KANBAN_CLAIM_LOCK")
             kb.heartbeat_claim(conn, tid, claimer=claim_lock)
 
             ok = kb.heartbeat_worker(
@@ -968,7 +970,7 @@ def _handle_comment(args: dict, **kw) -> str:
     # the future-worker context with what reads as a system directive.
     # Cross-task commenting itself remains unrestricted (see #19713) —
     # comments are the deliberate handoff channel between tasks.
-    author = os.environ.get("HERMES_PROFILE") or "worker"
+    author = env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE") or "worker"
     board = args.get("board")
     try:
         kb, conn = _connect(board=board)
@@ -1229,7 +1231,7 @@ def _handle_create(args: dict, **kw) -> str:
         )
     body = args.get("body")
     parents = args.get("parents") or []
-    tenant = args.get("tenant") or os.environ.get("HERMES_TENANT")
+    tenant = args.get("tenant") or env_with_legacy_alias("INDAGIS_TENANT", "HERMES_TENANT")
     # Stamp the originating session id when the agent loop runs under
     # ACP (which sets HERMES_SESSION_ID before invoking tools). NULL on
     # CLI / dashboard paths and on legacy hosts that don't set the env.
@@ -1296,7 +1298,7 @@ def _handle_create(args: dict, **kw) -> str:
             # it into a fresh per-task worktree. Never inherit the parent's
             # literal workspace kind/path; directory sharing must be explicit.
             if _inherit_project and project_id is None:
-                _self_tid = os.environ.get("HERMES_KANBAN_TASK")
+                _self_tid = env_with_legacy_alias("INDAGIS_KANBAN_TASK", "HERMES_KANBAN_TASK")
                 if _self_tid:
                     _self_task = kb.get_task(conn, _self_tid)
                     if _self_task is not None and _self_task.project_id:
@@ -1328,7 +1330,7 @@ def _handle_create(args: dict, **kw) -> str:
                     int(goal_max_turns) if goal_max_turns is not None else None
                 ),
                 initial_status=str(initial_status),
-                created_by=os.environ.get("HERMES_PROFILE") or "worker",
+                created_by=env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE") or "worker",
                 session_id=session_id,
             )
             new_task = kb.get_task(conn, new_tid)
@@ -1431,7 +1433,7 @@ def _maybe_auto_subscribe(conn: Any, task_id: str) -> bool:
         message_id = get_session_env("HERMES_SESSION_MESSAGE_ID", "") or ""
         notifier_profile = (
             get_session_env("HERMES_SESSION_PROFILE", "")
-            or os.environ.get("HERMES_PROFILE")
+            or env_with_legacy_alias("INDAGIS_PROFILE", "HERMES_PROFILE")
         )
         if not notifier_profile:
             try:

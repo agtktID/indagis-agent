@@ -32,7 +32,7 @@ from hermes_cli.nous_subscription import (
 )
 from hermes_cli.nous_account import format_nous_portal_entitlement_message
 from tools.tool_backend_helpers import fal_key_is_configured
-from utils import base_url_hostname, is_truthy_value
+from utils import base_url_hostname, env_with_legacy_alias, is_truthy_value
 
 logger = logging.getLogger(__name__)
 
@@ -754,7 +754,7 @@ TOOLSET_ENV_REQUIREMENTS = {
 
 def _cua_driver_cmd() -> str:
     """Return the configured cua-driver override, or the bare default name."""
-    return os.environ.get("HERMES_CUA_DRIVER_CMD", "").strip() or "cua-driver"
+    return env_with_legacy_alias("INDAGIS_CUA_DRIVER_CMD", "HERMES_CUA_DRIVER_CMD", "").strip() or "cua-driver"
 
 
 def _resolved_cua_driver_cmd() -> Optional[str]:

@@ -9,6 +9,7 @@ the first 6 and last 4 characters for debuggability.
 
 import logging
 import os
+from utils import env_with_legacy_alias
 import re
 import shlex
 from urllib.parse import unquote_plus
@@ -66,7 +67,7 @@ _SENSITIVE_BODY_KEYS = frozenset({
 # cli.py) or `HERMES_REDACT_SECRETS=false` in ~/.hermes/.env. An opt-out
 # warning is logged at gateway and CLI startup so operators see the
 # downgrade — see `_log_redaction_status()` in gateway/run.py and cli.py.
-_REDACT_ENABLED = os.getenv("HERMES_REDACT_SECRETS", "true").lower() in {"1", "true", "yes", "on"}
+_REDACT_ENABLED = env_with_legacy_alias("INDAGIS_REDACT_SECRETS", "HERMES_REDACT_SECRETS", "true").lower() in {"1", "true", "yes", "on"}
 
 # Known API key prefixes -- match the prefix + contiguous token chars
 _PREFIX_PATTERNS = [

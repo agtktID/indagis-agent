@@ -4,10 +4,10 @@ sidebar_position: 15
 
 # WeCom Callback (Self-Built App)
 
-Connect Hermes to WeCom (Enterprise WeChat) as a self-built enterprise application using the callback/webhook model.
+Connect Indagis to WeCom (Enterprise WeChat) as a self-built enterprise application using the callback/webhook model.
 
 :::info WeCom Bot vs WeCom Callback
-Hermes supports two WeCom integration modes:
+Indagis supports two WeCom integration modes:
 - **[WeCom Bot](wecom.md)** — bot-style, connects via WebSocket. Simpler setup, works in group chats.
 - **WeCom Callback** (this page) — self-built app, receives encrypted XML callbacks. Shows as a first-class app in users' WeCom sidebar. Supports multi-corp routing.
 :::
@@ -20,7 +20,7 @@ See also: [WeCom Bot](./wecom.md) for the bot-style integration.
 
 1. You register a self-built application in the WeCom Admin Console
 2. WeCom pushes encrypted XML to your HTTP callback endpoint
-3. Hermes decrypts the message, queues it for the agent
+3. Indagis decrypts the message, queues it for the agent
 4. Immediately acknowledges (silent — nothing displayed to the user)
 5. The agent processes the request (typically 3–30 minutes)
 6. The reply is delivered proactively via the WeCom `message/send` API
@@ -156,7 +156,7 @@ The crypto implementation is compatible with Tencent's official WXBizMsgCrypt SD
 
 **Signature verification failing.**
 WeCom signs every request with the **Token** you registered in the admin
-console. A mismatch between the token configured in Hermes and the token the
+console. A mismatch between the token configured in Indagis and the token the
 admin console expects is the most common cause. Re-copy both the **Token** and
 **EncodingAESKey** from the admin console — they're easy to truncate. Whitespace
 in `~/.indagis/.env` values around `=` will also break signature checks. After

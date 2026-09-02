@@ -11,6 +11,7 @@ module-level constants live in hermes_state_common.
 import logging
 import json
 import os
+from utils import env_with_legacy_alias
 import re
 import sqlite3
 import time
@@ -1342,7 +1343,7 @@ class SessionSearchMixin:
             return rows
         finally:
             try:
-                threshold = float(os.getenv("HERMES_SEARCH_SLOW_MS", "1000"))
+                threshold = float(env_with_legacy_alias("INDAGIS_SEARCH_SLOW_MS", "HERMES_SEARCH_SLOW_MS", "1000"))
             except (TypeError, ValueError):
                 threshold = 1000.0
             elapsed_ms = (time.time() - started) * 1000.0

@@ -33,6 +33,7 @@ import argparse
 import asyncio
 import logging
 import os
+from utils import env_with_legacy_alias
 import sys
 from pathlib import Path
 from hermes_constants import get_indagis_home
@@ -255,7 +256,7 @@ def main(argv: list[str] | None = None) -> None:
     # that path is unaffected.)  Moved from model_tools.py module scope
     # to avoid freezing the gateway's loop on lazy import (#16856).
     # Metadata-only hosts can opt out of unrelated global MCP startup.
-    if os.environ.get("HERMES_ACP_SKIP_CONFIGURED_MCP", "").strip() != "1":
+    if env_with_legacy_alias("INDAGIS_ACP_SKIP_CONFIGURED_MCP", "HERMES_ACP_SKIP_CONFIGURED_MCP", "").strip() != "1":
         try:
             from hermes_cli.mcp_startup import start_background_mcp_discovery
 

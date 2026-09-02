@@ -3,7 +3,7 @@ name: osint-investigation
 description: Follow the money via public records and sanctions data.
 version: 0.1.0
 platforms: [linux, macos, windows]
-author: Hermes Agent (adapted from ShinMegamiBoson/OpenPlanter, MIT)
+author: Indagis Agent (adapted from ShinMegamiBoson/OpenPlanter, MIT)
 metadata:
   hermes:
     tags: [osint, investigation, public-records, sec, sanctions, corporate-registry, property, courts, due-diligence, journalism]

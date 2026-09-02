@@ -26,7 +26,7 @@ RL post-training for LLMs with Megatron and SGLang.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Indagis loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # slime: LLM Post-Training Framework for RL Scaling

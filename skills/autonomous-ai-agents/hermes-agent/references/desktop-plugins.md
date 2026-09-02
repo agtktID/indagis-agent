@@ -1,6 +1,6 @@
 # Desktop App Plugins — UI Panes, Commands, Widgets
 
-Write plugins for the Hermes desktop app: statusbar items, layout panes,
+Write plugins for the Indagis desktop app: statusbar items, layout panes,
 command-palette commands, keybinds, routes, and themes. A plugin is a single
 plain-JavaScript ESM file the app loads at runtime — no build step, no repo
 changes. A plugin can also talk to its own Python backend namespace
@@ -18,7 +18,7 @@ Full human reference (every export, area payloads, backend, security):
 
 ## Prerequisites
 
-- The Hermes desktop app (it loads plugins; the CLI/gateway alone does not).
+- The Indagis desktop app (it loads plugins; the CLI/gateway alone does not).
 - Write access to `$HERMES_HOME/desktop-plugins/` (usually
   `~/.hermes/desktop-plugins/`).
 
@@ -73,7 +73,7 @@ The ONLY import surface is `@hermes/plugin-sdk` (plus `react` /
 - `ctx.storage.get/set/remove` — persistence namespaced to your plugin.
 - `ctx.os` — the curated OS door, attributed to your plugin:
   `ctx.os.notify({ title, body?, silent? })` posts a native OS notification.
-  Fires only while the user is away from Hermes (use `host.notify` for the
+  Fires only while the user is away from Indagis (use `host.notify` for the
   in-app toast); gated by Settings ▸ Notifications ▸ "Plugin notifications"
   and throttled per plugin — reserve it for genuinely notable events.
   `ctx.os.openExternal(url)`, `ctx.os.revealPath(path)`, and

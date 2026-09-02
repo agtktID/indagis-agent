@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import logging
 import os
+from utils import env_with_legacy_alias
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -69,7 +70,7 @@ def _bundles_dir() -> Path:
     Honors ``HERMES_BUNDLES_DIR`` for tests; falls back to
     ``<INDAGIS_HOME>/skill-bundles``.
     """
-    override = os.environ.get("HERMES_BUNDLES_DIR")
+    override = env_with_legacy_alias("INDAGIS_BUNDLES_DIR", "HERMES_BUNDLES_DIR")
     if override:
         return Path(override).expanduser()
     return get_indagis_home() / "skill-bundles"

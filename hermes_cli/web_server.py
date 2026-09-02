@@ -98,7 +98,7 @@ from gateway.status import (
     read_runtime_status,
     resolve_gateway_liveness,
 )
-from utils import env_var_enabled
+from utils import env_var_enabled, env_with_legacy_alias
 
 try:
     from fastapi import (
@@ -238,7 +238,7 @@ async def _lifespan(app: "FastAPI"):
     # dashboard` is unaffected — it relies on its own gateway.
     cron_stop: "threading.Event | None" = None
     cron_thread: "threading.Thread | None" = None
-    if os.getenv("HERMES_DESKTOP") == "1":
+    if env_with_legacy_alias("INDAGIS_DESKTOP", "HERMES_DESKTOP") == "1":
         cron_stop = threading.Event()
         cron_thread = threading.Thread(
             target=_start_desktop_cron_ticker,
@@ -328,7 +328,7 @@ app.include_router(_memory_oauth_router)
 
 
 def _resolve_session_token() -> str:
-    return os.environ.get("HERMES_DASHBOARD_SESSION_TOKEN") or secrets.token_urlsafe(32)
+    return env_with_legacy_alias("INDAGIS_DASHBOARD_SESSION_TOKEN", "HERMES_DASHBOARD_SESSION_TOKEN") or secrets.token_urlsafe(32)
 
 
 _SESSION_TOKEN = _resolve_session_token()
@@ -10337,7 +10337,7 @@ async def _start_device_code_flow(
         import httpx
         pconfig = PROVIDER_REGISTRY["nous"]
         portal_base_url = (
-            os.getenv("HERMES_PORTAL_BASE_URL")
+            env_with_legacy_alias("INDAGIS_PORTAL_BASE_URL", "HERMES_PORTAL_BASE_URL")
             or os.getenv("NOUS_PORTAL_BASE_URL")
             or pconfig.portal_base_url
         ).rstrip("/")
@@ -14910,7 +14910,7 @@ def _resolve_client_ws_host() -> Optional[str]:
        run in the same container.
     3. Any other bind host (loopback or LAN IP) — preserved verbatim.
     """
-    explicit = os.environ.get("HERMES_DASHBOARD_WS_HOST", "").strip()
+    explicit = env_with_legacy_alias("INDAGIS_DASHBOARD_WS_HOST", "HERMES_DASHBOARD_WS_HOST", "").strip()
     if explicit:
         return explicit
 
@@ -16053,7 +16053,7 @@ def mount_spa(application: FastAPI):
     # `hermes serve` is the headless backend: it must NEVER serve the browser
     # SPA, even if a dist is lying around from a prior `dashboard`/build. Take
     # the no-frontend path so only the JSON-RPC/WS/API surface is reachable.
-    _headless = os.environ.get("HERMES_SERVE_HEADLESS") == "1"
+    _headless = env_with_legacy_alias("INDAGIS_SERVE_HEADLESS", "HERMES_SERVE_HEADLESS") == "1"
     if _headless or not WEB_DIST.exists():
         _msg = (
             "Headless backend (hermes serve): web UI disabled — use "
@@ -17356,7 +17356,7 @@ def _write_dashboard_ready_file(actual_port: int) -> None:
     so Electron passes ``HERMES_DESKTOP_READY_FILE`` and waits for this JSON.
     Normal CLI/dashboard launches still use the stdout READY line below.
     """
-    target = os.environ.get("HERMES_DESKTOP_READY_FILE")
+    target = env_with_legacy_alias("INDAGIS_DESKTOP_READY_FILE", "HERMES_DESKTOP_READY_FILE")
     if not target:
         return
 

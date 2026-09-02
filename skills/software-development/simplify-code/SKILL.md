@@ -2,7 +2,7 @@
 name: simplify-code
 description: "Parallel 4-agent cleanup of recent code changes."
 version: 1.1.0
-author: Hermes Agent (inspired by Claude Code /simplify)
+author: Indagis Agent (inspired by Claude Code /simplify)
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

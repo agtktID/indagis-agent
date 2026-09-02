@@ -9,6 +9,7 @@ import contextvars
 import json
 import logging
 import os
+from utils import env_with_legacy_alias
 from collections import defaultdict, deque
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -1902,7 +1903,7 @@ class HermesACPAgent(acp.Agent):
             # the new task so clients can render a per-session board). Save
             # and restore around the agent call so a re-used executor thread
             # never leaks one session's id into the next session's tools.
-            previous_session_id = os.environ.get("HERMES_SESSION_ID")
+            previous_session_id = env_with_legacy_alias("INDAGIS_SESSION_ID", "HERMES_SESSION_ID", None)
             os.environ["HERMES_SESSION_ID"] = session_id
             try:
                 result = agent.run_conversation(
