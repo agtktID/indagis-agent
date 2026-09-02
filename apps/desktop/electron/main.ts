@@ -9254,6 +9254,24 @@ function closeQuickEntryWindow() {
 
 let splashWindow: BrowserWindow | null = null
 
+const DATA_URL_MIME_TYPES: Record<string, string> = {
+  '.png': 'image/png',
+  '.ico': 'image/x-icon',
+  '.icns': 'image/icns',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.svg': 'image/svg+xml'
+}
+
+// Base64-inlines a local file as a `data:` URI. Used for the splash window's
+// icon: its document is itself loaded via `data:` URL (an opaque origin), and
+// that can't fetch `file://` resources — see the note in createSplashWindow.
+function toDataUrl(filePath: string): string {
+  const mime = DATA_URL_MIME_TYPES[path.extname(filePath).toLowerCase()] ?? 'application/octet-stream'
+  const bytes = fs.readFileSync(filePath)
+  return `data:${mime};base64,${bytes.toString('base64')}`
+}
+
 // Shown immediately on cold start, before the main window's renderer has
 // loaded — mainWindow itself stays `show: false` until 'ready-to-show' (see
 // createWindow below) specifically to avoid a flash of unstyled content, but
@@ -9278,10 +9296,15 @@ function createSplashWindow() {
     webPreferences: { contextIsolation: true, nodeIntegration: false }
   })
 
-  const iconUrl = icon ? pathToFileURL(icon).toString() : ''
+  // The splash document is itself a `data:` URL, an opaque origin that
+  // Chromium's local-resource policy blocks from loading `file://` images —
+  // a `pathToFileURL(icon)` <img src> silently renders as a broken image
+  // (confirmed visually: naturalWidth/naturalHeight stay 0). Inlining the
+  // icon bytes as a data: URI sidesteps that origin check entirely.
+  const iconDataUrl = icon ? toDataUrl(icon) : ''
   splashWindow.loadURL(
     'data:text/html,' +
-      encodeURIComponent(`<!doctype html><html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:${getWindowBackgroundColor()}"><img src="${iconUrl}" width="140" height="140" alt="Indagis" /></body></html>`)
+      encodeURIComponent(`<!doctype html><html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:${getWindowBackgroundColor()}"><img src="${iconDataUrl}" width="140" height="140" alt="Indagis" /></body></html>`)
   )
 
   // Safety net: if the main window's 'ready-to-show' never fires (a slow
