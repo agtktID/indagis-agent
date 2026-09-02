@@ -215,17 +215,18 @@ echo "OPENROUTER_API_KEY=***" >> ~/.indagis/.env
 ### Run
 
 ```bash
-# The standard installer already put `hermes` on PATH.
-hermes doctor
-hermes chat -q "Hello"
+# The standard installer already put `indagis` on PATH.
+indagis doctor
+indagis chat -q "Hello"
 ```
 
-If you used the manual clone fallback, run `./hermes` from the checkout or
-symlink this clone's venv explicitly:
+If you used the manual clone fallback, run `./hermes` from the checkout (the
+repo-root launcher script's filename hasn't been renamed yet) or symlink this
+clone's venv explicitly:
 
 ```bash
 mkdir -p ~/.local/bin
-ln -sf "$(pwd)/venv/bin/hermes" ~/.local/bin/hermes
+ln -sf "$(pwd)/venv/bin/indagis" ~/.local/bin/indagis
 ```
 
 ### Run tests
