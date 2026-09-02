@@ -35,6 +35,40 @@ def env_var_enabled(name: str, default: str = "") -> bool:
     return is_truthy_value(os.getenv(name, default), default=False)
 
 
+_env_legacy_alias_warned: set[str] = set()
+
+
+def env_with_legacy_alias(
+    new_name: str, legacy_name: str, default: "str | None" = None
+) -> "str | None":
+    """Read an env var under its new INDAGIS_ name, falling back to the
+    legacy HERMES_ alias with a one-time-per-name deprecation warning.
+
+    Mirrors the resolution shape already used for INDAGIS_HOME (see
+    hermes_constants.py::_warn_legacy_alias_in_use_once), generalized for
+    the ~460 other env vars still only exposed under their old HERMES_
+    name. Each distinct ``new_name`` warns at most once per process — a
+    shared "warned globally" flag would suppress the warning for every
+    variable after the first one fires, which is wrong when this helper
+    wraps hundreds of independent names.
+    """
+    value = os.getenv(new_name)
+    if value is not None:
+        return value
+    legacy_value = os.getenv(legacy_name)
+    if legacy_value is not None:
+        if new_name not in _env_legacy_alias_warned:
+            _env_legacy_alias_warned.add(new_name)
+            logging.getLogger(__name__).warning(
+                "%s is deprecated, use %s instead. The alias will be "
+                "removed in a future Indagis Agent release.",
+                legacy_name,
+                new_name,
+            )
+        return legacy_value
+    return default
+
+
 def _preserve_file_mode(path: Path) -> "int | None":
     """Capture the permission bits of *path* if it exists, else ``None``."""
     try:
