@@ -611,10 +611,10 @@ def test_rebrand_text_replaces_openclaw_variants():
     assert mod.rebrand_text("I told Open Claw to use dark mode") == "I told Indagis to use dark mode"
     assert mod.rebrand_text("Open-Claw config is great") == "Indagis config is great"
     assert mod.rebrand_text("OPENCLAW uses tools well") == "Indagis uses tools well"
-    # All-lowercase matches → lowercase ``indagis``; this preserves the
-    # real filesystem path ``~/.indagis`` (Indagis home) when rebranding
+    # All-lowercase matches → lowercase ``hermes``; this preserves the
+    # real filesystem path ``~/.hermes`` (Hermes home) when rebranding
     # memory entries that reference ``~/.openclaw`` or ``openclaw`` prose.
-    assert mod.rebrand_text("openclaw should always respond concisely") == "indagis should always respond concisely"
+    assert mod.rebrand_text("openclaw should always respond concisely") == "hermes should always respond concisely"
 
 
 
