@@ -283,7 +283,7 @@ COMMAND_REGISTRY: list[CommandDef] = [
                subcommands=("list", "add", "show", "update", "pay", "remove", "stats")),
     CommandDef("scope", "Scope Sync — import authorized bounty scope, check targets against it", "Tools & Skills",
                cli_only=True, args_hint="[subcommand]",
-               subcommands=("list", "import", "add", "show", "check", "remove")),
+               subcommands=("list", "import", "add", "show", "check", "autopilot", "remove")),
     CommandDef("airgap", "Air Gap — pause network-reaching automations for a confidential engagement", "Tools & Skills",
                cli_only=True, args_hint="[subcommand]",
                subcommands=("status", "lockdown", "restore", "report")),

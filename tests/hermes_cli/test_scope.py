@@ -120,3 +120,96 @@ class TestScopeRemoveCli:
     def test_remove_missing(self, capsys):
         scope.scope_remove("nope")
         assert "No such program" in capsys.readouterr().out
+
+
+class TestDeriveHost:
+    def test_plain_domain(self):
+        assert scope._derive_host({"target": "example.com"}) == "example.com"
+
+    def test_wildcard_strips_prefix(self):
+        assert scope._derive_host({"target": "*.example.com"}) == "example.com"
+
+    def test_url_extracts_netloc(self):
+        assert scope._derive_host({"target": "https://sub.example.com:8443/path"}) == "sub.example.com"
+
+    def test_cidr_returns_none(self):
+        assert scope._derive_host({"target": "203.0.113.0/24"}) is None
+
+    def test_email_returns_none(self):
+        assert scope._derive_host({"target": "security@example.com"}) is None
+
+    def test_empty_returns_none(self):
+        assert scope._derive_host({"target": ""}) is None
+
+    def test_ip_passes_through(self):
+        assert scope._derive_host({"target": "198.51.100.1"}) == "198.51.100.1"
+
+    def test_mobile_type_excluded_even_if_dotted(self):
+        assert scope._derive_host({"target": "com.acme.mobileapp", "type": "mobile"}) is None
+
+    def test_unset_type_falls_through_to_shape_check(self):
+        assert scope._derive_host({"target": "example.com"}) == "example.com"
+
+
+class TestScopeAutopilot:
+    def test_unknown_program(self, capsys):
+        scope.scope_autopilot("nope", "every 6h", "local")
+        assert "No such program" in capsys.readouterr().out
+
+    def test_dry_run_lists_without_scheduling(self, monkeypatch, capsys):
+        from hermes_cli.scope_state import import_scope
+
+        import_scope(
+            "acme",
+            in_scope=[{"target": "example.com", "type": "domain", "description": None}],
+            out_of_scope=[],
+            source="test",
+        )
+        called = []
+        monkeypatch.setattr("hermes_cli.surface.surface_schedule", lambda *a, **k: called.append(a))
+        scope.scope_autopilot("acme", "every 6h", "local", dry_run=True)
+        out = capsys.readouterr().out
+        assert "Dry run" in out
+        assert "example.com" in out
+        assert called == []
+
+    def test_schedules_new_host_shaped_in_scope_targets(self, monkeypatch, capsys):
+        from hermes_cli.scope_state import import_scope
+
+        import_scope(
+            "acme",
+            in_scope=[
+                {"target": "*.example.com", "type": "wildcard", "description": None},
+                {"target": "203.0.113.0/24", "type": "cidr", "description": None},
+                {"target": "com.acme.mobileapp", "type": "mobile", "description": None},
+            ],
+            out_of_scope=[{"target": "internal.example.com", "type": "domain", "description": None}],
+            source="test",
+        )
+        called = []
+        monkeypatch.setattr("hermes_cli.surface.surface_schedule", lambda *a, **k: called.append(a))
+        scope.scope_autopilot("acme", "every 6h", "local")
+        out = capsys.readouterr().out
+        assert "New targets to onboard:  1" in out
+        assert called == [("example.com", "example.com", "every 6h", "local")]
+        # out-of-scope target must never be touched
+        assert not any("internal.example.com" in str(c) for c in called)
+
+    def test_skips_already_monitored_targets(self, monkeypatch, capsys):
+        from hermes_cli.scope_state import import_scope
+        from hermes_cli.surface_state import save_snapshot
+
+        import_scope(
+            "acme",
+            in_scope=[{"target": "example.com", "type": "domain", "description": None}],
+            out_of_scope=[],
+            source="test",
+        )
+        save_snapshot("example.com", {"ips": ["198.51.100.1"]})
+        called = []
+        monkeypatch.setattr("hermes_cli.surface.surface_schedule", lambda *a, **k: called.append(a))
+        scope.scope_autopilot("acme", "every 6h", "local")
+        out = capsys.readouterr().out
+        assert "Already monitored:       1" in out
+        assert "Nothing new to onboard" in out
+        assert called == []

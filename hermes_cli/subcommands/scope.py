@@ -49,6 +49,21 @@ def build_scope_parser(subparsers, *, cmd_scope: Callable) -> None:
     scope_check.add_argument("target", help="Domain, URL, or IP to check")
     scope_check.add_argument("--program", help="Limit the check to one program")
 
+    # scope autopilot
+    scope_autopilot = scope_subparsers.add_parser(
+        "autopilot",
+        help="Onboard every in-scope, host-shaped target onto Surface Diff monitoring",
+    )
+    scope_autopilot.add_argument("program", help="Program name")
+    scope_autopilot.add_argument(
+        "--schedule", required=True,
+        help="Schedule like 'every 30m', 'every 2h', or '0 9 * * *' (cron expression)",
+    )
+    scope_autopilot.add_argument("--deliver", required=True, help="Delivery channel for surface-change alerts")
+    scope_autopilot.add_argument(
+        "--dry-run", action="store_true", help="List what would be onboarded without scheduling anything"
+    )
+
     # scope remove
     scope_remove = scope_subparsers.add_parser("remove", aliases=["rm", "delete"], help="Remove a program's scope")
     scope_remove.add_argument("program", help="Program name")
