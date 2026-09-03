@@ -18,7 +18,8 @@ import csv
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
 from hermes_cli.colors import Colors, color
 from hermes_cli.scope_state import (
@@ -178,6 +179,99 @@ def scope_check(target: str, program: str = None) -> None:
         print(f"    [{r['program']}] matched rule: {r['entry']['target']}")
 
 
+#: Scope-entry ``type`` values that are never a fingerprintable host, no
+#: matter how their ``target`` string looks — a reversed-domain mobile app
+#: ID (``com.acme.mobileapp``) or a source-code repo path can read exactly
+#: like a hostname to a string heuristic. Bounty platforms commonly use
+#: these type names; unrecognized/unset types (including the "other"
+#: default a plain string import gets) fall through to the shape check.
+_NON_HOST_TYPES = frozenset({
+    "mobile", "android", "ios", "hardware", "executable", "binary",
+    "source_code", "source-code", "smart_contract", "smart-contract",
+})
+
+
+def _derive_host(entry: Dict[str, Any]) -> Optional[str]:
+    """Turn one scope entry into a single fingerprintable host, or ``None``
+    when the entry isn't shaped like one (a CIDR range, a mobile app ID, an
+    email address — nothing Surface Diff's HTTP/TLS probe can snapshot)."""
+    if (entry.get("type") or "").strip().lower() in _NON_HOST_TYPES:
+        return None
+    target = (entry.get("target") or "").strip()
+    if not target or " " in target or "@" in target:
+        return None
+    if target.startswith("*."):
+        # Wildcard domains fingerprint the base domain — the concrete host
+        # a certificate/DNS change on the wildcard would actually show up on.
+        return target[2:] or None
+    if "://" in target:
+        netloc = urlparse(target).netloc
+        return netloc.split(":")[0] or None
+    if "/" in target:
+        # CIDR range or path-shaped entry — not a single host.
+        return None
+    return target
+
+
+def scope_autopilot(program: str, schedule: str, deliver: str, *, dry_run: bool = False) -> None:
+    """Onboard every in-scope, host-shaped target of ``program`` onto
+    Surface Diff's continuous monitoring — Recon Autopilot.
+
+    Scope Sync answers "is this target authorized" one target at a time;
+    Surface Diff monitors one target at a time once you've told it to.
+    Between the two, onboarding a program with dozens of in-scope assets
+    means running 'indagis surface schedule' by hand for each one. This
+    closes that loop: every in-scope entry that resolves to a concrete
+    host gets scheduled, and — critically — out-of-scope entries are never
+    even considered, so an autopilot run can't accidentally start probing
+    something the program owner excluded.
+
+    Targets already under Surface Diff monitoring (an existing snapshot
+    directory) are skipped on a re-run rather than re-scheduled, so running
+    this again after a scope re-import only onboards what's new.
+    """
+    from hermes_cli.surface import surface_schedule
+    from hermes_cli.surface_state import list_targets
+
+    prog = get_program(program)
+    if prog is None:
+        print(color(f"No such program: {program}", Colors.RED))
+        return
+
+    already_monitored = set(list_targets())
+    candidates: List[str] = []
+    skipped_unhostlike = 0
+    for entry in prog.get("in_scope", []):
+        host = _derive_host(entry)
+        if host is None:
+            skipped_unhostlike += 1
+            continue
+        candidates.append(host)
+
+    new_targets = sorted({h for h in candidates if h not in already_monitored})
+    skipped_existing = len(set(candidates)) - len(new_targets)
+
+    print(color(f"Recon Autopilot — {program}", Colors.CYAN + Colors.BOLD))
+    print(f"  In-scope entries:        {len(prog.get('in_scope', []))}")
+    print(f"  Not host-shaped (skip):  {skipped_unhostlike}")
+    print(f"  Already monitored:       {skipped_existing}")
+    print(f"  New targets to onboard:  {len(new_targets)}")
+    print()
+
+    if not new_targets:
+        print(color("Nothing new to onboard.", Colors.DIM))
+        return
+
+    if dry_run:
+        print(color("Dry run — would schedule monitoring for:", Colors.YELLOW))
+        for host in new_targets:
+            print(f"    {host}")
+        return
+
+    for host in new_targets:
+        surface_schedule(host, host, schedule, deliver)
+
+
 def scope_remove(program: str) -> None:
     if not remove_program(program):
         print(color(f"No such program: {program}", Colors.RED))
@@ -202,6 +296,10 @@ def scope_command(args) -> None:
         scope_show(args.program)
     elif action == "check":
         scope_check(args.target, program=getattr(args, "program", None))
+    elif action == "autopilot":
+        scope_autopilot(
+            args.program, args.schedule, args.deliver, dry_run=getattr(args, "dry_run", False)
+        )
     elif action == "remove":
         scope_remove(args.program)
     else:
