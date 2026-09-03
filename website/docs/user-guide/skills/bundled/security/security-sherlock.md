@@ -14,8 +14,8 @@ Find accounts for a username across 400+ platforms.
 
 | | |
 |---|---|
-| Source | Optional — install with `indagis skills install official/security/sherlock` |
-| Path | `optional-skills/security/sherlock` |
+| Source | Bundled (installed by default) |
+| Path | `skills/security/sherlock` |
 | Version | `1.0.0` |
 | Author | unmodeled-tyler |
 | License | MIT |

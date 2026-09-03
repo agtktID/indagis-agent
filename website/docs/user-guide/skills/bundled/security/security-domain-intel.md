@@ -14,8 +14,8 @@ Passive recon of subdomains, SSL certs, WHOIS, and DNS.
 
 | | |
 |---|---|
-| Source | Optional — install with `indagis skills install official/research/domain-intel` |
-| Path | `optional-skills/research/domain-intel` |
+| Source | Bundled (installed by default) |
+| Path | `skills/security/domain-intel` |
 | Platforms | linux, macos, windows |
 
 ## Reference: full SKILL.md
