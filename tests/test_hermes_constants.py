@@ -37,6 +37,12 @@ class TestGetDefaultHermesRoot:
         """When INDAGIS_HOME is not set, returns ~/.hermes."""
         monkeypatch.delenv("INDAGIS_HOME", raising=False)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
+        # Pin to the POSIX branch: on native Windows this resolves via
+        # LOCALAPPDATA instead of Path.home() (see
+        # test_no_hermes_home_returns_localappdata_root_on_windows below),
+        # so without this the assertion below only passes by accident of
+        # running on a POSIX CI runner.
+        monkeypatch.setattr(hermes_constants.sys, "platform", "linux")
 
         assert get_default_indagis_root() == tmp_path / ".indagis"
 

@@ -67,6 +67,11 @@ def test_priority_2_existing_indagis_default(monkeypatch, tmp_path, capsys):
     indagis = tmp_path / ".indagis"
     indagis.mkdir()
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    # Pin to the POSIX branch: on native Windows the platform default
+    # resolves via LOCALAPPDATA instead of Path.home(), so without this
+    # the assertion below only passes by accident of running on a POSIX
+    # CI runner.
+    monkeypatch.setattr(hermes_constants.sys, "platform", "linux")
 
     assert hermes_constants.get_indagis_home() == indagis
     assert "Indagis Agent" not in capsys.readouterr().err
@@ -110,6 +115,11 @@ def test_priority_4_existing_platform_legacy_default(monkeypatch, tmp_path, caps
     legacy = tmp_path / ".hermes"
     legacy.mkdir()
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    # Pin to the POSIX branch: on native Windows the legacy-alias default
+    # is %LOCALAPPDATA%\hermes, not ~/.hermes, so without this the
+    # assertion below only passes by accident of running on a POSIX CI
+    # runner.
+    monkeypatch.setattr(hermes_constants.sys, "platform", "linux")
 
     # CIBLE : doit retourner ~/.hermes (repli), pas ~/.indagis
     assert hermes_constants.get_indagis_home() == legacy
@@ -131,6 +141,10 @@ def test_priority_5_missing_defaults_returns_new_platform_default(monkeypatch, t
     _reset_profile_warning(monkeypatch)
     _reset_legacy_warning(monkeypatch)
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    # Pin to the POSIX branch: on native Windows this resolves via
+    # LOCALAPPDATA instead of Path.home(), so without this the assertion
+    # below only passes by accident of running on a POSIX CI runner.
+    monkeypatch.setattr(hermes_constants.sys, "platform", "linux")
 
     result = hermes_constants.get_indagis_home()
 
