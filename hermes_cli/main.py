@@ -444,6 +444,7 @@ from hermes_cli.subcommands.bounty import build_bounty_parser
 from hermes_cli.subcommands.case import build_case_parser
 from hermes_cli.subcommands.cron import build_cron_parser
 from hermes_cli.subcommands.custody import build_custody_parser
+from hermes_cli.subcommands.intel import build_intel_parser
 from hermes_cli.subcommands.rules import build_rules_parser
 from hermes_cli.subcommands.scope import build_scope_parser
 from hermes_cli.subcommands.surface import build_surface_parser
@@ -4641,6 +4642,13 @@ def cmd_surface(args):
     from hermes_cli.surface import surface_command
 
     surface_command(args)
+
+
+def cmd_intel(args):
+    """Threat-intel lookups — first-party connectors, no bundled third-party MCP server."""
+    from hermes_cli.intel import intel_command
+
+    intel_command(args)
 
 
 def cmd_rules(args):
@@ -10684,7 +10692,7 @@ def _build_provider_choices() -> list[str]:
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
         "acp", "airgap", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
-        "computer-use", "custody", "rules", "scope", "surface",
+        "computer-use", "custody", "intel", "rules", "scope", "surface",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
         "gui", "desktop", "kanban", "login", "logout", "logs", "lsp", "mcp", "memory", "migrate", "moa",
@@ -11571,6 +11579,7 @@ def main():
     build_scope_parser(subparsers, cmd_scope=cmd_scope)
     build_airgap_parser(subparsers, cmd_airgap=cmd_airgap)
     build_custody_parser(subparsers, cmd_custody=cmd_custody)
+    build_intel_parser(subparsers, cmd_intel=cmd_intel)
     build_surface_parser(subparsers, cmd_surface=cmd_surface)
     build_rules_parser(subparsers, cmd_rules=cmd_rules)
     build_sync_parser(subparsers, cmd_sync=cmd_sync)
