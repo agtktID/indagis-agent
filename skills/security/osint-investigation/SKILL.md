@@ -7,7 +7,7 @@ author: Indagis Agent (adapted from ShinMegamiBoson/OpenPlanter, MIT)
 metadata:
   hermes:
     tags: [osint, investigation, public-records, sec, sanctions, corporate-registry, property, courts, due-diligence, journalism]
-    category: research
+    category: security
     related_skills: [domain-intel, arxiv]
 ---
 

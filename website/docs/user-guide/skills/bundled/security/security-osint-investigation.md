@@ -14,13 +14,13 @@ Follow the money via public records and sanctions data.
 
 | | |
 |---|---|
-| Source | Optional — install with `indagis skills install official/research/osint-investigation` |
-| Path | `optional-skills/research/osint-investigation` |
+| Source | Bundled (installed by default) |
+| Path | `skills/security/osint-investigation` |
 | Version | `0.1.0` |
 | Author | Indagis Agent (adapted from ShinMegamiBoson/OpenPlanter, MIT) |
 | Platforms | linux, macos, windows |
 | Tags | `osint`, `investigation`, `public-records`, `sec`, `sanctions`, `corporate-registry`, `property`, `courts`, `due-diligence`, `journalism` |
-| Related skills | [`domain-intel`](/docs/user-guide/skills/optional/research/research-domain-intel), [`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv) |
+| Related skills | [`domain-intel`](/docs/user-guide/skills/bundled/security/security-domain-intel), [`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv) |
 
 ## Reference: full SKILL.md
 
