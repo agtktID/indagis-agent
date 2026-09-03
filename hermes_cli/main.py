@@ -444,6 +444,7 @@ from hermes_cli.subcommands.bounty import build_bounty_parser
 from hermes_cli.subcommands.case import build_case_parser
 from hermes_cli.subcommands.cron import build_cron_parser
 from hermes_cli.subcommands.custody import build_custody_parser
+from hermes_cli.subcommands.rules import build_rules_parser
 from hermes_cli.subcommands.scope import build_scope_parser
 from hermes_cli.subcommands.surface import build_surface_parser
 from hermes_cli.subcommands.watch import build_watch_parser
@@ -4640,6 +4641,13 @@ def cmd_surface(args):
     from hermes_cli.surface import surface_command
 
     surface_command(args)
+
+
+def cmd_rules(args):
+    """Rule Forge — auto-generate Sigma/YARA rules from Case Memory findings."""
+    from hermes_cli.rules import rules_command
+
+    rules_command(args)
 
 
 def cmd_sync(args):
@@ -10676,7 +10684,7 @@ def _build_provider_choices() -> list[str]:
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
         "acp", "airgap", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
-        "computer-use", "custody", "scope", "surface",
+        "computer-use", "custody", "rules", "scope", "surface",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
         "gui", "desktop", "kanban", "login", "logout", "logs", "lsp", "mcp", "memory", "migrate", "moa",
@@ -11564,6 +11572,7 @@ def main():
     build_airgap_parser(subparsers, cmd_airgap=cmd_airgap)
     build_custody_parser(subparsers, cmd_custody=cmd_custody)
     build_surface_parser(subparsers, cmd_surface=cmd_surface)
+    build_rules_parser(subparsers, cmd_rules=cmd_rules)
     build_sync_parser(subparsers, cmd_sync=cmd_sync)
 
     # =========================================================================
