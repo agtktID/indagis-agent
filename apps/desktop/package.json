@@ -162,7 +162,7 @@
     "wait-on": "9.0.10"
   },
   "build": {
-    "electronVersion": "40.10.6",
+    "electronVersion": "41.10.3",
     "appId": "com.indagis.agent",
     "productName": "Indagis",
     "executableName": "Indagis",
