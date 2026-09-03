@@ -50,6 +50,14 @@ def intel_kev(cve: str) -> None:
     _print_result(intel_sources.check_kev_epss(cve))
 
 
+def intel_breach_email(email: str) -> None:
+    _print_result(intel_sources.check_breach_email(email))
+
+
+def intel_breach_domain(domain: str) -> None:
+    _print_result(intel_sources.check_breach_domain(domain))
+
+
 def intel_sources_list() -> None:
     key_env = {
         "abuseipdb": "ABUSEIPDB_API_KEY",
@@ -58,6 +66,8 @@ def intel_sources_list() -> None:
         "malwarebazaar": None,
         "crtsh": None,
         "kev-epss": None,
+        "breach-email": None,
+        "breach-domain": None,
     }
     print()
     for name in intel_sources.SOURCES:
@@ -87,5 +97,9 @@ def intel_command(args) -> None:
         intel_crtsh(args.domain)
     elif action == "kev":
         intel_kev(args.cve)
+    elif action == "breach-email":
+        intel_breach_email(args.email)
+    elif action == "breach-domain":
+        intel_breach_domain(args.domain)
     else:
         print(color(f"Unknown intel subcommand: {action}", Colors.RED), file=sys.stderr)

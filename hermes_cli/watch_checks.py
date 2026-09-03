@@ -11,10 +11,10 @@ performs one lightweight HTTP check, and returns ``(alert_text, new_state)``:
 
 Checkers deliberately do their own minimal HTTP work — RDAP and the NVD CVE
 API are free, keyless, and structured; the abuseipdb-ip/greynoise-ip/
-kev-status checkers below reuse the same first-party connectors as
-``indagis intel`` (hermes_cli/intel_sources.py), degrading to a silent
-not-configured state rather than erroring when an optional API key (e.g.
-ABUSEIPDB_API_KEY) isn't set.
+kev-status/breach-email/breach-domain checkers below reuse the same
+first-party connectors as ``indagis intel`` (hermes_cli/intel_sources.py),
+degrading to a silent not-configured state rather than erroring when an
+optional API key (e.g. ABUSEIPDB_API_KEY) isn't set.
 """
 
 from __future__ import annotations
@@ -265,6 +265,65 @@ def check_kev_status(target: str, state: Dict[str, Any]) -> CheckResult:
     return "\n".join(alerts), new_state
 
 
+def check_breach_email(target: str, state: Dict[str, Any]) -> CheckResult:
+    """Alert the moment an email address turns up in a newly indexed data
+    breach — the classic "your monitored inbox just got breached" alert
+    ("Breach Radar")."""
+    from hermes_cli.intel_sources import check_breach_email as _check_breach_email
+
+    result = _check_breach_email(target)
+    if result["status"] == "error":
+        return _first_failure_or_recovery(state, ok=False, error_text=result["message"])
+
+    data = result["data"]
+    current = sorted(data.get("breaches") or [])
+    prior = state.get("seen_breaches")
+    new_state = dict(state)
+    new_state["last_status"] = "ok"
+    new_state["seen_breaches"] = current
+
+    if prior is None:
+        # First run establishes the baseline — don't alert on the entire
+        # pre-existing breach history, only on what's new after this.
+        return None, new_state
+
+    new_breaches = sorted(set(current) - set(prior))
+    if not new_breaches:
+        return None, new_state
+
+    plural = "s" if len(new_breaches) > 1 else ""
+    return (
+        f"💥 {target} appeared in {len(new_breaches)} new breach{plural}: " + ", ".join(new_breaches)
+    ), new_state
+
+
+def check_breach_domain(target: str, state: Dict[str, Any]) -> CheckResult:
+    """Alert when the count of known-breached addresses at a domain rises —
+    a corporate-exposure trend line rather than a single-address alert."""
+    from hermes_cli.intel_sources import check_breach_domain as _check_breach_domain
+
+    result = _check_breach_domain(target)
+    if result["status"] == "error":
+        return _first_failure_or_recovery(state, ok=False, error_text=result["message"])
+
+    data = result["data"]
+    current_count = data.get("exposed_email_count") or 0
+    new_state = dict(state)
+    new_state["last_status"] = "ok"
+    new_state["exposed_email_count"] = current_count
+    new_state["seen_breaches"] = sorted(data.get("breaches") or [])
+
+    prior_count = state.get("exposed_email_count")
+    if prior_count is None:
+        return None, new_state
+    if current_count > prior_count:
+        return (
+            f"💥 Breach exposure for {target} increased: "
+            f"{prior_count} → {current_count} exposed addresses"
+        ), new_state
+    return None, new_state
+
+
 CHECKERS = {
     "url-hash": check_url_hash,
     "rdap-domain": check_rdap_domain,
@@ -272,4 +331,6 @@ CHECKERS = {
     "abuseipdb-ip": check_abuseipdb_ip,
     "greynoise-ip": check_greynoise_ip,
     "kev-status": check_kev_status,
+    "breach-email": check_breach_email,
+    "breach-domain": check_breach_domain,
 }
