@@ -1,0 +1,11 @@
+{
+  "name": "surface",
+  "label": "Surface Diff",
+  "description": "Browse attack-surface snapshots per target and the diff between the two most recent ones — new IPs, certificate changes, header drift.",
+  "icon": "Radar",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
