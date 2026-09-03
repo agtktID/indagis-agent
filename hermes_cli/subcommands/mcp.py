@@ -80,6 +80,14 @@ def build_mcp_parser(subparsers, *, cmd_mcp: Callable) -> None:
     mcp_test_p = mcp_sub.add_parser("test", help="Test MCP server connection")
     mcp_test_p.add_argument("name", help="Server name to test")
 
+    mcp_audit_p = mcp_sub.add_parser(
+        "audit",
+        help="Scan a server's tool descriptions/schemas for tool-poisoning signals",
+    )
+    mcp_audit_p.add_argument(
+        "name", nargs="?", help="Server name to audit (omit to list stored results)"
+    )
+
     mcp_cfg_p = mcp_sub.add_parser(
         "configure", aliases=["config"], help="Toggle tool selection"
     )
