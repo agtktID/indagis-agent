@@ -445,6 +445,7 @@ from hermes_cli.subcommands.case import build_case_parser
 from hermes_cli.subcommands.cron import build_cron_parser
 from hermes_cli.subcommands.custody import build_custody_parser
 from hermes_cli.subcommands.scope import build_scope_parser
+from hermes_cli.subcommands.surface import build_surface_parser
 from hermes_cli.subcommands.watch import build_watch_parser
 from hermes_cli.subcommands.sync import build_sync_parser
 from hermes_cli.subcommands.gateway import build_gateway_parser
@@ -4632,6 +4633,13 @@ def cmd_custody(args):
     from hermes_cli.custody import custody_command
 
     custody_command(args)
+
+
+def cmd_surface(args):
+    """Surface Diff — continuous recon with automatic diffing."""
+    from hermes_cli.surface import surface_command
+
+    surface_command(args)
 
 
 def cmd_sync(args):
@@ -10668,7 +10676,7 @@ def _build_provider_choices() -> list[str]:
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
         "acp", "airgap", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
-        "computer-use", "custody", "scope",
+        "computer-use", "custody", "scope", "surface",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
         "gui", "desktop", "kanban", "login", "logout", "logs", "lsp", "mcp", "memory", "migrate", "moa",
@@ -11555,6 +11563,7 @@ def main():
     build_scope_parser(subparsers, cmd_scope=cmd_scope)
     build_airgap_parser(subparsers, cmd_airgap=cmd_airgap)
     build_custody_parser(subparsers, cmd_custody=cmd_custody)
+    build_surface_parser(subparsers, cmd_surface=cmd_surface)
     build_sync_parser(subparsers, cmd_sync=cmd_sync)
 
     # =========================================================================
