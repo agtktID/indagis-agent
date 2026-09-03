@@ -1,0 +1,11 @@
+{
+  "name": "mcp-audit",
+  "label": "MCP Vetting Firewall",
+  "description": "Browse the last audit verdict for every MCP server — tool-list findings and the content hash used to detect post-approval behavior changes.",
+  "icon": "ShieldAlert",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
