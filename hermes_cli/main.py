@@ -439,6 +439,7 @@ import functools as _functools
 
 from hermes_cli.sessions_cmd import cmd_sessions  # noqa: F401
 from hermes_cli.subcommands._shared import add_accept_hooks_flag as _add_accept_hooks_flag
+from hermes_cli.subcommands.bounty import build_bounty_parser
 from hermes_cli.subcommands.case import build_case_parser
 from hermes_cli.subcommands.cron import build_cron_parser
 from hermes_cli.subcommands.watch import build_watch_parser
@@ -4600,6 +4601,13 @@ def cmd_case(args):
     from hermes_cli.case_memory import case_command
 
     case_command(args)
+
+
+def cmd_bounty(args):
+    """Bounty Ledger — payout/ROI tracker for bug bounty submissions."""
+    from hermes_cli.bounty import bounty_command
+
+    bounty_command(args)
 
 
 def cmd_sync(args):
@@ -10635,7 +10643,7 @@ def _build_provider_choices() -> list[str]:
 # to parse.
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
-        "acp", "approvals", "auth", "backup", "bundles", "case", "checkpoints", "claw", "completion",
+        "acp", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
         "computer-use",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
@@ -11519,6 +11527,7 @@ def main():
     build_cron_parser(subparsers, cmd_cron=cmd_cron)
     build_watch_parser(subparsers, cmd_watch=cmd_watch)
     build_case_parser(subparsers, cmd_case=cmd_case)
+    build_bounty_parser(subparsers, cmd_bounty=cmd_bounty)
     build_sync_parser(subparsers, cmd_sync=cmd_sync)
 
     # =========================================================================
