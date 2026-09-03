@@ -581,6 +581,7 @@ const sidebars: SidebarsConfig = {
                   collapsed: true,
                   items: [
                     'user-guide/skills/optional/security/security-1password',
+                    'user-guide/skills/optional/security/security-dfir-toolkit',
                     'user-guide/skills/optional/security/security-godmode',
                     'user-guide/skills/optional/security/security-misp-query',
                     'user-guide/skills/optional/security/security-mitm-traffic-audit',
