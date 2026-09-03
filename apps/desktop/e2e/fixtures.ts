@@ -334,13 +334,36 @@ export async function launchDesktop(
     cwd: DESKTOP_ROOT,
   })
 
-  const page = await app.firstWindow()
+  const page = await getMainWindow(app)
 
   // Install the error-banner guard so any [role="alert"] that appears
   // during a test is collected and surfaced in afterEach.
   installErrorBannerGuard(page)
 
   return { app, page }
+}
+
+// `app.firstWindow()` races the splash window: createSplashWindow() in
+// electron/main.ts opens a `data:` URL window immediately on boot, then
+// closes it once the real main window's `ready-to-show` fires. If
+// firstWindow() catches the splash, every later call on that Page throws
+// "Target page, context or browser has been closed" the moment the splash
+// is dismissed — regardless of how well the app itself booted. Skip past
+// it and wait for the real (non-`data:`) window instead.
+async function getMainWindow(app: ElectronApplication): Promise<Page> {
+  const isSplash = (p: Page) => p.url().startsWith('data:')
+  const first = await app.firstWindow()
+  if (!isSplash(first)) {
+    return first
+  }
+  const existing = app.windows().find((p) => !isSplash(p))
+  if (existing) {
+    return existing
+  }
+  return app.waitForEvent('window', {
+    predicate: (p) => !isSplash(p),
+    timeout: 30_000,
+  })
 }
 
 // ─── Public fixtures ────────────────────────────────────────────────────
@@ -573,7 +596,7 @@ export async function setupPackagedApp(): Promise<PackagedAppFixture> {
     env,
   })
 
-  const page = await app.firstWindow()
+  const page = await getMainWindow(app)
   installErrorBannerGuard(page)
 
   return {
