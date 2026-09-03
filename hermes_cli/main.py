@@ -442,6 +442,7 @@ from hermes_cli.subcommands._shared import add_accept_hooks_flag as _add_accept_
 from hermes_cli.subcommands.bounty import build_bounty_parser
 from hermes_cli.subcommands.case import build_case_parser
 from hermes_cli.subcommands.cron import build_cron_parser
+from hermes_cli.subcommands.scope import build_scope_parser
 from hermes_cli.subcommands.watch import build_watch_parser
 from hermes_cli.subcommands.sync import build_sync_parser
 from hermes_cli.subcommands.gateway import build_gateway_parser
@@ -4608,6 +4609,13 @@ def cmd_bounty(args):
     from hermes_cli.bounty import bounty_command
 
     bounty_command(args)
+
+
+def cmd_scope(args):
+    """Scope Sync — imported bounty scope, checked locally against targets."""
+    from hermes_cli.scope import scope_command
+
+    scope_command(args)
 
 
 def cmd_sync(args):
@@ -10644,7 +10652,7 @@ def _build_provider_choices() -> list[str]:
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
         "acp", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
-        "computer-use",
+        "computer-use", "scope",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
         "gui", "desktop", "kanban", "login", "logout", "logs", "lsp", "mcp", "memory", "migrate", "moa",
@@ -11528,6 +11536,7 @@ def main():
     build_watch_parser(subparsers, cmd_watch=cmd_watch)
     build_case_parser(subparsers, cmd_case=cmd_case)
     build_bounty_parser(subparsers, cmd_bounty=cmd_bounty)
+    build_scope_parser(subparsers, cmd_scope=cmd_scope)
     build_sync_parser(subparsers, cmd_sync=cmd_sync)
 
     # =========================================================================
