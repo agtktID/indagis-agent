@@ -215,6 +215,7 @@ indagis skills uninstall <skill-name>
 | Skill | Description |
 |-------|-------------|
 | [**1password**](/docs/user-guide/skills/optional/security/security-1password) | Set up op CLI, sign in, and read or inject secrets. |
+| [**dfir-toolkit**](/docs/user-guide/skills/optional/security/security-dfir-toolkit) | Memory and disk forensic triage using Volatility3 (memory image analysis) and The Sleuth Kit (disk image analysis) — process/network/injection artifacts from a RAM capture, and partition/file-level artifacts from a disk image, logged int... |
 | [**godmode**](/docs/user-guide/skills/optional/security/security-godmode) | Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN. |
 | [**misp-query**](/docs/user-guide/skills/optional/security/security-misp-query) | Search a MISP threat-intelligence instance for indicators (IOCs), events, and related context via the REST API. |
 | [**mitm-traffic-audit**](/docs/user-guide/skills/optional/security/security-mitm-traffic-audit) | Comprehensive security audit of mitmproxy-captured traffic across 8 vulnerability categories (recon, auth/session, IDOR, SQLi, SSRF, data exposure, payment/business logic, transport/headers). Use after mitm-traffic-capture has produced a... |
