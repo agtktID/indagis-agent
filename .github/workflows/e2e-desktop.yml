@@ -53,6 +53,24 @@ jobs:
         with:
           command: npm ci
 
+      # electron's postinstall can exit 0 while leaving dist/ empty — the
+      # binary download silently fails without failing `npm ci`, so the
+      # retry above never fires. Verify the binary launches; if not, force
+      # a clean reinstall of just the electron package before the E2E run
+      # tries to launch it (2026-09-03: seen twice in a row re-enabling
+      # this job — npm ci green, node_modules/electron/dist/electron
+      # missing/truncated).
+      - name: Verify Electron binary installed
+        run: |
+          if node_modules/.bin/electron --version --no-sandbox --disable-gpu >/dev/null 2>&1; then
+            echo "Electron binary OK"
+            exit 0
+          fi
+          echo "::warning::Electron binary missing or broken after npm ci — forcing reinstall"
+          rm -rf node_modules/electron
+          npm install --no-save --foreground-scripts "electron@$(node -p "require('./apps/desktop/package.json').devDependencies.electron")"
+          node_modules/.bin/electron --version --no-sandbox --disable-gpu
+
       # ── Python (for the hermes serve backend) ──────────────────────────
       - name: Install uv
         uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # 8.2.0

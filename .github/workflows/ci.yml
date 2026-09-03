@@ -103,13 +103,28 @@ jobs:
     # Tests-only PRs (~17% of commits) skip this 5-minute job — the longest
     # single job in the workflow — while still running the full pytest lanes.
     #
-    # ⛔ TEMPORARILY DISABLED (Aug 2, 2026, Teknium) — the suite is red on
-    # every PR and on main itself since the Aug 1 night engines/npm churn
-    # (#76499 → #76562 → #76575): the mock-backend Electron window never
-    # gets a title, so boot/chat/setup/interim specs all fail identically
-    # regardless of the PR's diff (verified on #76573 and the docs-only
-    # #76582). Tracking issue: #76627 (assigned: Ari). To re-enable,
-    # delete the `false &&` below — nothing else changed.
+    # ⛔ STILL DISABLED (2026-09-03) — attempted re-enable this session and
+    # made real progress but did not reach green:
+    #   1. The original Aug 2 cause (engines/npm churn breaking the window
+    #      title) is confirmed fixed.
+    #   2. Found and fixed a real, separate CI-only bug: package.json's
+    #      allowScripts allowlist still keyed electron's postinstall
+    #      permission to "electron@40.10.2" while apps/desktop/package.json
+    #      pins 41.10.3 — npm's install-scripts gate silently blocked the
+    #      postinstall (binary download) for the un-listed version, so
+    #      `npm ci` exited 0 but node_modules/electron/dist stayed empty.
+    #      Fixed in package.json + added a verify/reinstall safety step in
+    #      e2e-desktop.yml.
+    #   3. With Electron installing correctly, the suite now launches and
+    #      runs for real — but every spec (boot, chat, correction-session-
+    #      switch, etc.) fails on actual assertions, several after a ~1.5min
+    #      timeout, not on visual diffs. This looks like the app has
+    #      drifted from what the specs expect during the ~5 weeks the job
+    #      was dark (rebrand + feature work), not a CI/install problem.
+    #      Untangling that is real app-vs-test reconciliation work across
+    #      dozens of specs, out of scope for a CI-config PR.
+    # To re-enable: fix/update the failing specs against current app
+    # behavior (or vice versa), then delete the `false &&` below.
     if: ${{ false && (needs.detect.outputs.python_prod == 'true' || needs.detect.outputs.frontend == 'true') }}
     uses: ./.github/workflows/e2e-desktop.yml
 
