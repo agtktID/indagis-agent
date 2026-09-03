@@ -439,6 +439,7 @@ import functools as _functools
 
 from hermes_cli.sessions_cmd import cmd_sessions  # noqa: F401
 from hermes_cli.subcommands._shared import add_accept_hooks_flag as _add_accept_hooks_flag
+from hermes_cli.subcommands.airgap import build_airgap_parser
 from hermes_cli.subcommands.bounty import build_bounty_parser
 from hermes_cli.subcommands.case import build_case_parser
 from hermes_cli.subcommands.cron import build_cron_parser
@@ -4616,6 +4617,13 @@ def cmd_scope(args):
     from hermes_cli.scope import scope_command
 
     scope_command(args)
+
+
+def cmd_airgap(args):
+    """Air Gap — pause network-reaching automations for a confidential engagement."""
+    from hermes_cli.airgap import airgap_command
+
+    airgap_command(args)
 
 
 def cmd_sync(args):
@@ -10651,7 +10659,7 @@ def _build_provider_choices() -> list[str]:
 # to parse.
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
-        "acp", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
+        "acp", "airgap", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
         "computer-use", "scope",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
@@ -11537,6 +11545,7 @@ def main():
     build_case_parser(subparsers, cmd_case=cmd_case)
     build_bounty_parser(subparsers, cmd_bounty=cmd_bounty)
     build_scope_parser(subparsers, cmd_scope=cmd_scope)
+    build_airgap_parser(subparsers, cmd_airgap=cmd_airgap)
     build_sync_parser(subparsers, cmd_sync=cmd_sync)
 
     # =========================================================================
