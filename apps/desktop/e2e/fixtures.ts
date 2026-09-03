@@ -236,7 +236,16 @@ export function buildAppEnv(sandbox: Sandbox, extra: Record<string, string> = {}
 
   return {
     ...clean,
+    // INDAGIS_HOME is priority 1 in the home-resolution ladder
+    // (hermes_constants.py: get_indagis_home) — HERMES_HOME is only
+    // priority 3, *below* "~/.indagis exists on disk" at priority 2. On any
+    // machine that has ever run the real app, ~/.indagis exists, so setting
+    // HERMES_HOME alone gets silently ignored and the backend loads the
+    // real user config instead of this sandbox — no mock provider, onboarding
+    // never dismisses, waitForAppReady times out. Set both so the sandbox
+    // wins regardless of what's on disk.
     HERMES_HOME: sandbox.hermesHome,
+    INDAGIS_HOME: sandbox.hermesHome,
     HERMES_DESKTOP_USER_DATA_DIR: sandbox.userDataDir,
     HERMES_DESKTOP_IGNORE_EXISTING: '1',
     HERMES_DESKTOP_HERMES_ROOT: REPO_ROOT,
@@ -334,13 +343,36 @@ export async function launchDesktop(
     cwd: DESKTOP_ROOT,
   })
 
-  const page = await app.firstWindow()
+  const page = await getMainWindow(app)
 
   // Install the error-banner guard so any [role="alert"] that appears
   // during a test is collected and surfaced in afterEach.
   installErrorBannerGuard(page)
 
   return { app, page }
+}
+
+// `app.firstWindow()` races the splash window: createSplashWindow() in
+// electron/main.ts opens a `data:` URL window immediately on boot, then
+// closes it once the real main window's `ready-to-show` fires. If
+// firstWindow() catches the splash, every later call on that Page throws
+// "Target page, context or browser has been closed" the moment the splash
+// is dismissed — regardless of how well the app itself booted. Skip past
+// it and wait for the real (non-`data:`) window instead.
+async function getMainWindow(app: ElectronApplication): Promise<Page> {
+  const isSplash = (p: Page) => p.url().startsWith('data:')
+  const first = await app.firstWindow()
+  if (!isSplash(first)) {
+    return first
+  }
+  const existing = app.windows().find((p) => !isSplash(p))
+  if (existing) {
+    return existing
+  }
+  return app.waitForEvent('window', {
+    predicate: (p) => !isSplash(p),
+    timeout: 30_000,
+  })
 }
 
 // ─── Public fixtures ────────────────────────────────────────────────────
@@ -573,7 +605,7 @@ export async function setupPackagedApp(): Promise<PackagedAppFixture> {
     env,
   })
 
-  const page = await app.firstWindow()
+  const page = await getMainWindow(app)
   installErrorBannerGuard(page)
 
   return {
