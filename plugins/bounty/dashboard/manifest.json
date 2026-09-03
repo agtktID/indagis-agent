@@ -1,0 +1,11 @@
+{
+  "name": "bounty",
+  "label": "Bounty Ledger",
+  "description": "Browse bug bounty submissions, payout status, and win-rate stats tracked by the CLI's bounty ledger.",
+  "icon": "Wallet",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
