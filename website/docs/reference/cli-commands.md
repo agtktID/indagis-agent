@@ -8,7 +8,10 @@ description: "Authoritative reference for Hermes terminal commands and command f
 
 This page covers the **terminal commands** you run from your shell.
 
-For in-chat slash commands, see [Slash Commands Reference](./slash-commands.md).
+For in-chat slash commands, see [Slash Commands Reference](./slash-commands.md). For
+the OSINT/DFIR investigation toolchain (`case`, `dossier`, `attribution`, `puppet`,
+`bounty`, `airgap`, `custody`, `surface`, and the `watch`/`scope` additions that
+support them), see the [Investigation Commands Reference](./investigation-commands.md).
 
 ## Global entrypoint
 

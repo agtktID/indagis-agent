@@ -811,6 +811,7 @@ const sidebars: SidebarsConfig = {
           label: 'Command Reference',
           items: [
             'reference/cli-commands',
+            'reference/investigation-commands',
             'reference/slash-commands',
             'reference/profile-commands',
           ],
