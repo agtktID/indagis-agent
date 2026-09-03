@@ -45,4 +45,10 @@ def build_intel_parser(subparsers, *, cmd_intel: Callable) -> None:
     p = intel_subparsers.add_parser("kev", help="Is this CVE known-exploited (CISA KEV) and how likely (EPSS)?")
     p.add_argument("cve", help="CVE identifier, e.g. CVE-2024-12345")
 
+    p = intel_subparsers.add_parser("breach-email", help="Has this email appeared in a known data breach? (XposedOrNot, keyless)")
+    p.add_argument("email", help="Email address to check")
+
+    p = intel_subparsers.add_parser("breach-domain", help="Aggregated breach exposure for a domain (XposedOrNot, keyless)")
+    p.add_argument("domain", help="Domain to check")
+
     intel_parser.set_defaults(func=cmd_intel)

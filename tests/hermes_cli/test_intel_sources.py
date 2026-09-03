@@ -155,5 +155,70 @@ class TestCheckKevEpss:
         assert "KEV" in result["message"]
 
 
+class TestCheckBreachEmail:
+    def test_not_breached_404(self, monkeypatch):
+        monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResponse(status_code=404))
+        result = intel_sources.check_breach_email("clean@example.com")
+        assert result["status"] == "ok"
+        assert result["data"]["breached"] is False
+        assert result["data"]["breach_count"] == 0
+
+    def test_breached(self, monkeypatch):
+        payload = {"breaches": [["Adobe", "LinkedIn"]]}
+        monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResponse(json_data=payload))
+        result = intel_sources.check_breach_email("victim@example.com")
+        assert result["status"] == "ok"
+        assert result["data"]["breached"] is True
+        assert result["data"]["breach_count"] == 2
+        assert set(result["data"]["breaches"]) == {"Adobe", "LinkedIn"}
+
+    def test_network_error_reported(self, monkeypatch):
+        def _raise(*a, **k):
+            raise requests.RequestException("refused")
+
+        monkeypatch.setattr(requests, "get", _raise)
+        result = intel_sources.check_breach_email("victim@example.com")
+        assert result["status"] == "error"
+
+
+class TestCheckBreachDomain:
+    def test_not_found_404(self, monkeypatch):
+        monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResponse(status_code=404))
+        result = intel_sources.check_breach_domain("clean.example")
+        assert result["status"] == "ok"
+        assert result["data"]["exposed_email_count"] == 0
+
+    def test_exposed(self, monkeypatch):
+        payload = {
+            "ExposedBreaches": {
+                "breaches_details": [{"breach": "Adobe"}, {"breach": "LinkedIn"}]
+            },
+            "ExposedRecords": 42,
+        }
+        monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResponse(json_data=payload))
+        result = intel_sources.check_breach_domain("example.com")
+        assert result["status"] == "ok"
+        assert result["data"]["exposed_email_count"] == 42
+        assert result["data"]["breaches"] == ["Adobe", "LinkedIn"]
+
+    def test_unexpected_shape_degrades_gracefully(self, monkeypatch):
+        monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResponse(json_data={"something": "else"}))
+        result = intel_sources.check_breach_domain("example.com")
+        assert result["status"] == "ok"
+        assert result["data"]["exposed_email_count"] == 0
+        assert result["data"]["breaches"] == []
+
+    def test_network_error_reported(self, monkeypatch):
+        def _raise(*a, **k):
+            raise requests.RequestException("refused")
+
+        monkeypatch.setattr(requests, "get", _raise)
+        result = intel_sources.check_breach_domain("example.com")
+        assert result["status"] == "error"
+
+
 def test_sources_dispatch_table_complete():
-    assert set(intel_sources.SOURCES) == {"abuseipdb", "greynoise", "otx", "malwarebazaar", "crtsh", "kev-epss"}
+    assert set(intel_sources.SOURCES) == {
+        "abuseipdb", "greynoise", "otx", "malwarebazaar", "crtsh", "kev-epss",
+        "breach-email", "breach-domain",
+    }

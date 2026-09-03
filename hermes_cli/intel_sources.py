@@ -237,6 +237,80 @@ def check_kev_epss(cve: str) -> Dict[str, Any]:
     return _result("kev-epss", cve, "ok", data=data)
 
 
+def check_breach_email(email: str) -> Dict[str, Any]:
+    """Has this email address appeared in a known data breach?
+
+    Uses XposedOrNot's public check-email endpoint — fully keyless, no
+    account required (https://xposedornot.com/api_doc). A 404 from the API
+    means "not found in any known breach", not an error, so it's reported
+    as ``ok`` with an empty breach list rather than ``status: error``."""
+    try:
+        resp = requests.get(
+            f"https://api.xposedornot.com/v1/check-email/{email}",
+            headers={"Accept": "application/json", "User-Agent": _USER_AGENT},
+            timeout=_HTTP_TIMEOUT,
+        )
+        if resp.status_code == 404:
+            return _result("breach-email", email, "ok", data={"breached": False, "breach_count": 0, "breaches": []})
+        resp.raise_for_status()
+        payload = resp.json()
+    except (requests.RequestException, ValueError) as exc:
+        return _result("breach-email", email, "error", str(exc))
+
+    raw_breaches = payload.get("breaches") or []
+    # XposedOrNot nests results as a list of lists (one inner list per
+    # exposure grouping) — flatten defensively since we only need names.
+    names: List[str] = []
+    for group in raw_breaches:
+        if isinstance(group, list):
+            names.extend(str(n) for n in group)
+        elif isinstance(group, str):
+            names.append(group)
+
+    return _result(
+        "breach-email", email, "ok",
+        data={"breached": bool(names), "breach_count": len(names), "breaches": names},
+    )
+
+
+def check_breach_domain(domain: str) -> Dict[str, Any]:
+    """Aggregated breach exposure for every known-breached address at a
+    domain — the corporate-exposure view of ``check_breach_email``.
+
+    Uses XposedOrNot's public breach-analytics endpoint with a ``domain``
+    filter, also fully keyless. Best-effort: the endpoint's exact response
+    shape is less consistently documented than the single-email lookup, so
+    this reads defensively (``.get`` throughout) and would rather report
+    "0 exposed addresses found" than raise on an unexpected shape."""
+    try:
+        resp = requests.get(
+            "https://api.xposedornot.com/v1/breach-analytics",
+            params={"domain": domain},
+            headers={"Accept": "application/json", "User-Agent": _USER_AGENT},
+            timeout=_HTTP_TIMEOUT,
+        )
+        if resp.status_code == 404:
+            return _result("breach-domain", domain, "ok", data={"exposed_email_count": 0, "breaches": []})
+        resp.raise_for_status()
+        payload = resp.json()
+    except (requests.RequestException, ValueError) as exc:
+        return _result("breach-domain", domain, "error", str(exc))
+
+    exposed = payload.get("ExposedBreaches") or payload.get("exposedBreaches") or {}
+    breach_list = exposed.get("breaches_details") if isinstance(exposed, dict) else exposed
+    breach_names = sorted({
+        str(b.get("breach") or b.get("name"))
+        for b in (breach_list or [])
+        if isinstance(b, dict) and (b.get("breach") or b.get("name"))
+    })
+    exposed_count = payload.get("ExposedRecords") or payload.get("exposedRecords") or len(breach_names)
+
+    return _result(
+        "breach-domain", domain, "ok",
+        data={"exposed_email_count": exposed_count, "breaches": breach_names},
+    )
+
+
 SOURCES = {
     "abuseipdb": check_abuseipdb,
     "greynoise": check_greynoise,
@@ -244,4 +318,6 @@ SOURCES = {
     "malwarebazaar": check_malwarebazaar,
     "crtsh": check_crtsh,
     "kev-epss": check_kev_epss,
+    "breach-email": check_breach_email,
+    "breach-domain": check_breach_domain,
 }

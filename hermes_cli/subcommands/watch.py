@@ -38,7 +38,8 @@ def build_watch_parser(subparsers, *, cmd_watch: Callable) -> None:
         "target",
         help=(
             "What to watch: a domain for rdap-domain, a URL for url-hash, "
-            "a free-text keyword (e.g. a product name) for cve-keyword"
+            "a free-text keyword (e.g. a product name) for cve-keyword, "
+            "an email address for breach-email, a domain for breach-domain"
         ),
     )
     watch_create.add_argument(

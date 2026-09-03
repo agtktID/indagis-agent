@@ -7,6 +7,8 @@ from hermes_cli.watch_checks import (
     CHECKERS,
     _first_failure_or_recovery,
     check_abuseipdb_ip,
+    check_breach_domain,
+    check_breach_email,
     check_cve_keyword,
     check_greynoise_ip,
     check_kev_status,
@@ -169,6 +171,7 @@ def test_checkers_dispatch_table_complete():
     assert set(CHECKERS) == {
         "url-hash", "rdap-domain", "cve-keyword",
         "abuseipdb-ip", "greynoise-ip", "kev-status",
+        "breach-email", "breach-domain",
     }
     assert CHECKERS["url-hash"] is check_url_hash
     assert CHECKERS["rdap-domain"] is check_rdap_domain
@@ -176,6 +179,8 @@ def test_checkers_dispatch_table_complete():
     assert CHECKERS["abuseipdb-ip"] is check_abuseipdb_ip
     assert CHECKERS["greynoise-ip"] is check_greynoise_ip
     assert CHECKERS["kev-status"] is check_kev_status
+    assert CHECKERS["breach-email"] is check_breach_email
+    assert CHECKERS["breach-domain"] is check_breach_domain
 
 
 class TestCheckAbuseipdbIp:
@@ -308,3 +313,100 @@ class TestCheckKevStatus:
         monkeypatch.setattr(intel_sources, "check_kev_epss", fake_after)
         alert, _ = check_kev_status("CVE-2024-0001", state)
         assert alert is None
+
+
+class TestCheckBreachEmail:
+    def test_baseline_silent(self, monkeypatch):
+        def fake(email):
+            return {"source": "breach-email", "query": email, "status": "ok", "message": None,
+                     "data": {"breached": True, "breach_count": 2, "breaches": ["Adobe", "LinkedIn"]}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_email", fake)
+        alert, state = check_breach_email("victim@example.com", {})
+        assert alert is None
+        assert state["seen_breaches"] == ["Adobe", "LinkedIn"]
+
+    def test_new_breach_alerts(self, monkeypatch):
+        def fake_before(email):
+            return {"source": "breach-email", "query": email, "status": "ok", "message": None,
+                     "data": {"breached": True, "breach_count": 1, "breaches": ["Adobe"]}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_email", fake_before)
+        _, state = check_breach_email("victim@example.com", {})
+
+        def fake_after(email):
+            return {"source": "breach-email", "query": email, "status": "ok", "message": None,
+                     "data": {"breached": True, "breach_count": 2, "breaches": ["Adobe", "LinkedIn"]}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_email", fake_after)
+        alert, _ = check_breach_email("victim@example.com", state)
+        assert alert is not None
+        assert "LinkedIn" in alert
+        assert "Adobe" not in alert  # only the NEW breach is named
+
+    def test_no_new_breach_stays_silent(self, monkeypatch):
+        def fake(email):
+            return {"source": "breach-email", "query": email, "status": "ok", "message": None,
+                     "data": {"breached": True, "breach_count": 1, "breaches": ["Adobe"]}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_email", fake)
+        _, state = check_breach_email("victim@example.com", {})
+        alert, _ = check_breach_email("victim@example.com", state)
+        assert alert is None
+
+    def test_error_status_treated_as_failure(self, monkeypatch):
+        def fake(email):
+            return {"source": "breach-email", "query": email, "status": "error", "message": "boom", "data": None}
+
+        monkeypatch.setattr(intel_sources, "check_breach_email", fake)
+        alert, state = check_breach_email("victim@example.com", {})
+        assert state["last_status"] == "error"
+        assert alert is not None
+
+
+class TestCheckBreachDomain:
+    def test_baseline_silent(self, monkeypatch):
+        def fake(domain):
+            return {"source": "breach-domain", "query": domain, "status": "ok", "message": None,
+                     "data": {"exposed_email_count": 5, "breaches": ["Adobe"]}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_domain", fake)
+        alert, state = check_breach_domain("example.com", {})
+        assert alert is None
+        assert state["exposed_email_count"] == 5
+
+    def test_increase_alerts(self, monkeypatch):
+        def fake_before(domain):
+            return {"source": "breach-domain", "query": domain, "status": "ok", "message": None,
+                     "data": {"exposed_email_count": 5, "breaches": ["Adobe"]}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_domain", fake_before)
+        _, state = check_breach_domain("example.com", {})
+
+        def fake_after(domain):
+            return {"source": "breach-domain", "query": domain, "status": "ok", "message": None,
+                     "data": {"exposed_email_count": 12, "breaches": ["Adobe", "LinkedIn"]}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_domain", fake_after)
+        alert, _ = check_breach_domain("example.com", state)
+        assert alert is not None
+        assert "5" in alert and "12" in alert
+
+    def test_unchanged_stays_silent(self, monkeypatch):
+        def fake(domain):
+            return {"source": "breach-domain", "query": domain, "status": "ok", "message": None,
+                     "data": {"exposed_email_count": 5, "breaches": ["Adobe"]}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_domain", fake)
+        _, state = check_breach_domain("example.com", {})
+        alert, _ = check_breach_domain("example.com", state)
+        assert alert is None
+
+    def test_error_status_treated_as_failure(self, monkeypatch):
+        def fake(domain):
+            return {"source": "breach-domain", "query": domain, "status": "error", "message": "boom", "data": None}
+
+        monkeypatch.setattr(intel_sources, "check_breach_domain", fake)
+        alert, state = check_breach_domain("example.com", {})
+        assert state["last_status"] == "error"
+        assert alert is not None

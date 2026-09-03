@@ -58,6 +58,28 @@ class TestIntelLookupHandlers:
         intel.intel_otx("evil.example.com", "domain")
         assert captured == {"indicator": "evil.example.com", "indicator_type": "domain"}
 
+    def test_breach_email_dispatch(self, monkeypatch):
+        captured = {}
+
+        def fake(email):
+            captured["email"] = email
+            return {"source": "breach-email", "query": email, "status": "ok", "message": None, "data": {"breached": False, "breach_count": 0, "breaches": []}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_email", fake)
+        intel.intel_breach_email("victim@example.com")
+        assert captured == {"email": "victim@example.com"}
+
+    def test_breach_domain_dispatch(self, monkeypatch):
+        captured = {}
+
+        def fake(domain):
+            captured["domain"] = domain
+            return {"source": "breach-domain", "query": domain, "status": "ok", "message": None, "data": {"exposed_email_count": 0, "breaches": []}}
+
+        monkeypatch.setattr(intel_sources, "check_breach_domain", fake)
+        intel.intel_breach_domain("example.com")
+        assert captured == {"domain": "example.com"}
+
     def test_malwarebazaar_passes_through_type(self, monkeypatch):
         captured = {}
 
@@ -77,6 +99,18 @@ class TestIntelCommandDispatch:
         monkeypatch.setattr(intel, "intel_sources_list", lambda: called.append(True))
         intel.intel_command(type("Args", (), {"intel_command": None})())
         assert called
+
+    def test_breach_email_action_routes(self, monkeypatch):
+        called = []
+        monkeypatch.setattr(intel, "intel_breach_email", lambda email: called.append(email))
+        intel.intel_command(type("Args", (), {"intel_command": "breach-email", "email": "victim@example.com"})())
+        assert called == ["victim@example.com"]
+
+    def test_breach_domain_action_routes(self, monkeypatch):
+        called = []
+        monkeypatch.setattr(intel, "intel_breach_domain", lambda domain: called.append(domain))
+        intel.intel_command(type("Args", (), {"intel_command": "breach-domain", "domain": "example.com"})())
+        assert called == ["example.com"]
 
     def test_unknown_action(self, capsys):
         intel.intel_command(type("Args", (), {"intel_command": "bogus"})())
