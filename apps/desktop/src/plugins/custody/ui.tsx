@@ -4,7 +4,7 @@
  * `hermes_cli/custody_state.py` via the plugin's own REST router — this
  * page never writes and never sees private key material; generating a
  * key or signing an export stays a CLI action (`indagis custody
- * generate` / `indagis custody sign`).
+ * keygen` / `indagis custody sign`).
  */
 
 import { cn, EmptyState, ErrorState, Loader, useQuery } from '@hermes/plugin-sdk'
@@ -30,7 +30,7 @@ export function CustodyPage() {
       <div>
         <h1 className="text-base font-semibold">Custody Chain</h1>
         <p className="text-xs text-muted-foreground">
-          Signing keys for evidence exports — names and public keys only. Generate one with <code>indagis custody generate</code>.
+          Signing keys for evidence exports — names and public keys only. Generate one with <code>indagis custody keygen</code>.
         </p>
       </div>
 
@@ -43,7 +43,7 @@ export function CustodyPage() {
       {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load keys.'} title="Could not load keys" />}
 
       {!isLoading && !error && data && data.keys.length === 0 && (
-        <EmptyState description="Generate a signing key with indagis custody generate to get started." title="No keys yet" />
+        <EmptyState description="Generate a signing key with indagis custody keygen to get started." title="No keys yet" />
       )}
 
       {!isLoading && !error && data && data.keys.length > 0 && (
