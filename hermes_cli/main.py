@@ -443,6 +443,7 @@ from hermes_cli.subcommands.airgap import build_airgap_parser
 from hermes_cli.subcommands.bounty import build_bounty_parser
 from hermes_cli.subcommands.case import build_case_parser
 from hermes_cli.subcommands.cron import build_cron_parser
+from hermes_cli.subcommands.custody import build_custody_parser
 from hermes_cli.subcommands.scope import build_scope_parser
 from hermes_cli.subcommands.watch import build_watch_parser
 from hermes_cli.subcommands.sync import build_sync_parser
@@ -4624,6 +4625,13 @@ def cmd_airgap(args):
     from hermes_cli.airgap import airgap_command
 
     airgap_command(args)
+
+
+def cmd_custody(args):
+    """Custody Chain — Ed25519 signing and verification for evidence exports."""
+    from hermes_cli.custody import custody_command
+
+    custody_command(args)
 
 
 def cmd_sync(args):
@@ -10660,7 +10668,7 @@ def _build_provider_choices() -> list[str]:
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
         "acp", "airgap", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
-        "computer-use", "scope",
+        "computer-use", "custody", "scope",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
         "gui", "desktop", "kanban", "login", "logout", "logs", "lsp", "mcp", "memory", "migrate", "moa",
@@ -11546,6 +11554,7 @@ def main():
     build_bounty_parser(subparsers, cmd_bounty=cmd_bounty)
     build_scope_parser(subparsers, cmd_scope=cmd_scope)
     build_airgap_parser(subparsers, cmd_airgap=cmd_airgap)
+    build_custody_parser(subparsers, cmd_custody=cmd_custody)
     build_sync_parser(subparsers, cmd_sync=cmd_sync)
 
     # =========================================================================
