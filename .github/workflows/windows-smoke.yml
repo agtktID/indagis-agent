@@ -1,0 +1,60 @@
+# Best-effort Windows coverage for the CLI's OS-sensitive home-directory
+# resolution logic. Unlike installer-tests.yml (real per-PR Windows CI for
+# scripts/install.ps1), this repo has NO Windows coverage at all for the
+# Python CLI or desktop test suites — everything else runs on ubuntu-latest
+# only. Windows runners cost ~2x a Linux minute and the full pytest suite
+# takes 8 parallel slices even on Linux, so this intentionally does not try
+# to mirror that suite here. It runs the specific tests that assert
+# Windows-relevant path behavior (get_indagis_home()'s resolution ladder,
+# 8.3 short names, drive-letter/UNC handling) on a real windows-latest
+# runner, so a Windows-only path bug in that logic is caught somewhere.
+#
+# Non-blocking by design: runs on push to main and on a weekly schedule,
+# never on pull_request, so a flake or a real regression here never holds
+# up someone else's PR. Treat a failure as a genuine "go look at this",
+# not decoration — this is the only signal this repo has for Windows path
+# behavior outside the installer.
+
+name: Windows smoke tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "hermes_constants.py"
+      - "tests/test_hermes_constants.py"
+      - "tests/hermes_cli/test_hermes_constants_path_migration.py"
+      - ".github/workflows/windows-smoke.yml"
+  schedule:
+    - cron: "17 6 * * 1" # weekly, Monday
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest-windows:
+    name: Home-directory resolution (windows-latest)
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # 8.2.0
+        with:
+          version: "0.9.28"
+
+      - name: Install Python deps
+        run: uv sync --locked --python 3.11 --extra dev
+
+      - name: Run Windows-relevant path-resolution tests
+        run: |
+          uv run pytest -q `
+            tests/test_hermes_constants.py `
+            tests/hermes_cli/test_hermes_constants_path_migration.py

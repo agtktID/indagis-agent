@@ -1,0 +1,70 @@
+# Best-effort macOS coverage for the desktop app. This repo has ZERO macOS
+# CI coverage anywhere today (confirmed: the only `macos-latest` mention in
+# any workflow is codeql.yml's Swift matrix leg, which is never reached —
+# `swift` isn't in that job's language matrix). apps/desktop already has
+# working macOS packaging scripts (dist:mac, dist:mac:dmg/zip via
+# electron-builder, scripts/patch-electron-builder-mac-binary.mjs) that have
+# only ever been exercised locally by whoever happened to be on a Mac.
+#
+# This job runs the desktop unit/platform test suites plus an UNSIGNED
+# --mac build (no notarization, no publish) on a real macos-latest runner,
+# to catch macOS-specific breakage (path handling, packaging, native deps)
+# that ubuntu-latest can't. It deliberately does NOT run the Playwright
+# visual-diff E2E suite (e2e-desktop.yml) — that needs per-OS baseline
+# screenshots this repo doesn't have yet; adding those is a separate,
+# larger follow-up.
+#
+# Non-blocking by design: runs on push to main and on a weekly schedule,
+# never on pull_request, so this never holds up someone else's PR. macOS
+# runners bill at a materially higher rate than Linux, which is the other
+# reason this isn't wired into the per-PR gate.
+
+name: macOS desktop smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/desktop/**"
+      - ".github/workflows/macos-desktop-smoke.yml"
+  schedule:
+    - cron: "23 6 * * 1" # weekly, Monday
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-desktop-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desktop-macos:
+    name: apps/desktop (macos-latest)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 26
+          cache: npm
+
+      - name: grab npm 12
+        run: npm i -g npm@12
+
+      - uses: ./.github/actions/retry
+        with:
+          command: npm ci
+
+      - name: Run desktop unit/platform test suites
+        run: |
+          npm run --prefix apps/desktop check:test:ui
+          npm run --prefix apps/desktop check:test:desktop:platforms
+
+      - name: Unsigned macOS build (packaging smoke test)
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: npm run --prefix apps/desktop dist:mac -- --publish never
