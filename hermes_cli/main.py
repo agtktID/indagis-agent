@@ -442,6 +442,7 @@ from hermes_cli.subcommands._shared import add_accept_hooks_flag as _add_accept_
 from hermes_cli.subcommands.airgap import build_airgap_parser
 from hermes_cli.subcommands.bounty import build_bounty_parser
 from hermes_cli.subcommands.case import build_case_parser
+from hermes_cli.subcommands.dossier import build_dossier_parser
 from hermes_cli.subcommands.cron import build_cron_parser
 from hermes_cli.subcommands.custody import build_custody_parser
 from hermes_cli.subcommands.intel import build_intel_parser
@@ -4607,6 +4608,13 @@ def cmd_case(args):
     from hermes_cli.case_memory import case_command
 
     case_command(args)
+
+
+def cmd_dossier(args):
+    """Dossier Builder — Markdown investigation report from an evidence store."""
+    from hermes_cli.dossier import dossier_command
+
+    dossier_command(args)
 
 
 def cmd_bounty(args):
@@ -10692,7 +10700,7 @@ def _build_provider_choices() -> list[str]:
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
         "acp", "airgap", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
-        "computer-use", "custody", "intel", "rules", "scope", "surface",
+        "computer-use", "custody", "dossier", "intel", "rules", "scope", "surface",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
         "gui", "desktop", "kanban", "login", "logout", "logs", "lsp", "mcp", "memory", "migrate", "moa",
@@ -11575,6 +11583,7 @@ def main():
     build_cron_parser(subparsers, cmd_cron=cmd_cron)
     build_watch_parser(subparsers, cmd_watch=cmd_watch)
     build_case_parser(subparsers, cmd_case=cmd_case)
+    build_dossier_parser(subparsers, cmd_dossier=cmd_dossier)
     build_bounty_parser(subparsers, cmd_bounty=cmd_bounty)
     build_scope_parser(subparsers, cmd_scope=cmd_scope)
     build_airgap_parser(subparsers, cmd_airgap=cmd_airgap)
