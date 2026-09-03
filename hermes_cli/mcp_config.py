@@ -782,6 +782,105 @@ def cmd_mcp_test(args):
     print()
 
 
+# ─── hermes mcp audit ────────────────────────────────────────────────────────
+
+_AUDIT_SEVERITY_COLOR = {"blocked": Colors.RED, "warn": Colors.YELLOW}
+
+
+def cmd_mcp_audit(args):
+    """Scan a server's advertised tool descriptions/schemas for tool-poisoning
+    signals (the MCP Vetting Firewall — see ``hermes_cli/mcp_audit.py``).
+
+    Advisory in v1: prints findings and stores the result, never blocks the
+    server from being used. A repeat audit also reports whether the tool
+    list changed since the last run — the signal that would catch a server
+    silently changing behavior after a user already approved it.
+    """
+    from hermes_cli import mcp_audit, mcp_audit_state
+
+    name = getattr(args, "name", None)
+    if not name:
+        cmd_mcp_audit_list(args)
+        return
+
+    servers = _get_mcp_servers()
+    if name not in servers:
+        _error(f"Server '{name}' not found in config.")
+        available = list(servers.keys())
+        if available:
+            _info(f"Available: {', '.join(available)}")
+        return
+
+    cfg = servers[name]
+    print()
+    print(color(f"  Auditing '{name}'...", Colors.CYAN))
+
+    prior = mcp_audit_state.get_audit_record(name)
+
+    try:
+        result = mcp_audit.run_audit(name, cfg)
+    except Exception as exc:
+        _error(f"Audit failed: {exc}")
+        return
+
+    mcp_audit_state.save_audit_record(
+        name,
+        verdict=result["verdict"],
+        tool_hash=result["tool_hash"],
+        tool_count=result["tool_count"],
+        findings=result["findings"],
+    )
+
+    _info(f"Tools scanned: {result['tool_count']}")
+
+    if prior and prior.get("tool_hash") and prior["tool_hash"] != result["tool_hash"]:
+        _warning(
+            f"Tool list changed since the last audit ({prior.get('audited_at', 'unknown time')}) "
+            f"— re-review before continuing to trust this server."
+        )
+
+    if result["verdict"] == "clean":
+        _success("No tool-poisoning signals found.")
+    else:
+        for finding in result["findings"]:
+            fn = _warning if finding["severity"] == "warn" else _error
+            fn(f"[{finding['severity']}] {finding['tool']}: {finding['pattern']} — {finding['snippet']!r}")
+        if result["verdict"] == "blocked":
+            _error(f"Verdict: BLOCKED — high-confidence tool-poisoning signal(s) found in '{name}'.")
+        else:
+            _warning(f"Verdict: WARN — review the flagged tool(s) in '{name}' before trusting it.")
+
+    print()
+
+
+def cmd_mcp_audit_list(args=None):
+    """List stored audit results for all servers (``hermes mcp audit --list``)."""
+    from hermes_cli import mcp_audit_state
+
+    records = mcp_audit_state.list_audit_records()
+    if not records:
+        print()
+        _info("No servers have been audited yet.")
+        _info("Run `indagis mcp audit <name>` to scan one.")
+        print()
+        return
+
+    print()
+    print(color("  MCP Audit Results:", Colors.CYAN + Colors.BOLD))
+    print()
+    print(f"  {'Name':<16} {'Verdict':<10} {'Tools':<8} {'Audited At':<26}")
+    print(f"  {'─' * 16} {'─' * 10} {'─' * 8} {'─' * 26}")
+    for record in records:
+        verdict = record.get("verdict", "?")
+        verdict_color = _AUDIT_SEVERITY_COLOR.get(verdict, Colors.GREEN)
+        name_col = f"{record.get('name', '?'):<16}"
+        verdict_col = f"{verdict:<10}"
+        tools_col = f"{record.get('tool_count', '?'):<8}"
+        audited_col = f"{record.get('audited_at', '?'):<26}"
+        print(f"  {name_col} {color(verdict_col, verdict_color)} {tools_col} {audited_col}")
+    print()
+
+
 # ─── hermes mcp login ────────────────────────────────────────────────────────
 
 def _reauth_oauth_server(name: str, server_config: dict) -> bool:
@@ -1104,6 +1203,7 @@ def mcp_command(args):
         "list": cmd_mcp_list,
         "ls": cmd_mcp_list,
         "test": cmd_mcp_test,
+        "audit": cmd_mcp_audit,
         "configure": cmd_mcp_configure,
         "config": cmd_mcp_configure,
         "login": cmd_mcp_login,
@@ -1129,6 +1229,7 @@ def mcp_command(args):
         _info("indagis mcp remove <name>                      Remove a server")
         _info("indagis mcp list                               List configured servers")
         _info("indagis mcp test <name>                        Test connection")
+        _info("indagis mcp audit <name>                       Scan for tool-poisoning signals")
         _info("indagis mcp configure <name>                   Toggle tools")
         _info("indagis mcp login <name>                       Re-authenticate OAuth")
         _info("indagis mcp reauth <name> | --all              Re-auth one or all OAuth servers")
