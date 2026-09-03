@@ -1,0 +1,11 @@
+{
+  "name": "custody",
+  "label": "Custody Chain",
+  "description": "Browse the Ed25519 signing keys available for evidence exports — names and public keys only, private key material never leaves the CLI.",
+  "icon": "KeyRound",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
