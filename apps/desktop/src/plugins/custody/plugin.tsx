@@ -6,7 +6,7 @@
  * read-only plugins in this rollout. That backend router never wraps
  * load_private_key() or sign_digest() — private key material never
  * crosses the HTTP boundary. Generating a key or signing an export stays
- * a CLI action (`indagis custody generate` / `indagis custody sign`).
+ * a CLI action (`indagis custody keygen` / `indagis custody sign`).
  *
  * Ships OFF by default (`defaultEnabled: false`): it inventories in
  * Settings ▸ Plugins and registers nothing until the user flips the switch.
