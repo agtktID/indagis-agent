@@ -443,6 +443,7 @@ from hermes_cli.subcommands.airgap import build_airgap_parser
 from hermes_cli.subcommands.bounty import build_bounty_parser
 from hermes_cli.subcommands.case import build_case_parser
 from hermes_cli.subcommands.dossier import build_dossier_parser
+from hermes_cli.subcommands.attribution import build_attribution_parser
 from hermes_cli.subcommands.cron import build_cron_parser
 from hermes_cli.subcommands.custody import build_custody_parser
 from hermes_cli.subcommands.intel import build_intel_parser
@@ -4615,6 +4616,13 @@ def cmd_dossier(args):
     from hermes_cli.dossier import dossier_command
 
     dossier_command(args)
+
+
+def cmd_attribution(args):
+    """Attribution Confidence Scorer — NATO/Admiralty source-reliability rating."""
+    from hermes_cli.attribution import attribution_command
+
+    attribution_command(args)
 
 
 def cmd_bounty(args):
@@ -10699,7 +10707,7 @@ def _build_provider_choices() -> list[str]:
 # to parse.
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
-        "acp", "airgap", "approvals", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
+        "acp", "airgap", "approvals", "attribution", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
         "computer-use", "custody", "dossier", "intel", "rules", "scope", "surface",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
@@ -11584,6 +11592,7 @@ def main():
     build_watch_parser(subparsers, cmd_watch=cmd_watch)
     build_case_parser(subparsers, cmd_case=cmd_case)
     build_dossier_parser(subparsers, cmd_dossier=cmd_dossier)
+    build_attribution_parser(subparsers, cmd_attribution=cmd_attribution)
     build_bounty_parser(subparsers, cmd_bounty=cmd_bounty)
     build_scope_parser(subparsers, cmd_scope=cmd_scope)
     build_airgap_parser(subparsers, cmd_airgap=cmd_airgap)
