@@ -2,10 +2,14 @@
 
 import requests
 
+from hermes_cli import intel_sources
 from hermes_cli.watch_checks import (
     CHECKERS,
     _first_failure_or_recovery,
+    check_abuseipdb_ip,
     check_cve_keyword,
+    check_greynoise_ip,
+    check_kev_status,
     check_rdap_domain,
     check_url_hash,
 )
@@ -162,7 +166,145 @@ class TestCheckCveKeyword:
 
 
 def test_checkers_dispatch_table_complete():
-    assert set(CHECKERS) == {"url-hash", "rdap-domain", "cve-keyword"}
+    assert set(CHECKERS) == {
+        "url-hash", "rdap-domain", "cve-keyword",
+        "abuseipdb-ip", "greynoise-ip", "kev-status",
+    }
     assert CHECKERS["url-hash"] is check_url_hash
     assert CHECKERS["rdap-domain"] is check_rdap_domain
     assert CHECKERS["cve-keyword"] is check_cve_keyword
+    assert CHECKERS["abuseipdb-ip"] is check_abuseipdb_ip
+    assert CHECKERS["greynoise-ip"] is check_greynoise_ip
+    assert CHECKERS["kev-status"] is check_kev_status
+
+
+class TestCheckAbuseipdbIp:
+    def test_not_configured_treated_as_failure(self, monkeypatch):
+        monkeypatch.delenv("ABUSEIPDB_API_KEY", raising=False)
+        alert, state = check_abuseipdb_ip("1.2.3.4", {})
+        assert state["last_status"] == "error"
+        assert alert is not None  # first-failure transition fires
+
+    def test_baseline_then_score_change_alerts(self, monkeypatch):
+        monkeypatch.setenv("ABUSEIPDB_API_KEY", "k")
+
+        def fake(ip):
+            return {"source": "abuseipdb", "query": ip, "status": "ok", "message": None,
+                     "data": {"abuse_confidence_score": 10, "total_reports": 1}}
+
+        monkeypatch.setattr(intel_sources, "check_abuseipdb", fake)
+        alert, state = check_abuseipdb_ip("1.2.3.4", {})
+        assert alert is None
+        assert state["abuse_confidence_score"] == 10
+
+        def fake_changed(ip):
+            return {"source": "abuseipdb", "query": ip, "status": "ok", "message": None,
+                     "data": {"abuse_confidence_score": 80, "total_reports": 5}}
+
+        monkeypatch.setattr(intel_sources, "check_abuseipdb", fake_changed)
+        alert2, state2 = check_abuseipdb_ip("1.2.3.4", state)
+        assert alert2 is not None
+        assert "10" in alert2 and "80" in alert2
+
+    def test_unchanged_score_stays_silent(self, monkeypatch):
+        monkeypatch.setenv("ABUSEIPDB_API_KEY", "k")
+
+        def fake(ip):
+            return {"source": "abuseipdb", "query": ip, "status": "ok", "message": None,
+                     "data": {"abuse_confidence_score": 10, "total_reports": 1}}
+
+        monkeypatch.setattr(intel_sources, "check_abuseipdb", fake)
+        _, state = check_abuseipdb_ip("1.2.3.4", {})
+        alert, _ = check_abuseipdb_ip("1.2.3.4", state)
+        assert alert is None
+
+
+class TestCheckGreynoiseIp:
+    def test_baseline_then_classification_change_alerts(self, monkeypatch):
+        def fake(ip):
+            return {"source": "greynoise", "query": ip, "status": "ok", "message": None,
+                     "data": {"classification": "benign"}}
+
+        monkeypatch.setattr(intel_sources, "check_greynoise", fake)
+        alert, state = check_greynoise_ip("1.2.3.4", {})
+        assert alert is None
+
+        def fake_changed(ip):
+            return {"source": "greynoise", "query": ip, "status": "ok", "message": None,
+                     "data": {"classification": "malicious"}}
+
+        monkeypatch.setattr(intel_sources, "check_greynoise", fake_changed)
+        alert2, _ = check_greynoise_ip("1.2.3.4", state)
+        assert alert2 is not None
+        assert "benign" in alert2 and "malicious" in alert2
+
+    def test_error_status_treated_as_failure(self, monkeypatch):
+        def fake(ip):
+            return {"source": "greynoise", "query": ip, "status": "error", "message": "boom", "data": None}
+
+        monkeypatch.setattr(intel_sources, "check_greynoise", fake)
+        alert, state = check_greynoise_ip("1.2.3.4", {})
+        assert state["last_status"] == "error"
+        assert alert is not None
+
+
+class TestCheckKevStatus:
+    def test_baseline_silent(self, monkeypatch):
+        def fake(cve):
+            return {"source": "kev-epss", "query": cve, "status": "ok", "message": None,
+                     "data": {"in_kev": False, "epss_score": 0.1}}
+
+        monkeypatch.setattr(intel_sources, "check_kev_epss", fake)
+        alert, state = check_kev_status("CVE-2024-0001", {})
+        assert alert is None
+        assert state["in_kev"] is False
+
+    def test_added_to_kev_alerts(self, monkeypatch):
+        def fake_before(cve):
+            return {"source": "kev-epss", "query": cve, "status": "ok", "message": None,
+                     "data": {"in_kev": False, "epss_score": 0.1}}
+
+        monkeypatch.setattr(intel_sources, "check_kev_epss", fake_before)
+        _, state = check_kev_status("CVE-2024-0001", {})
+
+        def fake_after(cve):
+            return {"source": "kev-epss", "query": cve, "status": "ok", "message": None,
+                     "data": {"in_kev": True, "epss_score": 0.1}}
+
+        monkeypatch.setattr(intel_sources, "check_kev_epss", fake_after)
+        alert, _ = check_kev_status("CVE-2024-0001", state)
+        assert alert is not None
+        assert "Known Exploited" in alert
+
+    def test_epss_jump_alerts(self, monkeypatch):
+        def fake_before(cve):
+            return {"source": "kev-epss", "query": cve, "status": "ok", "message": None,
+                     "data": {"in_kev": False, "epss_score": 0.05}}
+
+        monkeypatch.setattr(intel_sources, "check_kev_epss", fake_before)
+        _, state = check_kev_status("CVE-2024-0001", {})
+
+        def fake_after(cve):
+            return {"source": "kev-epss", "query": cve, "status": "ok", "message": None,
+                     "data": {"in_kev": False, "epss_score": 0.9}}
+
+        monkeypatch.setattr(intel_sources, "check_kev_epss", fake_after)
+        alert, _ = check_kev_status("CVE-2024-0001", state)
+        assert alert is not None
+        assert "EPSS" in alert
+
+    def test_small_epss_change_stays_silent(self, monkeypatch):
+        def fake_before(cve):
+            return {"source": "kev-epss", "query": cve, "status": "ok", "message": None,
+                     "data": {"in_kev": False, "epss_score": 0.05}}
+
+        monkeypatch.setattr(intel_sources, "check_kev_epss", fake_before)
+        _, state = check_kev_status("CVE-2024-0001", {})
+
+        def fake_after(cve):
+            return {"source": "kev-epss", "query": cve, "status": "ok", "message": None,
+                     "data": {"in_kev": False, "epss_score": 0.08}}
+
+        monkeypatch.setattr(intel_sources, "check_kev_epss", fake_after)
+        alert, _ = check_kev_status("CVE-2024-0001", state)
+        assert alert is None

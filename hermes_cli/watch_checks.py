@@ -9,10 +9,12 @@ performs one lightweight HTTP check, and returns ``(alert_text, new_state)``:
 * ``new_state`` is always returned and always persisted, even on a silent
   tick, so a checker can track things like consecutive-failure counts.
 
-Checkers deliberately do their own minimal HTTP work rather than depending on
-provider API keys (Shodan/VirusTotal/etc. are prompt-only skills today with
-no shared Python backend — see the security skill SKILL.md files) — RDAP and
-the NVD CVE API are both free, keyless, and structured.
+Checkers deliberately do their own minimal HTTP work — RDAP and the NVD CVE
+API are free, keyless, and structured; the abuseipdb-ip/greynoise-ip/
+kev-status checkers below reuse the same first-party connectors as
+``indagis intel`` (hermes_cli/intel_sources.py), degrading to a silent
+not-configured state rather than erroring when an optional API key (e.g.
+ABUSEIPDB_API_KEY) isn't set.
 """
 
 from __future__ import annotations
@@ -178,8 +180,96 @@ def check_cve_keyword(target: str, state: Dict[str, Any]) -> CheckResult:
     ), new_state
 
 
+def check_abuseipdb_ip(target: str, state: Dict[str, Any]) -> CheckResult:
+    """Alert when an IP's AbuseIPDB reputation changes — a new report
+    pushes the confidence score up, or a prior offender goes quiet."""
+    from hermes_cli.intel_sources import check_abuseipdb
+
+    result = check_abuseipdb(target)
+    if result["status"] == "not_configured":
+        return _first_failure_or_recovery(state, ok=False, error_text=result["message"])
+    if result["status"] == "error":
+        return _first_failure_or_recovery(state, ok=False, error_text=result["message"])
+
+    data = result["data"]
+    new_state = dict(state)
+    new_state["last_status"] = "ok"
+    new_state["abuse_confidence_score"] = data.get("abuse_confidence_score")
+    new_state["total_reports"] = data.get("total_reports")
+
+    prior_score = state.get("abuse_confidence_score")
+    if prior_score is None:
+        return None, new_state
+    if prior_score != data.get("abuse_confidence_score"):
+        return (
+            f"🚩 AbuseIPDB confidence score for {target} changed: "
+            f"{prior_score} → {data.get('abuse_confidence_score')} "
+            f"({data.get('total_reports')} total reports)"
+        ), new_state
+    return None, new_state
+
+
+def check_greynoise_ip(target: str, state: Dict[str, Any]) -> CheckResult:
+    """Alert when an IP's GreyNoise classification changes — e.g. it starts
+    (or stops) being seen scanning the internet at large."""
+    from hermes_cli.intel_sources import check_greynoise
+
+    result = check_greynoise(target)
+    if result["status"] == "error":
+        return _first_failure_or_recovery(state, ok=False, error_text=result["message"])
+
+    classification = result["data"].get("classification")
+    new_state = dict(state)
+    new_state["last_status"] = "ok"
+    new_state["classification"] = classification
+
+    prior = state.get("classification")
+    if prior is None:
+        return None, new_state
+    if prior != classification:
+        return f"🔭 GreyNoise classification for {target} changed: {prior!r} → {classification!r}", new_state
+    return None, new_state
+
+
+def check_kev_status(target: str, state: Dict[str, Any]) -> CheckResult:
+    """Alert the moment a CVE lands in CISA's Known Exploited Vulnerabilities
+    catalog, or its EPSS exploitation-probability score moves meaningfully."""
+    from hermes_cli.intel_sources import check_kev_epss
+
+    result = check_kev_epss(target)
+    if result["status"] == "error":
+        return _first_failure_or_recovery(state, ok=False, error_text=result["message"])
+
+    data = result["data"]
+    new_state = dict(state)
+    new_state["last_status"] = "ok"
+    new_state["in_kev"] = data.get("in_kev")
+    new_state["epss_score"] = data.get("epss_score")
+
+    prior_in_kev = state.get("in_kev")
+    prior_epss = state.get("epss_score")
+    if prior_in_kev is None:
+        return None, new_state
+
+    alerts = []
+    if not prior_in_kev and data.get("in_kev"):
+        alerts.append(f"🚨 {target} was just added to CISA's Known Exploited Vulnerabilities catalog")
+    try:
+        if prior_epss is not None and abs(float(data.get("epss_score") or 0) - float(prior_epss)) >= 0.1:
+            alerts.append(f"📈 {target} EPSS score moved: {prior_epss} → {data.get('epss_score')}")
+    except (TypeError, ValueError):
+        pass
+
+    if not alerts:
+        return None, new_state
+    return "\n".join(alerts), new_state
+
+
 CHECKERS = {
     "url-hash": check_url_hash,
     "rdap-domain": check_rdap_domain,
     "cve-keyword": check_cve_keyword,
+    "abuseipdb-ip": check_abuseipdb_ip,
+    "greynoise-ip": check_greynoise_ip,
+    "kev-status": check_kev_status,
 }
