@@ -236,7 +236,16 @@ export function buildAppEnv(sandbox: Sandbox, extra: Record<string, string> = {}
 
   return {
     ...clean,
+    // INDAGIS_HOME is priority 1 in the home-resolution ladder
+    // (hermes_constants.py: get_indagis_home) — HERMES_HOME is only
+    // priority 3, *below* "~/.indagis exists on disk" at priority 2. On any
+    // machine that has ever run the real app, ~/.indagis exists, so setting
+    // HERMES_HOME alone gets silently ignored and the backend loads the
+    // real user config instead of this sandbox — no mock provider, onboarding
+    // never dismisses, waitForAppReady times out. Set both so the sandbox
+    // wins regardless of what's on disk.
     HERMES_HOME: sandbox.hermesHome,
+    INDAGIS_HOME: sandbox.hermesHome,
     HERMES_DESKTOP_USER_DATA_DIR: sandbox.userDataDir,
     HERMES_DESKTOP_IGNORE_EXISTING: '1',
     HERMES_DESKTOP_HERMES_ROOT: REPO_ROOT,
