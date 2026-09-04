@@ -137,6 +137,34 @@ export {
 export type { StatusbarItem } from '@/app/shell/statusbar-controls'
 
 export type { TitlebarTool } from '@/app/shell/titlebar-controls'
+/** Mission-control primitives: a framed `Panel` with corner brackets, the
+ *  telemetry `StatTile`, a segmented `StatusBar`, a severity `Alert`, and a
+ *  multi-axis `RadarChart`. Structure is borrowed from the Andromeda design
+ *  system (MIT); colours resolve through the Indagis palette, so they read
+ *  in both themes. Use them for dense operational readouts — the plainer
+ *  primitives below still suit ordinary pages. */
+export {
+  type AlertVariant,
+  Alert as AndromedaAlert,
+  type AlertProps as AndromedaAlertProps,
+  andromedaTokens,
+  CornerMarkers,
+  type CornerMarkersProps,
+  Kicker,
+  Panel,
+  PanelHeader,
+  type PanelHeaderProps,
+  type PanelProps,
+  RadarChart,
+  type RadarChartProps,
+  type RadarSeries,
+  StatTile,
+  type StatTileProps,
+  type StatTone,
+  StatusBar,
+  type StatusBarProps,
+  type StatusBarTone
+} from '@/components/andromeda'
 /** Pane placement roles. `'floating'` is the one NON-tiling value: the pane is
  *  excluded from the layout tree and rendered as a fixed, draggable card above
  *  it — it takes no width from any zone, has no tab, and can't be docked.

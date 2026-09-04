@@ -1,0 +1,11 @@
+{
+  "name": "mission-control",
+  "label": "Mission Control",
+  "description": "One operational overview across the investigation toolchain — indicators, scope, watches, personas and subsystem readiness.",
+  "icon": "LayoutDashboard",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
