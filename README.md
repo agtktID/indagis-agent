@@ -3,20 +3,39 @@
 </p>
 
 # Indagis Agent
+
 <p align="center">
-  <a href="https://github.com/agtktID/indagis-agent">Indagis Agent</a> | <a href="https://github.com/agtktID/indagis-agent">Indagis Desktop</a>
-</p>
-<p align="center">
-  <a href="https://github.com/agtktID/indagis-agent/tree/main/website/docs/"><img src="https://img.shields.io/badge/Docs-Indagis%20Docs-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://github.com/agtktID/indagis-agent"><b>Indagis Agent</b></a> (CLI &amp; gateway) &nbsp;·&nbsp; <a href="apps/desktop/README.md"><b>Indagis Desktop</b></a> (Electron app)
 </p>
 
-**Indagis Agent is an AI workspace for cybersecurity investigation** — OSINT, threat intel, and DFIR. It has a closed learning loop: it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://github.com/agtktID/indagis-agent/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/agtktID/indagis-agent/ci.yml?style=for-the-badge&label=CI" alt="CI status"></a>
+  <img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11–3.13">
+  <a href="https://github.com/agtktID/indagis-agent/stargazers"><img src="https://img.shields.io/github/stars/agtktID/indagis-agent?style=for-the-badge&color=FFD700" alt="GitHub stars"></a>
+</p>
+
+<p align="center">
+  <a href="#quick-install"><img src="https://img.shields.io/badge/Quick_Start-2ea44f?style=for-the-badge" alt="Quick Start"></a>
+  <a href="https://github.com/agtktID/indagis-agent/tree/main/website/docs/"><img src="https://img.shields.io/badge/Documentation-FFD700?style=for-the-badge" alt="Documentation"></a>
+  <a href="#contributing"><img src="https://img.shields.io/badge/Contributing-blue?style=for-the-badge" alt="Contributing"></a>
+</p>
+
+<p align="center">
+  <b>An AI workspace for cybersecurity investigation</b> — OSINT, threat intel, and DFIR.
+</p>
+
+Indagis Agent has a closed learning loop: it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
 
 Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many others](https://github.com/agtktID/indagis-agent/blob/main/website/docs/integrations/providers.md). Switch with `indagis model` — no code changes, no lock-in.
 
+---
+
+## Features
+
 <table>
 <tr><td><b>Authorization-gated investigations</b></td><td>Security work is tracked as a persisted <code>Investigation</code>: an objective, an authorized scope, evidence, findings and a timeline. Every recorded target is checked against that scope before it is written (fail-closed), with Markdown/JSON export.</td></tr>
+<tr><td><b>An investigation command suite</b></td><td>Cross-investigation IOC correlation (<code>indagis case</code>), one-command Markdown case reports (<code>indagis dossier build</code>), Admiralty-scale source scoring (<code>indagis attribution</code>), sock puppet bookkeeping (<code>indagis puppet</code>), bug bounty payout tracking (<code>indagis bounty</code>), authorized-scope import with auto-onboarding onto continuous recon (<code>indagis scope</code>, <code>indagis scope autopilot</code>), a confidential-engagement kill switch (<code>indagis airgap</code>), Ed25519 evidence signing (<code>indagis custody</code>), diffing recon snapshots over time (<code>indagis surface</code>), proactive breach/IOC alerting (<code>indagis watch</code>, <code>indagis intel breach-email</code>/<code>breach-domain</code>), and an MCP tool-poisoning scanner (<code>indagis mcp audit</code>) — most ship a matching read-only desktop dashboard plugin (opt-in via Settings ▸ Plugins). Full syntax in the <a href="https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md">Investigation Commands Reference</a>.</td></tr>
 <tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
 <tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
 <tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
@@ -206,6 +225,7 @@ Documentation lives at **[website/docs/](https://github.com/agtktID/indagis-agen
 | [Architecture](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/architecture.md)             | Project structure, agent loop, key classes                 |
 | [Contributing](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/contributing.md)             | Development setup, PR process, code style                  |
 | [CLI Reference](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/cli-commands.md)                  | All commands and flags                                     |
+| [Investigation Commands](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md) | Case Memory, Dossier Builder, Attribution Scoring, Sock Puppet Manager, Bounty Ledger, Scope Sync, Air Gap, Custody Chain, Surface Diff, Signal Watch, MCP Vetting Firewall |
 | [Environment Variables](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/environment-variables.md) | Complete env var reference                                 |
 
 ---
@@ -304,6 +324,7 @@ This differentiation lives in the **skill library**, under `skills/security/` (b
 | `yara-scan` | File / memory scanning | `yara` CLI | Shipped — bundled |
 | `mitm-traffic-capture` | Recon / API traffic capture | `mitmproxy` CLI | Shipped — optional |
 | `mitm-traffic-audit` | API security / bug-bounty methodology | `mitmproxy` capture + `curl` | Shipped — optional |
+| `dfir-toolkit` | Memory / disk forensics | Volatility3 (`vol`) + The Sleuth Kit (`mmls`, `fls`, `icat`, …) | Shipped — optional |
 | `mvt-android-triage` | Mobile DFIR | MVT (Mobile Verification Toolkit) CLI | Planned (Phase 5) |
 | `velociraptor-hunt` | DFIR / endpoint | Velociraptor `velociraptor` CLI | Planned (Phase 5) |
 | `osquery-investigate` | Endpoint live forensics | `osqueryi` shell | Planned (Phase 5) |
@@ -312,6 +333,6 @@ This differentiation lives in the **skill library**, under `skills/security/` (b
 
 Shipped skills land as standalone `SKILL.md` + `references/` files (the format documented in `CONTRIBUTING.md`, reviewed against its Skill-vs-Tool decision criteria). The **bundled** ones live under `skills/security/` and are active from install — no setup step required. The **optional** ones live under `optional-skills/security/` and ship with the repo but aren't activated by default; install one with `indagis skills install official/security/<name>`. The remaining entries are still planned.
 
-**Status of shipped skills today:** of the 7 shipped roadmap entries above, 4 — `shodan-search`, `virustotal-lookup`, `sigma-rule-search`, `yara-scan` — are bundled and active by default; `misp-query`, `mitm-traffic-capture`, and `mitm-traffic-audit` stay optional (they need a MISP instance or an active mitmproxy capture, not a fit for a default loadout). Outside this roadmap table, `sherlock`, `domain-intel`, and `osint-investigation` are also bundled under `skills/security/`, while `1password`, `oss-forensics`, `web-pentest`, `godmode`, and `unbroker` stay optional for their own credential, legal, or active-action reasons. The remaining 5 roadmap entries are still planned; operators who want to test one early should file an issue with the workflow they want to automate.
+**Status of shipped skills today:** of the 8 shipped roadmap entries above, 4 — `shodan-search`, `virustotal-lookup`, `sigma-rule-search`, `yara-scan` — are bundled and active by default; `misp-query`, `mitm-traffic-capture`, `mitm-traffic-audit`, and `dfir-toolkit` stay optional (they need a MISP instance, an active mitmproxy capture, or heavyweight forensics tooling on `PATH` — not a fit for a default loadout). Outside this roadmap table, `sherlock`, `domain-intel`, and `osint-investigation` are also bundled under `skills/security/`, while `1password`, `oss-forensics`, `web-pentest`, `godmode`, and `unbroker` stay optional for their own credential, legal, or active-action reasons. The remaining 5 roadmap entries are still planned; operators who want to test one early should file an issue with the workflow they want to automate.
 
 The engine (agent runtime, provider abstraction, gateway, skills scheduler, session persistence) is kept as-is at the fork point so security and bug fixes can still be reviewed and merged in — the fork's own work is the presentation layer (CLI banner, dashboard, desktop app, TUI, palette) and the cybersecurity skill library above. A handful of internal-only technical identifiers (an installer env var, an Electron bundle id, a couple of module directory names) are intentionally not yet renamed for install-compatibility reasons — see `CHANGELOG.md` for the full technical log if you're touching that code.

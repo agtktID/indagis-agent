@@ -1,0 +1,11 @@
+{
+  "name": "watch",
+  "label": "Signal Watch",
+  "description": "Browse Signal Watch rules — what's being watched, schedule, delivery channel, and last-run status.",
+  "icon": "Eye",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
