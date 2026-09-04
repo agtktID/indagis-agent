@@ -103,7 +103,7 @@ If you already have Git installed, the installer detects it and uses that instea
 
 > **Android / Termux:** The tested manual path is documented in the [Termux guide](https://github.com/agtktID/indagis-agent/blob/main/website/docs/getting-started/termux.md). On Termux, Indagis Agent installs a curated `.[termux]` extra because the full `.[all]` extra currently pulls Android-incompatible voice dependencies.
 
-> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. A fresh native Windows install lives under `%LOCALAPPDATA%\indagis`; WSL2 installs under `~/.indagis` as on Linux. An existing `%LOCALAPPDATA%\hermes` / `~/.hermes` from before the rename keeps being used — the installer prefers it over creating a second home, so upgrades stay in place.
+> **Where it installs:** native Windows uses `%LOCALAPPDATA%\indagis`; WSL2 uses `~/.indagis` as on Linux. An existing `%LOCALAPPDATA%\hermes` / `~/.hermes` from before the rename keeps being used — the installer prefers it over creating a second home, so upgrades stay in place.
 
 After installation:
 
@@ -112,40 +112,7 @@ source ~/.bashrc    # reload shell (or: source ~/.zshrc)
 indagis            # start chatting!
 ```
 
-### Troubleshooting
-
-#### Windows Defender or antivirus flags `uv.exe` as malware
-
-If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Indagis Agent install's `bin` folder (`%LOCALAPPDATA%\indagis\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Indagis Agent bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
-
-**To verify your copy is authentic:**
-
-```powershell
-# Install GitHub CLI if needed
-winget install --id GitHub.cli
-
-# Login to GitHub
-gh auth login
-
-# Run verification
-$uv = "$env:LOCALAPPDATA\indagis\bin\uv.exe"
-$ver = (& $uv --version).Split(' ')[1]
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$zip = "$env:TEMP\uv.zip"
-Invoke-WebRequest "https://github.com/astral-sh/uv/releases/download/$ver/uv-x86_64-pc-windows-msvc.zip" -OutFile $zip -UseBasicParsing
-gh attestation verify $zip --repo astral-sh/uv
-Expand-Archive $zip "$env:TEMP\uv_x" -Force
-(Get-FileHash "$env:TEMP\uv_x\uv.exe").Hash -eq (Get-FileHash $uv).Hash
-```
-
-If attestation says "Verification succeeded" and the last line prints `True`, you're good.
-
-**To whitelist the Indagis install:**
-- **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\indagis\bin"`
-- **Bitdefender:** Add an exception in the Bitdefender console (Protection > Antivirus > Settings > Manage Exceptions)
-- Whitelist the **folder**, not the file hash — Indagis Agent inherits `uv` updates from the upstream release and the hash changes every version
-
-For more context, see the upstream Astral reports: [astral-sh/uv#13553](https://github.com/astral-sh/uv/issues/13553), [astral-sh/uv#15011](https://github.com/astral-sh/uv/issues/15011), [astral-sh/uv#10079](https://github.com/astral-sh/uv/issues/10079).
+> **Antivirus flagged `uv.exe`?** It's a false positive on the bundled Astral `uv` binary. [How to verify and whitelist it →](https://github.com/agtktID/indagis-agent/blob/main/website/docs/user-guide/windows-native.md#antivirus-flags-uvexe-as-malware)
 
 ---
 
@@ -276,33 +243,18 @@ Documentation lives at **[website/docs/](https://github.com/agtktID/indagis-agen
 
 ---
 
-## Migrating from OpenClaw
+## Coming from another agent
 
-If you're coming from OpenClaw, Indagis Agent can automatically import your settings, memories, skills, and API keys.
+`indagis setup` detects an existing `~/.openclaw` and offers to migrate before
+configuration begins. Anytime after install, `indagis claw migrate --dry-run`
+previews what would move — persona, memories, skills, approval patterns,
+messaging config and TTS assets. **No preset imports API keys silently**;
+that needs an explicit `--migrate-secrets`.
 
-**During first-time setup:** The setup wizard (`indagis setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
+Migrating from **Claude Code** or **OpenAI Codex CLI** instead? That's
+`indagis import-agent`, same preview-first flow.
 
-**Anytime after install:**
-
-```bash
-indagis claw migrate              # Interactive migration (full preset)
-indagis claw migrate --dry-run    # Preview what would be migrated
-indagis claw migrate --preset user-data   # Migrate without secrets
-indagis claw migrate --overwrite  # Overwrite existing conflicts
-```
-
-What gets imported:
-
-- **SOUL.md** — persona file
-- **Memories** — MEMORY.md and USER.md entries
-- **Skills** — user-created skills → `~/.indagis/skills/openclaw-imports/`
-- **Command allowlist** — approval patterns
-- **Messaging settings** — platform configs, allowed users, working directory
-- **API keys** — allowlisted secrets (Telegram, OpenRouter, OpenAI, Anthropic, ElevenLabs)
-- **TTS assets** — workspace audio files
-- **Workspace instructions** — AGENTS.md (with `--workspace-target`)
-
-See `indagis claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
+📖 [Migrate from OpenClaw](https://github.com/agtktID/indagis-agent/blob/main/website/docs/guides/migrate-from-openclaw.md) · [Import from other agents](https://github.com/agtktID/indagis-agent/blob/main/website/docs/user-guide/import-from-other-agents.md)
 
 ---
 
@@ -310,10 +262,9 @@ See `indagis claw migrate --help` for all options, or use the `openclaw-migratio
 
 We welcome contributions! See the [Contributing Guide](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/contributing.md) for development setup, code style, and PR process.
 
-Quick start for contributors — use the standard installer, then work from the
-full git checkout it creates at `$INDAGIS_HOME/hermes-agent` (usually
-`~/.indagis/hermes-agent`). This matches the layout used by `indagis update`, the
-managed venv, lazy dependencies, gateway, and docs tooling.
+Run the standard installer, then work from the git checkout it creates at
+`$INDAGIS_HOME/hermes-agent` — that layout is what `indagis update`, the managed
+venv, the gateway and the docs tooling all expect.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.sh | bash
@@ -322,20 +273,10 @@ uv pip install -e ".[all,dev]"
 scripts/run_tests.sh
 ```
 
-Manual clone fallback (for throwaway clones/CI where you intentionally do not
-want the managed install layout):
-
-Create the venv outside the cloned source tree — a venv inside the directory
-the agent operates from can be wiped by a relative-path command the agent runs
-against its own checkout, destroying the running runtime mid-session.
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-uv venv ~/.indagis/venvs/indagis-dev --python 3.11
-source ~/.indagis/venvs/indagis-dev/bin/activate
-uv pip install -e ".[all,dev]"
-scripts/run_tests.sh
-```
+> If you clone manually instead, put the venv **outside** the source tree. A venv
+> inside the directory the agent operates on can be wiped by a relative-path
+> command the agent runs against its own checkout — destroying the runtime
+> mid-session.
 
 ---
 
