@@ -282,6 +282,45 @@ Consequence: any codepath that said "check if this PID is alive" via `os.kill(pi
 
 `scripts/check-windows-footguns.py` enforces this in CI: any new `os.kill(pid, 0)` call fails the `Windows footguns (blocking)` check unless the line carries a `# windows-footgun: ok — <reason>` marker.
 
+## Antivirus flags `uv.exe` as malware
+
+If Windows Defender, Bitdefender or similar quarantines `uv.exe` from
+`%LOCALAPPDATA%\indagis\bin\`, this is a **false positive**. The file is
+Astral's [`uv`](https://github.com/astral-sh/uv) — the Rust Python package
+manager Indagis bundles to manage its own environment. ML-based engines
+routinely flag unsigned Rust binaries that download and install packages.
+See the upstream reports: [uv#13553](https://github.com/astral-sh/uv/issues/13553),
+[uv#15011](https://github.com/astral-sh/uv/issues/15011),
+[uv#10079](https://github.com/astral-sh/uv/issues/10079).
+
+**Verify your copy is authentic** — this checks GitHub's build attestation for
+the release, then compares the hash against your installed binary:
+
+```powershell
+winget install --id GitHub.cli   # if you don't have gh
+gh auth login
+
+$uv = "$env:LOCALAPPDATA\indagis\bin\uv.exe"
+$ver = (& $uv --version).Split(' ')[1]
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$zip = "$env:TEMP\uv.zip"
+Invoke-WebRequest "https://github.com/astral-sh/uv/releases/download/$ver/uv-x86_64-pc-windows-msvc.zip" -OutFile $zip -UseBasicParsing
+gh attestation verify $zip --repo astral-sh/uv
+Expand-Archive $zip "$env:TEMP\uv_x" -Force
+(Get-FileHash "$env:TEMP\uv_x\uv.exe").Hash -eq (Get-FileHash $uv).Hash
+```
+
+"Verification succeeded" plus a final `True` means the binary is genuine.
+
+**To whitelist it:**
+
+- **Windows Defender** — PowerShell as Admin:
+  `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\indagis\bin"`
+- **Bitdefender** — Protection → Antivirus → Settings → Manage Exceptions
+
+Whitelist the **folder**, not the file hash: Indagis inherits `uv` updates from
+upstream, so the hash changes with every version.
+
 ## Common pitfalls
 
 **`hermes: command not found` right after install.**

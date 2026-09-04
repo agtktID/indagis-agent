@@ -35,7 +35,7 @@ Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many othe
 
 <table>
 <tr><td><b>Authorization-gated investigations</b></td><td>Security work is tracked as a persisted <code>Investigation</code>: an objective, an authorized scope, evidence, findings and a timeline. Every recorded target is checked against that scope before it is written (fail-closed), with Markdown/JSON export.</td></tr>
-<tr><td><b>An investigation command suite</b></td><td>Cross-investigation IOC correlation (<code>indagis case</code>), one-command Markdown case reports (<code>indagis dossier build</code>), Admiralty-scale source scoring (<code>indagis attribution</code>), sock puppet bookkeeping (<code>indagis puppet</code>), bug bounty payout tracking (<code>indagis bounty</code>), authorized-scope import with auto-onboarding onto continuous recon (<code>indagis scope</code>, <code>indagis scope autopilot</code>), a confidential-engagement kill switch (<code>indagis airgap</code>), Ed25519 evidence signing (<code>indagis custody</code>), diffing recon snapshots over time (<code>indagis surface</code>), proactive breach/IOC alerting (<code>indagis watch</code>, <code>indagis intel breach-email</code>/<code>breach-domain</code>), and an MCP tool-poisoning scanner (<code>indagis mcp audit</code>) — most ship a matching read-only desktop dashboard plugin (opt-in via Settings ▸ Plugins). Full syntax in the <a href="https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md">Investigation Commands Reference</a>.</td></tr>
+<tr><td><b>An investigation command suite</b></td><td>Eleven investigation subsystems — scope authorization, IOC correlation, attribution scoring, evidence signing, sock puppets, bounty tracking, continuous recon and more — each a CLI command with a matching read-only desktop panel. <a href="#the-investigation-suite">See the table below</a>.</td></tr>
 <tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
 <tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
 <tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
@@ -44,6 +44,38 @@ Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many othe
 <tr><td><b>Runs anywhere, not just your laptop</b></td><td>Seven terminal backends — local, Docker, SSH, Singularity, Modal, Daytona, and Vercel Sandbox. Daytona and Modal offer serverless persistence — your agent's environment hibernates when idle and wakes on demand, costing nearly nothing between sessions. Run it on a $5 VPS or a GPU cluster.</td></tr>
 <tr><td><b>Research-ready</b></td><td>Batch trajectory generation, trajectory compression for training the next generation of tool-calling models.</td></tr>
 </table>
+
+---
+
+## The investigation suite
+
+Eleven subsystems built for the work an investigator actually does. Each one is a CLI command that owns its state on disk, plus a **read-only desktop panel** that renders it — the panel never writes, so nothing in the UI can mutate an investigation behind your back.
+
+| Subsystem | Command | What it does |
+| --- | --- | --- |
+| **Scope Sync** | `indagis scope` | Import an authorized scope export from your bounty dashboard, then `scope check <target>` before you touch anything. **Out-of-scope always wins** over an in-scope match elsewhere. `scope autopilot` onboards every in-scope host onto continuous recon. |
+| **Case Memory** | `indagis case` | One index of every IOC across every investigation, so an indicator seen in a new case surfaces the earlier case it came from. |
+| **Attribution Confidence** | `indagis attribution` | Scores findings on the NATO/Admiralty scale (source reliability A–F × information credibility 1–6). A cross-case corroboration upgrades credibility, because an independent investigation *is* an independent source. |
+| **Dossier Builder** | `indagis dossier build` | Renders an evidence store as a Markdown dossier, with a SHA-256 integrity re-check over every item. |
+| **Custody Chain** | `indagis custody` | Ed25519 signing for evidence exports. The private key never leaves the machine — the dashboard only ever exposes key *names* and public keys. |
+| **Sock Puppet Manager** | `indagis puppet` | Bookkeeping for research personas: platform footprint, investigation, burn status. It records personas; it never creates accounts or content. |
+| **Surface Diff** | `indagis surface` | Snapshots an attack surface (DNS, HTTP, HTTPS, TLS certificate) and diffs consecutive snapshots so drift is visible. |
+| **Signal Watch** | `indagis watch` | Scheduled IOC/target watches delivered to any messaging platform. |
+| **Breach Radar** | `indagis intel breach-email` · `breach-domain` | Breach exposure checks for an address or a domain. |
+| **Bounty Ledger** | `indagis bounty` | Submissions, statuses and payouts. Payouts stay per-currency — nothing is summed across currencies, because no exchange rate exists in the stack. |
+| **Air Gap** | `indagis airgap` | A confidential-engagement kill switch that holds outbound integrations. |
+
+Plus **MCP Vetting Firewall** (`indagis mcp audit`) — a tool-poisoning scanner for MCP servers.
+
+📖 Full syntax: **[Investigation Commands Reference](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md)**
+
+### Mission Control
+
+The desktop app ships a **Mission Control** board that aggregates the whole suite into one operational overview: headline counts, per-subsystem readiness, coverage across the toolchain, and banners for the states that need to interrupt you (air gap engaged, scope exclusions in force).
+
+It computes nothing of its own — every figure is read from the state module that already owns it, each subsystem is probed defensively so an unconfigured feature reads as *no data* rather than blanking the board, and readiness reflects real fields rather than a synthetic score.
+
+All twelve panels ship **off by default** and are enabled individually under **Settings ▸ Plugins**.
 
 ---
 
@@ -71,7 +103,7 @@ If you already have Git installed, the installer detects it and uses that instea
 
 > **Android / Termux:** The tested manual path is documented in the [Termux guide](https://github.com/agtktID/indagis-agent/blob/main/website/docs/getting-started/termux.md). On Termux, Indagis Agent installs a curated `.[termux]` extra because the full `.[all]` extra currently pulls Android-incompatible voice dependencies.
 
-> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. A fresh native Windows install lives under `%LOCALAPPDATA%\indagis`; WSL2 installs under `~/.indagis` as on Linux. An existing `%LOCALAPPDATA%\hermes` / `~/.hermes` from before the rename keeps being used — the installer prefers it over creating a second home, so upgrades stay in place.
+> **Where it installs:** native Windows uses `%LOCALAPPDATA%\indagis`; WSL2 uses `~/.indagis` as on Linux. An existing `%LOCALAPPDATA%\hermes` / `~/.hermes` from before the rename keeps being used — the installer prefers it over creating a second home, so upgrades stay in place.
 
 After installation:
 
@@ -80,40 +112,7 @@ source ~/.bashrc    # reload shell (or: source ~/.zshrc)
 indagis            # start chatting!
 ```
 
-### Troubleshooting
-
-#### Windows Defender or antivirus flags `uv.exe` as malware
-
-If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Indagis Agent install's `bin` folder (`%LOCALAPPDATA%\indagis\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Indagis Agent bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
-
-**To verify your copy is authentic:**
-
-```powershell
-# Install GitHub CLI if needed
-winget install --id GitHub.cli
-
-# Login to GitHub
-gh auth login
-
-# Run verification
-$uv = "$env:LOCALAPPDATA\indagis\bin\uv.exe"
-$ver = (& $uv --version).Split(' ')[1]
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$zip = "$env:TEMP\uv.zip"
-Invoke-WebRequest "https://github.com/astral-sh/uv/releases/download/$ver/uv-x86_64-pc-windows-msvc.zip" -OutFile $zip -UseBasicParsing
-gh attestation verify $zip --repo astral-sh/uv
-Expand-Archive $zip "$env:TEMP\uv_x" -Force
-(Get-FileHash "$env:TEMP\uv_x\uv.exe").Hash -eq (Get-FileHash $uv).Hash
-```
-
-If attestation says "Verification succeeded" and the last line prints `True`, you're good.
-
-**To whitelist the Indagis install:**
-- **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\indagis\bin"`
-- **Bitdefender:** Add an exception in the Bitdefender console (Protection > Antivirus > Settings > Manage Exceptions)
-- Whitelist the **folder**, not the file hash — Indagis Agent inherits `uv` updates from the upstream release and the hash changes every version
-
-For more context, see the upstream Astral reports: [astral-sh/uv#13553](https://github.com/astral-sh/uv/issues/13553), [astral-sh/uv#15011](https://github.com/astral-sh/uv/issues/15011), [astral-sh/uv#10079](https://github.com/astral-sh/uv/issues/10079).
+> **Antivirus flagged `uv.exe`?** It's a false positive on the bundled Astral `uv` binary. [How to verify and whitelist it →](https://github.com/agtktID/indagis-agent/blob/main/website/docs/user-guide/windows-native.md#antivirus-flags-uvexe-as-malware)
 
 ---
 
@@ -181,6 +180,20 @@ indagis update       # Update to the latest version
 indagis doctor       # Diagnose any issues
 ```
 
+Investigation work has its own verbs:
+
+```bash
+indagis scope import <program> <file>   # Load an authorized scope export
+indagis scope check <target>            # Am I allowed to touch this? (out-of-scope wins)
+indagis case ingest <store>             # Index an evidence store into Case Memory
+indagis attribution score <store>       # Admiralty reliability × credibility
+indagis dossier build <store>           # Render the case as a Markdown dossier
+indagis surface snapshot <target>       # Snapshot an attack surface; diff on the next run
+indagis watch create ...                # Schedule an IOC/target watch
+indagis custody keygen <name>           # Ed25519 key for signing evidence exports
+indagis airgap lockdown                 # Hold outbound integrations for a confidential job
+```
+
 📖 **[Full documentation →](https://github.com/agtktID/indagis-agent/tree/main/website/docs/)**
 
 ---
@@ -230,33 +243,18 @@ Documentation lives at **[website/docs/](https://github.com/agtktID/indagis-agen
 
 ---
 
-## Migrating from OpenClaw
+## Coming from another agent
 
-If you're coming from OpenClaw, Indagis Agent can automatically import your settings, memories, skills, and API keys.
+`indagis setup` detects an existing `~/.openclaw` and offers to migrate before
+configuration begins. Anytime after install, `indagis claw migrate --dry-run`
+previews what would move — persona, memories, skills, approval patterns,
+messaging config and TTS assets. **No preset imports API keys silently**;
+that needs an explicit `--migrate-secrets`.
 
-**During first-time setup:** The setup wizard (`indagis setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
+Migrating from **Claude Code** or **OpenAI Codex CLI** instead? That's
+`indagis import-agent`, same preview-first flow.
 
-**Anytime after install:**
-
-```bash
-indagis claw migrate              # Interactive migration (full preset)
-indagis claw migrate --dry-run    # Preview what would be migrated
-indagis claw migrate --preset user-data   # Migrate without secrets
-indagis claw migrate --overwrite  # Overwrite existing conflicts
-```
-
-What gets imported:
-
-- **SOUL.md** — persona file
-- **Memories** — MEMORY.md and USER.md entries
-- **Skills** — user-created skills → `~/.indagis/skills/openclaw-imports/`
-- **Command allowlist** — approval patterns
-- **Messaging settings** — platform configs, allowed users, working directory
-- **API keys** — allowlisted secrets (Telegram, OpenRouter, OpenAI, Anthropic, ElevenLabs)
-- **TTS assets** — workspace audio files
-- **Workspace instructions** — AGENTS.md (with `--workspace-target`)
-
-See `indagis claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
+📖 [Migrate from OpenClaw](https://github.com/agtktID/indagis-agent/blob/main/website/docs/guides/migrate-from-openclaw.md) · [Import from other agents](https://github.com/agtktID/indagis-agent/blob/main/website/docs/user-guide/import-from-other-agents.md)
 
 ---
 
@@ -264,10 +262,9 @@ See `indagis claw migrate --help` for all options, or use the `openclaw-migratio
 
 We welcome contributions! See the [Contributing Guide](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/contributing.md) for development setup, code style, and PR process.
 
-Quick start for contributors — use the standard installer, then work from the
-full git checkout it creates at `$INDAGIS_HOME/hermes-agent` (usually
-`~/.indagis/hermes-agent`). This matches the layout used by `indagis update`, the
-managed venv, lazy dependencies, gateway, and docs tooling.
+Run the standard installer, then work from the git checkout it creates at
+`$INDAGIS_HOME/hermes-agent` — that layout is what `indagis update`, the managed
+venv, the gateway and the docs tooling all expect.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.sh | bash
@@ -276,20 +273,10 @@ uv pip install -e ".[all,dev]"
 scripts/run_tests.sh
 ```
 
-Manual clone fallback (for throwaway clones/CI where you intentionally do not
-want the managed install layout):
-
-Create the venv outside the cloned source tree — a venv inside the directory
-the agent operates from can be wiped by a relative-path command the agent runs
-against its own checkout, destroying the running runtime mid-session.
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-uv venv ~/.indagis/venvs/indagis-dev --python 3.11
-source ~/.indagis/venvs/indagis-dev/bin/activate
-uv pip install -e ".[all,dev]"
-scripts/run_tests.sh
-```
+> If you clone manually instead, put the venv **outside** the source tree. A venv
+> inside the directory the agent operates on can be wiped by a relative-path
+> command the agent runs against its own checkout — destroying the runtime
+> mid-session.
 
 ---
 
