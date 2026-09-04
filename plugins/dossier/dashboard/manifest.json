@@ -1,0 +1,11 @@
+{
+  "name": "dossier",
+  "label": "Dossier Builder",
+  "description": "Preview the Markdown investigation dossier for an ingested evidence store, with its SHA-256 integrity re-check.",
+  "icon": "FileText",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
