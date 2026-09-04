@@ -4,13 +4,36 @@
  * `hermes_cli/bounty_state.py` via the plugin's own REST router — this
  * page never writes; recording a submission or payout stays a CLI action
  * (`indagis bounty add` / `indagis bounty pay`).
+ *
+ * Rendered with the mission-control primitives from the SDK: headline
+ * figures are `StatTile`s in one `Panel`, and the ledger's own timestamps
+ * (`submitted_at` / `paid_at`) are rolled up by month into a `TrendChart`.
+ * The chart plots COUNTS, never money: payouts are recorded per currency
+ * and this app never invents an exchange rate, so summing them onto one
+ * axis would be a fabricated figure.
  */
 
-import { Badge, cn, EmptyState, ErrorState, Loader, relativeTime, useQuery } from '@hermes/plugin-sdk'
+import {
+  Badge,
+  cn,
+  EmptyState,
+  ErrorState,
+  Loader,
+  Panel,
+  PanelHeader,
+  relativeTime,
+  StatTile,
+  TrendChart,
+  useQuery
+} from '@hermes/plugin-sdk'
 
 import { type BountyStats, fetchStats, fetchSubmissions, STATS_KEY, type Submission, SUBMISSIONS_KEY } from './api'
 
 const REJECTED_STATUSES = new Set(['duplicate', 'informative', 'not-applicable'])
+
+/** How many trailing months the trend shows — enough to read a cadence,
+ *  few enough that the x axis stays legible at this width. */
+const TREND_MONTHS = 12
 
 function statusVariant(status: string): 'default' | 'destructive' | 'warn' {
   if (status === 'paid') {return 'default'}
@@ -20,27 +43,121 @@ function statusVariant(status: string): 'default' | 'destructive' | 'warn' {
   return 'warn'
 }
 
-function StatTile({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div className="flex flex-col gap-0.5 rounded-md border border-(--ui-stroke-secondary) px-3 py-2">
-      <span className="text-lg font-semibold tabular-nums">{value}</span>
-      <span className="text-[0.6875rem] text-muted-foreground">{label}</span>
-    </div>
-  )
-}
-
 function StatsRow({ stats }: { stats: BountyStats }) {
   const payoutTotal = Object.entries(stats.total_payout_by_currency)
     .map(([currency, amount]) => `${amount.toLocaleString()} ${currency}`)
     .join(', ')
 
   return (
-    <div className="grid grid-cols-4 gap-2">
-      <StatTile label="Submissions" value={stats.total_submissions} />
-      <StatTile label="Paid" value={stats.paid_count} />
-      <StatTile label="Win rate" value={stats.win_rate_pct === null ? '—' : `${stats.win_rate_pct}%`} />
-      <StatTile label="Payout" value={payoutTotal || '—'} />
-    </div>
+    <Panel className="grid grid-cols-2 divide-x divide-y divide-(--ui-stroke-secondary) sm:grid-cols-4 sm:divide-y-0">
+      <StatTile code="SUB-01" label="Submissions" value={stats.total_submissions} />
+      <StatTile code="PAY-02" label="Paid" value={stats.paid_count} />
+      {stats.win_rate_pct === null ? (
+        <StatTile code="WIN-03" label="Win rate" value="—" />
+      ) : (
+        <StatTile code="WIN-03" label="Win rate" unit="%" value={stats.win_rate_pct} />
+      )}
+      {/* Multi-currency, so it stays a string: one figure per currency,
+          never a summed total this app has no rate to compute. */}
+      <StatTile code="PYT-04" label="Payout" value={payoutTotal || '—'} />
+    </Panel>
+  )
+}
+
+/** A type alias, not an interface: TrendChart takes
+ *  `Record<string, number | string>[]`, and only an alias gets the implicit
+ *  index signature that makes it assignable. */
+type MonthPoint = {
+  month: string
+  paid: number
+  submitted: number
+}
+
+/** `YYYY-MM` bucket for an ISO timestamp, or null when it is missing or
+ *  unparseable — the ledger's dates come from the CLI, not a picker. */
+function monthKey(iso: null | string): null | string {
+  if (!iso) {return null}
+  const time = new Date(iso).getTime()
+
+  if (Number.isNaN(time)) {return null}
+  const date = new Date(time)
+
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+}
+
+function monthLabel(key: string): string {
+  const [year, month] = key.split('-')
+
+  return `${new Date(Number(year), Number(month) - 1, 1).toLocaleString(undefined, { month: 'short' })} ${year.slice(2)}`
+}
+
+/** Submissions and payouts per calendar month, over a continuous span so a
+ *  quiet month reads as a zero rather than disappearing from the axis. */
+function monthlyActivity(submissions: Submission[]): MonthPoint[] {
+  const submitted = new Map<string, number>()
+  const paid = new Map<string, number>()
+
+  for (const submission of submissions) {
+    const openedAt = monthKey(submission.submitted_at)
+
+    if (openedAt) {
+      submitted.set(openedAt, (submitted.get(openedAt) ?? 0) + 1)
+    }
+
+    const paidAt = monthKey(submission.paid_at)
+
+    if (paidAt) {
+      paid.set(paidAt, (paid.get(paidAt) ?? 0) + 1)
+    }
+  }
+
+  const keys = [...new Set([...submitted.keys(), ...paid.keys()])].sort()
+
+  if (keys.length === 0) {return []}
+
+  const span: string[] = []
+  const [firstYear, firstMonth] = keys[0].split('-').map(Number)
+  const cursor = new Date(firstYear, firstMonth - 1, 1)
+  const [lastYear, lastMonth] = keys[keys.length - 1].split('-').map(Number)
+  const end = new Date(lastYear, lastMonth - 1, 1)
+
+  while (cursor <= end) {
+    span.push(`${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}`)
+    cursor.setMonth(cursor.getMonth() + 1)
+  }
+
+  return span.slice(-TREND_MONTHS).map(key => ({
+    month: monthLabel(key),
+    paid: paid.get(key) ?? 0,
+    submitted: submitted.get(key) ?? 0
+  }))
+}
+
+function ActivityTrend({ submissions }: { submissions: Submission[] }) {
+  const points = monthlyActivity(submissions)
+
+  // One month is a dot, not a trend — the tiles above already say how many.
+  if (points.length < 2) {return null}
+
+  return (
+    <Panel className="min-w-0">
+      <PanelHeader
+        description="Reports opened and payouts settled per month, counted from the ledger's own timestamps."
+        kicker="Cadence"
+        title="Submission activity"
+      />
+      <div className="px-4 pb-3">
+        <TrendChart
+          data={points}
+          form="line"
+          series={[
+            { key: 'submitted', label: 'Submitted' },
+            { key: 'paid', label: 'Paid' }
+          ]}
+          xKey="month"
+        />
+      </div>
+    </Panel>
   )
 }
 
@@ -90,11 +207,22 @@ export function BountyPage() {
       )}
 
       {!isLoading && !error && data && data.submissions.length > 0 && (
-        <div>
-          {data.submissions.map(submission => (
-            <SubmissionRow key={submission.id} submission={submission} />
-          ))}
-        </div>
+        <>
+          <ActivityTrend submissions={data.submissions} />
+
+          <Panel className="min-w-0">
+            <PanelHeader
+              actions={<span className="text-[0.6875rem] tabular-nums text-muted-foreground">{data.submissions.length} total</span>}
+              kicker="Ledger"
+              title="Submissions"
+            />
+            <div className="px-4 pb-2">
+              {data.submissions.map(submission => (
+                <SubmissionRow key={submission.id} submission={submission} />
+              ))}
+            </div>
+          </Panel>
+        </>
       )}
     </div>
   )
