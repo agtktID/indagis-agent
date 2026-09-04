@@ -3,17 +3,35 @@
 </p>
 
 # Indagis Agent
+
 <p align="center">
-  <a href="https://github.com/agtktID/indagis-agent">Indagis Agent</a> | <a href="https://github.com/agtktID/indagis-agent">Indagis Desktop</a>
-</p>
-<p align="center">
-  <a href="https://github.com/agtktID/indagis-agent/tree/main/website/docs/"><img src="https://img.shields.io/badge/Docs-Indagis%20Docs-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://github.com/agtktID/indagis-agent"><b>Indagis Agent</b></a> (CLI &amp; gateway) &nbsp;·&nbsp; <a href="apps/desktop/README.md"><b>Indagis Desktop</b></a> (Electron app)
 </p>
 
-**Indagis Agent is an AI workspace for cybersecurity investigation** — OSINT, threat intel, and DFIR. It has a closed learning loop: it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://github.com/agtktID/indagis-agent/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/agtktID/indagis-agent/ci.yml?style=for-the-badge&label=CI" alt="CI status"></a>
+  <img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11–3.13">
+  <a href="https://github.com/agtktID/indagis-agent/stargazers"><img src="https://img.shields.io/github/stars/agtktID/indagis-agent?style=for-the-badge&color=FFD700" alt="GitHub stars"></a>
+</p>
+
+<p align="center">
+  <a href="#quick-install"><img src="https://img.shields.io/badge/Quick_Start-2ea44f?style=for-the-badge" alt="Quick Start"></a>
+  <a href="https://github.com/agtktID/indagis-agent/tree/main/website/docs/"><img src="https://img.shields.io/badge/Documentation-FFD700?style=for-the-badge" alt="Documentation"></a>
+  <a href="#contributing"><img src="https://img.shields.io/badge/Contributing-blue?style=for-the-badge" alt="Contributing"></a>
+</p>
+
+<p align="center">
+  <b>An AI workspace for cybersecurity investigation</b> — OSINT, threat intel, and DFIR.
+</p>
+
+Indagis Agent has a closed learning loop: it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
 
 Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many others](https://github.com/agtktID/indagis-agent/blob/main/website/docs/integrations/providers.md). Switch with `indagis model` — no code changes, no lock-in.
+
+---
+
+## Features
 
 <table>
 <tr><td><b>Authorization-gated investigations</b></td><td>Security work is tracked as a persisted <code>Investigation</code>: an objective, an authorized scope, evidence, findings and a timeline. Every recorded target is checked against that scope before it is written (fail-closed), with Markdown/JSON export.</td></tr>
