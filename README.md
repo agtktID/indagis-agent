@@ -35,7 +35,7 @@ Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many othe
 
 <table>
 <tr><td><b>Authorization-gated investigations</b></td><td>Security work is tracked as a persisted <code>Investigation</code>: an objective, an authorized scope, evidence, findings and a timeline. Every recorded target is checked against that scope before it is written (fail-closed), with Markdown/JSON export.</td></tr>
-<tr><td><b>An investigation command suite</b></td><td>Cross-investigation IOC correlation (<code>indagis case</code>), one-command Markdown case reports (<code>indagis dossier build</code>), Admiralty-scale source scoring (<code>indagis attribution</code>), sock puppet bookkeeping (<code>indagis puppet</code>), bug bounty payout tracking (<code>indagis bounty</code>), authorized-scope import with auto-onboarding onto continuous recon (<code>indagis scope</code>, <code>indagis scope autopilot</code>), a confidential-engagement kill switch (<code>indagis airgap</code>), Ed25519 evidence signing (<code>indagis custody</code>), diffing recon snapshots over time (<code>indagis surface</code>), proactive breach/IOC alerting (<code>indagis watch</code>, <code>indagis intel breach-email</code>/<code>breach-domain</code>), and an MCP tool-poisoning scanner (<code>indagis mcp audit</code>) — most ship a matching read-only desktop dashboard plugin (opt-in via Settings ▸ Plugins). Full syntax in the <a href="https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md">Investigation Commands Reference</a>.</td></tr>
+<tr><td><b>An investigation command suite</b></td><td>Eleven investigation subsystems — scope authorization, IOC correlation, attribution scoring, evidence signing, sock puppets, bounty tracking, continuous recon and more — each a CLI command with a matching read-only desktop panel. <a href="#the-investigation-suite">See the table below</a>.</td></tr>
 <tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
 <tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
 <tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
@@ -44,6 +44,38 @@ Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many othe
 <tr><td><b>Runs anywhere, not just your laptop</b></td><td>Seven terminal backends — local, Docker, SSH, Singularity, Modal, Daytona, and Vercel Sandbox. Daytona and Modal offer serverless persistence — your agent's environment hibernates when idle and wakes on demand, costing nearly nothing between sessions. Run it on a $5 VPS or a GPU cluster.</td></tr>
 <tr><td><b>Research-ready</b></td><td>Batch trajectory generation, trajectory compression for training the next generation of tool-calling models.</td></tr>
 </table>
+
+---
+
+## The investigation suite
+
+Eleven subsystems built for the work an investigator actually does. Each one is a CLI command that owns its state on disk, plus a **read-only desktop panel** that renders it — the panel never writes, so nothing in the UI can mutate an investigation behind your back.
+
+| Subsystem | Command | What it does |
+| --- | --- | --- |
+| **Scope Sync** | `indagis scope` | Import an authorized scope export from your bounty dashboard, then `scope check <target>` before you touch anything. **Out-of-scope always wins** over an in-scope match elsewhere. `scope autopilot` onboards every in-scope host onto continuous recon. |
+| **Case Memory** | `indagis case` | One index of every IOC across every investigation, so an indicator seen in a new case surfaces the earlier case it came from. |
+| **Attribution Confidence** | `indagis attribution` | Scores findings on the NATO/Admiralty scale (source reliability A–F × information credibility 1–6). A cross-case corroboration upgrades credibility, because an independent investigation *is* an independent source. |
+| **Dossier Builder** | `indagis dossier build` | Renders an evidence store as a Markdown dossier, with a SHA-256 integrity re-check over every item. |
+| **Custody Chain** | `indagis custody` | Ed25519 signing for evidence exports. The private key never leaves the machine — the dashboard only ever exposes key *names* and public keys. |
+| **Sock Puppet Manager** | `indagis puppet` | Bookkeeping for research personas: platform footprint, investigation, burn status. It records personas; it never creates accounts or content. |
+| **Surface Diff** | `indagis surface` | Snapshots an attack surface (DNS, HTTP, HTTPS, TLS certificate) and diffs consecutive snapshots so drift is visible. |
+| **Signal Watch** | `indagis watch` | Scheduled IOC/target watches delivered to any messaging platform. |
+| **Breach Radar** | `indagis intel breach-email` · `breach-domain` | Breach exposure checks for an address or a domain. |
+| **Bounty Ledger** | `indagis bounty` | Submissions, statuses and payouts. Payouts stay per-currency — nothing is summed across currencies, because no exchange rate exists in the stack. |
+| **Air Gap** | `indagis airgap` | A confidential-engagement kill switch that holds outbound integrations. |
+
+Plus **MCP Vetting Firewall** (`indagis mcp audit`) — a tool-poisoning scanner for MCP servers.
+
+📖 Full syntax: **[Investigation Commands Reference](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md)**
+
+### Mission Control
+
+The desktop app ships a **Mission Control** board that aggregates the whole suite into one operational overview: headline counts, per-subsystem readiness, coverage across the toolchain, and banners for the states that need to interrupt you (air gap engaged, scope exclusions in force).
+
+It computes nothing of its own — every figure is read from the state module that already owns it, each subsystem is probed defensively so an unconfigured feature reads as *no data* rather than blanking the board, and readiness reflects real fields rather than a synthetic score.
+
+All twelve panels ship **off by default** and are enabled individually under **Settings ▸ Plugins**.
 
 ---
 
@@ -179,6 +211,20 @@ indagis setup        # Run the full setup wizard (configures everything at once)
 indagis claw migrate # Migrate from OpenClaw (if coming from OpenClaw)
 indagis update       # Update to the latest version
 indagis doctor       # Diagnose any issues
+```
+
+Investigation work has its own verbs:
+
+```bash
+indagis scope import <program> <file>   # Load an authorized scope export
+indagis scope check <target>            # Am I allowed to touch this? (out-of-scope wins)
+indagis case ingest <store>             # Index an evidence store into Case Memory
+indagis attribution score <store>       # Admiralty reliability × credibility
+indagis dossier build <store>           # Render the case as a Markdown dossier
+indagis surface snapshot <target>       # Snapshot an attack surface; diff on the next run
+indagis watch create ...                # Schedule an IOC/target watch
+indagis custody keygen <name>           # Ed25519 key for signing evidence exports
+indagis airgap lockdown                 # Hold outbound integrations for a confidential job
 ```
 
 📖 **[Full documentation →](https://github.com/agtktID/indagis-agent/tree/main/website/docs/)**
