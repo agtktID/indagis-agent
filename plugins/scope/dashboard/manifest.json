@@ -1,0 +1,11 @@
+{
+  "name": "scope",
+  "label": "Scope Sync",
+  "description": "Browse imported bug bounty program scopes and check whether a target is authorized before you touch it.",
+  "icon": "ShieldCheck",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
