@@ -4,12 +4,78 @@
  * `hermes_cli/surface_state.py` / `surface_probe.py` via the plugin's own
  * REST router — this page never writes; taking a new snapshot stays a CLI
  * action (`indagis surface snapshot`).
+ *
+ * The drift gauge is a `HeatGrid`, and its denominator is deliberate: the
+ * raw change count `/diff` returns is unbounded (one changed header is one
+ * entry, so is a whole set of added SANs), and a saturation gauge needs a
+ * ceiling. `surface_probe.diff_snapshots` compares exactly four facets —
+ * resolved IPs, HTTP, HTTPS and the TLS certificate — so the share of
+ * those four that moved is a real 0–100 with a real denominator. The
+ * unbounded count sits beside it as a figure, which is where an operator
+ * reads the exact number.
  */
 
-import { Badge, cn, EmptyState, ErrorState, Loader, relativeTime, useQuery } from '@hermes/plugin-sdk'
+import {
+  Badge,
+  cn,
+  EmptyState,
+  ErrorState,
+  HeatGrid,
+  type HeatTone,
+  Loader,
+  Panel,
+  PanelHeader,
+  relativeTime,
+  StatTile,
+  useQuery
+} from '@hermes/plugin-sdk'
 import { useState } from 'react'
 
 import { diffKey, fetchDiff, fetchSnapshots, fetchTargets, snapshotsKey, TARGETS_KEY } from './api'
+
+/** The facets `diff_snapshots` actually compares, in the order it emits
+ *  them. Matching is on the prefix each change line is built with. */
+const FACETS: { label: string, match: (change: string) => boolean }[] = [
+  { label: 'DNS', match: change => change.startsWith('IPs ') },
+  { label: 'HTTPS', match: change => change.startsWith('https') },
+  { label: 'HTTP', match: change => change.startsWith('http ') || change.startsWith('http:') },
+  { label: 'TLS', match: change => change.startsWith('tls_cert') }
+]
+
+function driftTone(pct: number): HeatTone {
+  if (pct === 0) {return 'nominal'}
+
+  if (pct <= 50) {return 'caution'}
+
+  return 'fault'
+}
+
+function DriftGauge({ changes }: { changes: string[] }) {
+  const touched = FACETS.filter(facet => changes.some(facet.match))
+  const pct = Math.round((touched.length / FACETS.length) * 100)
+
+  return (
+    <Panel className="min-w-0">
+      <PanelHeader
+        description="Share of the four probed facets — DNS, HTTP, HTTPS, TLS certificate — that moved between the two most recent snapshots."
+        kicker="Drift"
+        title="Change saturation"
+      />
+      <div className="flex flex-wrap items-center justify-between gap-4 px-4 pt-1 pb-4">
+        <HeatGrid cols={8} label="Facets changed" rows={4} tone={driftTone(pct)} value={pct} />
+        <div className="flex">
+          <StatTile code="CHG-01" label="Changes" value={changes.length} />
+          <StatTile code="FCT-02" label="Facets" unit={`/ ${FACETS.length}`} value={touched.length} />
+        </div>
+      </div>
+      {touched.length > 0 && (
+        <p className="px-4 pb-3 text-[0.6875rem] text-muted-foreground">
+          Moved: {touched.map(facet => facet.label).join(', ')}
+        </p>
+      )}
+    </Panel>
+  )
+}
 
 function DiffView({ target }: { target: string }) {
   const { data, error, isLoading } = useQuery({ queryFn: () => fetchDiff(target), queryKey: diffKey(target) })
@@ -29,6 +95,8 @@ function DiffView({ target }: { target: string }) {
 
   return (
     <div className="flex flex-col gap-4">
+      {data.available && <DriftGauge changes={data.changes} />}
+
       <div className="rounded-md border border-(--ui-stroke-secondary) p-3">
         {data.available ? (
           <>

@@ -3,21 +3,31 @@
  * IOC correlation index. Every value comes straight from
  * `hermes_cli/case_memory_state.py` via the plugin's own REST router — this
  * page never writes; ingesting stays a CLI action (`indagis case ingest`).
+ *
+ * Rendered with the mission-control primitives from the SDK: the headline
+ * figures are `StatTile`s in one `Panel`, and the index itself is a
+ * `DataTable` — the rows are homogeneous records with a natural sort on
+ * sightings and recency, which a stack of hand-rolled rows can't offer.
  */
 
-import { Badge, cn, Codicon, EmptyState, ErrorState, Loader, relativeTime, useQuery } from '@hermes/plugin-sdk'
+import {
+  Badge,
+  cn,
+  Codicon,
+  DataTable,
+  type DataTableColumn,
+  EmptyState,
+  ErrorState,
+  Loader,
+  Panel,
+  PanelHeader,
+  relativeTime,
+  StatTile,
+  useQuery
+} from '@hermes/plugin-sdk'
 import { useMemo, useState } from 'react'
 
 import { fetchInvestigations, fetchIocs, fetchStats, INVESTIGATIONS_KEY, type IocEntry, iocInvestigations, IOCS_KEY, STATS_KEY } from './api'
-
-function StatTile({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div className="flex flex-col gap-0.5 rounded-md border border-(--ui-stroke-secondary) px-3 py-2">
-      <span className="text-lg font-semibold tabular-nums">{value}</span>
-      <span className="text-[0.6875rem] text-muted-foreground">{label}</span>
-    </div>
-  )
-}
 
 function StatsRow() {
   const { data, error, isLoading } = useQuery({ queryFn: fetchStats, queryKey: STATS_KEY })
@@ -27,40 +37,79 @@ function StatsRow() {
   if (error || !data) {return null}
 
   return (
-    <div className="grid grid-cols-4 gap-2">
-      <StatTile label="Indicators" value={data.total_iocs} />
-      <StatTile label="Investigations" value={data.total_investigations} />
-      <StatTile label="Cross-case" value={data.cross_investigation_iocs} />
-      <StatTile label="IOC types" value={Object.keys(data.by_type).length} />
-    </div>
+    <Panel className="grid grid-cols-2 divide-x divide-y divide-(--ui-stroke-secondary) sm:grid-cols-4 sm:divide-y-0">
+      <StatTile code="IOC-01" label="Indicators" value={data.total_iocs} />
+      <StatTile code="CAS-02" label="Investigations" value={data.total_investigations} />
+      {/* An indicator seen in more than one case is the whole point of the
+          index, so it carries a tone: it is a finding, not just a count. */}
+      <StatTile
+        code="XCS-03"
+        label="Cross-case"
+        tone={data.cross_investigation_iocs > 0 ? 'caution' : 'neutral'}
+        value={data.cross_investigation_iocs}
+      />
+      <StatTile code="TYP-04" label="IOC types" value={Object.keys(data.by_type).length} />
+    </Panel>
   )
 }
 
-function IocRow({ entry }: { entry: IocEntry }) {
-  const investigations = iocInvestigations(entry)
-  const crossCase = investigations.length > 1
+/** Columns are module-level: they never close over state, and a stable
+ *  reference keeps DataTable's sort memo from recomputing every render. */
+const COLUMNS: DataTableColumn<IocEntry>[] = [
+  {
+    cell: entry => <Badge variant="outline">{entry.type}</Badge>,
+    header: 'Type',
+    id: 'type',
+    sortable: true,
+    sortValue: entry => entry.type,
+    width: '5.5rem'
+  },
+  {
+    cell: entry => <span className="font-mono">{entry.value}</span>,
+    header: 'Indicator',
+    id: 'value',
+    sortable: true,
+    sortValue: entry => entry.value
+  },
+  {
+    cell: entry => {
+      const investigations = iocInvestigations(entry)
 
-  return (
-    <div className="flex items-center justify-between gap-3 border-b border-(--ui-stroke-secondary) py-2.5 last:border-b-0">
-      <div className="min-w-0">
-        <div className="flex items-center gap-1.5">
-          <Badge variant="outline">{entry.type}</Badge>
-          <span className="truncate font-mono text-xs">{entry.value}</span>
-          {crossCase && (
+      return (
+        <span className="flex items-center gap-1.5">
+          <span className="truncate text-muted-foreground">{investigations.join(', ')}</span>
+          {investigations.length > 1 && (
             <Badge variant="destructive">
               <Codicon name="warning" size="0.7rem" />
               {investigations.length} cases
             </Badge>
           )}
-        </div>
-        <p className="mt-1 truncate text-[0.6875rem] text-muted-foreground">
-          {investigations.join(', ')} · last seen {relativeTime(new Date(entry.last_seen).getTime())}
-        </p>
-      </div>
-      <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{entry.sightings.length} sighting{entry.sightings.length === 1 ? '' : 's'}</span>
-    </div>
-  )
-}
+        </span>
+      )
+    },
+    header: 'Investigations',
+    id: 'investigations',
+    sortable: true,
+    sortValue: entry => iocInvestigations(entry).length
+  },
+  {
+    cell: entry => relativeTime(new Date(entry.last_seen).getTime()),
+    header: 'Last seen',
+    id: 'last_seen',
+    sortable: true,
+    sortValue: entry => new Date(entry.last_seen).getTime(),
+    width: '7rem'
+  },
+  {
+    cell: entry => entry.sightings.length,
+    header: 'Sightings',
+    id: 'sightings',
+    numeric: true,
+    sortable: true,
+    sortValue: entry => entry.sightings.length,
+    width: '5.5rem'
+  }
+]
 
 export function CaseMemoryPage() {
   const [filter, setFilter] = useState('')
@@ -80,7 +129,7 @@ export function CaseMemoryPage() {
   }, [data, filter])
 
   return (
-    <div className={cn('mx-auto flex max-w-2xl flex-col gap-4 p-6')}>
+    <div className={cn('mx-auto flex max-w-3xl flex-col gap-4 p-6')}>
       <div>
         <h1 className="text-base font-semibold">Case Memory</h1>
         <p className="text-xs text-muted-foreground">
@@ -115,11 +164,16 @@ export function CaseMemoryPage() {
       )}
 
       {!isLoading && !error && filtered.length > 0 && (
-        <div>
-          {filtered.map(entry => (
-            <IocRow entry={entry} key={`${entry.type}:${entry.value}`} />
-          ))}
-        </div>
+        <Panel className="min-w-0">
+          <PanelHeader
+            actions={<span className="text-[0.6875rem] tabular-nums text-muted-foreground">{filtered.length} shown</span>}
+            kicker="Correlation index"
+            title="Indicators"
+          />
+          <div className="px-2 pb-2">
+            <DataTable columns={COLUMNS} rowKey={entry => `${entry.type}:${entry.value}`} rows={filtered} />
+          </div>
+        </Panel>
       )}
     </div>
   )

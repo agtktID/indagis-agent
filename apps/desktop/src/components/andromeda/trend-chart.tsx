@@ -2,28 +2,18 @@
  * TrendChart — an area/line plot over time, for a measure that has a
  * direction worth reading.
  *
- * Styling borrowed from the Andromeda design system (MIT), built on recharts
- * primitives with the colours resolved through the Indagis palette. Upstream
- * ships a line/bar toggle behind Phosphor icons; that dependency is not in
- * this app, and a toggle nobody asked for is a control to maintain — so the
- * form is a prop instead.
+ * Hand-drawn SVG for the same reason as RadarChart: recharts 3 costs a full
+ * Redux stack in transitive dependencies, and a trend line is a `<path>`.
  *
  * One scale, one axis: two measures of different magnitude get two charts,
- * never a second y-axis. Chart text takes its colour from the theme tokens
- * rather than from a series, and the legend is present whenever more than
- * one series is drawn, so identity never rides on colour alone.
+ * never a second y-axis — a dual axis lets the author choose where the lines
+ * cross, which is a claim the data never made. Chart text takes its colour
+ * from the theme tokens rather than from a series, and a legend appears
+ * whenever more than one series is drawn, so identity never rides on colour
+ * alone. Upstream's line/bar toggle is a `form` prop here: it rides on
+ * Phosphor icons this app does not carry, and a control nobody asked for is
+ * a control to maintain.
  */
-
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis
-} from 'recharts'
 
 import { cn } from '@/lib/utils'
 
@@ -47,11 +37,23 @@ export interface TrendChartProps extends Omit<React.ComponentProps<'div'>, 'chil
 
 const DEFAULT_COLORS = [tokens.color.nominal, tokens.color.info, tokens.color.caution]
 
-const AXIS_TICK = {
-  fill: tokens.color.text.muted,
-  fontFamily: tokens.typography.fontMono,
-  fontSize: 10
-} as const
+const W = 600
+const H = 200
+const PAD = { bottom: 22, left: 40, right: 8, top: 8 }
+const PLOT_W = W - PAD.left - PAD.right
+const PLOT_H = H - PAD.top - PAD.bottom
+
+/** A "nice" upper bound, so the top gridline is a number worth reading. */
+function niceMax(value: number): number {
+  if (value <= 0) {
+    return 1
+  }
+
+  const magnitude = 10 ** Math.floor(Math.log10(value))
+  const normalised = value / magnitude
+
+  return (normalised <= 1 ? 1 : normalised <= 2 ? 2 : normalised <= 5 ? 5 : 10) * magnitude
+}
 
 export function TrendChart({
   className,
@@ -63,48 +65,98 @@ export function TrendChart({
   ...props
 }: TrendChartProps) {
   const resolved = series.map((s, i) => ({ ...s, color: s.color ?? DEFAULT_COLORS[i % DEFAULT_COLORS.length] }))
-  const Chart = form === 'area' ? AreaChart : LineChart
+
+  if (data.length < 2) {
+    return null
+  }
+
+  const peak = Math.max(
+    ...data.flatMap(datum => resolved.map(s => Number(datum[s.key]) || 0)),
+    0
+  )
+
+  const max = niceMax(peak)
+
+  const px = (i: number) => PAD.left + (i / (data.length - 1)) * PLOT_W
+  const py = (v: number) => PAD.top + PLOT_H - (Math.max(0, v) / max) * PLOT_H
+
+  // Every gridline is labelled with a value the chart actually reaches.
+  const gridlines = [0, 0.5, 1].map(ratio => ({ ratio, value: max * ratio }))
+  // Show at most six x labels so they never collide.
+  const step = Math.max(1, Math.ceil(data.length / 6))
 
   return (
     <div className={cn('min-w-0', className)} data-slot="trend-chart" {...props}>
-      <div style={{ height }}>
-        <ResponsiveContainer height="100%" width="100%">
-          <Chart data={data} margin={{ bottom: 0, left: 0, right: 4, top: 4 }}>
-            <CartesianGrid stroke={tokens.color.border.subtle} strokeDasharray={tokens.chart.dash} vertical={false} />
-            <XAxis
-              axisLine={{ stroke: tokens.color.border.base }}
-              dataKey={xKey}
-              tick={AXIS_TICK}
-              tickLine={false}
-            />
-            <YAxis axisLine={false} tick={AXIS_TICK} tickLine={false} width={36} />
-            {resolved.map(s =>
-              form === 'area' ? (
-                <Area
-                  dataKey={s.key}
+      <svg aria-hidden height={height} style={{ display: 'block' }} viewBox={`0 0 ${W} ${H}`} width="100%">
+        {gridlines.map(({ ratio, value }) => {
+          const y = PAD.top + PLOT_H - ratio * PLOT_H
+
+          return (
+            <g key={ratio}>
+              <line
+                stroke={tokens.color.border.subtle}
+                strokeDasharray={tokens.chart.dash}
+                x1={PAD.left}
+                x2={W - PAD.right}
+                y1={y}
+                y2={y}
+              />
+              <text
+                dominantBaseline="middle"
+                fill={tokens.color.text.muted}
+                fontFamily={tokens.typography.fontMono}
+                fontSize={10}
+                textAnchor="end"
+                x={PAD.left - 6}
+                y={y}
+              >
+                {Math.round(value)}
+              </text>
+            </g>
+          )
+        })}
+
+        {resolved.map(s => {
+          const points = data.map((datum, i) => ({ x: px(i), y: py(Number(datum[s.key]) || 0) }))
+          const line = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')
+
+          return (
+            <g key={s.key}>
+              {form === 'area' && (
+                <path
+                  d={`${line} L${points[points.length - 1].x.toFixed(1)},${PAD.top + PLOT_H} L${points[0].x.toFixed(1)},${PAD.top + PLOT_H} Z`}
                   fill={s.color}
                   fillOpacity={tokens.chart.fillOpacity}
-                  key={s.key}
-                  name={s.label}
-                  stroke={s.color}
-                  strokeWidth={tokens.chart.lineWidth}
-                  type="monotone"
                 />
-              ) : (
-                <Line
-                  dataKey={s.key}
-                  dot={false}
-                  key={s.key}
-                  name={s.label}
-                  stroke={s.color}
-                  strokeWidth={tokens.chart.lineWidth}
-                  type="monotone"
-                />
-              )
-            )}
-          </Chart>
-        </ResponsiveContainer>
-      </div>
+              )}
+              <path
+                d={line}
+                fill="none"
+                stroke={s.color}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={tokens.chart.lineWidth}
+              />
+            </g>
+          )
+        })}
+
+        {data.map((datum, i) =>
+          i % step === 0 || i === data.length - 1 ? (
+            <text
+              fill={tokens.color.text.muted}
+              fontFamily={tokens.typography.fontMono}
+              fontSize={10}
+              key={i}
+              textAnchor={i === 0 ? 'start' : i === data.length - 1 ? 'end' : 'middle'}
+              x={px(i)}
+              y={H - 6}
+            >
+              {String(datum[xKey] ?? '')}
+            </text>
+          ) : null
+        )}
+      </svg>
 
       {/* A single series is named by the panel title above it; a legend box
           would just repeat that. Two or more need one. */}
