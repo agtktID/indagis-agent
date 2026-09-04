@@ -150,6 +150,14 @@ export {
   andromedaTokens,
   CornerMarkers,
   type CornerMarkersProps,
+  DataTable,
+  /** Column descriptor for `DataTable`. Prefixed because `Column` alone is
+   *  too generic a name to claim in a shared surface. */
+  type Column as DataTableColumn,
+  type DataTableProps,
+  HeatGrid,
+  type HeatGridProps,
+  type HeatTone,
   Kicker,
   Panel,
   PanelHeader,
@@ -163,7 +171,10 @@ export {
   type StatTone,
   StatusBar,
   type StatusBarProps,
-  type StatusBarTone
+  type StatusBarTone,
+  TrendChart,
+  type TrendChartProps,
+  type TrendSeries
 } from '@/components/andromeda'
 /** Pane placement roles. `'floating'` is the one NON-tiling value: the pane is
  *  excluded from the layout tree and rendered as a fixed, draggable card above

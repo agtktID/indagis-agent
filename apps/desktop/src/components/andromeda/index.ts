@@ -13,8 +13,11 @@
 
 export { Alert, type AlertProps, type AlertVariant } from './alert'
 export { CornerMarkers, type CornerMarkersProps } from './corner-markers'
+export { type Column, DataTable, type DataTableProps } from './data-table'
+export { HeatGrid, type HeatGridProps, type HeatTone } from './heat-grid'
 export { Kicker, Panel, PanelHeader, type PanelHeaderProps, type PanelProps } from './panel'
 export { RadarChart, type RadarChartProps, type RadarSeries } from './radar-chart'
 export { StatTile, type StatTileProps, type StatTone } from './stat-tile'
 export { StatusBar, type StatusBarProps, type StatusBarTone } from './status-bar'
 export { tokens as andromedaTokens } from './tokens'
+export { TrendChart, type TrendChartProps, type TrendSeries } from './trend-chart'
