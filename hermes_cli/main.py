@@ -447,6 +447,7 @@ from hermes_cli.subcommands.attribution import build_attribution_parser
 from hermes_cli.subcommands.puppet import build_puppet_parser
 from hermes_cli.subcommands.cron import build_cron_parser
 from hermes_cli.subcommands.custody import build_custody_parser
+from hermes_cli.subcommands.image import build_image_parser
 from hermes_cli.subcommands.intel import build_intel_parser
 from hermes_cli.subcommands.rules import build_rules_parser
 from hermes_cli.subcommands.scope import build_scope_parser
@@ -4659,6 +4660,13 @@ def cmd_custody(args):
     from hermes_cli.custody import custody_command
 
     custody_command(args)
+
+
+def cmd_image(args):
+    """Image Intel — EXIF, GPS and device fingerprints from a photograph."""
+    from hermes_cli.image_cmd import image_command
+
+    image_command(args)
 
 
 def cmd_surface(args):
@@ -10716,7 +10724,7 @@ def _build_provider_choices() -> list[str]:
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
         "acp", "airgap", "approvals", "attribution", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
-        "computer-use", "custody", "dossier", "intel", "puppet", "rules", "scope", "surface",
+        "computer-use", "custody", "dossier", "image", "intel", "puppet", "rules", "scope", "surface",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
         "gui", "desktop", "kanban", "login", "logout", "logs", "lsp", "mcp", "memory", "migrate", "moa",
@@ -11606,6 +11614,7 @@ def main():
     build_scope_parser(subparsers, cmd_scope=cmd_scope)
     build_airgap_parser(subparsers, cmd_airgap=cmd_airgap)
     build_custody_parser(subparsers, cmd_custody=cmd_custody)
+    build_image_parser(subparsers, cmd_image=cmd_image)
     build_intel_parser(subparsers, cmd_intel=cmd_intel)
     build_surface_parser(subparsers, cmd_surface=cmd_surface)
     build_rules_parser(subparsers, cmd_rules=cmd_rules)

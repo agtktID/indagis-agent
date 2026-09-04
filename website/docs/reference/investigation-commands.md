@@ -165,6 +165,47 @@ The bundled "Custody Chain" desktop plugin shows key names and public keys only 
 never wraps `keygen` or `sign`, so private key material never crosses the dashboard's
 HTTP boundary.
 
+## `indagis image`
+
+```bash
+indagis image <inspect|gps|scrub>
+```
+
+**Image Intel** — metadata forensics on a photograph. The question an analyst asks of a
+picture is rarely *what is in it* but *where was this taken, when, and by which device*;
+those three answers live in EXIF. Nothing here modifies the image being read.
+
+| Subcommand | Description |
+|------------|-------------|
+| `inspect <path>` | Full report: SHA-256, EXIF tags, GPS, device fingerprint, timestamps. `--json` for the raw report; `--evidence <store>` appends the findings to an existing evidence store. |
+| `gps <path>` | Coordinates, altitude and an OpenStreetMap link, nothing else. `--json` supported. |
+| `scrub <path> --out <path>` | Write a metadata-free copy. Refuses to overwrite an existing file, and never touches the original. |
+
+Three findings carry most of the weight:
+
+- **GPS** — a coordinate pair is the single highest-value field a photograph can carry.
+  It is reported as decimal degrees plus a map link, and a malformed EXIF coordinate
+  yields *no* coordinate rather than a guessed one.
+- **Device fingerprint** — make, model, and the body/lens serial numbers a camera writes
+  when it has them. Serials link *separate* photographs to the *same* physical device,
+  which no visual comparison gives you.
+- **Timestamp disagreement** — EXIF `DateTimeOriginal` against the file's own mtime. A
+  gap over 48 hours is flagged, deliberately without a verdict: copying, exporting and
+  re-saving all produce one, so it is a prompt to check provenance rather than evidence
+  of tampering.
+
+`--evidence` writes the same entry shape `evidence-store.py` produces, so an image lands
+in a case exactly as any other artefact does — GPS becomes its own `GEO` indicator, which
+[Case Memory](#indagis-case) then correlates across investigations, and
+[`indagis dossier build`](#indagis-dossier) renders both entries with its integrity
+re-check intact. Appending changes the store's digest, so re-run
+[`indagis custody sign`](#indagis-custody) afterwards.
+
+`scrub` re-encodes from the raw pixel buffer rather than copying the file and deleting
+tags, which leaves recoverable remnants. It exists for the defensive half of the job: an
+investigator publishing a photograph should not ship their own camera serial or home
+coordinates with it.
+
 ## `indagis surface`
 
 ```bash

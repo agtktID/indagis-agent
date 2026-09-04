@@ -49,7 +49,7 @@ Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many othe
 
 ## The investigation suite
 
-Eleven subsystems built for the work an investigator actually does. Each one is a CLI command that owns its state on disk, plus a **read-only desktop panel** that renders it — the panel never writes, so nothing in the UI can mutate an investigation behind your back.
+Twelve subsystems built for the work an investigator actually does. Each one is a CLI command that owns its state on disk, plus a **read-only desktop panel** that renders it — the panel never writes, so nothing in the UI can mutate an investigation behind your back.
 
 | Subsystem | Command | What it does |
 | --- | --- | --- |
@@ -58,6 +58,7 @@ Eleven subsystems built for the work an investigator actually does. Each one is 
 | **Attribution Confidence** | `indagis attribution` | Scores findings on the NATO/Admiralty scale (source reliability A–F × information credibility 1–6). A cross-case corroboration upgrades credibility, because an independent investigation *is* an independent source. |
 | **Dossier Builder** | `indagis dossier build` | Renders an evidence store as a Markdown dossier, with a SHA-256 integrity re-check over every item. |
 | **Custody Chain** | `indagis custody` | Ed25519 signing for evidence exports. The private key never leaves the machine — the dashboard only ever exposes key *names* and public keys. |
+| **Image Intel** | `indagis image` | EXIF forensics on a photograph: GPS coordinates, capture timestamps, and the camera serial numbers that tie separate photographs to one physical device. `image scrub` writes a metadata-free copy for publication, always to a new path. |
 | **Sock Puppet Manager** | `indagis puppet` | Bookkeeping for research personas: platform footprint, investigation, burn status. It records personas; it never creates accounts or content. |
 | **Surface Diff** | `indagis surface` | Snapshots an attack surface (DNS, HTTP, HTTPS, TLS certificate) and diffs consecutive snapshots so drift is visible. |
 | **Signal Watch** | `indagis watch` | Scheduled IOC/target watches delivered to any messaging platform. |
@@ -188,6 +189,7 @@ indagis scope check <target>            # Am I allowed to touch this? (out-of-sc
 indagis case ingest <store>             # Index an evidence store into Case Memory
 indagis attribution score <store>       # Admiralty reliability × credibility
 indagis dossier build <store>           # Render the case as a Markdown dossier
+indagis image inspect <file>            # EXIF, GPS and device fingerprint from a photo
 indagis surface snapshot <target>       # Snapshot an attack surface; diff on the next run
 indagis watch create ...                # Schedule an IOC/target watch
 indagis custody keygen <name>           # Ed25519 key for signing evidence exports
@@ -238,7 +240,7 @@ Documentation lives at **[website/docs/](https://github.com/agtktID/indagis-agen
 | [Architecture](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/architecture.md)             | Project structure, agent loop, key classes                 |
 | [Contributing](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/contributing.md)             | Development setup, PR process, code style                  |
 | [CLI Reference](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/cli-commands.md)                  | All commands and flags                                     |
-| [Investigation Commands](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md) | Case Memory, Dossier Builder, Attribution Scoring, Sock Puppet Manager, Bounty Ledger, Scope Sync, Air Gap, Custody Chain, Surface Diff, Signal Watch, MCP Vetting Firewall |
+| [Investigation Commands](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md) | Case Memory, Dossier Builder, Attribution Scoring, Image Intel, Sock Puppet Manager, Bounty Ledger, Scope Sync, Air Gap, Custody Chain, Surface Diff, Signal Watch, MCP Vetting Firewall |
 | [Environment Variables](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/environment-variables.md) | Complete env var reference                                 |
 
 ---
