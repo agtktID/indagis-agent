@@ -213,3 +213,48 @@ class TestScopeAutopilot:
         assert "Already monitored:       1" in out
         assert "Nothing new to onboard" in out
         assert called == []
+
+
+class TestScopeCheckExitCode:
+    """`scope check` is a pre-flight gate — the module docstring says to run it
+    "before a single request goes out", which in practice means
+
+        indagis scope check "$t" && run_scan "$t"
+
+    That idiom is only safe if a refusal is non-zero. The verdict text was
+    always right; the exit code was 0 for every verdict, so the wrapper above
+    scanned explicitly out-of-scope hosts with the warning printed right
+    above it. These tests pin the code, not the text — nothing tested it
+    before, which is why it stayed broken.
+    """
+
+    def _import(self, tmp_path):
+        path = tmp_path / "scope.json"
+        path.write_text(json.dumps({
+            "in_scope": [{"target": "*.safe.example", "type": "domain"}],
+            "out_of_scope": [{"target": "admin.safe.example", "type": "domain"}],
+        }), encoding="utf-8")
+        scope.scope_import("acme", str(path))
+
+    def test_in_scope_is_zero(self, tmp_path, capsys):
+        self._import(tmp_path)
+        assert scope.scope_check("www.safe.example") == scope.SCOPE_CHECK_OK
+        assert "IN SCOPE" in capsys.readouterr().out
+
+    def test_out_of_scope_is_non_zero(self, tmp_path, capsys):
+        self._import(tmp_path)
+        rc = scope.scope_check("admin.safe.example")
+        assert rc == scope.SCOPE_CHECK_OUT_OF_SCOPE
+        assert rc != 0, "a refusal that exits 0 lets `scope check && scan` scan a forbidden host"
+        assert "OUT OF SCOPE" in capsys.readouterr().out
+
+    def test_unknown_target_is_non_zero_and_distinct(self, tmp_path, capsys):
+        self._import(tmp_path)
+        rc = scope.scope_check("never-imported.example")
+        assert rc == scope.SCOPE_CHECK_UNKNOWN
+        assert rc != 0
+        # Distinct from an explicit refusal: "no rule covers this" and
+        # "a rule forbids this" are different facts a caller may want to
+        # treat differently.
+        assert rc != scope.SCOPE_CHECK_OUT_OF_SCOPE
+        assert "treat as out of scope" in capsys.readouterr().out

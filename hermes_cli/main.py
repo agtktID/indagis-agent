@@ -4646,7 +4646,10 @@ def cmd_scope(args):
     """Scope Sync — imported bounty scope, checked locally against targets."""
     from hermes_cli.scope import scope_command
 
-    scope_command(args)
+    # Returned so `scope check` can exit non-zero: main() turns a non-zero
+    # int from a handler into sys.exit(). Swallowing it here is what made
+    # `scope check` a gate that never refuses.
+    return scope_command(args)
 
 
 def cmd_airgap(args):
@@ -4660,7 +4663,7 @@ def cmd_custody(args):
     """Custody Chain — Ed25519 signing and verification for evidence exports."""
     from hermes_cli.custody import custody_command
 
-    custody_command(args)
+    return custody_command(args)
 
 
 def cmd_graph(args):

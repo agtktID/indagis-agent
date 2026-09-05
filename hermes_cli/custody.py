@@ -115,18 +115,29 @@ def custody_sign(store_path_str: str, key_name: str) -> None:
     print(f"    Signed by: {key_name}")
 
 
-def custody_verify(store_path_str: str) -> None:
+#: Exit codes for ``indagis custody verify``. A chain-of-custody check that
+#: always exits 0 cannot be branched on, so ``custody verify x.json &&
+#: ship_evidence`` would ship a forged store with "✗ TAMPERED" printed
+#: directly above it. A failed integrity check and a store that could not be
+#: checked at all are different facts, so they get different codes: the
+#: first says the evidence is bad, the second says you do not yet know.
+CUSTODY_VERIFY_OK = 0
+CUSTODY_VERIFY_FAILED = 1
+CUSTODY_VERIFY_UNCHECKABLE = 2
+
+
+def custody_verify(store_path_str: str) -> int:
     store_path = Path(store_path_str)
     sig_path = _sig_path(store_path)
     if not sig_path.exists():
         print(color(f"No signature file found at {sig_path} — this evidence store hasn't been signed.", Colors.RED))
-        return
+        return CUSTODY_VERIFY_UNCHECKABLE
     try:
         data = _load_evidence_store(store_path_str)
         sig_record = json.loads(sig_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         print(color(f"Failed to read {store_path_str} or its signature: {exc}", Colors.RED))
-        return
+        return CUSTODY_VERIFY_UNCHECKABLE
 
     current_digest = _canonical_digest(data)
     recorded_digest = sig_record.get("digest_sha256", "")
@@ -135,18 +146,19 @@ def custody_verify(store_path_str: str) -> None:
         print(color("✗ TAMPERED — evidence content no longer matches what was signed.", Colors.RED))
         print(f"    Signed digest:  {recorded_digest}")
         print(f"    Current digest: {current_digest.hex()}")
-        return
+        return CUSTODY_VERIFY_FAILED
 
     valid = verify_signature(
         sig_record.get("signer_public_key", ""), current_digest, sig_record.get("signature", "")
     )
     if not valid:
         print(color("✗ INVALID SIGNATURE — digest matches but the signature does not verify against the recorded public key.", Colors.RED))
-        return
+        return CUSTODY_VERIFY_FAILED
 
     print(color(f"✓ VALID — signed by '{sig_record.get('signer_key', '?')}' at {sig_record.get('signed_at', '?')}", Colors.GREEN))
     print(f"    Public key: {sig_record.get('signer_public_key', '?')}")
     print(f"    Evidence entries covered: {sig_record.get('evidence_count', '?')}")
+    return CUSTODY_VERIFY_OK
 
 
 def custody_export(store_path_str: str, out_path_str: str) -> None:
@@ -180,7 +192,7 @@ def custody_export(store_path_str: str, out_path_str: str) -> None:
     print(color(f"✓ Exported self-verifying bundle to {out_path}", Colors.GREEN))
 
 
-def custody_command(args) -> None:
+def custody_command(args) -> int | None:
     action = getattr(args, "custody_command", None)
     if action in (None, "keys"):
         custody_keys()
@@ -189,7 +201,7 @@ def custody_command(args) -> None:
     elif action == "sign":
         custody_sign(args.store_path, args.key)
     elif action == "verify":
-        custody_verify(args.store_path)
+        return custody_verify(args.store_path)
     elif action == "export":
         custody_export(args.store_path, args.out)
     else:

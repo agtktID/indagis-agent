@@ -198,6 +198,20 @@ indagis custody keygen <name>           # Ed25519 key for signing evidence expor
 indagis airgap lockdown                 # Hold outbound integrations for a confidential job
 ```
 
+Two of those are safety gates, so they are scriptable — they exit non-zero
+when they refuse, and you can branch on which refusal it was:
+
+```bash
+indagis scope check "$target" && run_scan "$target"   # never scans an out-of-scope host
+indagis custody verify case.json && ship_evidence     # never ships a tampered store
+```
+
+| Exit | `scope check`                        | `custody verify`                       |
+| ---- | ------------------------------------ | -------------------------------------- |
+| `0`  | in scope                             | signature valid                        |
+| `1`  | **out of scope — do not test**       | **tampered, or signature invalid**     |
+| `2`  | no rule matched — treat as out of scope | not signed, or could not be read     |
+
 📖 **[Full documentation →](https://github.com/agtktID/indagis-agent/tree/main/website/docs/)**
 
 ---
