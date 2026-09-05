@@ -1,0 +1,126 @@
+# Does the installer actually install, on the platforms the README promises?
+#
+# THE GAP THIS FILLS. Before this file, every documented install target except
+# Linux was unverified:
+#
+#   * macOS  — zero CI coverage of any kind for the CLI. macos-desktop-smoke.yml
+#              covers apps/desktop only, and its own header records that the
+#              repo has no other macOS runner.
+#   * Windows — installer-tests.yml runs on windows-latest, but it executes one
+#              script (test-install-ps1-longpath.ps1) under pwsh 7 and Windows
+#              PowerShell 5.1. That proves install.ps1 parses and normalizes
+#              8.3 paths in both shells. It never installs anything.
+#
+# install-e2e.yml looks like it covers this, and cannot: it picks starting
+# versions from the repo's release tags, and the repo has none. Its legs have
+# never had a version to install FROM. This file deliberately installs from the
+# commit under test instead, so it works with zero releases published.
+#
+# WHAT EACH LEG ASSERTS. A real install (uv, a managed Python, the venv, the
+# launchers) from this commit, then the launcher answering on its own:
+# `indagis --version` and `indagis doctor`. Those two catch the failure modes
+# that reading the scripts cannot — a launcher written to the wrong directory,
+# an entry point that does not exist, an interpreter the shim can't reach.
+#
+# NOT on pull_request, by design and by precedent. A leg is ~10 minutes of real
+# toolchain download, and macOS/Windows runners bill well above Linux. Same
+# posture macos-desktop-smoke.yml already takes: push to main, a weekly clock,
+# and manual dispatch. Breakage surfaces within a week and on every merge to
+# main, without holding up anyone's review.
+
+name: Install smoke (macOS + Windows)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/install.sh"
+      - "scripts/install.ps1"
+      - "scripts/install_helpers.sh"
+      - "pyproject.toml"
+      - ".github/workflows/install-smoke.yml"
+  schedule:
+    - cron: "41 5 * * 2" # weekly, Tuesday — off the hour, away from the other jobs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: install-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macos:
+    name: install.sh (macos-latest)
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # --skip-browser: Playwright's Chromium is ~150MB and is not what this
+      # job is testing. --skip-setup: the wizard wants a human.
+      - name: Install from this commit
+        env:
+          INDAGIS_HOME: ${{ runner.temp }}/indagis-home
+        run: |
+          set -euo pipefail
+          bash scripts/install.sh \
+            --non-interactive \
+            --skip-setup \
+            --skip-browser \
+            --dir "$RUNNER_TEMP/indagis-install" \
+            --hermes-home "$INDAGIS_HOME"
+
+      # The launcher, not the venv binary: a shim in the wrong directory or
+      # pointing at a missing entry point is exactly the class of bug that
+      # reading install.sh cannot rule out.
+      - name: The installed launcher answers
+        env:
+          INDAGIS_HOME: ${{ runner.temp }}/indagis-home
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          command -v indagis
+          indagis --version
+          indagis doctor || true   # doctor exits non-zero on a bare box (no .env, no auth)
+
+  windows:
+    name: install.ps1 (windows-latest)
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # Windows PowerShell 5.1 is what ships with Windows and what the
+      # documented `irm | iex` one-liner lands in, so the install runs there
+      # rather than under pwsh 7.
+      - name: Install from this commit
+        shell: powershell
+        env:
+          INDAGIS_HOME: ${{ runner.temp }}\indagis-home
+        run: |
+          $ErrorActionPreference = 'Stop'
+          .\scripts\install.ps1 -NonInteractive `
+            -HermesHome "$env:RUNNER_TEMP\indagis-home" `
+            -InstallDir "$env:RUNNER_TEMP\indagis-install"
+          if ($LASTEXITCODE -ne 0) { throw "install.ps1 exited $LASTEXITCODE" }
+
+      # The name matters: [project.scripts] builds indagis.exe, and the guide
+      # told users to run `hermes` for a long time. Assert the real one.
+      - name: The installed launcher answers
+        shell: powershell
+        env:
+          INDAGIS_HOME: ${{ runner.temp }}\indagis-home
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = Join-Path $env:RUNNER_TEMP 'indagis-install\venv\Scripts\indagis.exe'
+          if (-not (Test-Path $exe)) {
+            Get-ChildItem (Join-Path $env:RUNNER_TEMP 'indagis-install\venv\Scripts') -ErrorAction SilentlyContinue
+            throw "launcher not found at $exe"
+          }
+          & $exe --version
+          if ($LASTEXITCODE -ne 0) { throw "indagis --version exited $LASTEXITCODE" }
+          & $exe doctor    # informational: doctor flags a bare box, which is expected here
