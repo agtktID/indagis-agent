@@ -122,7 +122,7 @@ export const en: Translations = {
     recentSessions: "Recent Sessions",
     restartGateway: "Restart Gateway",
     restartGatewayConfirmMessage:
-      "This restarts the Hermes gateway process. Connected channels and active sessions will reconnect afterward.",
+      "This restarts the Indagis gateway process. Connected channels and active sessions will reconnect afterward.",
     restartGatewayConfirmTitle: "Restart gateway?",
     restartingGateway: "Restarting gateway…",
     running: "Running",
@@ -377,7 +377,7 @@ export const en: Translations = {
     enableRuntime: "Enable",
     forceReinstall: "Force reinstall (delete existing folder first)",
     headline:
-      "Discover, install, enable, and update Hermes plugins (`hermes plugins` parity).",
+      "Discover, install, enable, and update Indagis plugins (`indagis plugins` parity).",
     identifierLabel: "Git URL or owner/repo",
     inactive: "inactive",
     installBtn: "Install",
@@ -495,7 +495,7 @@ export const en: Translations = {
     showValue: "Show real value",
     hideValue: "Hide value",
     customTitle: "Custom Keys",
-    customHint: "Arbitrary environment variables stored in your .env that Hermes doesn't recognise. Use these to inject env vars for skills, MCP servers, or your own tooling.",
+    customHint: "Arbitrary environment variables stored in your .env that Indagis doesn't recognise. Use these to inject env vars for skills, MCP servers, or your own tooling.",
     customConfigured: "{count} custom key{s} set",
     addCustomKey: "Add a custom key",
     customKeyName: "Variable name",
