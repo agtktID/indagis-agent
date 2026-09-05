@@ -3,7 +3,9 @@ description: >-
   Classify a PR's changed files into CI work lanes (python, frontend, site,
   scan, deps, mcp_catalog) so the orchestrator can conditionally call only
   the sub-workflows a PR can affect. Outputs are always "true" on push/dispatch
-  events and fail open (everything "true") when the diff cannot be computed.
+  events, where no diff is computed. On a pull request the compare API is
+  retried three times; if it still fails the step errors out, because an
+  unknown diff is not an empty one — see the comment on that branch.
 
 inputs:
   github-token:
@@ -97,9 +99,25 @@ runs:
               break
             fi
             if [ "$i" = 3 ]; then
-              echo "::warning::compare API failed after 3 attempts — failing open (all lanes run)"
-              CHANGED=""
-              break
+              # Fail the job instead of feeding an empty list to the
+              # classifier. The classifier fails open by design and by test
+              # ("empty diff -> all"), which is right for the work lanes: not
+              # knowing what changed should run everything. But ci_review is
+              # not a work lane, it is a gate that needs a human to apply a
+              # label, and forcing it true with ci_review_files=[] asks a
+              # reviewer to sign off on a list of nothing. That turned a
+              # transient 403 into a hard block twice (PRs #54, #77), each
+              # cleared only by re-running the whole workflow by hand.
+              #
+              # An unknown diff is not the same fact as an empty diff, and
+              # only this step can tell them apart -- the classifier just
+              # sees empty stdin. So it is reported here, as a failure the
+              # next re-run clears, rather than laundered into a label
+              # request nobody can act on.
+              echo "::error::compare API failed after 3 attempts for ${BASE_SHA}...${HEAD_SHA}."
+              echo "::error::The changed-file list is unknown, so lane detection cannot run."
+              echo "::error::This is almost always a transient API rate limit — re-run this workflow."
+              exit 1
             fi
             echo "::warning::compare API failed (attempt $i); retrying in 10s"
             sleep 10
