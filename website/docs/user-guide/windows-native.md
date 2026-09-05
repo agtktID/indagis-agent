@@ -261,7 +261,7 @@ From PowerShell:
 indagis uninstall
 ```
 
-That's the clean path — removes the schtasks entry, Startup folder shortcut, `hermes.cmd` shim, deletes `%LOCALAPPDATA%\indagis\hermes-agent\`, and trims the User PATH. It leaves the rest of `%LOCALAPPDATA%\indagis\` alone (your config, auth, skills, sessions, logs) in case you're reinstalling.
+That's the clean path — removes the schtasks entry, Startup folder shortcut, deletes `%LOCALAPPDATA%\indagis\hermes-agent\`, and trims the User PATH. It leaves the rest of `%LOCALAPPDATA%\indagis\` alone (your config, auth, skills, sessions, logs) in case you're reinstalling.
 
 To nuke everything:
 
