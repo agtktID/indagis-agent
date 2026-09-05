@@ -61,7 +61,29 @@ REPO_URL_HTTPS="https://github.com/agtktID/indagis-agent.git"
 # P3/P4 detection logic that resolve_indagis_home applies, but only
 # for the warning — the path capture delegates to resolve_indagis_home.
 _SCRIPT_DIR_HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
-source "$_SCRIPT_DIR_HERE/install_helpers.sh"
+if [ -f "$_SCRIPT_DIR_HERE/install_helpers.sh" ]; then
+    source "$_SCRIPT_DIR_HERE/install_helpers.sh"
+else
+    # Running via `curl | bash` — the one-liner this script's own header
+    # documents. Piped to bash there is no script file, so BASH_SOURCE[0] is
+    # empty and $0 is "bash": the path above resolves to the user's current
+    # directory, which does not contain install_helpers.sh, and `set -e` kills
+    # the install before it prints anything. Fetch the sibling from the same
+    # raw-content host instead of failing outright.
+    #
+    # `main` is hardcoded rather than using $BRANCH because BRANCH is not
+    # defined until line ~101 and --branch is not parsed until ~140 — both
+    # after this point. Moving them earlier would be a larger change than
+    # this bug needs.
+    _HELPERS_URL="https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install_helpers.sh"
+    _HELPERS_TMP="$(mktemp)"
+    trap 'rm -f "$_HELPERS_TMP"' EXIT
+    if ! curl -fsSL "$_HELPERS_URL" -o "$_HELPERS_TMP"; then
+        echo "✗ Could not find install_helpers.sh locally and failed to download it from $_HELPERS_URL" >&2
+        exit 1
+    fi
+    source "$_HELPERS_TMP"
+fi
 if [ -n "${INDAGIS_HOME:-}" ]; then
     : # P1: explicit INDAGIS_HOME — the preferred variable, no warning.
 elif [ -d "${HOME:-}/.indagis" ]; then
