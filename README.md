@@ -107,11 +107,19 @@ If you already have Git installed, the installer detects it and uses that instea
 
 > **Where it installs:** native Windows uses `%LOCALAPPDATA%\indagis`; WSL2 uses `~/.indagis` as on Linux. An existing `%LOCALAPPDATA%\hermes` / `~/.hermes` from before the rename keeps being used — the installer prefers it over creating a second home, so upgrades stay in place.
 
-After installation:
+After installation, on Linux, macOS or WSL2:
 
 ```bash
 source ~/.bashrc    # reload shell (or: source ~/.zshrc)
-indagis            # start chatting!
+indagis             # start chatting!
+```
+
+On native Windows there is nothing to source — the installer writes your
+**User PATH**, which only new shells read. Close PowerShell, open a new
+window, and run:
+
+```powershell
+indagis
 ```
 
 > **Antivirus flagged `uv.exe`?** It's a false positive on the bundled Astral `uv` binary. [How to verify and whitelist it →](https://github.com/agtktID/indagis-agent/blob/main/website/docs/user-guide/windows-native.md#antivirus-flags-uvexe-as-malware)

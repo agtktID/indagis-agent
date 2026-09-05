@@ -138,10 +138,10 @@ A well-built third-party-product plugin can clear automated review and still be 
 
 | Requirement | Notes |
 |-------------|-------|
-| **Git** | With the `git-lfs` extension installed |
+| **Git** | Any recent version |
 | **Python 3.11–3.13** | uv will install it if missing |
 | **uv** | Fast Python package manager ([install](https://docs.astral.sh/uv/)) |
-| **Node.js 20+** | Optional — needed for browser tools and WhatsApp bridge (matches root `package.json` engines) |
+| **Node.js 22.22+** | Optional — needed for browser tools and WhatsApp bridge (matches root `package.json` engines; `.nvmrc` pins 26 for development) |
 
 ### Install with the standard installer
 

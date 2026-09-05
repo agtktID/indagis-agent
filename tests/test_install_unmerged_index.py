@@ -165,7 +165,14 @@ def test_install_ps1_stops_venv_resident_processes_before_removing_venv() -> Non
     """
     text = INSTALL_PS1.read_text()
 
-    # The hermes.exe tree-kill is preserved (kills spawned child processes too).
+    # Both launcher image names are tree-killed (which also takes the spawned
+    # child processes). Neither is redundant: [project.scripts] builds
+    # indagis.exe for a current install, while a reinstall over a pre-rename
+    # %LOCALAPPDATA%\hermes home -- a fallback install.ps1 deliberately
+    # supports -- still has a hermes.exe in its venv holding .pyd files open.
+    # This assertion used to name only hermes.exe, which made it pass while the
+    # installer killed a process that no longer exists.
+    assert 'taskkill /F /T /IM indagis.exe' in text
     assert 'taskkill /F /T /IM hermes.exe' in text
 
     # The venv path-prefix sweep exists. It must match by case-insensitive
