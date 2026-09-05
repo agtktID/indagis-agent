@@ -29,8 +29,14 @@ param(
     # existing tree pass -ForceCommit.
     [switch]$ForceCommit,
     [string]$Tag = "",
-    [string]$HermesHome = $(if ($env:HERMES_HOME) { $env:HERMES_HOME } else { "$env:LOCALAPPDATA\hermes" }),
-    [string]$InstallDir = $(if ($env:HERMES_HOME) { "$env:HERMES_HOME\hermes-agent" } else { "$env:LOCALAPPDATA\hermes\hermes-agent" }),
+    # These defaults are never what an unattended install uses: the block below
+    # overwrites both from Get-IndagisHome unless the caller passed the switch
+    # explicitly ($PSBoundParameters). They stayed at the pre-rename \hermes
+    # path long after the resolver moved to \indagis, which made Get-Help and
+    # the Windows guide advertise a default the installer does not apply.
+    # Left as $null so there is one source of truth for the default.
+    [string]$HermesHome = $null,
+    [string]$InstallDir = $null,
 
     # --- Stage protocol (additive; default invocation behaves as before) ----
     # See the "Stage protocol" section near the bottom of the file for the
@@ -2369,12 +2375,14 @@ function Install-Venv {
             } catch {
                 Write-Warn "Could not enumerate gateway scheduled tasks: $($_.Exception.Message)"
             }
-            # The launcher CLI (hermes.exe) plus its child tree.
-            & taskkill /F /T /IM hermes.exe /FI "PID ne $myPid" 2>$null | Out-Null
-            # taskkill /IM hermes.exe is NOT enough: the gateway/agent that a
+            # The launcher CLI (indagis.exe) plus its child tree. The console
+            # script is `indagis` ([project.scripts] in pyproject.toml); the
+            # old hermes.exe image name matched nothing after the rename.
+            & taskkill /F /T /IM indagis.exe /FI "PID ne $myPid" 2>$null | Out-Null
+            # taskkill /IM indagis.exe is NOT enough: the gateway/agent that a
             # scheduled task or watchdog autostarts runs as
             # `pythonw.exe -m hermes_cli.main gateway run` straight out of
-            # venv\Scripts\, so its image name is python/pythonw, not hermes.exe.
+            # venv\Scripts\, so its image name is python/pythonw, not indagis.exe.
             # That process holds the venv's .pyd files open and re-triggers the
             # access-denied failure. Stop anything whose executable lives under
             # this venv, matched by path prefix so the image name does not matter
