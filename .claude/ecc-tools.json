@@ -144,9 +144,6 @@
     "workflow-pack"
   ],
   "managedFiles": [
-    ".claude/skills/indagis-agent/SKILL.md",
-    ".agents/skills/indagis-agent/SKILL.md",
-    ".agents/skills/indagis-agent/agents/openai.yaml",
     ".codex/config.toml",
     ".codex/AGENTS.md",
     ".codex/agents/explorer.toml",
@@ -155,9 +152,6 @@
   ],
   "packageFiles": {
     "runtime-core": [
-      ".claude/skills/indagis-agent/SKILL.md",
-      ".agents/skills/indagis-agent/SKILL.md",
-      ".agents/skills/indagis-agent/agents/openai.yaml",
       ".codex/config.toml",
       ".codex/AGENTS.md",
       ".codex/agents/explorer.toml",
@@ -167,9 +161,6 @@
   },
   "moduleFiles": {
     "runtime-core": [
-      ".claude/skills/indagis-agent/SKILL.md",
-      ".agents/skills/indagis-agent/SKILL.md",
-      ".agents/skills/indagis-agent/agents/openai.yaml",
       ".codex/config.toml",
       ".codex/AGENTS.md",
       ".codex/agents/explorer.toml",
@@ -178,21 +169,6 @@
     ]
   },
   "files": [
-    {
-      "moduleId": "runtime-core",
-      "path": ".claude/skills/indagis-agent/SKILL.md",
-      "description": "Repository-specific Claude Code skill generated from git history."
-    },
-    {
-      "moduleId": "runtime-core",
-      "path": ".agents/skills/indagis-agent/SKILL.md",
-      "description": "Codex-facing copy of the generated repository skill."
-    },
-    {
-      "moduleId": "runtime-core",
-      "path": ".agents/skills/indagis-agent/agents/openai.yaml",
-      "description": "Codex skill metadata so the repo skill appears cleanly in the skill interface."
-    },
     {
       "moduleId": "runtime-core",
       "path": ".codex/config.toml",
@@ -222,13 +198,11 @@
   "workflows": [],
   "adapters": {
     "claudeCode": {
-      "skillPath": ".claude/skills/indagis-agent/SKILL.md",
       "commandPaths": []
     },
     "codex": {
       "configPath": ".codex/config.toml",
-      "agentsGuidePath": ".codex/AGENTS.md",
-      "skillPath": ".agents/skills/indagis-agent/SKILL.md"
+      "agentsGuidePath": ".codex/AGENTS.md"
     }
   }
 }
