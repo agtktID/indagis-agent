@@ -14,7 +14,11 @@ import { useState } from 'react'
 
 import { fetchInvestigations, fetchPreview, type Investigation, INVESTIGATIONS_KEY } from './api'
 
-function InvestigationRow({ investigation, onSelect, selected }: {
+function InvestigationRow({
+  investigation,
+  onSelect,
+  selected
+}: {
   investigation: Investigation
   onSelect: () => void
   selected: boolean
@@ -31,9 +35,7 @@ function InvestigationRow({ investigation, onSelect, selected }: {
           <span className="truncate text-xs font-medium">{investigation.name}</span>
           {!investigation.exists && <Badge variant="destructive">file missing</Badge>}
         </div>
-        <p className="mt-1 truncate font-mono text-[0.6875rem] text-muted-foreground">
-          {investigation.store_path}
-        </p>
+        <p className="mt-1 truncate font-mono text-[0.6875rem] text-muted-foreground">{investigation.store_path}</p>
         {investigation.last_ingested_at && (
           <p className="mt-1 text-[0.6875rem] text-muted-foreground">
             last ingested {relativeTime(new Date(investigation.last_ingested_at).getTime())}
@@ -70,7 +72,9 @@ function DossierPreview({ storePath }: { storePath: string }) {
     )
   }
 
-  if (!data) {return null}
+  if (!data) {
+    return null
+  }
 
   return (
     <div className="overflow-x-auto rounded-md border border-(--ui-stroke-secondary) p-3">

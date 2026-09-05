@@ -18,10 +18,7 @@ import { tokens } from './tokens'
 
 export type AlertVariant = 'accent' | 'caution' | 'default' | 'fault'
 
-const VARIANT: Record<
-  AlertVariant,
-  { color: string, filled: boolean, icon: typeof Info }
-> = {
+const VARIANT: Record<AlertVariant, { color: string; filled: boolean; icon: typeof Info }> = {
   accent: { color: tokens.color.accent, filled: true, icon: Activity },
   caution: { color: tokens.color.caution, filled: false, icon: AlertTriangle },
   default: { color: tokens.color.border.bright, filled: false, icon: Info },

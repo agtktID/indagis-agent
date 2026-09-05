@@ -80,7 +80,12 @@ function StoreImages({ storePath }: { storePath: string }) {
   }
 
   if (error || !data) {
-    return <ErrorState description={error instanceof Error ? error.message : 'Failed to load images.'} title="Could not load images" />
+    return (
+      <ErrorState
+        description={error instanceof Error ? error.message : 'Failed to load images.'}
+        title="Could not load images"
+      />
+    )
   }
 
   if (data.images.length === 0) {
@@ -124,7 +129,8 @@ export function ImagePage() {
       <div>
         <h1 className="text-base font-semibold">Image Intel</h1>
         <p className="text-xs text-muted-foreground">
-          Photographs already recorded in a case. Add one with <code>indagis image inspect &lt;file&gt; --evidence &lt;store&gt;</code>.
+          Photographs already recorded in a case. Add one with{' '}
+          <code>indagis image inspect &lt;file&gt; --evidence &lt;store&gt;</code>.
         </p>
       </div>
 
@@ -142,7 +148,10 @@ export function ImagePage() {
       )}
 
       {!isLoading && !error && data && data.investigations.length === 0 && (
-        <EmptyState description="Index an evidence store with indagis case ingest to get started." title="No investigations yet" />
+        <EmptyState
+          description="Index an evidence store with indagis case ingest to get started."
+          title="No investigations yet"
+        />
       )}
 
       {!isLoading && !error && data && data.investigations.length > 0 && (

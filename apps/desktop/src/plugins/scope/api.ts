@@ -53,4 +53,4 @@ export const PROGRAMS_KEY = ['scope', 'programs'] as const
 export const fetchPrograms = () => call<{ programs: Program[] }>('/programs')
 
 export const checkTarget = (target: string) =>
-  call<{ target: string, results: CheckHit[] }>(`/check?target=${encodeURIComponent(target)}`)
+  call<{ target: string; results: CheckHit[] }>(`/check?target=${encodeURIComponent(target)}`)

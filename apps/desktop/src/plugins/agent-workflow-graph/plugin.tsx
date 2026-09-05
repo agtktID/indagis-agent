@@ -20,13 +20,7 @@
  * the app is untouched.
  */
 
-import {
-  atom,
-  type HermesPlugin,
-  host,
-  type RpcEvent,
-  useValue
-} from '@hermes/plugin-sdk'
+import { atom, type HermesPlugin, host, type RpcEvent, useValue } from '@hermes/plugin-sdk'
 import { useEffect, useMemo } from 'react'
 
 // ── palette (task 4 — Cyber Cyan) ─────────────────────────────────────────────
@@ -177,6 +171,7 @@ function handleToolComplete(event: RpcEvent<Record<string, unknown>>): void {
 
   // Resolve the original session even if the user has switched away.
   const boundSession = $toolToSession.get(toolId) ?? event.session_id ?? ''
+
   if (boundSession !== activeSessionId) {
     return
   }
@@ -247,6 +242,7 @@ function handleSubagentComplete(event: RpcEvent<Record<string, unknown>>): void 
   }
 
   const parentSession = $subagentParent.get(childId) ?? event.session_id ?? ''
+
   if (parentSession !== activeSessionId) {
     return
   }
@@ -269,16 +265,24 @@ function onAnyEvent(event: RpcEvent): void {
   switch (event.type) {
     case 'tool.start':
       handleToolStart({ ...event, payload })
+
       break
+
     case 'tool.complete':
       handleToolComplete({ ...event, payload })
+
       break
+
     case 'subagent.start':
       handleSubagentStart({ ...event, payload })
+
       break
+
     case 'subagent.complete':
       handleSubagentComplete({ ...event, payload })
+
       break
+
     default:
       // Unrelated events: ignore.
       break
@@ -317,24 +321,27 @@ function layout(graph: Graph): Layout {
   }
 
   const sessionNode = graph.nodes.find(n => n.kind === 'session')
+
   if (!sessionNode) {
     return { positioned: [], width: 0, height: 0 }
   }
 
   const childrenByParent = new Map<string, GraphNode[]>()
+
   for (const edge of graph.edges) {
     const list = childrenByParent.get(edge.from) ?? []
     const child = graph.nodes.find(n => n.id === edge.to)
+
     if (child) {
       list.push(child)
     }
+
     childrenByParent.set(edge.from, list)
   }
 
   const positioned: PositionedNode[] = []
-  const queue: Array<{ node: GraphNode; x: number; y: number }> = [
-    { node: sessionNode, x: MARGIN, y: MARGIN }
-  ]
+
+  const queue: Array<{ node: GraphNode; x: number; y: number }> = [{ node: sessionNode, x: MARGIN, y: MARGIN }]
 
   let maxX = NODE_W + MARGIN * 2
   let maxY = NODE_H + MARGIN * 2
@@ -344,6 +351,7 @@ function layout(graph: Graph): Layout {
     positioned.push({ node, x, y })
 
     const children = childrenByParent.get(node.id) ?? []
+
     if (children.length === 0) {
       continue
     }
@@ -390,10 +398,7 @@ function WorkflowPane() {
         font: '0.6875rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace'
       }}
     >
-      <header
-        className="flex items-center justify-between border-b px-2 py-1.5"
-        style={{ borderColor: FAINT }}
-      >
+      <header className="flex items-center justify-between border-b px-2 py-1.5" style={{ borderColor: FAINT }}>
         <span className="uppercase tracking-[0.18em]">{`> Agent Workflow -- ${activeId ?? 'no session'}`}</span>
         <span style={{ color: DIM }}>{`${graph.nodes.length} nodes`}</span>
       </header>
@@ -425,6 +430,7 @@ function WorkflowPane() {
             {graph.edges.map((edge, i) => {
               const from = computed.positioned.find(p => p.node.id === edge.from)
               const to = computed.positioned.find(p => p.node.id === edge.to)
+
               if (!from || !to) {
                 return null
               }
@@ -467,23 +473,11 @@ function WorkflowPane() {
                 >
                   {node.kind === 'session' ? '◆ session' : node.kind === 'subagent' ? '◇ subagent' : '▶ tool'}
                 </text>
-                <text
-                  fill={CYBER_CYAN}
-                  fontSize="11"
-                  fontWeight={600}
-                  x={10}
-                  y={34}
-                >
+                <text fill={CYBER_CYAN} fontSize="11" fontWeight={600} x={10} y={34}>
                   {truncate(node.label, 22)}
                 </text>
                 {node.durationS != null && (
-                  <text
-                    fill={DIM}
-                    fontSize="10"
-                    textAnchor="end"
-                    x={NODE_W - 10}
-                    y={34}
-                  >
+                  <text fill={DIM} fontSize="10" textAnchor="end" x={NODE_W - 10} y={34}>
                     {node.durationS.toFixed(1)}s
                   </text>
                 )}

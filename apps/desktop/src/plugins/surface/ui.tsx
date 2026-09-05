@@ -35,7 +35,7 @@ import { diffKey, fetchDiff, fetchSnapshots, fetchTargets, snapshotsKey, TARGETS
 
 /** The facets `diff_snapshots` actually compares, in the order it emits
  *  them. Matching is on the prefix each change line is built with. */
-const FACETS: { label: string, match: (change: string) => boolean }[] = [
+const FACETS: { label: string; match: (change: string) => boolean }[] = [
   { label: 'DNS', match: change => change.startsWith('IPs ') },
   { label: 'HTTPS', match: change => change.startsWith('https') },
   { label: 'HTTP', match: change => change.startsWith('http ') || change.startsWith('http:') },
@@ -43,9 +43,13 @@ const FACETS: { label: string, match: (change: string) => boolean }[] = [
 ]
 
 function driftTone(pct: number): HeatTone {
-  if (pct === 0) {return 'nominal'}
+  if (pct === 0) {
+    return 'nominal'
+  }
 
-  if (pct <= 50) {return 'caution'}
+  if (pct <= 50) {
+    return 'caution'
+  }
 
   return 'fault'
 }
@@ -90,7 +94,12 @@ function DiffView({ target }: { target: string }) {
   }
 
   if (error || !data) {
-    return <ErrorState description={error instanceof Error ? error.message : 'Failed to load diff.'} title="Could not load diff" />
+    return (
+      <ErrorState
+        description={error instanceof Error ? error.message : 'Failed to load diff.'}
+        title="Could not load diff"
+      />
+    )
   }
 
   return (
@@ -101,7 +110,8 @@ function DiffView({ target }: { target: string }) {
         {data.available ? (
           <>
             <p className="mb-2 text-[0.6875rem] text-muted-foreground">
-              {data.older_taken_at && relativeTime(new Date(data.older_taken_at).getTime())} → {data.newer_taken_at && relativeTime(new Date(data.newer_taken_at).getTime())}
+              {data.older_taken_at && relativeTime(new Date(data.older_taken_at).getTime())} →{' '}
+              {data.newer_taken_at && relativeTime(new Date(data.newer_taken_at).getTime())}
             </p>
             {data.changes.length === 0 ? (
               <p className="text-xs text-muted-foreground">No change between the two most recent snapshots.</p>
@@ -117,7 +127,9 @@ function DiffView({ target }: { target: string }) {
             )}
           </>
         ) : (
-          <p className="text-xs text-muted-foreground">Need at least 2 snapshots to diff — take another with the CLI.</p>
+          <p className="text-xs text-muted-foreground">
+            Need at least 2 snapshots to diff — take another with the CLI.
+          </p>
         )}
       </div>
 
@@ -125,9 +137,14 @@ function DiffView({ target }: { target: string }) {
         <div>
           <h2 className="mb-1.5 text-xs font-medium text-muted-foreground">History</h2>
           {snapshots.snapshots.map(entry => (
-            <div className="flex items-center justify-between border-b border-(--ui-stroke-secondary) py-1.5 text-xs last:border-b-0" key={entry.filename}>
+            <div
+              className="flex items-center justify-between border-b border-(--ui-stroke-secondary) py-1.5 text-xs last:border-b-0"
+              key={entry.filename}
+            >
               <span className="font-mono text-muted-foreground">{entry.filename}</span>
-              <span className="text-muted-foreground">{entry.taken_at && relativeTime(new Date(entry.taken_at).getTime())}</span>
+              <span className="text-muted-foreground">
+                {entry.taken_at && relativeTime(new Date(entry.taken_at).getTime())}
+              </span>
             </div>
           ))}
         </div>
@@ -155,10 +172,18 @@ export function SurfacePage() {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load targets.'} title="Could not load targets" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load targets.'}
+          title="Could not load targets"
+        />
+      )}
 
       {!isLoading && !error && data && data.targets.length === 0 && (
-        <EmptyState description="Take a snapshot with indagis surface snapshot to get started." title="No targets snapshotted" />
+        <EmptyState
+          description="Take a snapshot with indagis surface snapshot to get started."
+          title="No targets snapshotted"
+        />
       )}
 
       {!isLoading && !error && data && data.targets.length > 0 && (

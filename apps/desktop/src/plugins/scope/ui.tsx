@@ -13,8 +13,10 @@ import { useState } from 'react'
 
 import { checkTarget, fetchPrograms, type Program, PROGRAMS_KEY } from './api'
 
-function EntryList({ entries, tone }: { entries: { target: string, type: string }[], tone: 'in' | 'out' }) {
-  if (entries.length === 0) {return null}
+function EntryList({ entries, tone }: { entries: { target: string; type: string }[]; tone: 'in' | 'out' }) {
+  if (entries.length === 0) {
+    return null
+  }
 
   return (
     <div className="mt-1 flex flex-wrap gap-1">
@@ -110,10 +112,18 @@ export function ScopePage() {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load programs.'} title="Could not load scope" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load programs.'}
+          title="Could not load scope"
+        />
+      )}
 
       {!isLoading && !error && data && data.programs.length === 0 && (
-        <EmptyState description="Import a scope export with indagis scope import to get started." title="No programs imported yet" />
+        <EmptyState
+          description="Import a scope export with indagis scope import to get started."
+          title="No programs imported yet"
+        />
       )}
 
       {!isLoading && !error && data && data.programs.length > 0 && (

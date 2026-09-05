@@ -12,7 +12,13 @@
  * Ships OFF by default (`defaultEnabled: false`).
  */
 
-import { type HermesPlugin, type RouteContribution, ROUTES_AREA, SIDEBAR_NAV_AREA, type SidebarNavContribution } from '@hermes/plugin-sdk'
+import {
+  type HermesPlugin,
+  type RouteContribution,
+  ROUTES_AREA,
+  SIDEBAR_NAV_AREA,
+  type SidebarNavContribution
+} from '@hermes/plugin-sdk'
 
 import { bindApi } from './api'
 import { MissionControlPage } from './ui'
@@ -36,7 +42,11 @@ const plugin: HermesPlugin = {
         area: SIDEBAR_NAV_AREA,
         // Ahead of the feature pages it summarises.
         order: 60,
-        data: { codicon: 'dashboard', label: 'Mission Control', path: '/mission-control' } satisfies SidebarNavContribution
+        data: {
+          codicon: 'dashboard',
+          label: 'Mission Control',
+          path: '/mission-control'
+        } satisfies SidebarNavContribution
       }
     ])
   }

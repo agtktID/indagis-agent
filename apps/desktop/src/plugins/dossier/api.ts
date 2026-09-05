@@ -44,4 +44,4 @@ export const INVESTIGATIONS_KEY = ['dossier', 'investigations'] as const
 export const fetchInvestigations = () => call<{ investigations: Investigation[] }>('/investigations')
 
 export const fetchPreview = (storePath: string) =>
-  call<{ store_path: string, markdown: string }>(`/preview?store_path=${encodeURIComponent(storePath)}`)
+  call<{ store_path: string; markdown: string }>(`/preview?store_path=${encodeURIComponent(storePath)}`)

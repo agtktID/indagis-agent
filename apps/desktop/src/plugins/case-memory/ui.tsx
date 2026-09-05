@@ -27,14 +27,27 @@ import {
 } from '@hermes/plugin-sdk'
 import { useMemo, useState } from 'react'
 
-import { fetchInvestigations, fetchIocs, fetchStats, INVESTIGATIONS_KEY, type IocEntry, iocInvestigations, IOCS_KEY, STATS_KEY } from './api'
+import {
+  fetchInvestigations,
+  fetchIocs,
+  fetchStats,
+  INVESTIGATIONS_KEY,
+  type IocEntry,
+  iocInvestigations,
+  IOCS_KEY,
+  STATS_KEY
+} from './api'
 
 function StatsRow() {
   const { data, error, isLoading } = useQuery({ queryFn: fetchStats, queryKey: STATS_KEY })
 
-  if (isLoading) {return null}
+  if (isLoading) {
+    return null
+  }
 
-  if (error || !data) {return null}
+  if (error || !data) {
+    return null
+  }
 
   return (
     <Panel className="grid grid-cols-2 divide-x divide-y divide-(--ui-stroke-secondary) sm:grid-cols-4 sm:divide-y-0">
@@ -120,10 +133,14 @@ export function CaseMemoryPage() {
   useQuery({ queryFn: fetchInvestigations, queryKey: INVESTIGATIONS_KEY })
 
   const filtered = useMemo(() => {
-    if (!data) {return []}
+    if (!data) {
+      return []
+    }
     const needle = filter.trim().toLowerCase()
 
-    if (!needle) {return data.iocs}
+    if (!needle) {
+      return data.iocs
+    }
 
     return data.iocs.filter(e => e.value.toLowerCase().includes(needle) || e.type.toLowerCase().includes(needle))
   }, [data, filter])
@@ -154,11 +171,20 @@ export function CaseMemoryPage() {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load Case Memory.'} title="Could not load indicators" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load Case Memory.'}
+          title="Could not load indicators"
+        />
+      )}
 
       {!isLoading && !error && data && filtered.length === 0 && (
         <EmptyState
-          description={data.iocs.length === 0 ? 'Ingest an evidence store with indagis case ingest to get started.' : 'No indicators match this filter.'}
+          description={
+            data.iocs.length === 0
+              ? 'Ingest an evidence store with indagis case ingest to get started.'
+              : 'No indicators match this filter.'
+          }
           title="No indicators"
         />
       )}
@@ -166,7 +192,9 @@ export function CaseMemoryPage() {
       {!isLoading && !error && filtered.length > 0 && (
         <Panel className="min-w-0">
           <PanelHeader
-            actions={<span className="text-[0.6875rem] tabular-nums text-muted-foreground">{filtered.length} shown</span>}
+            actions={
+              <span className="text-[0.6875rem] tabular-nums text-muted-foreground">{filtered.length} shown</span>
+            }
             kicker="Correlation index"
             title="Indicators"
           />

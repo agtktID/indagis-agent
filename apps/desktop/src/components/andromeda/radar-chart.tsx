@@ -49,13 +49,13 @@ const SIZE = (R + PAD) * 2
 const RINGS = [0.25, 0.5, 0.75, 1]
 
 /** Axis i as a unit vector, starting at 12 o'clock and going clockwise. */
-function axisVector(i: number, count: number): { x: number, y: number } {
+function axisVector(i: number, count: number): { x: number; y: number } {
   const angle = (Math.PI * 2 * i) / count - Math.PI / 2
 
   return { x: Math.cos(angle), y: Math.sin(angle) }
 }
 
-function polygon(points: { x: number, y: number }[]): string {
+function polygon(points: { x: number; y: number }[]): string {
   return points.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ')
 }
 
@@ -184,10 +184,7 @@ export function RadarChart({
             <span aria-hidden style={{ backgroundColor: s.color, height: 2, width: 10 }} />
             {s.label}
             <span className="sr-only">
-              :{' '}
-              {data
-                .map(datum => `${String(datum[axisKey] ?? '')} ${Number(datum[s.key]) || 0} of ${max}`)
-                .join(', ')}
+              : {data.map(datum => `${String(datum[axisKey] ?? '')} ${Number(datum[s.key]) || 0} of ${max}`).join(', ')}
             </span>
           </li>
         ))}

@@ -36,9 +36,13 @@ const REJECTED_STATUSES = new Set(['duplicate', 'informative', 'not-applicable']
 const TREND_MONTHS = 12
 
 function statusVariant(status: string): 'default' | 'destructive' | 'warn' {
-  if (status === 'paid') {return 'default'}
+  if (status === 'paid') {
+    return 'default'
+  }
 
-  if (REJECTED_STATUSES.has(status)) {return 'destructive'}
+  if (REJECTED_STATUSES.has(status)) {
+    return 'destructive'
+  }
 
   return 'warn'
 }
@@ -76,10 +80,14 @@ type MonthPoint = {
 /** `YYYY-MM` bucket for an ISO timestamp, or null when it is missing or
  *  unparseable — the ledger's dates come from the CLI, not a picker. */
 function monthKey(iso: null | string): null | string {
-  if (!iso) {return null}
+  if (!iso) {
+    return null
+  }
   const time = new Date(iso).getTime()
 
-  if (Number.isNaN(time)) {return null}
+  if (Number.isNaN(time)) {
+    return null
+  }
   const date = new Date(time)
 
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
@@ -113,7 +121,9 @@ function monthlyActivity(submissions: Submission[]): MonthPoint[] {
 
   const keys = [...new Set([...submitted.keys(), ...paid.keys()])].sort()
 
-  if (keys.length === 0) {return []}
+  if (keys.length === 0) {
+    return []
+  }
 
   const span: string[] = []
   const [firstYear, firstMonth] = keys[0].split('-').map(Number)
@@ -137,7 +147,9 @@ function ActivityTrend({ submissions }: { submissions: Submission[] }) {
   const points = monthlyActivity(submissions)
 
   // One month is a dot, not a trend — the tiles above already say how many.
-  if (points.length < 2) {return null}
+  if (points.length < 2) {
+    return null
+  }
 
   return (
     <Panel className="min-w-0">
@@ -200,10 +212,18 @@ export function BountyPage() {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load submissions.'} title="Could not load submissions" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load submissions.'}
+          title="Could not load submissions"
+        />
+      )}
 
       {!isLoading && !error && data && data.submissions.length === 0 && (
-        <EmptyState description="Record a submission with indagis bounty add to get started." title="No submissions yet" />
+        <EmptyState
+          description="Record a submission with indagis bounty add to get started."
+          title="No submissions yet"
+        />
       )}
 
       {!isLoading && !error && data && data.submissions.length > 0 && (
@@ -212,7 +232,11 @@ export function BountyPage() {
 
           <Panel className="min-w-0">
             <PanelHeader
-              actions={<span className="text-[0.6875rem] tabular-nums text-muted-foreground">{data.submissions.length} total</span>}
+              actions={
+                <span className="text-[0.6875rem] tabular-nums text-muted-foreground">
+                  {data.submissions.length} total
+                </span>
+              }
               kicker="Ledger"
               title="Submissions"
             />

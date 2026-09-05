@@ -43,7 +43,7 @@ export interface GraphResponse {
   nodes: GraphNode[]
   edges: GraphEdge[]
   pivots: GraphNode[]
-  hubs: { value: string, ioc_type: string, degree: number }[]
+  hubs: { value: string; ioc_type: string; degree: number }[]
   stats: {
     investigations: number
     iocs: number

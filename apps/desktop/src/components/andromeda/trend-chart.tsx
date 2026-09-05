@@ -70,10 +70,7 @@ export function TrendChart({
     return null
   }
 
-  const peak = Math.max(
-    ...data.flatMap(datum => resolved.map(s => Number(datum[s.key]) || 0)),
-    0
-  )
+  const peak = Math.max(...data.flatMap(datum => resolved.map(s => Number(datum[s.key]) || 0)), 0)
 
   const max = niceMax(peak)
 

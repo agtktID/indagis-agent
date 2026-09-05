@@ -11,9 +11,13 @@ import { Badge, cn, EmptyState, ErrorState, Loader, relativeTime, useQuery } fro
 import { type AuditRecord, fetchRecords, RECORDS_KEY } from './api'
 
 function verdictVariant(verdict: AuditRecord['verdict']): 'default' | 'destructive' | 'warn' {
-  if (verdict === 'blocked') {return 'destructive'}
+  if (verdict === 'blocked') {
+    return 'destructive'
+  }
 
-  if (verdict === 'warn') {return 'warn'}
+  if (verdict === 'warn') {
+    return 'warn'
+  }
 
   return 'default'
 }
@@ -27,7 +31,9 @@ function RecordCard({ record }: { record: AuditRecord }) {
           <Badge variant="outline">{record.tool_count} tools</Badge>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <span className="text-[0.6875rem] text-muted-foreground">{relativeTime(new Date(record.audited_at).getTime())}</span>
+          <span className="text-[0.6875rem] text-muted-foreground">
+            {relativeTime(new Date(record.audited_at).getTime())}
+          </span>
           <Badge variant={verdictVariant(record.verdict)}>{record.verdict}</Badge>
         </div>
       </div>
@@ -35,7 +41,10 @@ function RecordCard({ record }: { record: AuditRecord }) {
       {record.findings.length > 0 && (
         <div className="mt-1.5 flex flex-col gap-1">
           {record.findings.map((finding, i) => (
-            <div className="flex items-center gap-1.5 text-[0.6875rem] text-muted-foreground" key={`${finding.tool}:${finding.pattern}:${i}`}>
+            <div
+              className="flex items-center gap-1.5 text-[0.6875rem] text-muted-foreground"
+              key={`${finding.tool}:${finding.pattern}:${i}`}
+            >
               <Badge size="xs" variant={finding.severity === 'blocked' ? 'destructive' : 'warn'}>
                 {finding.pattern}
               </Badge>
@@ -68,10 +77,18 @@ export function McpAuditPage() {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load audit records.'} title="Could not load audits" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load audit records.'}
+          title="Could not load audits"
+        />
+      )}
 
       {!isLoading && !error && data && data.records.length === 0 && (
-        <EmptyState description="Audit an MCP server with indagis mcp audit to get started." title="No audits recorded" />
+        <EmptyState
+          description="Audit an MCP server with indagis mcp audit to get started."
+          title="No audits recorded"
+        />
       )}
 
       {!isLoading && !error && data && data.records.length > 0 && (

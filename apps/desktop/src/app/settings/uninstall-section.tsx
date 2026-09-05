@@ -36,7 +36,8 @@ const OPTIONS: ModeOption[] = [
     mode: 'full',
     title: 'Uninstall everything',
     description: 'Remove the app, the agent, and all user data — config, chats, scheduled jobs, secrets, logs.',
-    consequence: 'EVERYTHING — the desktop Chat GUI, the Indagis agent, and all of your config, chats, secrets, and logs',
+    consequence:
+      'EVERYTHING — the desktop Chat GUI, the Indagis agent, and all of your config, chats, secrets, and logs',
     // full removes the agent (and user data), so it's an agent-removing option:
     // hide it on a lite client with no local agent, same as lite. A lite client
     // connecting to a remote backend has no local agent OR local user data the

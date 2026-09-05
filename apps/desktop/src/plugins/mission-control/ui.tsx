@@ -27,7 +27,7 @@ import { AIRGAP_KEY, fetchAirgap, fetchOverview, OVERVIEW_KEY, type Tiles } from
 /** The four headline figures, with mono codes in the Andromeda telemetry
  *  style. Codes are stable identifiers, not decoration — they let an
  *  operator refer to a tile out loud. */
-const TILES: { code: string, key: keyof Tiles, label: string, unit?: string }[] = [
+const TILES: { code: string; key: keyof Tiles; label: string; unit?: string }[] = [
   { code: 'IOC-01', key: 'indicators', label: 'Indicators' },
   { code: 'CAS-02', key: 'investigations', label: 'Investigations' },
   { code: 'WCH-03', key: 'watches', label: 'Watch rules' },
@@ -142,14 +142,7 @@ export function MissionControlPage() {
           />
           <div className="flex flex-col gap-3 px-4 pt-1 pb-4">
             {subsystems.map(s => (
-              <StatusBar
-                hideValue
-                key={s.id}
-                label={s.label}
-                statusLabel={s.detail}
-                tone={s.tone}
-                value={s.value}
-              />
+              <StatusBar hideValue key={s.id} label={s.label} statusLabel={s.detail} tone={s.tone} value={s.value} />
             ))}
           </div>
         </Panel>
