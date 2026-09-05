@@ -143,9 +143,21 @@ jobs:
       base-ref: ${{ github.event.pull_request.base.ref }}
 
   contributor-check:
+    # The `pull_request` half of this condition is not redundant: the reusable
+    # workflow takes `base-ref` from `github.event.pull_request.base.ref`, which
+    # is empty on a `push`. It then runs `git merge-base "origin/${BASE_REF}"`,
+    # i.e. `origin/`, and dies with "Not a valid object name". So on every push
+    # to main that touched Python this job failed — main's CI has been red
+    # continuously for that reason alone, unrelated to the code being pushed.
+    # `history-check` above already guards itself the same way, for the same
+    # reason; this one was simply missed.
+    #
+    # Skipping is the correct behaviour, not a workaround: the check compares a
+    # PR's commits against its base branch. A push to main has no such pair —
+    # by then the commits are already the base branch.
     name: Check contributors
     needs: detect
-    if: needs.detect.outputs.python == 'true'
+    if: needs.detect.outputs.python == 'true' && needs.detect.outputs.event_name == 'pull_request'
     uses: ./.github/workflows/contributor-check.yml
     with:
       base-ref: ${{ github.event.pull_request.base.ref }}
