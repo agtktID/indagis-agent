@@ -1,0 +1,11 @@
+{
+  "name": "image",
+  "label": "Image Intel",
+  "description": "Browse the photographs already recorded in an investigation — file hashes, device summaries and EXIF GPS coordinates. Inspecting a new picture stays a CLI action.",
+  "icon": "ImageIcon",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}

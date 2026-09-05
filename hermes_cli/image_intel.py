@@ -401,3 +401,86 @@ def append_to_store(store_path: str, report: Dict[str, Any]) -> List[str]:
     os.replace(tmp, store)
 
     return new_ids
+
+
+def collect_store_images(store_path: str) -> List[Dict[str, Any]]:
+    """Every image already recorded in an evidence store, newest first.
+
+    The read side of ``append_to_store``. A photograph enters a case as two
+    entries — the ``image_metadata`` entry carrying the file hash, and, when
+    the picture had coordinates, a separate ``GEO`` indicator. This walks
+    those back into one record per image so a reader does not have to
+    reassemble the pair themselves.
+
+    Pairing is by ``source`` (the filename both entries were written with).
+    Two different photographs sharing a filename would merge here; that is
+    accepted rather than worked around, because the alternative — inventing
+    a synthetic key — would not survive a store an operator edited by hand,
+    and the file hash shown on each record is what actually distinguishes
+    them.
+
+    Returns [] for a store with no images. Never raises on a malformed
+    entry: a store is operator-editable, so a bad record is skipped rather
+    than taken down the whole listing.
+    """
+    import json
+
+    store = Path(store_path).expanduser()
+
+    with open(store, "r", encoding="utf-8-sig") as handle:
+        data = json.load(handle)
+
+    if not isinstance(data, dict):
+        raise ValueError("Not an evidence-store file (expected a JSON object)")
+
+    entries = data.get("evidence")
+    if not isinstance(entries, list):
+        return []
+
+    # Index the GEO indicators first so each image can pick up its own.
+    coordinates: Dict[str, Dict[str, Any]] = {}
+    for entry in entries:
+        if not isinstance(entry, dict) or entry.get("ioc_type") != "GEO":
+            continue
+        source = entry.get("source")
+        content = entry.get("content")
+        if not isinstance(source, str) or not isinstance(content, str):
+            continue
+        lat, _, lon = content.partition(",")
+        try:
+            latitude, longitude = float(lat), float(lon)
+        except ValueError:
+            continue
+        coordinates[source] = {
+            "latitude": latitude,
+            "longitude": longitude,
+            "map_url": (
+                f"https://www.openstreetmap.org/?mlat={latitude}"
+                f"&mlon={longitude}#map=17/{latitude}/{longitude}"
+            ),
+        }
+
+    images: List[Dict[str, Any]] = []
+    for entry in entries:
+        if not isinstance(entry, dict) or entry.get("type") != "image_metadata":
+            continue
+        source = entry.get("source")
+        if not isinstance(source, str):
+            continue
+        images.append(
+            {
+                "id": entry.get("id") or "",
+                "filename": source,
+                "sha256": entry.get("content") or "",
+                "summary": entry.get("notes") or "",
+                "collected_at": entry.get("collected_at") or "",
+                "verification": entry.get("verification") or "unverified",
+                "gps": coordinates.get(source),
+            }
+        )
+
+    # Newest first. Entries without a timestamp sort last rather than
+    # crashing the comparison.
+    images.sort(key=lambda item: item["collected_at"] or "", reverse=True)
+
+    return images
