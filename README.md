@@ -35,7 +35,7 @@ Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many othe
 
 <table>
 <tr><td><b>Authorization-gated investigations</b></td><td>Security work is tracked as a persisted <code>Investigation</code>: an objective, an authorized scope, evidence, findings and a timeline. Every recorded target is checked against that scope before it is written (fail-closed), with Markdown/JSON export.</td></tr>
-<tr><td><b>An investigation command suite</b></td><td>Eleven investigation subsystems — scope authorization, IOC correlation, attribution scoring, evidence signing, sock puppets, bounty tracking, continuous recon and more — each a CLI command with a matching read-only desktop panel. <a href="#the-investigation-suite">See the table below</a>.</td></tr>
+<tr><td><b>An investigation command suite</b></td><td>Thirteen investigation subsystems — scope authorization, IOC correlation, a cross-case relationship graph, attribution scoring, evidence signing, sock puppets, bounty tracking, continuous recon and more — each a CLI command with a matching read-only desktop panel. <a href="#the-investigation-suite">See the table below</a>.</td></tr>
 <tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
 <tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
 <tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
@@ -49,11 +49,12 @@ Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many othe
 
 ## The investigation suite
 
-Twelve subsystems built for the work an investigator actually does. Each one is a CLI command that owns its state on disk, plus a **read-only desktop panel** that renders it — the panel never writes, so nothing in the UI can mutate an investigation behind your back.
+Thirteen subsystems built for the work an investigator actually does. Each is a CLI command with a **read-only desktop panel** that renders it — the panel never writes, so nothing in the UI can mutate an investigation behind your back. Twelve own their state on disk; the thirteenth, the relationship graph, derives its whole view from what Case Memory has already indexed rather than adding a store of its own.
 
 | Subsystem | Command | What it does |
 | --- | --- | --- |
 | **Scope Sync** | `indagis scope` | Import an authorized scope export from your bounty dashboard, then `scope check <target>` before you touch anything. **Out-of-scope always wins** over an in-scope match elsewhere. `scope autopilot` onboards every in-scope host onto continuous recon. |
+| **Relationship Graph** | `indagis graph` | Which investigations are connected, through which indicators, and how strongly. An indicator seen in too many cases is reported but **links nothing** — everywhere means nowhere, and one banal address would otherwise wire every case together. |
 | **Case Memory** | `indagis case` | One index of every IOC across every investigation, so an indicator seen in a new case surfaces the earlier case it came from. |
 | **Attribution Confidence** | `indagis attribution` | Scores findings on the NATO/Admiralty scale (source reliability A–F × information credibility 1–6). A cross-case corroboration upgrades credibility, because an independent investigation *is* an independent source. |
 | **Dossier Builder** | `indagis dossier build` | Renders an evidence store as a Markdown dossier, with a SHA-256 integrity re-check over every item. |
@@ -187,6 +188,7 @@ Investigation work has its own verbs:
 indagis scope import <program> <file>   # Load an authorized scope export
 indagis scope check <target>            # Am I allowed to touch this? (out-of-scope wins)
 indagis case ingest <store>             # Index an evidence store into Case Memory
+indagis graph show                      # Which cases are connected, and by what
 indagis attribution score <store>       # Admiralty reliability × credibility
 indagis dossier build <store>           # Render the case as a Markdown dossier
 indagis image inspect <file>            # EXIF, GPS and device fingerprint from a photo
@@ -240,7 +242,7 @@ Documentation lives at **[website/docs/](https://github.com/agtktID/indagis-agen
 | [Architecture](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/architecture.md)             | Project structure, agent loop, key classes                 |
 | [Contributing](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/contributing.md)             | Development setup, PR process, code style                  |
 | [CLI Reference](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/cli-commands.md)                  | All commands and flags                                     |
-| [Investigation Commands](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md) | Case Memory, Dossier Builder, Attribution Scoring, Image Intel, Sock Puppet Manager, Bounty Ledger, Scope Sync, Air Gap, Custody Chain, Surface Diff, Signal Watch, MCP Vetting Firewall |
+| [Investigation Commands](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md) | Case Memory, Relationship Graph, Dossier Builder, Attribution Scoring, Image Intel, Sock Puppet Manager, Bounty Ledger, Scope Sync, Air Gap, Custody Chain, Surface Diff, Signal Watch, MCP Vetting Firewall |
 | [Environment Variables](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/environment-variables.md) | Complete env var reference                                 |
 
 ---

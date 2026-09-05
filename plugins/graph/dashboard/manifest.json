@@ -1,0 +1,11 @@
+{
+  "name": "graph",
+  "label": "Relationship Graph",
+  "description": "Which investigations are connected, through which indicators, and how strongly — derived from the Case Memory index, never written to.",
+  "icon": "GitBranch",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
