@@ -157,11 +157,25 @@ def scope_show(program: str) -> None:
         print(f"    {color(e['target'], Colors.RED)} [{e.get('type', 'other')}]{desc}")
 
 
-def scope_check(target: str, program: str = None) -> None:
+#: Exit codes for ``indagis scope check``. This command is a pre-flight
+#: safety gate — the module docstring tells you to check a target "before a
+#: single request goes out" — so it is written into shell as
+#: ``indagis scope check "$t" && run_scan "$t"``. That idiom is only safe if
+#: a refusal is non-zero: returning 0 for OUT OF SCOPE means the wrapper
+#: scans a host the program explicitly forbade, with the correct warning
+#: printed right above it. Both refusals are non-zero for that reason, and
+#: they are distinct so a caller that wants to treat "no rule matched"
+#: differently from "explicitly forbidden" can.
+SCOPE_CHECK_OK = 0
+SCOPE_CHECK_OUT_OF_SCOPE = 1
+SCOPE_CHECK_UNKNOWN = 2
+
+
+def scope_check(target: str, program: str = None) -> int:
     results = check_target(target, program=program)
     if not results:
         print(color(f"⚠ '{target}' matches no imported scope rule — verdict unknown, treat as out of scope.", Colors.YELLOW))
-        return
+        return SCOPE_CHECK_UNKNOWN
 
     out_hits = [r for r in results if r["verdict"] == "out-of-scope"]
     in_hits = [r for r in results if r["verdict"] == "in-scope"]
@@ -172,11 +186,12 @@ def scope_check(target: str, program: str = None) -> None:
             print(f"    [{r['program']}] matched rule: {r['entry']['target']}")
         if in_hits:
             print(color("  (also matched an in-scope rule elsewhere — out-of-scope always wins)", Colors.DIM))
-        return
+        return SCOPE_CHECK_OUT_OF_SCOPE
 
     print(color(f"✓ IN SCOPE — '{target}'", Colors.GREEN))
     for r in in_hits:
         print(f"    [{r['program']}] matched rule: {r['entry']['target']}")
+    return SCOPE_CHECK_OK
 
 
 #: Scope-entry ``type`` values that are never a fingerprintable host, no
@@ -279,7 +294,7 @@ def scope_remove(program: str) -> None:
     print(color(f"✓ Removed scope for '{program}'", Colors.GREEN))
 
 
-def scope_command(args) -> None:
+def scope_command(args) -> int | None:
     action = getattr(args, "scope_command", None)
     if action in (None, "list"):
         scope_list()
@@ -295,7 +310,7 @@ def scope_command(args) -> None:
     elif action == "show":
         scope_show(args.program)
     elif action == "check":
-        scope_check(args.target, program=getattr(args, "program", None))
+        return scope_check(args.target, program=getattr(args, "program", None))
     elif action == "autopilot":
         scope_autopilot(
             args.program, args.schedule, args.deliver, dry_run=getattr(args, "dry_run", False)

@@ -141,3 +141,42 @@ class TestCustodyExport:
         _write_store(store, [_entry("EV-0001", "hello")])
         custody.custody_export(str(store), str(tmp_path / "out.json"))
         assert "sign it first" in capsys.readouterr().out
+
+
+class TestCustodyVerifyExitCode:
+    """`custody verify` returned 0 for TAMPERED, INVALID SIGNATURE and unsigned
+    stores alike, so `custody verify x.json && ship_evidence` shipped a forged
+    store with "✗ TAMPERED" printed directly above it. The detection was
+    always correct; only the code a script can branch on was missing."""
+
+    def test_valid_is_zero(self, tmp_path, capsys):
+        custody.custody_keygen("k1")
+        store = tmp_path / "evidence.json"
+        _write_store(store, [_entry("EV-0001", "hello world")])
+        custody.custody_sign(str(store), "k1")
+        capsys.readouterr()
+        assert custody.custody_verify(str(store)) == custody.CUSTODY_VERIFY_OK
+
+    def test_tampered_is_non_zero(self, tmp_path, capsys):
+        custody.custody_keygen("k1")
+        store = tmp_path / "evidence.json"
+        _write_store(store, [_entry("EV-0001", "hello world")])
+        custody.custody_sign(str(store), "k1")
+        # Rewrite the content after signing; the entry's self-reported hash is
+        # updated too, exactly as an attacker editing the file would.
+        _write_store(store, [_entry("EV-0001", "goodbye world")])
+        capsys.readouterr()
+        rc = custody.custody_verify(str(store))
+        assert rc == custody.CUSTODY_VERIFY_FAILED
+        assert rc != 0, "`custody verify && ship` must not ship a tampered store"
+        assert "TAMPERED" in capsys.readouterr().out
+
+    def test_unsigned_is_non_zero_and_distinct(self, tmp_path, capsys):
+        store = tmp_path / "evidence.json"
+        _write_store(store, [_entry("EV-0001", "hello world")])
+        capsys.readouterr()
+        rc = custody.custody_verify(str(store))
+        assert rc == custody.CUSTODY_VERIFY_UNCHECKABLE
+        assert rc != 0
+        # "could not be checked" is not "checked and found bad".
+        assert rc != custody.CUSTODY_VERIFY_FAILED
