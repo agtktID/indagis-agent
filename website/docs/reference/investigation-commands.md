@@ -42,6 +42,69 @@ credibility automatically. The bundled "Case Memory" desktop plugin (opt-in via
 Settings ▸ Plugins in the desktop app) gives a read-only browser over this same
 index.
 
+## `indagis graph`
+
+```bash
+indagis graph <show|links|node>
+```
+
+**Relationship Graph** — [`indagis case`](#indagis-case) answers *"has this indicator
+been seen before?"* one indicator at a time. This answers the same structure whole:
+which investigations are connected, through which indicators, and how strongly.
+
+Nothing new is collected. Every node and edge is derived from the index
+`indagis case ingest` has already built, so the graph is exactly as complete as the
+ingestion you have already done — no more, and never less.
+
+| Subcommand | Description |
+|------------|-------------|
+| `show` | The whole picture: connected cases with the indicators that join them, the strongest pivots, and any excluded hubs. `--json` for the raw graph; `--dot` for Graphviz. |
+| `links` | Just the case-to-case links, one per line — for piping. |
+| `node <query>` | Everything one step from an indicator or an investigation. Matches on the plain value (`evil.example`), not an internal id. |
+
+All three take the same filters, because they change *which graph is built* rather
+than what each verb does with it:
+
+| Flag | Effect |
+|------|--------|
+| `--type <IOC_TYPE>` | Only link through indicators of this type — an analyst chasing infrastructure does not want file hashes in the picture. |
+| `--hub-threshold <N>` | An indicator seen in more than N investigations links nothing (default: 5). |
+| `--include-hubs` | Link through hubs anyway. Usually turns the graph into one blob. |
+| `--min-shared <N>` | Hide case pairs joined by fewer than N indicators — one shared indicator is a lead, four is a case. |
+
+### The hub problem
+
+A relationship graph is only useful if its edges mean something, and one banal
+indicator destroys that. A public DNS resolver, a CDN address, or a shared hosting IP
+appears in every case you ever open, wires all of them together, and turns the graph
+into a single blob where nothing stands out.
+
+So an indicator above the hub threshold is **reported but links nothing**. It is not
+deleted — it stays a node, it is named in the output, and `--include-hubs` brings its
+links back — because *"this indicator is in everything"* is itself a finding, just not
+a link. The cut happens before pairing rather than after, which bounds the work as
+well as the noise: an indicator in k cases would otherwise yield k(k-1)/2 pairs.
+
+### Reading the output
+
+`show` ranks **pivots**: the indicators joining the most separate investigations.
+That is the analytic payoff — in a pile of indicators, the handful appearing across
+distinct cases are the ones worth an afternoon. Hubs are excluded from that ranking
+for the same reason they link nothing.
+
+An empty result distinguishes its two causes. *"No two investigations share an
+indicator yet"* is a real finding; when a filter did the hiding, the output says which
+filter instead, because an analyst who narrowed to one IOC type and read the first
+sentence would conclude the cases are unrelated when the graph never looked.
+
+`--dot` draws only the case-to-case links. The bipartite sighting edges are what
+*build* those links; drawing both would hang every indicator off the diagram as its
+own leaf and bury the structure you opened the graph to see.
+
+```bash
+indagis graph show --dot | dot -Tsvg > cases.svg
+```
+
 ## `indagis dossier`
 
 ```bash
