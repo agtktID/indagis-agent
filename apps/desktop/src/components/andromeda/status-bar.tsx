@@ -20,7 +20,7 @@ import { tokens } from './tokens'
 
 export type StatusBarTone = 'caution' | 'fault' | 'nominal' | 'unknown'
 
-const TONE: Record<StatusBarTone, { color: string, label: string }> = {
+const TONE: Record<StatusBarTone, { color: string; label: string }> = {
   caution: { color: tokens.color.caution, label: 'Caution' },
   fault: { color: tokens.color.fault, label: 'Fault' },
   nominal: { color: tokens.color.nominal, label: 'OK' },

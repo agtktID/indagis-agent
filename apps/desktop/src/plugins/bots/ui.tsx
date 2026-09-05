@@ -152,7 +152,12 @@ export function BotsPage({ os }: { os: BotsPageOs }) {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load bots.'} title="Could not load bots" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load bots.'}
+          title="Could not load bots"
+        />
+      )}
 
       {!isLoading && !error && data && data.bots.length === 0 && (
         <EmptyState description="Create one above to get started." title="No bots yet" />

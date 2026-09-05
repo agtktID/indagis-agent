@@ -80,13 +80,13 @@ const GRID_LINE = 'rgba(55, 213, 214, 0.08)'
 
 // Semantic badges — kept as accent only. They survive the re-skin.
 const SEVERITY_TONE: Record<Severity, { bg: string; fg: string; border: string }> = {
-  high:     { bg: 'rgba(248, 113, 113, 0.12)', fg: '#f87171', border: '#f87171' },
-  moderate: { bg: 'rgba(251, 191, 36, 0.12)',  fg: '#fbbf24', border: '#fbbf24' },
-  low:      { bg: 'rgba(125, 211, 252, 0.12)', fg: '#7dd3fc', border: '#7dd3fc' }
+  high: { bg: 'rgba(248, 113, 113, 0.12)', fg: '#f87171', border: '#f87171' },
+  moderate: { bg: 'rgba(251, 191, 36, 0.12)', fg: '#fbbf24', border: '#fbbf24' },
+  low: { bg: 'rgba(125, 211, 252, 0.12)', fg: '#7dd3fc', border: '#7dd3fc' }
 }
 
 const STATUS_TONE: Record<Status, { bg: string; fg: string; border: string }> = {
-  fixed:           { bg: 'rgba(52, 211, 153, 0.12)', fg: '#34d399', border: '#34d399' },
+  fixed: { bg: 'rgba(52, 211, 153, 0.12)', fg: '#34d399', border: '#34d399' },
   'documented-debt': { bg: 'rgba(148, 163, 184, 0.12)', fg: '#94a3b8', border: '#94a3b8' }
 }
 
@@ -101,13 +101,17 @@ function shortId(v: Vulnerability): string {
 
 function compareVulns(a: Vulnerability, b: Vulnerability): number {
   const sev = SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity]
+
   if (sev !== 0) {
     return sev
   }
+
   const stat = STATUS_RANK[a.status] - STATUS_RANK[b.status]
+
   if (stat !== 0) {
     return stat
   }
+
   return a.id.localeCompare(b.id)
 }
 
@@ -115,6 +119,7 @@ function compareVulns(a: Vulnerability, b: Vulnerability): number {
 
 function SeverityBadge({ severity }: { severity: Severity }) {
   const tone = SEVERITY_TONE[severity]
+
   return (
     <span
       className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.08em]"
@@ -133,6 +138,7 @@ function SeverityBadge({ severity }: { severity: Severity }) {
 function StatusBadge({ status }: { status: Status }) {
   const tone = STATUS_TONE[status]
   const label = status === 'fixed' ? 'fixed' : 'documented'
+
   return (
     <span
       className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.08em]"
@@ -197,11 +203,7 @@ function VulnRow({ v }: { v: Vulnerability }) {
         >
           {open ? 'v' : '>'}
         </td>
-        <td
-          className="px-2 py-1.5 font-mono text-[0.6875rem]"
-          style={{ color: CYBER_CYAN }}
-          title={v.id}
-        >
+        <td className="px-2 py-1.5 font-mono text-[0.6875rem]" style={{ color: CYBER_CYAN }} title={v.id}>
           {shortId(v)}
         </td>
         <td className="px-2 py-1.5">
@@ -257,17 +259,7 @@ function VulnRow({ v }: { v: Vulnerability }) {
   )
 }
 
-function Field({
-  block,
-  label,
-  mono,
-  value
-}: {
-  block?: boolean
-  label: string
-  mono?: boolean
-  value: string
-}) {
+function Field({ block, label, mono, value }: { block?: boolean; label: string; mono?: boolean; value: string }) {
   return (
     <>
       <dt className="font-semibold uppercase tracking-[0.1em]" style={{ color: CYAN_DIM }}>
@@ -293,10 +285,12 @@ function VulnerabilitiesPane() {
 
   const counts = useMemo(() => {
     const acc = { high: 0, moderate: 0, low: 0, fixed: 0, 'documented-debt': 0 }
+
     for (const v of vulns) {
       acc[v.severity]++
       acc[v.status]++
     }
+
     return acc
   }, [vulns])
 
@@ -306,7 +300,11 @@ function VulnerabilitiesPane() {
       style={{
         backgroundColor: OBSIDIAN,
         backgroundImage:
-          'linear-gradient(' + GRID_LINE + ' 1px, transparent 1px), linear-gradient(90deg, ' + GRID_LINE + ' 1px, transparent 1px)',
+          'linear-gradient(' +
+          GRID_LINE +
+          ' 1px, transparent 1px), linear-gradient(90deg, ' +
+          GRID_LINE +
+          ' 1px, transparent 1px)',
         backgroundSize: '24px 24px',
         color: CYBER_CYAN,
         font: '0.6875rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace'
@@ -344,10 +342,7 @@ function VulnerabilitiesPane() {
               borderBottom: `1px solid ${CYAN_DIM}`
             }}
           >
-            <tr
-              className="text-[0.625rem] uppercase tracking-[0.1em]"
-              style={{ color: CYAN_DIM }}
-            >
+            <tr className="text-[0.625rem] uppercase tracking-[0.1em]" style={{ color: CYAN_DIM }}>
               <th aria-label="Expand" className="w-6" />
               <th className="px-2 py-1.5 text-left font-semibold">CVE</th>
               <th className="px-2 py-1.5 text-left font-semibold">Package</th>

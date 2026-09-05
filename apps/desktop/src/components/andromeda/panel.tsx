@@ -41,14 +41,7 @@ export interface PanelHeaderProps extends Omit<React.ComponentProps<'header'>, '
   actions?: React.ReactNode
 }
 
-export function PanelHeader({
-  actions,
-  className,
-  description,
-  kicker,
-  title,
-  ...props
-}: PanelHeaderProps) {
+export function PanelHeader({ actions, className, description, kicker, title, ...props }: PanelHeaderProps) {
   return (
     <header className={cn('flex items-start justify-between gap-3 px-4 pt-3 pb-2', className)} {...props}>
       <div className="min-w-0">

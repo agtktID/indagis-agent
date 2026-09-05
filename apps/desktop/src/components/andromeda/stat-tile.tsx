@@ -42,7 +42,7 @@ const TONE_COLOR: Record<StatTone, string> = {
 /** Springs to `value`, rendering to the DOM without re-rendering React.
  *  Mounts at 0 so the first paint counts up; later changes spring from
  *  wherever the number already was. */
-function AnimatedFigure({ decimals, value }: { decimals: number, value: number }) {
+function AnimatedFigure({ decimals, value }: { decimals: number; value: number }) {
   const spring = useSpring(0, SPRING)
   const text = useTransform(spring, latest => latest.toFixed(decimals))
 

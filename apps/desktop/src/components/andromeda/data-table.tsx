@@ -45,16 +45,8 @@ export interface DataTableProps<Row> extends Omit<React.ComponentProps<'div'>, '
   onRowClick?: (row: Row) => void
 }
 
-export function DataTable<Row>({
-  className,
-  columns,
-  empty,
-  onRowClick,
-  rowKey,
-  rows,
-  ...props
-}: DataTableProps<Row>) {
-  const [sort, setSort] = useState<null | { desc: boolean, id: string }>(null)
+export function DataTable<Row>({ className, columns, empty, onRowClick, rowKey, rows, ...props }: DataTableProps<Row>) {
+  const [sort, setSort] = useState<null | { desc: boolean; id: string }>(null)
 
   const sorted = useMemo(() => {
     if (!sort) {
@@ -113,7 +105,9 @@ export function DataTable<Row>({
                       className="inline-flex items-center gap-1 uppercase hover:text-(--ui-text-primary)"
                       onClick={() =>
                         setSort(current =>
-                          current?.id === column.id ? { desc: !current.desc, id: column.id } : { desc: false, id: column.id }
+                          current?.id === column.id
+                            ? { desc: !current.desc, id: column.id }
+                            : { desc: false, id: column.id }
                         )
                       }
                       type="button"
@@ -144,10 +138,7 @@ export function DataTable<Row>({
             >
               {columns.map(column => (
                 <td
-                  className={cn(
-                    'px-2 py-1.5 text-[0.6875rem]',
-                    column.numeric && 'text-right tabular-nums'
-                  )}
+                  className={cn('px-2 py-1.5 text-[0.6875rem]', column.numeric && 'text-right tabular-nums')}
                   key={column.id}
                   style={{ color: tokens.color.text.primary }}
                 >

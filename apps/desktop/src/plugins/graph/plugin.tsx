@@ -14,7 +14,13 @@
  * Settings ▸ Plugins and registers nothing until the user flips the switch.
  */
 
-import { type HermesPlugin, type RouteContribution, ROUTES_AREA, SIDEBAR_NAV_AREA, type SidebarNavContribution } from '@hermes/plugin-sdk'
+import {
+  type HermesPlugin,
+  type RouteContribution,
+  ROUTES_AREA,
+  SIDEBAR_NAV_AREA,
+  type SidebarNavContribution
+} from '@hermes/plugin-sdk'
 
 import { bindApi } from './api'
 import { GraphPage } from './ui'
@@ -39,7 +45,11 @@ const plugin: HermesPlugin = {
         // 72: the investigation block runs 60–71 and this sits at its end,
         // beside Case Memory's data rather than colliding with a neighbour.
         order: 72,
-        data: { codicon: 'type-hierarchy', label: 'Relationship Graph', path: '/graph' } satisfies SidebarNavContribution
+        data: {
+          codicon: 'type-hierarchy',
+          label: 'Relationship Graph',
+          path: '/graph'
+        } satisfies SidebarNavContribution
       }
     ])
   }

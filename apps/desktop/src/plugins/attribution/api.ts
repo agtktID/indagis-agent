@@ -57,4 +57,5 @@ export const INVESTIGATIONS_KEY = ['attribution', 'investigations'] as const
 export const scoreKey = (storePath: string) => ['attribution', 'score', storePath] as const
 
 export const fetchInvestigations = () => call<{ investigations: Investigation[] }>('/investigations')
-export const fetchScore = (storePath: string) => call<AttributionReport>(`/score?store_path=${encodeURIComponent(storePath)}`)
+export const fetchScore = (storePath: string) =>
+  call<AttributionReport>(`/score?store_path=${encodeURIComponent(storePath)}`)

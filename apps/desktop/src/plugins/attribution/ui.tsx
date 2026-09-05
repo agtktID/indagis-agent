@@ -38,7 +38,14 @@ import {
 } from '@hermes/plugin-sdk'
 import { useState } from 'react'
 
-import { type AttributionReport, fetchInvestigations, fetchScore, INVESTIGATIONS_KEY, type ScoredEntry, scoreKey } from './api'
+import {
+  type AttributionReport,
+  fetchInvestigations,
+  fetchScore,
+  INVESTIGATIONS_KEY,
+  type ScoredEntry,
+  scoreKey
+} from './api'
 
 /** The backend's own weights (hermes_cli/attribution.py): both axes run
  *  best-to-worst, 6 down to 1. Mirrored — not re-derived — so a bar here
@@ -50,18 +57,26 @@ const RELIABILITY_GRADE = ['F', 'E', 'D', 'C', 'B', 'A']
 const CREDIBILITY_GRADE = ['6', '5', '4', '3', '2', '1']
 
 function confidenceVariant(score: number): 'default' | 'destructive' | 'warn' {
-  if (score >= 70) {return 'default'}
+  if (score >= 70) {
+    return 'default'
+  }
 
-  if (score >= 40) {return 'warn'}
+  if (score >= 40) {
+    return 'warn'
+  }
 
   return 'destructive'
 }
 
 /** Same bands the CLI prints (high / moderate / low), as a gauge tone. */
 function scoreTone(score: number): StatusBarTone {
-  if (score >= 80) {return 'nominal'}
+  if (score >= 80) {
+    return 'nominal'
+  }
 
-  if (score >= 50) {return 'caution'}
+  if (score >= 50) {
+    return 'caution'
+  }
 
   return 'fault'
 }
@@ -124,12 +139,22 @@ const COLUMNS: DataTableColumn<ScoredEntry>[] = [
 
 /** Mean of one Admiralty axis, as a 0–100 reading plus the grade that mean
  *  rounds to — the same scale each entry's own confidence is built from. */
-function axisMean(entries: ScoredEntry[], weights: Record<string, number>, grades: string[], pick: (entry: ScoredEntry) => string) {
-  if (entries.length === 0) {return { grade: '—', value: 0 }}
+function axisMean(
+  entries: ScoredEntry[],
+  weights: Record<string, number>,
+  grades: string[],
+  pick: (entry: ScoredEntry) => string
+) {
+  if (entries.length === 0) {
+    return { grade: '—', value: 0 }
+  }
   const total = entries.reduce((sum, entry) => sum + (weights[pick(entry).toUpperCase()] ?? 1), 0)
   const mean = total / entries.length
 
-  return { grade: grades[Math.min(grades.length - 1, Math.max(0, Math.round(mean) - 1))], value: Math.round((mean / 6) * 100) }
+  return {
+    grade: grades[Math.min(grades.length - 1, Math.max(0, Math.round(mean) - 1))],
+    value: Math.round((mean / 6) * 100)
+  }
 }
 
 function Aggregate({ report }: { report: AttributionReport }) {
@@ -140,7 +165,8 @@ function Aggregate({ report }: { report: AttributionReport }) {
   const assessed = report.total_count - report.unassessed_count
   const corroborationPct = entries.length === 0 ? 0 : Math.round((corroborated / entries.length) * 100)
   const assessedPct = report.total_count === 0 ? 0 : Math.round((assessed / report.total_count) * 100)
-  const overallTone: StatTone = report.overall_confidence >= 80 ? 'nominal' : report.overall_confidence >= 50 ? 'caution' : 'fault'
+  const overallTone: StatTone =
+    report.overall_confidence >= 80 ? 'nominal' : report.overall_confidence >= 50 ? 'caution' : 'fault'
 
   return (
     <div className="flex flex-col gap-3">
@@ -219,7 +245,12 @@ function ReportView({ storePath }: { storePath: string }) {
   }
 
   if (error || !data) {
-    return <ErrorState description={error instanceof Error ? error.message : 'Failed to score this evidence store.'} title="Could not score" />
+    return (
+      <ErrorState
+        description={error instanceof Error ? error.message : 'Failed to score this evidence store.'}
+        title="Could not score"
+      />
+    )
   }
 
   return (
@@ -257,7 +288,8 @@ export function AttributionPage() {
       <div>
         <h1 className="text-base font-semibold">Attribution Confidence</h1>
         <p className="text-xs text-muted-foreground">
-          NATO/Admiralty source reliability × information credibility, scored per finding. Index investigations with <code>indagis case ingest</code>.
+          NATO/Admiralty source reliability × information credibility, scored per finding. Index investigations with{' '}
+          <code>indagis case ingest</code>.
         </p>
       </div>
 
@@ -267,10 +299,18 @@ export function AttributionPage() {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load investigations.'} title="Could not load investigations" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load investigations.'}
+          title="Could not load investigations"
+        />
+      )}
 
       {!isLoading && !error && data && data.investigations.length === 0 && (
-        <EmptyState description="Ingest an evidence store with indagis case ingest to get started." title="No investigations indexed" />
+        <EmptyState
+          description="Ingest an evidence store with indagis case ingest to get started."
+          title="No investigations indexed"
+        />
       )}
 
       {!isLoading && !error && data && data.investigations.length > 0 && (

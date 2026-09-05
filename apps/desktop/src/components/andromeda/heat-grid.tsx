@@ -41,7 +41,7 @@ export interface HeatGridProps extends Omit<React.ComponentProps<'div'>, 'childr
 /** Ranked cell order: lower rank fills first. */
 function fillRanks(cols: number, rows: number): number[] {
   const centre = (cols - 1) / 2
-  const ranks: { index: number, rank: number }[] = []
+  const ranks: { index: number; rank: number }[] = []
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
@@ -95,10 +95,7 @@ export function HeatGrid({
       </div>
 
       {!hideValue && (
-        <span
-          className="text-lg font-semibold tabular-nums"
-          style={{ color, fontFamily: tokens.typography.fontMono }}
-        >
+        <span className="text-lg font-semibold tabular-nums" style={{ color, fontFamily: tokens.typography.fontMono }}>
           {clamped}%
         </span>
       )}

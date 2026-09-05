@@ -99,7 +99,6 @@ export const artWidth = (lines: Line[]) => lines.reduce((m, [, t]) => Math.max(m
 
 type Line = [string, string]
 
-
 /**
  * Indagis Agent banner — used by the Ink launcher until the gateway
  * arrives its skin. Cyber Cyan #37D5D6 on transparent terminal.

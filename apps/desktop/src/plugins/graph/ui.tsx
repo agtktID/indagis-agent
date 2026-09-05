@@ -17,17 +17,7 @@
  * structure the analyst opened the page to see.
  */
 
-import {
-  Badge,
-  cn,
-  EmptyState,
-  ErrorState,
-  Loader,
-  Panel,
-  PanelHeader,
-  StatTile,
-  useQuery
-} from '@hermes/plugin-sdk'
+import { Badge, cn, EmptyState, ErrorState, Loader, Panel, PanelHeader, StatTile, useQuery } from '@hermes/plugin-sdk'
 import { useMemo, useState } from 'react'
 
 import { fetchGraph, type GraphEdge, type GraphFilters, graphKey, type GraphResponse } from './api'
@@ -186,7 +176,7 @@ function GraphDiagram({ data }: { data: GraphResponse }) {
   )
 }
 
-function Filters({ filters, onChange }: { filters: GraphFilters, onChange: (next: GraphFilters) => void }) {
+function Filters({ filters, onChange }: { filters: GraphFilters; onChange: (next: GraphFilters) => void }) {
   return (
     <div className="flex flex-wrap items-end gap-3">
       <label className="flex flex-col gap-1 text-[0.6875rem] text-muted-foreground">
@@ -237,8 +227,8 @@ export function GraphPage() {
       <div>
         <h1 className="text-base font-semibold">Relationship Graph</h1>
         <p className="text-xs text-muted-foreground">
-          Which investigations are connected, and by what. Derived from what <code>indagis case ingest</code> has indexed —
-          nothing new is collected.
+          Which investigations are connected, and by what. Derived from what <code>indagis case ingest</code> has
+          indexed — nothing new is collected.
         </p>
       </div>
 
@@ -250,10 +240,18 @@ export function GraphPage() {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load the graph.'} title="Could not load the graph" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load the graph.'}
+          title="Could not load the graph"
+        />
+      )}
 
       {!isLoading && !error && data && data.stats.investigations === 0 && (
-        <EmptyState description="Index an evidence store with indagis case ingest to get started." title="Nothing indexed yet" />
+        <EmptyState
+          description="Index an evidence store with indagis case ingest to get started."
+          title="Nothing indexed yet"
+        />
       )}
 
       {!isLoading && !error && data && data.stats.investigations > 0 && (
@@ -310,8 +308,8 @@ export function GraphPage() {
                 <Badge variant="warn">{data.hubs.length}</Badge>
               </h2>
               <p className="mb-1.5 text-[0.6875rem] text-muted-foreground">
-                Seen in more than {data.stats.hub_threshold} cases, so they link nothing — everywhere means nowhere. That
-                they are everywhere is itself worth knowing.
+                Seen in more than {data.stats.hub_threshold} cases, so they link nothing — everywhere means nowhere.
+                That they are everywhere is itself worth knowing.
               </p>
               {data.hubs.slice(0, 6).map(hub => (
                 <div className="flex items-center justify-between gap-2 py-1 text-[0.6875rem]" key={hub.value}>

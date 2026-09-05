@@ -186,9 +186,7 @@ export function AboutSettings() {
             href="https://github.com/NousResearch/hermes-agent"
             onClick={event => {
               event.preventDefault()
-              void window.hermesDesktop?.openExternal?.(
-                'https://github.com/NousResearch/hermes-agent'
-              )
+              void window.hermesDesktop?.openExternal?.('https://github.com/NousResearch/hermes-agent')
             }}
             rel="noreferrer"
             target="_blank"

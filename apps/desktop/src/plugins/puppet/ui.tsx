@@ -11,9 +11,13 @@ import { Badge, cn, EmptyState, ErrorState, Loader, relativeTime, useQuery } fro
 import { fetchPersonas, type Persona, PERSONAS_KEY } from './api'
 
 function statusVariant(status: Persona['status']): 'default' | 'destructive' | 'muted' {
-  if (status === 'burned') {return 'destructive'}
+  if (status === 'burned') {
+    return 'destructive'
+  }
 
-  if (status === 'retired') {return 'muted'}
+  if (status === 'retired') {
+    return 'muted'
+  }
 
   return 'default'
 }
@@ -31,7 +35,10 @@ function PersonaRow({ persona }: { persona: Persona }) {
 
       <div className="mt-1 flex flex-wrap gap-1">
         {persona.platforms.map(p => (
-          <span className="rounded-[3px] bg-muted px-1.5 py-0.5 font-mono text-[0.6875rem] text-muted-foreground" key={`${p.platform}:${p.handle}`}>
+          <span
+            className="rounded-[3px] bg-muted px-1.5 py-0.5 font-mono text-[0.6875rem] text-muted-foreground"
+            key={`${p.platform}:${p.handle}`}
+          >
             {p.platform}/{p.handle}
           </span>
         ))}
@@ -54,7 +61,8 @@ export function PuppetPage() {
       <div>
         <h1 className="text-base font-semibold">Sock Puppet Manager</h1>
         <p className="text-xs text-muted-foreground">
-          OSINT persona bookkeeping — never creates accounts or content. Register one with <code>indagis puppet create</code>.
+          OSINT persona bookkeeping — never creates accounts or content. Register one with{' '}
+          <code>indagis puppet create</code>.
         </p>
       </div>
 
@@ -64,10 +72,18 @@ export function PuppetPage() {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load personas.'} title="Could not load personas" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load personas.'}
+          title="Could not load personas"
+        />
+      )}
 
       {!isLoading && !error && data && data.personas.length === 0 && (
-        <EmptyState description="Register a persona with indagis puppet create to get started." title="No personas yet" />
+        <EmptyState
+          description="Register a persona with indagis puppet create to get started."
+          title="No personas yet"
+        />
       )}
 
       {!isLoading && !error && data && data.personas.length > 0 && (

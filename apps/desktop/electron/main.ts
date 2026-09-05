@@ -9269,6 +9269,7 @@ const DATA_URL_MIME_TYPES: Record<string, string> = {
 function toDataUrl(filePath: string): string {
   const mime = DATA_URL_MIME_TYPES[path.extname(filePath).toLowerCase()] ?? 'application/octet-stream'
   const bytes = fs.readFileSync(filePath)
+
   return `data:${mime};base64,${bytes.toString('base64')}`
 }
 
@@ -9304,7 +9305,9 @@ function createSplashWindow() {
   const iconDataUrl = icon ? toDataUrl(icon) : ''
   splashWindow.loadURL(
     'data:text/html,' +
-      encodeURIComponent(`<!doctype html><html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:${getWindowBackgroundColor()}"><img src="${iconDataUrl}" width="140" height="140" alt="Indagis" /></body></html>`)
+      encodeURIComponent(
+        `<!doctype html><html><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:${getWindowBackgroundColor()}"><img src="${iconDataUrl}" width="140" height="140" alt="Indagis" /></body></html>`
+      )
   )
 
   // Safety net: if the main window's 'ready-to-show' never fires (a slow

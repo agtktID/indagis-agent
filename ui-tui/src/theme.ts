@@ -383,21 +383,21 @@ export function buildPalette(seeds: ThemeSeeds, isLight: boolean): ThemeColors {
 // Cyber Cyan accent, restrained semantic hues. Never "Matrix green" or
 // hacker aesthetics.
 export const DARK_SEEDS: ThemeSeeds = {
-  accent: '#37D5D6',           // Cyber Cyan
-  activeRow: '#1D2733',        // Graphite (identity fill for active list row)
-  bg: '#0B0F14',               // Obsidian Black
-  border: '#1E2D3D',           // Subtle border
-  error: '#C74B50',            // Evidence Red
-  ok: '#2CB67D',               // Success Green
-  primary: '#37D5D6',          // Cyber Cyan (single accent identity)
-  prompt: '#E2E8F0',           // Text primary
-  selection: '#1D2733',        // Graphite
-  shellDollar: '#B0C4D8',      // Text secondary
+  accent: '#37D5D6', // Cyber Cyan
+  activeRow: '#1D2733', // Graphite (identity fill for active list row)
+  bg: '#0B0F14', // Obsidian Black
+  border: '#1E2D3D', // Subtle border
+  error: '#C74B50', // Evidence Red
+  ok: '#2CB67D', // Success Green
+  primary: '#37D5D6', // Cyber Cyan (single accent identity)
+  prompt: '#E2E8F0', // Text primary
+  selection: '#1D2733', // Graphite
+  shellDollar: '#B0C4D8', // Text secondary
   statusBad: '#C74B50',
   statusCritical: '#C74B50',
   statusGood: '#2CB67D',
-  statusWarn: '#E0A33A',       // Amber Signal
-  surface: '#121A24',          // Midnight Slate
+  statusWarn: '#E0A33A', // Amber Signal
+  surface: '#121A24', // Midnight Slate
   text: '#E2E8F0',
   warn: '#E0A33A'
 }
@@ -410,19 +410,19 @@ export const DARK_SEEDS: ThemeSeeds = {
 // as ink. Status hues are darkened to the same WCAG-safe lift floor the
 // upstream seeds used (sRGB-luminance lift against #ffffff, target ≥4.5).
 export const LIGHT_SEEDS: ThemeSeeds = {
-  accent: '#0E7A7B',           // Cyber Cyan, darkened for light bg
+  accent: '#0E7A7B', // Cyber Cyan, darkened for light bg
   bg: '#ffffff',
-  border: '#1E2D3D',           // Subtle border (Indagis)
-  error: '#A23A3F',            // Evidence Red, darkened
-  ok: '#1F8A5F',               // Success Green, darkened
-  primary: '#0E7A7B',          // Cyber Cyan (darkened), single accent identity
-  prompt: '#0B0F14',           // Obsidian Black ink
-  shellDollar: '#2C5F8A',      // dim cyan
+  border: '#1E2D3D', // Subtle border (Indagis)
+  error: '#A23A3F', // Evidence Red, darkened
+  ok: '#1F8A5F', // Success Green, darkened
+  primary: '#0E7A7B', // Cyber Cyan (darkened), single accent identity
+  prompt: '#0B0F14', // Obsidian Black ink
+  shellDollar: '#2C5F8A', // dim cyan
   statusBad: '#A23A3F',
   statusCritical: '#A23A3F',
   statusGood: '#1F8A5F',
-  statusWarn: '#A07320',       // Amber Signal, darkened
-  surface: '#F1F5F9',          // Slate-100 (lifted Midnight Slate)
+  statusWarn: '#A07320', // Amber Signal, darkened
+  surface: '#F1F5F9', // Slate-100 (lifted Midnight Slate)
   text: '#0B0F14',
   warn: '#A07320'
 }

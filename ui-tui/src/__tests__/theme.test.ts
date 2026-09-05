@@ -281,6 +281,7 @@ describe('fromSkin', () => {
     // gold-tinted palette satisfied by coincidence.
     const empty = fromSkin({}, {}).color
     const seeded = DEFAULT_THEME.color
+
     const hexToRgb = (raw: string): [number, number, number] | null => {
       const h = raw.replace(/^#/, '')
 
@@ -288,11 +289,7 @@ describe('fromSkin', () => {
         return null
       }
 
-      return [
-        parseInt(h.slice(0, 2), 16),
-        parseInt(h.slice(2, 4), 16),
-        parseInt(h.slice(4, 6), 16)
-      ]
+      return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]
     }
 
     for (const key of Object.keys(seeded) as Array<keyof typeof seeded>) {
@@ -602,11 +599,7 @@ describe('background-aware adaptation (OSC-11 light terminals)', () => {
         return null
       }
 
-      return [
-        parseInt(h.slice(0, 2), 16),
-        parseInt(h.slice(2, 4), 16),
-        parseInt(h.slice(4, 6), 16)
-      ]
+      return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]
     }
 
     const empty = dark.fromSkin({}, {}).color

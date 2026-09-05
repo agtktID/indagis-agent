@@ -166,8 +166,8 @@ async function locateHermes(ssh, remoteHermesPath) {
 
     const err: any = new Error(
       `The Indagis path you set is not an executable on the remote host: "${remoteHermesPath}". ` +
-      'Check the path (it must be the full path to the `indagis` binary on the remote, e.g. ' +
-      '~/indagis-agent/.venv/bin/indagis), or clear it to auto-detect.'
+        'Check the path (it must be the full path to the `indagis` binary on the remote, e.g. ' +
+        '~/indagis-agent/.venv/bin/indagis), or clear it to auto-detect.'
     )
 
     err.kind = 'hermes-not-found'

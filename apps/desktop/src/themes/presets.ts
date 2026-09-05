@@ -60,7 +60,7 @@ export const nousTheme: DesktopTheme = {
     mutedForeground: '#475569',
     popover: '#FFFFFF',
     popoverForeground: INDAGIS_OBSIDIAN,
-    primary: '#0E7A7B',         // Cyber Cyan darkened for light bg
+    primary: '#0E7A7B', // Cyber Cyan darkened for light bg
     primaryForeground: '#FFFFFF',
     secondary: '#E2E8F0',
     secondaryForeground: '#1E293B',
@@ -294,11 +294,8 @@ export const slateTheme: DesktopTheme = {
   }
 }
 
-
 /** Skin used when nothing is persisted or the persisted name is retired. */
 export const DEFAULT_SKIN_NAME = 'indagis'
-
-
 
 export const indagisTheme: DesktopTheme = {
   name: 'indagis',
@@ -345,5 +342,5 @@ export const BUILTIN_THEMES: Record<string, DesktopTheme> = {
   slate: slateTheme
 }
 
-export const BUILTIN_THEME_LIST = Object.values(BUILTIN_THEMES).filter(t => t.name !== "indagis")
+export const BUILTIN_THEME_LIST = Object.values(BUILTIN_THEMES).filter(t => t.name !== 'indagis')
 export const ALL_THEMES_INCLUDING_INDAGIS = [...BUILTIN_THEME_LIST, indagisTheme]

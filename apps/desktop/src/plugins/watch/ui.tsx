@@ -12,9 +12,13 @@ import { Badge, cn, EmptyState, ErrorState, Loader, relativeTime, useQuery } fro
 import { fetchRules, RULES_KEY, type WatchRule } from './api'
 
 function statusVariant(rule: WatchRule): 'default' | 'destructive' | 'warn' {
-  if (!rule.enabled) {return 'warn'}
+  if (!rule.enabled) {
+    return 'warn'
+  }
 
-  if (rule.last_status && rule.last_status !== 'ok') {return 'destructive'}
+  if (rule.last_status && rule.last_status !== 'ok') {
+    return 'destructive'
+  }
 
   return 'default'
 }
@@ -56,10 +60,18 @@ export function WatchPage() {
         </div>
       )}
 
-      {error && <ErrorState description={error instanceof Error ? error.message : 'Failed to load watch rules.'} title="Could not load rules" />}
+      {error && (
+        <ErrorState
+          description={error instanceof Error ? error.message : 'Failed to load watch rules.'}
+          title="Could not load rules"
+        />
+      )}
 
       {!isLoading && !error && data && data.rules.length === 0 && (
-        <EmptyState description="Create a watch rule with indagis watch create to get started." title="No watch rules yet" />
+        <EmptyState
+          description="Create a watch rule with indagis watch create to get started."
+          title="No watch rules yet"
+        />
       )}
 
       {!isLoading && !error && data && data.rules.length > 0 && (

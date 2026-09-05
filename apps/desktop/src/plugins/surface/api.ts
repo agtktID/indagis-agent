@@ -50,5 +50,6 @@ export const snapshotsKey = (target: string) => ['surface', 'snapshots', target]
 export const diffKey = (target: string) => ['surface', 'diff', target] as const
 
 export const fetchTargets = () => call<{ targets: Target[] }>('/targets')
-export const fetchSnapshots = (target: string) => call<{ snapshots: SnapshotEntry[] }>(`/snapshots?target=${encodeURIComponent(target)}`)
+export const fetchSnapshots = (target: string) =>
+  call<{ snapshots: SnapshotEntry[] }>(`/snapshots?target=${encodeURIComponent(target)}`)
 export const fetchDiff = (target: string) => call<DiffResult>(`/diff?target=${encodeURIComponent(target)}`)
