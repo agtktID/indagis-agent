@@ -2375,11 +2375,16 @@ function Install-Venv {
             } catch {
                 Write-Warn "Could not enumerate gateway scheduled tasks: $($_.Exception.Message)"
             }
-            # The launcher CLI (indagis.exe) plus its child tree. The console
-            # script is `indagis` ([project.scripts] in pyproject.toml); the
-            # old hermes.exe image name matched nothing after the rename.
+            # The launcher CLI plus its child tree. BOTH image names are needed
+            # and neither is redundant: a current install builds indagis.exe
+            # ([project.scripts] defines `indagis`), while a reinstall over a
+            # pre-rename home -- the %LOCALAPPDATA%\hermes fallback this script
+            # deliberately supports -- still has hermes.exe in its venv, running
+            # and holding .pyd files open. Killing only one leaves the other
+            # locking the venv this branch is about to delete.
             & taskkill /F /T /IM indagis.exe /FI "PID ne $myPid" 2>$null | Out-Null
-            # taskkill /IM indagis.exe is NOT enough: the gateway/agent that a
+            & taskkill /F /T /IM hermes.exe /FI "PID ne $myPid" 2>$null | Out-Null
+            # taskkill /IM is NOT enough for either name: the gateway/agent that a
             # scheduled task or watchdog autostarts runs as
             # `pythonw.exe -m hermes_cli.main gateway run` straight out of
             # venv\Scripts\, so its image name is python/pythonw, not indagis.exe.
