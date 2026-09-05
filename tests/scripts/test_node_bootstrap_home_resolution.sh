@@ -230,7 +230,11 @@ chmod +x "$SCENARIO_BODY"
 env -i HOME="$TEST_TMP" USERPROFILE="$TEST_TMP" LOCALAPPDATA="" PATH="/usr/bin:/bin" \
     bash "$SCENARIO_BODY"
 
-warn_count="$(wc -c <"$COUNTER" 2>/dev/null || echo 0)"
+# `2>/dev/null` silences wc, not the redirection: when $COUNTER is absent
+# bash reports "No such file or directory" on its own stderr before wc
+# ever runs. The result was right (absent counter == no warning fired)
+# but the run leaked an error line that reads like a failure.
+if [ -f "$COUNTER" ]; then warn_count="$(wc -c <"$COUNTER")"; else warn_count=0; fi
 
 if [ "$warn_count" -eq 0 ]; then
     PASS=$((PASS + 1))

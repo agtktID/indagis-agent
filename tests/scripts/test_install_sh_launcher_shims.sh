@@ -36,6 +36,20 @@ set -o pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 INSTALL_SH="$REPO_ROOT/scripts/install.sh"
 
+# This test asserts shims land in $HOME/.local/bin, which is where
+# get_command_link_dir() sends a NON-ROOT install. As root it returns
+# /usr/local/bin instead, so the assertion below fails for a reason that has
+# nothing to do with the code under test — and, worse, the run really does
+# write six launchers into the system /usr/local/bin on the way there.
+# Refuse rather than pollute. CI runs as an unprivileged user, so this skip
+# does not weaken the check where it matters.
+if [ "$(id -u)" -eq 0 ]; then
+    echo "SKIP: running as root — setup_path targets /usr/local/bin, not"
+    echo "      \$HOME/.local/bin, and running it here would install six"
+    echo "      launchers system-wide. Run as an unprivileged user."
+    exit 0
+fi
+
 if [ ! -f "$INSTALL_SH" ]; then
     echo "FATAL: install.sh not found at $INSTALL_SH" >&2
     exit 2
@@ -115,7 +129,7 @@ SHIM_DIR="$TEST_TMP/.local/bin"
 if [ ! -d "$SHIM_DIR" ]; then
     FAIL=$((FAIL + 1))
     FAILURES+=("shim dir $SHIM_DIR not created (setup_path did not run). stderr: $(cat "$INSTALL_STDERR")")
-    echo "  FAIL: shim directory $SHIM_DIR was created by setup_path"
+    echo "  FAIL: shim directory $SHIM_DIR was NOT created by setup_path"
     exit 1
 else
     PASS=$((PASS + 1))
