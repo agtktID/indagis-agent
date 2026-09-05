@@ -439,7 +439,21 @@ import functools as _functools
 
 from hermes_cli.sessions_cmd import cmd_sessions  # noqa: F401
 from hermes_cli.subcommands._shared import add_accept_hooks_flag as _add_accept_hooks_flag
+from hermes_cli.subcommands.airgap import build_airgap_parser
+from hermes_cli.subcommands.bounty import build_bounty_parser
+from hermes_cli.subcommands.case import build_case_parser
+from hermes_cli.subcommands.dossier import build_dossier_parser
+from hermes_cli.subcommands.attribution import build_attribution_parser
+from hermes_cli.subcommands.puppet import build_puppet_parser
 from hermes_cli.subcommands.cron import build_cron_parser
+from hermes_cli.subcommands.custody import build_custody_parser
+from hermes_cli.subcommands.graph import build_graph_parser
+from hermes_cli.subcommands.image import build_image_parser
+from hermes_cli.subcommands.intel import build_intel_parser
+from hermes_cli.subcommands.rules import build_rules_parser
+from hermes_cli.subcommands.scope import build_scope_parser
+from hermes_cli.subcommands.surface import build_surface_parser
+from hermes_cli.subcommands.watch import build_watch_parser
 from hermes_cli.subcommands.sync import build_sync_parser
 from hermes_cli.subcommands.gateway import build_gateway_parser
 from hermes_cli.subcommands.profile import build_profile_parser
@@ -4584,6 +4598,107 @@ def cmd_cron(args):
     from hermes_cli.cron import cron_command
 
     cron_command(args)
+
+
+def cmd_watch(args):
+    """Signal Watch — proactive alert rules built on cron."""
+    from hermes_cli.watch import watch_command
+
+    watch_command(args)
+
+
+def cmd_case(args):
+    """Case Memory — cross-investigation IOC correlation index."""
+    from hermes_cli.case_memory import case_command
+
+    case_command(args)
+
+
+def cmd_dossier(args):
+    """Dossier Builder — Markdown investigation report from an evidence store."""
+    from hermes_cli.dossier import dossier_command
+
+    dossier_command(args)
+
+
+def cmd_attribution(args):
+    """Attribution Confidence Scorer — NATO/Admiralty source-reliability rating."""
+    from hermes_cli.attribution import attribution_command
+
+    attribution_command(args)
+
+
+def cmd_puppet(args):
+    """Sock Puppet Manager — OSINT persona bookkeeping (footprint, rotation, isolation)."""
+    from hermes_cli.puppet import puppet_command
+
+    puppet_command(args)
+
+
+def cmd_bounty(args):
+    """Bounty Ledger — payout/ROI tracker for bug bounty submissions."""
+    from hermes_cli.bounty import bounty_command
+
+    bounty_command(args)
+
+
+def cmd_scope(args):
+    """Scope Sync — imported bounty scope, checked locally against targets."""
+    from hermes_cli.scope import scope_command
+
+    # Returned so `scope check` can exit non-zero: main() turns a non-zero
+    # int from a handler into sys.exit(). Swallowing it here is what made
+    # `scope check` a gate that never refuses.
+    return scope_command(args)
+
+
+def cmd_airgap(args):
+    """Air Gap — pause network-reaching automations for a confidential engagement."""
+    from hermes_cli.airgap import airgap_command
+
+    airgap_command(args)
+
+
+def cmd_custody(args):
+    """Custody Chain — Ed25519 signing and verification for evidence exports."""
+    from hermes_cli.custody import custody_command
+
+    return custody_command(args)
+
+
+def cmd_graph(args):
+    """Relationship graph — which investigations are connected, by what."""
+    from hermes_cli.graph_cmd import graph_command
+
+    graph_command(args)
+
+
+def cmd_image(args):
+    """Image Intel — EXIF, GPS and device fingerprints from a photograph."""
+    from hermes_cli.image_cmd import image_command
+
+    image_command(args)
+
+
+def cmd_surface(args):
+    """Surface Diff — continuous recon with automatic diffing."""
+    from hermes_cli.surface import surface_command
+
+    surface_command(args)
+
+
+def cmd_intel(args):
+    """Threat-intel lookups — first-party connectors, no bundled third-party MCP server."""
+    from hermes_cli.intel import intel_command
+
+    intel_command(args)
+
+
+def cmd_rules(args):
+    """Rule Forge — auto-generate Sigma/YARA rules from Case Memory findings."""
+    from hermes_cli.rules import rules_command
+
+    rules_command(args)
 
 
 def cmd_sync(args):
@@ -10619,8 +10734,8 @@ def _build_provider_choices() -> list[str]:
 # to parse.
 _BUILTIN_SUBCOMMANDS = frozenset(
     {
-        "acp", "approvals", "auth", "backup", "bundles", "checkpoints", "claw", "completion",
-        "computer-use",
+        "acp", "airgap", "approvals", "attribution", "auth", "backup", "bounty", "bundles", "case", "checkpoints", "claw", "completion",
+        "computer-use", "custody", "dossier", "graph", "image", "intel", "puppet", "rules", "scope", "surface",
         "config", "console", "cron", "curator", "dashboard", "serve", "debug", "doctor",
         "dump", "egress", "fallback", "gateway", "hooks", "import", "import-agent", "insights",
         "gui", "desktop", "kanban", "login", "logout", "logs", "lsp", "mcp", "memory", "migrate", "moa",
@@ -10631,6 +10746,7 @@ _BUILTIN_SUBCOMMANDS = frozenset(
         "send", "sessions", "setup",
         "skin", "skills", "slack", "status", "sync", "tools", "uninstall", "update",
         "version", "webhook", "whatsapp", "whatsapp-cloud", "chat", "secrets", "security",
+        "watch",
         # Help-ish invocations — plugin commands not being listed in
         # top-level --help is an acceptable trade-off for skipping an
         # expensive eager import of every bundled plugin module.
@@ -11500,6 +11616,20 @@ def main():
     # cron command  (parser built in hermes_cli/subcommands/cron.py)
     # =========================================================================
     build_cron_parser(subparsers, cmd_cron=cmd_cron)
+    build_watch_parser(subparsers, cmd_watch=cmd_watch)
+    build_case_parser(subparsers, cmd_case=cmd_case)
+    build_dossier_parser(subparsers, cmd_dossier=cmd_dossier)
+    build_attribution_parser(subparsers, cmd_attribution=cmd_attribution)
+    build_puppet_parser(subparsers, cmd_puppet=cmd_puppet)
+    build_bounty_parser(subparsers, cmd_bounty=cmd_bounty)
+    build_scope_parser(subparsers, cmd_scope=cmd_scope)
+    build_airgap_parser(subparsers, cmd_airgap=cmd_airgap)
+    build_custody_parser(subparsers, cmd_custody=cmd_custody)
+    build_image_parser(subparsers, cmd_image=cmd_image)
+    build_graph_parser(subparsers, cmd_graph=cmd_graph)
+    build_intel_parser(subparsers, cmd_intel=cmd_intel)
+    build_surface_parser(subparsers, cmd_surface=cmd_surface)
+    build_rules_parser(subparsers, cmd_rules=cmd_rules)
     build_sync_parser(subparsers, cmd_sync=cmd_sync)
 
     # =========================================================================

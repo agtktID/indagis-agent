@@ -3,20 +3,39 @@
 </p>
 
 # Indagis Agent
+
 <p align="center">
-  <a href="https://github.com/agtktID/indagis-agent">Indagis Agent</a> | <a href="https://github.com/agtktID/indagis-agent">Indagis Desktop</a>
-</p>
-<p align="center">
-  <a href="https://github.com/agtktID/indagis-agent/tree/main/website/docs/"><img src="https://img.shields.io/badge/Docs-Indagis%20Docs-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://github.com/agtktID/indagis-agent"><b>Indagis Agent</b></a> (CLI &amp; gateway) &nbsp;·&nbsp; <a href="apps/desktop/README.md"><b>Indagis Desktop</b></a> (Electron app)
 </p>
 
-**Indagis Agent is an AI workspace for cybersecurity investigation** — OSINT, threat intel, and DFIR. It has a closed learning loop: it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://github.com/agtktID/indagis-agent/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/agtktID/indagis-agent/ci.yml?style=for-the-badge&label=CI" alt="CI status"></a>
+  <img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11–3.13">
+  <a href="https://github.com/agtktID/indagis-agent/stargazers"><img src="https://img.shields.io/github/stars/agtktID/indagis-agent?style=for-the-badge&color=FFD700" alt="GitHub stars"></a>
+</p>
+
+<p align="center">
+  <a href="#quick-install"><img src="https://img.shields.io/badge/Quick_Start-2ea44f?style=for-the-badge" alt="Quick Start"></a>
+  <a href="https://github.com/agtktID/indagis-agent/tree/main/website/docs/"><img src="https://img.shields.io/badge/Documentation-FFD700?style=for-the-badge" alt="Documentation"></a>
+  <a href="#contributing"><img src="https://img.shields.io/badge/Contributing-blue?style=for-the-badge" alt="Contributing"></a>
+</p>
+
+<p align="center">
+  <b>An AI workspace for cybersecurity investigation</b> — OSINT, threat intel, and DFIR.
+</p>
+
+Indagis Agent has a closed learning loop: it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
 
 Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many others](https://github.com/agtktID/indagis-agent/blob/main/website/docs/integrations/providers.md). Switch with `indagis model` — no code changes, no lock-in.
 
+---
+
+## Features
+
 <table>
 <tr><td><b>Authorization-gated investigations</b></td><td>Security work is tracked as a persisted <code>Investigation</code>: an objective, an authorized scope, evidence, findings and a timeline. Every recorded target is checked against that scope before it is written (fail-closed), with Markdown/JSON export.</td></tr>
+<tr><td><b>An investigation command suite</b></td><td>Thirteen investigation subsystems — scope authorization, IOC correlation, a cross-case relationship graph, attribution scoring, evidence signing, sock puppets, bounty tracking, continuous recon and more — each a CLI command with a matching read-only desktop panel. <a href="#the-investigation-suite">See the table below</a>.</td></tr>
 <tr><td><b>A real terminal interface</b></td><td>Full TUI with multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output.</td></tr>
 <tr><td><b>Lives where you do</b></td><td>Telegram, Discord, Slack, WhatsApp, Signal, and CLI — all from a single gateway process. Voice memo transcription, cross-platform conversation continuity.</td></tr>
 <tr><td><b>A closed learning loop</b></td><td>Agent-curated memory with periodic nudges. Autonomous skill creation after complex tasks. Skills self-improve during use. FTS5 session search with LLM summarization for cross-session recall. <a href="https://github.com/plastic-labs/honcho">Honcho</a> dialectic user modeling. Compatible with the <a href="https://agentskills.io">agentskills.io</a> open standard.</td></tr>
@@ -25,6 +44,40 @@ Use any model you want — OpenRouter, OpenAI, your own endpoint, and [many othe
 <tr><td><b>Runs anywhere, not just your laptop</b></td><td>Seven terminal backends — local, Docker, SSH, Singularity, Modal, Daytona, and Vercel Sandbox. Daytona and Modal offer serverless persistence — your agent's environment hibernates when idle and wakes on demand, costing nearly nothing between sessions. Run it on a $5 VPS or a GPU cluster.</td></tr>
 <tr><td><b>Research-ready</b></td><td>Batch trajectory generation, trajectory compression for training the next generation of tool-calling models.</td></tr>
 </table>
+
+---
+
+## The investigation suite
+
+Thirteen subsystems built for the work an investigator actually does. Each is a CLI command with a **read-only desktop panel** that renders it — the panel never writes, so nothing in the UI can mutate an investigation behind your back. Twelve own their state on disk; the thirteenth, the relationship graph, derives its whole view from what Case Memory has already indexed rather than adding a store of its own.
+
+| Subsystem | Command | What it does |
+| --- | --- | --- |
+| **Scope Sync** | `indagis scope` | Import an authorized scope export from your bounty dashboard, then `scope check <target>` before you touch anything. **Out-of-scope always wins** over an in-scope match elsewhere. `scope autopilot` onboards every in-scope host onto continuous recon. |
+| **Relationship Graph** | `indagis graph` | Which investigations are connected, through which indicators, and how strongly. An indicator seen in too many cases is reported but **links nothing** — everywhere means nowhere, and one banal address would otherwise wire every case together. |
+| **Case Memory** | `indagis case` | One index of every IOC across every investigation, so an indicator seen in a new case surfaces the earlier case it came from. |
+| **Attribution Confidence** | `indagis attribution` | Scores findings on the NATO/Admiralty scale (source reliability A–F × information credibility 1–6). A cross-case corroboration upgrades credibility, because an independent investigation *is* an independent source. |
+| **Dossier Builder** | `indagis dossier build` | Renders an evidence store as a Markdown dossier, with a SHA-256 integrity re-check over every item. |
+| **Custody Chain** | `indagis custody` | Ed25519 signing for evidence exports. The private key never leaves the machine — the dashboard only ever exposes key *names* and public keys. |
+| **Image Intel** | `indagis image` | EXIF forensics on a photograph: GPS coordinates, capture timestamps, and the camera serial numbers that tie separate photographs to one physical device. `image scrub` writes a metadata-free copy for publication, always to a new path. |
+| **Sock Puppet Manager** | `indagis puppet` | Bookkeeping for research personas: platform footprint, investigation, burn status. It records personas; it never creates accounts or content. |
+| **Surface Diff** | `indagis surface` | Snapshots an attack surface (DNS, HTTP, HTTPS, TLS certificate) and diffs consecutive snapshots so drift is visible. |
+| **Signal Watch** | `indagis watch` | Scheduled IOC/target watches delivered to any messaging platform. |
+| **Breach Radar** | `indagis intel breach-email` · `breach-domain` | Breach exposure checks for an address or a domain. |
+| **Bounty Ledger** | `indagis bounty` | Submissions, statuses and payouts. Payouts stay per-currency — nothing is summed across currencies, because no exchange rate exists in the stack. |
+| **Air Gap** | `indagis airgap` | A confidential-engagement kill switch that holds outbound integrations. |
+
+Plus **MCP Vetting Firewall** (`indagis mcp audit`) — a tool-poisoning scanner for MCP servers.
+
+📖 Full syntax: **[Investigation Commands Reference](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md)**
+
+### Mission Control
+
+The desktop app ships a **Mission Control** board that aggregates the whole suite into one operational overview: headline counts, per-subsystem readiness, coverage across the toolchain, and banners for the states that need to interrupt you (air gap engaged, scope exclusions in force).
+
+It computes nothing of its own — every figure is read from the state module that already owns it, each subsystem is probed defensively so an unconfigured feature reads as *no data* rather than blanking the board, and readiness reflects real fields rather than a synthetic score.
+
+All twelve panels ship **off by default** and are enabled individually under **Settings ▸ Plugins**.
 
 ---
 
@@ -52,49 +105,24 @@ If you already have Git installed, the installer detects it and uses that instea
 
 > **Android / Termux:** The tested manual path is documented in the [Termux guide](https://github.com/agtktID/indagis-agent/blob/main/website/docs/getting-started/termux.md). On Termux, Indagis Agent installs a curated `.[termux]` extra because the full `.[all]` extra currently pulls Android-incompatible voice dependencies.
 
-> **Windows:** Native Windows is fully supported — the PowerShell one-liner above installs everything. If you'd rather use WSL2, the Linux command works there too. A fresh native Windows install lives under `%LOCALAPPDATA%\indagis`; WSL2 installs under `~/.indagis` as on Linux. An existing `%LOCALAPPDATA%\hermes` / `~/.hermes` from before the rename keeps being used — the installer prefers it over creating a second home, so upgrades stay in place.
+> **Where it installs:** native Windows uses `%LOCALAPPDATA%\indagis`; WSL2 uses `~/.indagis` as on Linux. An existing `%LOCALAPPDATA%\hermes` / `~/.hermes` from before the rename keeps being used — the installer prefers it over creating a second home, so upgrades stay in place.
 
-After installation:
+After installation, on Linux, macOS or WSL2:
 
 ```bash
 source ~/.bashrc    # reload shell (or: source ~/.zshrc)
-indagis            # start chatting!
+indagis             # start chatting!
 ```
 
-### Troubleshooting
-
-#### Windows Defender or antivirus flags `uv.exe` as malware
-
-If your antivirus (Bitdefender, Windows Defender, etc.) quarantines `uv.exe` from the Indagis Agent install's `bin` folder (`%LOCALAPPDATA%\indagis\bin\uv.exe`), this is a **false positive**. The file is Astral's `uv` — the Rust Python package manager Indagis Agent bundles to manage its Python environment. ML-based antivirus engines commonly flag unsigned Rust binaries that download and install packages.
-
-**To verify your copy is authentic:**
+On native Windows there is nothing to source — the installer writes your
+**User PATH**, which only new shells read. Close PowerShell, open a new
+window, and run:
 
 ```powershell
-# Install GitHub CLI if needed
-winget install --id GitHub.cli
-
-# Login to GitHub
-gh auth login
-
-# Run verification
-$uv = "$env:LOCALAPPDATA\indagis\bin\uv.exe"
-$ver = (& $uv --version).Split(' ')[1]
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$zip = "$env:TEMP\uv.zip"
-Invoke-WebRequest "https://github.com/astral-sh/uv/releases/download/$ver/uv-x86_64-pc-windows-msvc.zip" -OutFile $zip -UseBasicParsing
-gh attestation verify $zip --repo astral-sh/uv
-Expand-Archive $zip "$env:TEMP\uv_x" -Force
-(Get-FileHash "$env:TEMP\uv_x\uv.exe").Hash -eq (Get-FileHash $uv).Hash
+indagis
 ```
 
-If attestation says "Verification succeeded" and the last line prints `True`, you're good.
-
-**To whitelist the Indagis install:**
-- **Windows Defender:** Run PowerShell as Admin → `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\indagis\bin"`
-- **Bitdefender:** Add an exception in the Bitdefender console (Protection > Antivirus > Settings > Manage Exceptions)
-- Whitelist the **folder**, not the file hash — Indagis Agent inherits `uv` updates from the upstream release and the hash changes every version
-
-For more context, see the upstream Astral reports: [astral-sh/uv#13553](https://github.com/astral-sh/uv/issues/13553), [astral-sh/uv#15011](https://github.com/astral-sh/uv/issues/15011), [astral-sh/uv#10079](https://github.com/astral-sh/uv/issues/10079).
+> **Antivirus flagged `uv.exe`?** It's a false positive on the bundled Astral `uv` binary. [How to verify and whitelist it →](https://github.com/agtktID/indagis-agent/blob/main/website/docs/user-guide/windows-native.md#antivirus-flags-uvexe-as-malware)
 
 ---
 
@@ -162,6 +190,36 @@ indagis update       # Update to the latest version
 indagis doctor       # Diagnose any issues
 ```
 
+Investigation work has its own verbs:
+
+```bash
+indagis scope import <program> <file>   # Load an authorized scope export
+indagis scope check <target>            # Am I allowed to touch this? (out-of-scope wins)
+indagis case ingest <store>             # Index an evidence store into Case Memory
+indagis graph show                      # Which cases are connected, and by what
+indagis attribution score <store>       # Admiralty reliability × credibility
+indagis dossier build <store>           # Render the case as a Markdown dossier
+indagis image inspect <file>            # EXIF, GPS and device fingerprint from a photo
+indagis surface snapshot <target>       # Snapshot an attack surface; diff on the next run
+indagis watch create ...                # Schedule an IOC/target watch
+indagis custody keygen <name>           # Ed25519 key for signing evidence exports
+indagis airgap lockdown                 # Hold outbound integrations for a confidential job
+```
+
+Two of those are safety gates, so they are scriptable — they exit non-zero
+when they refuse, and you can branch on which refusal it was:
+
+```bash
+indagis scope check "$target" && run_scan "$target"   # never scans an out-of-scope host
+indagis custody verify case.json && ship_evidence     # never ships a tampered store
+```
+
+| Exit | `scope check`                        | `custody verify`                       |
+| ---- | ------------------------------------ | -------------------------------------- |
+| `0`  | in scope                             | signature valid                        |
+| `1`  | **out of scope — do not test**       | **tampered, or signature invalid**     |
+| `2`  | no rule matched — treat as out of scope | not signed, or could not be read     |
+
 📖 **[Full documentation →](https://github.com/agtktID/indagis-agent/tree/main/website/docs/)**
 
 ---
@@ -206,37 +264,23 @@ Documentation lives at **[website/docs/](https://github.com/agtktID/indagis-agen
 | [Architecture](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/architecture.md)             | Project structure, agent loop, key classes                 |
 | [Contributing](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/contributing.md)             | Development setup, PR process, code style                  |
 | [CLI Reference](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/cli-commands.md)                  | All commands and flags                                     |
+| [Investigation Commands](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/investigation-commands.md) | Case Memory, Relationship Graph, Dossier Builder, Attribution Scoring, Image Intel, Sock Puppet Manager, Bounty Ledger, Scope Sync, Air Gap, Custody Chain, Surface Diff, Signal Watch, MCP Vetting Firewall |
 | [Environment Variables](https://github.com/agtktID/indagis-agent/blob/main/website/docs/reference/environment-variables.md) | Complete env var reference                                 |
 
 ---
 
-## Migrating from OpenClaw
+## Coming from another agent
 
-If you're coming from OpenClaw, Indagis Agent can automatically import your settings, memories, skills, and API keys.
+`indagis setup` detects an existing `~/.openclaw` and offers to migrate before
+configuration begins. Anytime after install, `indagis claw migrate --dry-run`
+previews what would move — persona, memories, skills, approval patterns,
+messaging config and TTS assets. **No preset imports API keys silently**;
+that needs an explicit `--migrate-secrets`.
 
-**During first-time setup:** The setup wizard (`indagis setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
+Migrating from **Claude Code** or **OpenAI Codex CLI** instead? That's
+`indagis import-agent`, same preview-first flow.
 
-**Anytime after install:**
-
-```bash
-indagis claw migrate              # Interactive migration (full preset)
-indagis claw migrate --dry-run    # Preview what would be migrated
-indagis claw migrate --preset user-data   # Migrate without secrets
-indagis claw migrate --overwrite  # Overwrite existing conflicts
-```
-
-What gets imported:
-
-- **SOUL.md** — persona file
-- **Memories** — MEMORY.md and USER.md entries
-- **Skills** — user-created skills → `~/.indagis/skills/openclaw-imports/`
-- **Command allowlist** — approval patterns
-- **Messaging settings** — platform configs, allowed users, working directory
-- **API keys** — allowlisted secrets (Telegram, OpenRouter, OpenAI, Anthropic, ElevenLabs)
-- **TTS assets** — workspace audio files
-- **Workspace instructions** — AGENTS.md (with `--workspace-target`)
-
-See `indagis claw migrate --help` for all options, or use the `openclaw-migration` skill for an interactive agent-guided migration with dry-run previews.
+📖 [Migrate from OpenClaw](https://github.com/agtktID/indagis-agent/blob/main/website/docs/guides/migrate-from-openclaw.md) · [Import from other agents](https://github.com/agtktID/indagis-agent/blob/main/website/docs/user-guide/import-from-other-agents.md)
 
 ---
 
@@ -244,10 +288,9 @@ See `indagis claw migrate --help` for all options, or use the `openclaw-migratio
 
 We welcome contributions! See the [Contributing Guide](https://github.com/agtktID/indagis-agent/blob/main/website/docs/developer-guide/contributing.md) for development setup, code style, and PR process.
 
-Quick start for contributors — use the standard installer, then work from the
-full git checkout it creates at `$INDAGIS_HOME/hermes-agent` (usually
-`~/.indagis/hermes-agent`). This matches the layout used by `indagis update`, the
-managed venv, lazy dependencies, gateway, and docs tooling.
+Run the standard installer, then work from the git checkout it creates at
+`$INDAGIS_HOME/hermes-agent` — that layout is what `indagis update`, the managed
+venv, the gateway and the docs tooling all expect.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.sh | bash
@@ -256,20 +299,10 @@ uv pip install -e ".[all,dev]"
 scripts/run_tests.sh
 ```
 
-Manual clone fallback (for throwaway clones/CI where you intentionally do not
-want the managed install layout):
-
-Create the venv outside the cloned source tree — a venv inside the directory
-the agent operates from can be wiped by a relative-path command the agent runs
-against its own checkout, destroying the running runtime mid-session.
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-uv venv ~/.indagis/venvs/indagis-dev --python 3.11
-source ~/.indagis/venvs/indagis-dev/bin/activate
-uv pip install -e ".[all,dev]"
-scripts/run_tests.sh
-```
+> If you clone manually instead, put the venv **outside** the source tree. A venv
+> inside the directory the agent operates on can be wiped by a relative-path
+> command the agent runs against its own checkout — destroying the runtime
+> mid-session.
 
 ---
 
@@ -293,25 +326,26 @@ MIT — see [LICENSE](LICENSE).
 
 ### Roadmap — cybersecurity-specialised skills
 
-This differentiation lives in the **skill library** under `optional-skills/`. This roadmap lists the cybersecurity-specialised skills built for the Indagis skill catalog. Each entry is a self-contained skill that wraps an existing CLI or API and an LLM-facing prompt — the agent invokes the skill, the skill wraps the tool, no custom Python integration is required. The skill engine handles all of these without modification.
+This differentiation lives in the **skill library**, under `skills/security/` (bundled, active by default) and `optional-skills/security/` (opt-in). This roadmap lists the cybersecurity-specialised skills built for the Indagis skill catalog. Each entry is a self-contained skill that wraps an existing CLI or API and an LLM-facing prompt — the agent invokes the skill, the skill wraps the tool, no custom Python integration is required. The skill engine handles all of these without modification.
 
 | Skill | Domain | Wraps | Status |
 |---|---|---|---|
-| `shodan-search` | Recon | Shodan REST API | Shipped |
-| `misp-query` | Threat intel | MISP REST API (`pymisp` or `curl`) | Shipped |
-| `virustotal-lookup` | Threat intel | VirusTotal v3 API | Shipped |
-| `sigma-rule-search` | Detection engineering | `sigma-cli` or PyPI `sigma` | Shipped |
-| `yara-scan` | File / memory scanning | `yara` CLI | Shipped |
-| `mitm-traffic-capture` | Recon / API traffic capture | `mitmproxy` CLI | Shipped |
-| `mitm-traffic-audit` | API security / bug-bounty methodology | `mitmproxy` capture + `curl` | Shipped |
+| `shodan-search` | Recon | Shodan REST API | Shipped — bundled |
+| `misp-query` | Threat intel | MISP REST API (`pymisp` or `curl`) | Shipped — optional |
+| `virustotal-lookup` | Threat intel | VirusTotal v3 API | Shipped — bundled |
+| `sigma-rule-search` | Detection engineering | `sigma-cli` or PyPI `sigma` | Shipped — bundled |
+| `yara-scan` | File / memory scanning | `yara` CLI | Shipped — bundled |
+| `mitm-traffic-capture` | Recon / API traffic capture | `mitmproxy` CLI | Shipped — optional |
+| `mitm-traffic-audit` | API security / bug-bounty methodology | `mitmproxy` capture + `curl` | Shipped — optional |
+| `dfir-toolkit` | Memory / disk forensics | Volatility3 (`vol`) + The Sleuth Kit (`mmls`, `fls`, `icat`, …) | Shipped — optional |
 | `mvt-android-triage` | Mobile DFIR | MVT (Mobile Verification Toolkit) CLI | Planned (Phase 5) |
 | `velociraptor-hunt` | DFIR / endpoint | Velociraptor `velociraptor` CLI | Planned (Phase 5) |
 | `osquery-investigate` | Endpoint live forensics | `osqueryi` shell | Planned (Phase 5) |
 | `wireshark-tshark` | Network forensics | `tshark` / `editcap` | Planned (Phase 5) |
 | `chainsaw-evtx` | Log forensics (Windows EVTX) | Chainsaw CLI | Planned (Phase 5) |
 
-Shipped skills land under `optional-skills/security/` as standalone `SKILL.md` + `references/` files (the format documented in `CONTRIBUTING.md`, reviewed against its Skill-vs-Tool decision criteria); they ship with the repo but aren't activated by default. The remaining entries are still planned.
+Shipped skills land as standalone `SKILL.md` + `references/` files (the format documented in `CONTRIBUTING.md`, reviewed against its Skill-vs-Tool decision criteria). The **bundled** ones live under `skills/security/` and are active from install — no setup step required. The **optional** ones live under `optional-skills/security/` and ship with the repo but aren't activated by default; install one with `indagis skills install official/security/<name>`. The remaining entries are still planned.
 
-**Status of shipped skills today:** 7 of the 12 roadmap entries above — `shodan-search`, `misp-query`, `virustotal-lookup`, `sigma-rule-search`, `yara-scan`, `mitm-traffic-capture`, and `mitm-traffic-audit` — are shipped under `optional-skills/security/`. The remaining 5 are still planned; operators who want to test one early should file an issue with the workflow they want to automate.
+**Status of shipped skills today:** of the 8 shipped roadmap entries above, 4 — `shodan-search`, `virustotal-lookup`, `sigma-rule-search`, `yara-scan` — are bundled and active by default; `misp-query`, `mitm-traffic-capture`, `mitm-traffic-audit`, and `dfir-toolkit` stay optional (they need a MISP instance, an active mitmproxy capture, or heavyweight forensics tooling on `PATH` — not a fit for a default loadout). Outside this roadmap table, `sherlock`, `domain-intel`, `osint-investigation`, and the three identity-pivot skills — `phone-intel`, `email-permute`, `handle-pivot` — are also bundled under `skills/security/`. The identity three wrap no external tool at all: they are Python-stdlib scripts with no API key, no network call and no new dependency, which is why they are bundled rather than optional and why they still work under `indagis airgap lockdown`. `1password`, `oss-forensics`, `web-pentest`, `godmode`, and `unbroker` stay optional for their own credential, legal, or active-action reasons. The remaining 5 roadmap entries are still planned; operators who want to test one early should file an issue with the workflow they want to automate.
 
 The engine (agent runtime, provider abstraction, gateway, skills scheduler, session persistence) is kept as-is at the fork point so security and bug fixes can still be reviewed and merged in — the fork's own work is the presentation layer (CLI banner, dashboard, desktop app, TUI, palette) and the cybersecurity skill library above. A handful of internal-only technical identifiers (an installer env var, an Electron bundle id, a couple of module directory names) are intentionally not yet renamed for install-compatibility reasons — see `CHANGELOG.md` for the full technical log if you're touching that code.

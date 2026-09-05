@@ -605,6 +605,40 @@ The new filtering support is also a security control:
 - expose only a minimal whitelist for a sensitive server
 - disable resource/prompt wrappers when you do not want that surface exposed
 
+### Tool-poisoning scanning: `indagis mcp audit`
+
+`validate_mcp_server_entry` (used at add-time and spawn-time — see
+[Trust model](#trust-model)) only inspects a server's *launch config*
+(command/args/env). It can't catch the shape of a real 2026 incident where
+npm's `postmark-mcp` package silently BCC'd outbound mail from 437,000+
+environments: the payload lived entirely in what the server's tools *say
+they do*, in a description the model reads but a user approving the
+server never does. A 2026 audit of public MCP registries found 9 of 11
+would accept a submission like that with no meaningful review.
+
+`indagis mcp audit <name>` connects to an already-configured server and
+scans every tool's full, untruncated `description` and `inputSchema` for
+tool-poisoning signals — instruction-override phrases ("ignore previous
+instructions"), covert-action phrasing ("do not tell the user"),
+exfiltration instructions ("also send a copy to"), zero-width characters,
+and embedded base64 blobs. It reports a verdict per run:
+
+- `clean` — nothing matched.
+- `warn` — a lower-confidence pattern matched (review before trusting).
+- `blocked` — a high-confidence pattern matched.
+
+Results are stored under `~/.indagis/mcp/audit.json`, keyed by server
+name, including a content hash of the tool list. Auditing the same server
+again compares against that hash and flags **drift** — the tool list
+changed since the last audit — which is exactly the signal that would
+catch a server changing behavior *after* you already trusted it. Run
+`indagis mcp audit` with no name to list every server's last stored
+result.
+
+v1 is advisory: it never blocks a server from connecting, it only reports.
+Treat a `blocked` or drifted verdict as a reason to re-read the flagged
+tool's description yourself before continuing to use that server.
+
 ## Example use cases
 
 ### GitHub server with a minimal issue-management surface

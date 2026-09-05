@@ -1,0 +1,11 @@
+{
+  "name": "puppet",
+  "label": "Sock Puppet Manager",
+  "description": "Browse OSINT investigation personas — status, platform footprint, and which investigation each belongs to.",
+  "icon": "Drama",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}

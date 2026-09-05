@@ -283,6 +283,21 @@ const sidebars: SidebarsConfig = {
                 },
                 {
                   type: 'category',
+                  label: 'security',
+                  key: 'skills-bundled-security',
+                  collapsed: true,
+                  items: [
+                    'user-guide/skills/bundled/security/security-domain-intel',
+                    'user-guide/skills/bundled/security/security-osint-investigation',
+                    'user-guide/skills/bundled/security/security-sherlock',
+                    'user-guide/skills/bundled/security/security-shodan-search',
+                    'user-guide/skills/bundled/security/security-sigma-rule-search',
+                    'user-guide/skills/bundled/security/security-virustotal-lookup',
+                    'user-guide/skills/bundled/security/security-yara-scan',
+                  ],
+                },
+                {
+                  type: 'category',
                   label: 'smart-home',
                   key: 'skills-bundled-smart-home',
                   collapsed: true,
@@ -394,6 +409,7 @@ const sidebars: SidebarsConfig = {
                   key: 'skills-optional-devops',
                   collapsed: true,
                   items: [
+                    'user-guide/skills/optional/devops/devops-actual-setup',
                     'user-guide/skills/optional/devops/devops-cli',
                     'user-guide/skills/optional/devops/devops-docker-management',
                     'user-guide/skills/optional/devops/devops-hermes-s6-container-supervision',
@@ -548,11 +564,9 @@ const sidebars: SidebarsConfig = {
                   items: [
                     'user-guide/skills/optional/research/research-bioinformatics',
                     'user-guide/skills/optional/research/research-darwinian-evolver',
-                    'user-guide/skills/optional/research/research-domain-intel',
                     'user-guide/skills/optional/research/research-drug-discovery',
                     'user-guide/skills/optional/research/research-duckduckgo-search',
                     'user-guide/skills/optional/research/research-gitnexus-explorer',
-                    'user-guide/skills/optional/research/research-osint-investigation',
                     'user-guide/skills/optional/research/research-parallel-cli',
                     'user-guide/skills/optional/research/research-pinecone-research',
                     'user-guide/skills/optional/research/research-qmd',
@@ -567,9 +581,12 @@ const sidebars: SidebarsConfig = {
                   collapsed: true,
                   items: [
                     'user-guide/skills/optional/security/security-1password',
+                    'user-guide/skills/optional/security/security-dfir-toolkit',
                     'user-guide/skills/optional/security/security-godmode',
+                    'user-guide/skills/optional/security/security-misp-query',
+                    'user-guide/skills/optional/security/security-mitm-traffic-audit',
+                    'user-guide/skills/optional/security/security-mitm-traffic-capture',
                     'user-guide/skills/optional/security/security-oss-forensics',
-                    'user-guide/skills/optional/security/security-sherlock',
                     'user-guide/skills/optional/security/security-unbroker',
                     'user-guide/skills/optional/security/security-web-pentest',
                   ],
@@ -794,6 +811,7 @@ const sidebars: SidebarsConfig = {
           label: 'Command Reference',
           items: [
             'reference/cli-commands',
+            'reference/investigation-commands',
             'reference/slash-commands',
             'reference/profile-commands',
           ],

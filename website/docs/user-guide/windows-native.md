@@ -12,7 +12,7 @@ Indagis runs natively on Windows 10 and Windows 11 — no WSL, no Cygwin, no Doc
 If you just want to install, the one-liner on the [landing page](/) or [Installation page](../getting-started/installation#windows-native) is all you need. Come back here when something surprises you.
 
 :::tip Want WSL instead?
-If you prefer a real POSIX environment (for the dashboard's embedded terminal, `fork` semantics, Linux-style file watchers, etc.), see the **[Windows (WSL2) Guide](./windows-wsl-quickstart.md)**. Both coexist cleanly: native data lives under `%LOCALAPPDATA%\hermes`, WSL data lives under `~/.hermes`.
+If you prefer a real POSIX environment (for the dashboard's embedded terminal, `fork` semantics, Linux-style file watchers, etc.), see the **[Windows (WSL2) Guide](./windows-wsl-quickstart.md)**. Both coexist cleanly: native data lives under `%LOCALAPPDATA%\indagis`, WSL data lives under `~/.indagis`.
 :::
 
 ## Quick install
@@ -23,7 +23,9 @@ Open **PowerShell** (or Windows Terminal) and run:
 iex (irm https://raw.githubusercontent.com/agtktID/indagis-agent/main/scripts/install.ps1)
 ```
 
-No admin rights required. The installer goes to `%LOCALAPPDATA%\hermes\` and adds `hermes` to your **User PATH** — open a new terminal after it finishes.
+No admin rights required. The installer goes to `%LOCALAPPDATA%\indagis\` and adds `indagis` to your **User PATH** — open a new terminal after it finishes.
+
+> **Upgrading from before the rename?** If `%LOCALAPPDATA%\hermes` already exists, the installer keeps using it rather than creating a second home, and every path below reads `hermes` instead of `indagis`. The User environment variable is still named `HERMES_HOME` in both cases — the name is kept for install-compatibility, only its value changed.
 
 **Installer options** (requires the scriptblock form to pass parameters):
 
@@ -38,14 +40,14 @@ No admin rights required. The installer goes to `%LOCALAPPDATA%\hermes\` and add
 | `-Tag` | unset | Pin install to a specific git tag (e.g. `v0.14.0`) |
 | `-NoVenv` | off | Skip venv creation (advanced — you manage Python yourself) |
 | `-SkipSetup` | off | Skip the post-install `indagis setup` wizard |
-| `-HermesHome` | `%LOCALAPPDATA%\hermes` | Override data directory |
-| `-InstallDir` | `%LOCALAPPDATA%\hermes\hermes-agent` | Override code location |
+| `-HermesHome` | `%LOCALAPPDATA%\indagis` | Override data directory |
+| `-InstallDir` | `%LOCALAPPDATA%\indagis\hermes-agent` | Override code location |
 
 The installer auto-retries flaky git fetches and strips BOM from any downloaded `install.ps1` payload, so a UTF-8 BOM picked up during HTTP transit no longer breaks the `[scriptblock]::Create((irm ...))` form.
 
 ### Desktop installer (alternative)
 
-A thin GUI installer is also available — useful if you'd rather double-click an `.exe` than open PowerShell. Download Indagis Desktop, run the installer, and on first launch the GUI calls `install.ps1` under the hood to provision Python (via `uv`), Node, PortableGit, and the rest of the dependency bootstrap described below. After the first run, the desktop app and the PowerShell-installed `hermes` CLI share the same `%LOCALAPPDATA%\hermes\hermes-agent` install and `%LOCALAPPDATA%\hermes` data directory — switch between the GUI and the CLI freely.
+A thin GUI installer is also available — useful if you'd rather double-click an `.exe` than open PowerShell. Download Indagis Desktop, run the installer, and on first launch the GUI calls `install.ps1` under the hood to provision Python (via `uv`), Node, PortableGit, and the rest of the dependency bootstrap described below. After the first run, the desktop app and the PowerShell-installed `indagis` CLI share the same `%LOCALAPPDATA%\indagis\hermes-agent` install and `%LOCALAPPDATA%\indagis` data directory — switch between the GUI and the CLI freely.
 
 Use the desktop installer when you want a familiar Windows install experience or you're handing Indagis to a non-developer; use the PowerShell one-liner when you're already in a terminal.
 
@@ -69,13 +71,13 @@ Top-to-bottom, in order:
 
 1. **Bootstraps `uv`** — Astral's fast Python manager. Installed to `%USERPROFILE%\.local\bin`.
 2. **Installs Python 3.11** via `uv`. No existing Python needed.
-3. **Installs Node.js 26** (winget if available, else a portable Node tarball unpacked under `%LOCALAPPDATA%\hermes\node`). Used for the browser tool and the WhatsApp bridge.
-4. **Installs portable Git** — if `git` is already on PATH the installer uses it; otherwise it downloads a trimmed, self-contained **PortableGit** (~45 MB, from the official `git-for-windows` release) to `%LOCALAPPDATA%\hermes\git`. No admin, no Windows installer registry, no interference with anything else on the box.
-5. **Clones the repo** to `%LOCALAPPDATA%\hermes\hermes-agent` and creates a virtualenv inside it.
+3. **Installs Node.js 26** (winget if available, else a portable Node tarball unpacked under `%LOCALAPPDATA%\indagis\node`). Used for the browser tool and the WhatsApp bridge.
+4. **Installs portable Git** — if `git` is already on PATH the installer uses it; otherwise it downloads a trimmed, self-contained **PortableGit** (~45 MB, from the official `git-for-windows` release) to `%LOCALAPPDATA%\indagis\git`. No admin, no Windows installer registry, no interference with anything else on the box.
+5. **Clones the repo** to `%LOCALAPPDATA%\indagis\hermes-agent` and creates a virtualenv inside it.
 6. **Tiered `uv pip install`** — tries `.[all]` first, falls back to progressively smaller sets (`[messaging,dashboard,ext]` → `[messaging]` → `.`) if a `git+https` dep flakes on rate-limited GitHub. Prevents "single flake drops you to a bare install" failure mode.
 7. **Auto-installs messaging SDKs** keyed off `.env` — if `TELEGRAM_BOT_TOKEN` / `DISCORD_BOT_TOKEN` / `SLACK_BOT_TOKEN` / `SLACK_APP_TOKEN` / `WHATSAPP_ENABLED` are present, runs `python -m ensurepip --upgrade` and targeted `pip install` calls so each platform's SDK is actually importable.
 8. **Sets `HERMES_GIT_BASH_PATH`** to the resolved `bash.exe` so Indagis finds it deterministically in fresh shells.
-9. **Adds `%LOCALAPPDATA%\hermes\hermes-agent\venv\Scripts` to User PATH and sets `HERMES_HOME=%LOCALAPPDATA%\hermes`** — exposes the `hermes` command (and points it at your data dir) after you open a new terminal.
+9. **Adds `%LOCALAPPDATA%\indagis\hermes-agent\venv\Scripts` to User PATH and sets `HERMES_HOME=%LOCALAPPDATA%\indagis`** — exposes the `indagis` command (and points it at your data dir) after you open a new terminal.
 10. **Runs `indagis setup`** — the normal first-run wizard (model, provider, toolsets). Skip with `-SkipSetup`.
 
 
@@ -105,8 +107,8 @@ Indagis's terminal tool runs commands through **Git Bash**, same strategy Claude
 Resolution order for `bash.exe`:
 
 1. `HERMES_GIT_BASH_PATH` environment variable if set.
-2. `%LOCALAPPDATA%\hermes\git\usr\bin\bash.exe` (installer-managed PortableGit).
-3. `%LOCALAPPDATA%\hermes\git\bin\bash.exe` (older Git-for-Windows layout).
+2. `%LOCALAPPDATA%\indagis\git\usr\bin\bash.exe` (installer-managed PortableGit).
+3. `%LOCALAPPDATA%\indagis\git\bin\bash.exe` (older Git-for-Windows layout).
 4. System Git-for-Windows install (`%ProgramFiles%\Git\bin\bash.exe`, etc.).
 5. MSYS2, Cygwin, or any `bash.exe` on PATH as a last resort.
 
@@ -199,13 +201,13 @@ Services require admin rights to install and tie the gateway's lifecycle to mach
 
 | Path | Contents |
 |---|---|
-| `%LOCALAPPDATA%\hermes\hermes-agent\` | Git checkout + venv. `venv\Scripts\hermes.exe` is the command added to User PATH. Safe to `Remove-Item -Recurse` and reinstall. |
-| `%LOCALAPPDATA%\hermes\git\` | PortableGit (only if the installer provisioned it). |
-| `%LOCALAPPDATA%\hermes\node\` | Portable Node.js (only if the installer provisioned it). |
-| `%LOCALAPPDATA%\hermes\bin\` | Indagis's managed `uv.exe` (the Python manager it uses for updates). |
-| `%LOCALAPPDATA%\hermes\` (root) | Your config, auth, skills, sessions, logs (`config.yaml`, `.env`, `skills\`, `sessions\`, `logs\`, …). **Survives reinstalls.** |
+| `%LOCALAPPDATA%\indagis\hermes-agent\` | Git checkout + venv. `venv\Scripts\indagis.exe` is the command added to User PATH. Safe to `Remove-Item -Recurse` and reinstall. |
+| `%LOCALAPPDATA%\indagis\git\` | PortableGit (only if the installer provisioned it). |
+| `%LOCALAPPDATA%\indagis\node\` | Portable Node.js (only if the installer provisioned it). |
+| `%LOCALAPPDATA%\indagis\bin\` | Indagis's managed `uv.exe` (the Python manager it uses for updates). |
+| `%LOCALAPPDATA%\indagis\` (root) | Your config, auth, skills, sessions, logs (`config.yaml`, `.env`, `skills\`, `sessions\`, `logs\`, …). **Survives reinstalls.** |
 
-On native Windows the installer sets `HERMES_HOME=%LOCALAPPDATA%\hermes`, so your data and the disposable install live under the **same** `%LOCALAPPDATA%\hermes` root: the install/runtime is the `hermes-agent\`, `git\`, `node\`, and `bin\` subdirectories, while your data files sit directly in `%LOCALAPPDATA%\hermes`. Reinstalling only replaces the `hermes-agent\` checkout, so your data survives — but because the two share a root, **don't** `Remove-Item -Recurse %LOCALAPPDATA%\hermes` if you want to keep your data; delete the `hermes-agent\` subdirectory instead. Your data directory is identical in shape to a Linux `~/.hermes`, so you can mirror it between machines.
+On native Windows the installer sets `HERMES_HOME=%LOCALAPPDATA%\indagis`, so your data and the disposable install live under the **same** `%LOCALAPPDATA%\indagis` root: the install/runtime is the `hermes-agent\`, `git\`, `node\`, and `bin\` subdirectories, while your data files sit directly in `%LOCALAPPDATA%\indagis`. Reinstalling only replaces the `hermes-agent\` checkout, so your data survives — but because the two share a root, **don't** `Remove-Item -Recurse %LOCALAPPDATA%\indagis` if you want to keep your data; delete the `hermes-agent\` subdirectory instead. Your data directory is identical in shape to a Linux `~/.indagis`, so you can mirror it between machines.
 
 **Override `HERMES_HOME`:** set the environment variable to point at a different data dir (e.g. `%USERPROFILE%\.hermes` to match a Linux/WSL layout). Works the same as on Linux.
 
@@ -221,18 +223,18 @@ The browser tool uses `agent-browser` (a Node helper) to drive Chromium. On Wind
 
 ### PATH after install
 
-The installer adds `%LOCALAPPDATA%\hermes\hermes-agent\venv\Scripts` to your **User PATH** via `[Environment]::SetEnvironmentVariable`. Existing terminals don't pick this up — open a new PowerShell window (or Windows Terminal tab) after installation. Close-and-reopen, don't `$env:PATH += …` by hand unless you know what you're doing.
+The installer adds `%LOCALAPPDATA%\indagis\hermes-agent\venv\Scripts` to your **User PATH** via `[Environment]::SetEnvironmentVariable`. Existing terminals don't pick this up — open a new PowerShell window (or Windows Terminal tab) after installation. Close-and-reopen, don't `$env:PATH += …` by hand unless you know what you're doing.
 
 Verify:
 
 ```powershell
-Get-Command hermes        # should print C:\Users\<you>\AppData\Local\hermes\hermes-agent\venv\Scripts\hermes.exe
+Get-Command indagis        # should print C:\Users\<you>\AppData\Local\indagis\hermes-agent\venv\Scripts\indagis.exe
 indagis --version
 ```
 
 ### Environment variables
 
-Indagis honors both `$env:X` (process-scope) and User environment variables (permanent, set in System Properties → Environment Variables). Setting API keys in `%LOCALAPPDATA%\hermes\.env` (your `HERMES_HOME`) is the normal path — same as Linux:
+Indagis honors both `$env:X` (process-scope) and User environment variables (permanent, set in System Properties → Environment Variables). Setting API keys in `%LOCALAPPDATA%\indagis\.env` (your `HERMES_HOME`) is the normal path — same as Linux:
 
 ```
 OPENROUTER_API_KEY=sk-or-...
@@ -259,13 +261,13 @@ From PowerShell:
 indagis uninstall
 ```
 
-That's the clean path — removes the schtasks entry, Startup folder shortcut, `hermes.cmd` shim, deletes `%LOCALAPPDATA%\hermes\hermes-agent\`, and trims the User PATH. It leaves the rest of `%LOCALAPPDATA%\hermes\` alone (your config, auth, skills, sessions, logs) in case you're reinstalling.
+That's the clean path — removes the schtasks entry, Startup folder shortcut, deletes `%LOCALAPPDATA%\indagis\hermes-agent\`, and trims the User PATH. It leaves the rest of `%LOCALAPPDATA%\indagis\` alone (your config, auth, skills, sessions, logs) in case you're reinstalling.
 
 To nuke everything:
 
 ```powershell
 indagis uninstall
-Remove-Item -Recurse -Force "$env:LOCALAPPDATA\hermes"
+Remove-Item -Recurse -Force "$env:LOCALAPPDATA\indagis"
 # Also remove a legacy CLI/WSL data dir if you ever used one:
 Remove-Item -Recurse -Force "$env:USERPROFILE\.hermes"
 ```
@@ -282,10 +284,49 @@ Consequence: any codepath that said "check if this PID is alive" via `os.kill(pi
 
 `scripts/check-windows-footguns.py` enforces this in CI: any new `os.kill(pid, 0)` call fails the `Windows footguns (blocking)` check unless the line carries a `# windows-footgun: ok — <reason>` marker.
 
+## Antivirus flags `uv.exe` as malware
+
+If Windows Defender, Bitdefender or similar quarantines `uv.exe` from
+`%LOCALAPPDATA%\indagis\bin\`, this is a **false positive**. The file is
+Astral's [`uv`](https://github.com/astral-sh/uv) — the Rust Python package
+manager Indagis bundles to manage its own environment. ML-based engines
+routinely flag unsigned Rust binaries that download and install packages.
+See the upstream reports: [uv#13553](https://github.com/astral-sh/uv/issues/13553),
+[uv#15011](https://github.com/astral-sh/uv/issues/15011),
+[uv#10079](https://github.com/astral-sh/uv/issues/10079).
+
+**Verify your copy is authentic** — this checks GitHub's build attestation for
+the release, then compares the hash against your installed binary:
+
+```powershell
+winget install --id GitHub.cli   # if you don't have gh
+gh auth login
+
+$uv = "$env:LOCALAPPDATA\indagis\bin\uv.exe"
+$ver = (& $uv --version).Split(' ')[1]
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$zip = "$env:TEMP\uv.zip"
+Invoke-WebRequest "https://github.com/astral-sh/uv/releases/download/$ver/uv-x86_64-pc-windows-msvc.zip" -OutFile $zip -UseBasicParsing
+gh attestation verify $zip --repo astral-sh/uv
+Expand-Archive $zip "$env:TEMP\uv_x" -Force
+(Get-FileHash "$env:TEMP\uv_x\uv.exe").Hash -eq (Get-FileHash $uv).Hash
+```
+
+"Verification succeeded" plus a final `True` means the binary is genuine.
+
+**To whitelist it:**
+
+- **Windows Defender** — PowerShell as Admin:
+  `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\indagis\bin"`
+- **Bitdefender** — Protection → Antivirus → Settings → Manage Exceptions
+
+Whitelist the **folder**, not the file hash: Indagis inherits `uv` updates from
+upstream, so the hash changes with every version.
+
 ## Common pitfalls
 
-**`hermes: command not found` right after install.**
-Open a new PowerShell window. The installer added `%LOCALAPPDATA%\hermes\hermes-agent\venv\Scripts` to User PATH, but existing shells need to be restarted to pick it up. In the meantime you can run `& "$env:LOCALAPPDATA\hermes\hermes-agent\venv\Scripts\hermes.exe"`.
+**`indagis: command not found` right after install.**
+Open a new PowerShell window. The installer added `%LOCALAPPDATA%\indagis\hermes-agent\venv\Scripts` to User PATH, but existing shells need to be restarted to pick it up. In the meantime you can run `& "$env:LOCALAPPDATA\indagis\hermes-agent\venv\Scripts\indagis.exe"`.
 
 **`WinError 193: %1 is not a valid Win32 application` when running a tool.**
 You hit a shebang-script invocation that bypassed the `.cmd` shim. Indagis resolves commands through `shutil.which(cmd, path=local_bin)` so PATHEXT picks up `.CMD` — if you're invoking the tool via a hardcoded path instead, switch to the `.cmd` variant (e.g., `npx.cmd`, not `npx`).
@@ -303,7 +344,7 @@ You set it in the current process only; close and reopen the shell, or set it at
 Chromium is auto-installed on first run. If the install failed (rate-limited GitHub, Playwright CDN hiccup), run `indagis doctor` — it will surface the missing Chromium and print the exact `npx playwright install chromium` command to fix it.
 
 **`agent-browser` fails with a weird Node version error.**
-The installer provisions Node 26 at `%LOCALAPPDATA%\hermes\node` but your PATH may have an older system Node 18 first. Either move Indagis's node dir earlier on PATH, or delete the system install if you don't use Node elsewhere.
+The installer provisions Node 26 at `%LOCALAPPDATA%\indagis\node` but your PATH may have an older system Node 18 first. Either move Indagis's node dir earlier on PATH, or delete the system install if you don't use Node elsewhere.
 
 **Chinese / Japanese / Arabic characters show as `?` in the CLI.**
 The UTF-8 stdio shim didn't activate. Check that `HERMES_DISABLE_WINDOWS_UTF8` is NOT set (`Get-ChildItem env:HERMES_DISABLE_WINDOWS_UTF8`). If it's empty and you still see `?`, the console host (very old `cmd.exe`) may not support UTF-8 at all — switch to Windows Terminal.
@@ -318,6 +359,6 @@ If you edited Indagis config or a skill on Windows using a non-UTF-8 editor (Not
 
 - **[Installation](../getting-started/installation.md)** — the full install page, including Linux/macOS/WSL2/Termux.
 - **[Windows (WSL2) Guide](./windows-wsl-quickstart.md)** — if you want POSIX semantics or the dashboard terminal pane.
-- **[CLI Reference](../reference/cli-commands.md)** — every `hermes` subcommand.
+- **[CLI Reference](../reference/cli-commands.md)** — every `indagis` subcommand.
 - **[FAQ](../reference/faq.md)** — common non-Windows-specific questions.
 - **[Messaging Gateway](./messaging/index.md)** — running Telegram/Discord/Slack on Windows.

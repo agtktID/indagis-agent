@@ -1,0 +1,11 @@
+{
+  "name": "case-memory",
+  "label": "Case Memory",
+  "description": "Browse the cross-investigation IOC correlation index — indicators seen across investigations, and which cases share them.",
+  "icon": "Search",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "attribution",
+  "label": "Attribution Confidence",
+  "description": "Score evidence-store findings with the NATO/Admiralty source reliability × information credibility matrix, corroborated against Case Memory.",
+  "icon": "ShieldCheck",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}

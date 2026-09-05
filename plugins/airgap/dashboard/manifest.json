@@ -1,0 +1,11 @@
+{
+  "name": "airgap",
+  "label": "Air Gap",
+  "description": "Show the current lockdown manifest — what Air Gap paused for a confidential engagement, and whether it's been restored.",
+  "icon": "Lock",
+  "version": "1.0.0",
+  "tab": {
+    "hidden": true
+  },
+  "api": "plugin_api.py"
+}
