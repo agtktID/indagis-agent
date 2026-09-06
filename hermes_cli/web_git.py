@@ -92,6 +92,28 @@ def resolve_rename_path(raw: str) -> str:
     return path.split(" => ")[-1].strip()
 
 
+#: git reads a leading-dash argument in revision position as an OPTION, not a
+#: revision. That matters here because ``base``/``ref`` arrive raw off the
+#: dashboard's REST surface, and ``git diff --output=<path>`` writes wherever it
+#: is told — turning a read-only review endpoint into an arbitrary file write.
+#: A real revision never starts with ``-`` (git forbids it in ref names, and no
+#: revision syntax — ``HEAD~3``, ``abc^{commit}``, ``origin/main`` — begins with
+#: one), so rejecting that shape is lossless where a character-stripping
+#: sanitiser would quietly turn ``HEAD~3`` into ``HEAD3`` and diff the wrong
+#: revision.
+#:
+#: ``--end-of-options`` is passed as well wherever it does not disturb the
+#: command's output; that is git's own sentinel and closes the same hole from
+#: the other side. It is NOT used with ``rev-parse``, which echoes the sentinel
+#: back on stdout and would corrupt the value the caller reads.
+def _safe_rev(value: str | None) -> str | None:
+    """A caller-supplied revision, or ``None`` when it is option-shaped."""
+    text = str(value or "").strip()
+    if not text or text.startswith("-"):
+        return None
+    return text
+
+
 def _numstat(cwd: str, args: list[str]) -> dict[str, tuple[int, int]]:
     """``git diff --numstat`` → {path: (added, removed)}; binary files (``-``) → 0."""
     out = _git_out(cwd, ["diff", "--numstat", *args])
@@ -271,13 +293,13 @@ def review_list(cwd: str, scope: str, base_ref: str | None) -> dict:
         return {"files": [], "base": None}
 
     if scope in ("branch", "lastTurn"):
-        base = _branch_base(cwd) if scope == "branch" else base_ref
+        base = _branch_base(cwd) if scope == "branch" else _safe_rev(base_ref)
         if not base:
             return {"files": [], "base": None}
         rng = f"{base}...HEAD" if scope == "branch" else base
         files = [
             {"path": path, "added": a, "removed": r, "status": "M", "staged": False}
-            for path, (a, r) in _numstat(cwd, [rng]).items()
+            for path, (a, r) in _numstat(cwd, ["--end-of-options", rng]).items()
         ]
         if scope == "lastTurn":
             seen = {f["path"] for f in files}
@@ -322,7 +344,10 @@ def review_diff(cwd: str, file_path: str, scope: str, base_ref: str | None, stag
         base = _branch_base(cwd)
         return _git_out(cwd, ["diff", f"{base}...HEAD", "--", file_path]) if base else ""
     if scope == "lastTurn":
-        return _git_out(cwd, ["diff", base_ref, "--", file_path]) if base_ref else ""
+        base = _safe_rev(base_ref)
+        if not base:
+            return ""
+        return _git_out(cwd, ["diff", "--end-of-options", base, "--", file_path])
     if staged:
         return _git_out(cwd, ["diff", "--cached", "--", file_path])
     worktree = _git_out(cwd, ["diff", "--", file_path])
@@ -367,7 +392,9 @@ def review_revert(cwd: str, file_path: str | None) -> dict:
 
 
 def review_rev_parse(cwd: str, ref: str | None) -> str | None:
-    out = _git_out(cwd, ["rev-parse", ref or "HEAD"]).strip()
+    # No ``--end-of-options`` here: rev-parse echoes the sentinel on stdout,
+    # which would become the first line of the value callers read back.
+    out = _git_out(cwd, ["rev-parse", _safe_rev(ref) or "HEAD"]).strip()
     return out or None
 
 
