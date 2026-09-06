@@ -26,6 +26,7 @@ import importlib.machinery
 import importlib.util
 import logging
 import sys
+import pathlib
 from pathlib import Path
 from typing import List, Optional, Tuple
 from hermes_cli.config import cfg_get
@@ -121,11 +122,33 @@ def _iter_provider_dirs() -> List[Tuple[str, Path]]:
     return dirs
 
 
+def _is_single_safe_segment(name: str) -> bool:
+    """Whether *name* is one plain directory name, not a path into somewhere else.
+
+    ``find_provider_dir`` builds ``<plugins dir> / name``, and ``Path.__truediv__``
+    is happy to walk: ``dir / "../../etc"`` is ``dir/../../etc``, which ``is_dir()``
+    follows straight out of the plugin tree. The HTTP routes that reach here today
+    all validate the name against a strict charset first — see
+    ``_require_valid_memory_provider_name`` in web_server.py, whose docstring says
+    it exists for exactly this reason. But that containment lives at the boundary,
+    not here, so any future caller that forgets it silently reopens the traversal.
+    This makes the function safe on its own terms.
+
+    A segment check rather than resolve()-and-contain: a user-installed plugin under
+    ``$INDAGIS_HOME/plugins/`` may legitimately be a symlink to a working copy
+    elsewhere, and containment against the resolved path would break that.
+    """
+    return bool(name) and name not in (".", "..") and len(pathlib.PurePath(name).parts) == 1
+
+
 def find_provider_dir(name: str) -> Optional[Path]:
     """Resolve a provider name to its directory.
 
-    Checks bundled first, then user-installed.
+    Checks bundled first, then user-installed. Returns ``None`` for a name that
+    is not a plain directory name — see :func:`_is_single_safe_segment`.
     """
+    if not _is_single_safe_segment(name):
+        return None
     # Bundled
     bundled = _MEMORY_PLUGINS_DIR / name
     if bundled.is_dir() and (bundled / "__init__.py").exists():
